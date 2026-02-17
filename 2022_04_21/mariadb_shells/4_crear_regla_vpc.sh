@@ -1,24 +1,33 @@
+#!/bin/bash
+
+# 1. Obtener nombre de la instancia actual
 hname=$(hostname)
-echo $hname
-full_string="gcloud compute instances list --format \"get(zone)\" --filter=\"$hname\""
-echo $full_string
-eval url=\$\($full_string\)
-project=$(echo $url | cut -d/ -f7)
-echo $project
+echo "Instancia actual: $hname"
 
-#crear regla de vpc
-rule_string="gcloud compute --project=$project firewall-rules create mariadb --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:3306 --source-ranges=0.0.0.0/0 --target-tags=mariadb"
-echo $rule_string
-eval $rule_string
+# 2. Obtener el ID del Proyecto (forma más segura)
+project=$(gcloud config get-value project)
+echo "Proyecto detectado: $project"
 
-#obtener zona de instancia actual
-full_string="gcloud compute instances list --format \"get(zone)\" --filter=\"$hname\""
-echo $full_string
-eval url=\$\($full_string\)
-zone=$(echo $url | cut -d/ -f9)
-echo $zone
+# 3. Obtener la zona de la instancia actual
+# Usamos --format="value(zone)" para obtener solo el nombre de la zona
+zone=$(gcloud compute instances list --filter="name:($hname)" --format="value(zone)")
+echo "Zona detectada: $zone"
 
-#agregar tag de  vpc a instancia actual
-tag_string="gcloud compute instances add-tags \"$hname\" --zone \"$zone\" --tags mariadb"
-echo $tag_string
-eval $tag_string
+# 4. Crear la regla de Firewall
+# Nota: Se usa la red 'default'. Asegúrate de que tu instancia esté en esa red.
+echo "Creando regla de firewall para MariaDB..."
+gcloud compute firewall-rules create allow-mariadb \
+    --project="$project" \
+    --direction=INGRESS \
+    --priority=1000 \
+    --network=default \
+    --action=ALLOW \
+    --rules=tcp:3306 \
+    --source-ranges=0.0.0.0/0 \
+    --target-tags=mariadb-server
+
+# 5. Agregar el tag a la instancia actual para que la regla le aplique
+echo "Asignando tag de red a la instancia..."
+gcloud compute instances add-tags "$hname" \
+    --zone "$zone" \
+    --tags=mariadb-server
