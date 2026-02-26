@@ -2,13 +2,13 @@
 
 Este repositorio contiene la guía paso a paso para desplegar un entorno de análisis de datos a gran escala en Google Cloud Platform (GCP). El clúster está configurado para procesar archivos de más de 20GB de manera eficiente.
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 * Una cuenta activa en Google Cloud Platform.
 * Un proyecto creado con la facturación habilitada.
 ---
 
-## 🚀 1. Creación del Clúster desde Cloud Shell
+Creación del Clúster desde Cloud Shell
 
 Abre **Cloud Shell** y ejecuta los siguientes bloques de código.
 
@@ -19,7 +19,10 @@ Configura el entorno según tu proyecto.
 export PROJECT_ID=$(gcloud config get-value project)
 export REGION=us-central1
 export ZONE=us-central1-a
-export CLUSTER_NAME=hive-learning-cluster```
+export CLUSTER_NAME=hive-learning-cluster
+```
+
+
 
 ### B) Código para crear cluster en Cloud Shell
 ```bash 
@@ -35,5 +38,5 @@ gcloud dataproc clusters create $CLUSTER_NAME \
     --worker-boot-disk-size 100 \
     --optional-components JUPYTER,ZEPPELIN \
     --enable-component-gateway \
-    --scopes '[https://www.googleapis.com/auth/cloud-platform](https://www.googleapis.com/auth/cloud-platform)'
+    --scopes 'https://www.googleapis.com/auth/cloud-platform'
 ```
