@@ -1,13 +1,16 @@
 #!/bin/bash
-# 1. Instalar MariaDB
-sudo apt-get update
-sudo apt-get install -y mariadb-server mariadb-client
+# 1_install_mariadb.sh
 
-# 2. Habilitar el servicio
-sudo systemctl enable mariadb
-sudo systemctl start mariadb
+echo "Instalando MariaDB Server..."
+apt-get update
+apt-get install -y mariadb-server
 
-# 3. Configurar para acceso remoto (IMPORTANTE para Big Data)
-# Cambia 127.0.0.1 por 0.0.0.0 para aceptar conexiones de cualquier IP
+echo "Configurando acceso remoto (bind-address)..."
+# Esta línea busca el bind-address y lo cambia a 0.0.0.0
 sudo sed -i 's/bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+
+echo "Reiniciando MariaDB para aplicar cambios..."
 sudo systemctl restart mariadb
+
+echo "Habilitando MariaDB en el arranque..."
+sudo systemctl enable mariadb
