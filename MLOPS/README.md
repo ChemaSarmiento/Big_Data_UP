@@ -31,17 +31,72 @@ gcloud dataproc clusters create $CLUSTER_NAME \
     --region=$REGION \
     --zone=$ZONE \
     --image-version=2.1-ubuntu20 \
-    --master-machine-type n2-standard-2 \
+    --master-machine-type n4-standard-2 \
     --master-boot-disk-size 100 \
-    --num-workers 2 \
+    --num-workers 3 \
     --worker-machine-type n2-standard-2 \
     --worker-boot-disk-size 100 \
     --optional-components JUPYTER,ZEPPELIN \
     --enable-component-gateway \
-    --scopes 'https://www.googleapis.com/auth/cloud-platform'
+    --scopes 'https://www.googleapis.com/auth/cloud-platform' \
+    --properties 'dataproc:jupyter.notebook.gcs.dir=gs://big-data-lunes-20260223/notebooks'
 ```
 
+
+
+
+
 ---
+
+#### Opciones adicionales:
+
+El clúster será principalmente para procesamiento, podemos agregar las siguientes opciones:
+```
+   --max-idle=1h \
+    --max-age=3h \
+```
+Para que tenga un tiempo de vida de 3 horas, y si nadie lo usa en 1 hora se borrará automáticamente. 
+
+De igual forma, para persistir tus notebooks de Spark, podremos exportar la siguiente variable:
+
+```
+export BUCKET_NAME=mi-bucket-creado
+```
+
+y agregar la opción la creación del clúster para crear un folder dentro del bucket, donde siempre vivan los notebooks, si borras el clúster, los notebooks se mantienen.
+
+```
+--properties="dataproc:jupyter.notebook.gcs.dir=gs://$BUCKET_NAME/notebooks"
+```
+
+De forma completa, quedaría así:
+
+
+```
+export PROJECT_ID=$(gcloud config get-value project)
+export REGION=us-central1
+export ZONE=us-central1-a
+export CLUSTER_NAME=hive-learning-cluster
+export BUCKET_NAME=mi-bucket-creado
+
+gcloud dataproc clusters create $CLUSTER_NAME \
+    --project=$PROJECT_ID \
+    --region=$REGION \
+    --zone=$ZONE \
+    --image-version=2.1-ubuntu20 \
+    --master-machine-type n4-standard-2 \
+    --master-boot-disk-size 100 \
+    --num-workers 3 \
+    --worker-machine-type n2-standard-2 \
+    --worker-boot-disk-size 100 \
+    --optional-components JUPYTER,ZEPPELIN \
+    --enable-component-gateway \
+    --max-idle=1h \
+    --max-age=3h \
+    --scopes 'https://www.googleapis.com/auth/cloud-platform' \
+    --properties="dataproc:jupyter.notebook.gcs.dir=gs://$BUCKET_NAME/notebooks"
+```
+
 ### C) Crear una VM con MariaDB
 
 
@@ -113,16 +168,10 @@ y el servicio de mariadb listo
 $> sudo systemctl status mariadb
 ```
 
-deberías de ver:
-
-```
-
-```
-
 Si el servicio no está disponible, corre:
 
 ```
 sudo tail -n 20 /var/log/mariadb_install.log
 ```
 
-y verás que sucedió con la instalación, si sigue 
+y verás que sucedió con la instalación.
