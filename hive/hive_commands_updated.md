@@ -31,26 +31,28 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] nombre_tabla (
 ```
 
 2. Desglose de Cláusulas Técnicas
-*EXTERNAL vs. MANAGED (Internal)*
-*EXTERNAL*: Es la mejor práctica en Big Data. Hive solo gestiona los metadatos. Si ejecutas un DROP TABLE, los datos en el bucket NO se borran.
 
-*MANAGED*: Hive es dueño de los datos. Si borras la tabla, los archivos físicos desaparecen.
+**EXTERNAL vs. MANAGED (Internal)**
+**EXTERNAL**: Es la mejor práctica en Big Data. Hive solo gestiona los metadatos. Si ejecutas un DROP TABLE, los datos en el bucket NO se borran.
+
+**MANAGED**: Hive es dueño de los datos. Si borras la tabla, los archivos físicos desaparecen.
 
 Organización de Datos (Rendimiento)
-*PARTITIONED BY*: Crea subdirectorios físicos. Es vital para el Partition Pruning (evita leer toda la tabla).
 
-Ejemplo: PARTITIONED BY (anio INT, mes INT) -> Ruta: /tabla/anio=2024/mes=03/.
+**PARTITIONED BY**: Crea subdirectorios físicos. Es vital para el Partition Pruning (evita leer toda la tabla).
 
-*CLUSTERED BY (Bucketing)*: Distribuye los datos en un número fijo de archivos mediante un cálculo de hash. Optimiza los Joins y el muestreo.
+Ejemplo: **PARTITIONED BY** (anio INT, mes INT) -> Ruta: `/tabla/anio=2024/mes=03/`.
+
+**CLUSTERED BY (Bucketing)**: Distribuye los datos en un número fijo de archivos mediante un cálculo de hash. Optimiza los Joins y el muestreo.
 
 Formatos de Almacenamiento (STORED AS)
 El formato impacta directamente en el costo de almacenamiento y la velocidad de procesamiento:
 
-*TEXTFILE*: Texto plano (CSV/TSV). Compatible con todo, pero pesado y lento.
+ * **TEXTFILE**: Texto plano (CSV/TSV). Compatible con todo, pero pesado y lento.
 
-*PARQUET*: Formato columnar. Comprime los datos y es ideal para procesos de Spark y BigQuery.
+ * **PARQUET**: Formato columnar. Comprime los datos y es ideal para procesos de Spark y BigQuery.
 
-*ORC*: El formato nativo más optimizado para Hive.
+ * **ORC(Optimized Row Columnar)**: El formato nativo más optimizado para Hive.
 
 ## 1. Gestión de Tablas Externas (Raw Layer)
 
