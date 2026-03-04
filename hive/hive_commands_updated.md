@@ -149,10 +149,10 @@ FROM HTTP_DATA;
 ```
 
 3. Glosario de Contexto Técnico Notas Técnicas y Troubleshooting
-   -Dynamic Partitioning Error: Si Hive arroja errores durante la inserción en tablas particionadas, asegúrese de que el modo esté en nonstrict.
-   -Bucketing Validation: El bucketing se valida verificando que en el bucket de GCS existan exactamente 30 archivos de salida dentro de la carpeta de la tabla.
-   -External vs Internal: Todas las tablas en este laboratorio son EXTERNAL para garantizar que la eliminación de metadatos en Hive no afecte los datos persistentes en Google Cloud Storage.
-   -EXTERNAL TABLE: Indica que Hive no es "dueño" de los datos. Si borras la tabla, los archivos en GCS/HDFS permanecen intactos.
-   -PARQUET: Formato de almacenamiento columnar que reduce drásticamente el uso de espacio y mejora la velocidad de lectura.
-   -SERDE: (Serializer/Deserializer) Permite a Hive leer datos en formatos específicos (como el formato de fecha de los emails).
-   -NONSTRICT: Permite insertar datos en particiones sin tener que definir cada una manualmente.
+   - Dynamic Partitioning Error: Si Hive arroja errores durante la inserción en tablas particionadas, asegúrese de que el modo esté en nonstrict.
+   - Bucketing Validation: El bucketing se valida verificando que en el bucket de GCS existan exactamente 30 archivos de salida dentro de la carpeta de la tabla.
+   - External vs Internal: Todas las tablas en este laboratorio son EXTERNAL para garantizar que la eliminación de metadatos en Hive no afecte los datos persistentes en Google Cloud Storage.
+   - EXTERNAL TABLE: Indica que Hive no es "dueño" de los datos. Si borras la tabla, los archivos en GCS/HDFS permanecen intactos.
+   - PARQUET: Formato de almacenamiento columnar que reduce drásticamente el uso de espacio y mejora la velocidad de lectura.
+   - SERDE: (Serializer/Deserializer) Permite a Hive leer datos en formatos específicos (como el formato de fecha de los emails).
+   - NONSTRICT: Permite insertar datos en particiones sin tener que definir cada una manualmente.
