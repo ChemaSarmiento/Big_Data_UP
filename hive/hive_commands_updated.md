@@ -2,7 +2,7 @@
 
 Este repositorio contiene la implementación de estructuras de datos masivos utilizando **Apache Hive** sobre un cluster de **Dataproc**. El objetivo es demostrar la transición de entornos locales (HDFS) hacia arquitecturas modernas en la nube (GCS), aplicando técnicas de optimización.
 
-## 📋 Contexto del Proyecto
+## Contexto del Proyecto
 El proyecto procesa tres fuentes de datos principales:
 1. **Carpetas de Investigación**: Datos de criminalidad (CSV en HDFS).
 2. **Sentiment Data**: Logs de tráfico HTTP con análisis de sentimiento (Parquet en GCS).
@@ -45,10 +45,12 @@ LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
 LOCATION '/user/carpetas_hdfs' 
 TBLPROPERTIES ("skip.header.line.count"="1");
+```
+
 B. Integración con Google Cloud Storage (GCS)
 Mapeo de datos directamente desde Buckets de GCP, utilizando el formato Parquet para optimizar el rendimiento y el SerDe de Hive para parsear formatos de fecha complejos.
 
-SQL
+```sql
 -- Datos de sentimiento HTTP optimizados en formato Columnar (Parquet)
 CREATE EXTERNAL TABLE HTTP_DATA (
     seq INT,
@@ -62,6 +64,7 @@ CREATE EXTERNAL TABLE HTTP_DATA (
 )
 STORED AS PARQUET
 LOCATION 'gs://BUCKET/http_sentiment/http_sentiment_compressed';
+
 
 -- Datos de Email con formato de fecha personalizado
 CREATE TABLE EMAIL_DATA
@@ -85,11 +88,13 @@ WITH SERDEPROPERTIES (
 )
 LOCATION 'gs://BUCKET/email/'
 TBLPROPERTIES ("skip.header.line.count"="1");
+```
+
 2. Optimizaciones de Rendimiento
 Particionamiento Dinámico (Partitioning)
 Implementamos particionamiento para mejorar la velocidad de consulta mediante el filtrado de directorios (Partition Pruning).
 
-SQL
+```sql
 -- Estructura particionada por año y mes
 CREATE EXTERNAL TABLE HTTP_DATA_PARTITIONED (
     seq INT,
@@ -113,10 +118,12 @@ INSERT INTO HTTP_DATA_PARTITIONED
 SELECT seq, id, visited, logged_user, pc, url, content, sentiment, 
        year(visited) as year, month(visited) as month 
 FROM HTTP_DATA;
+```
+
 Segmentación (Bucketing)
 El bucketing permite distribuir los datos uniformemente basados en un hash de columna, optimizando los procesos de JOIN y SAMPLE.
 
-SQL
+```sql
 -- Distribución de datos en 30 buckets basados en el ID de la PC
 CREATE EXTERNAL TABLE HTTP_DATA_BUCKETS (
     seq INT,
@@ -139,7 +146,7 @@ SET hive.enforce.bucketing = true;
 INSERT INTO HTTP_DATA_BUCKETS 
 SELECT seq, id, visited, logged_user, pc, url, content, sentiment 
 FROM HTTP_DATA;
-
+```
 
 3. Glosario de Contexto Técnico Notas Técnicas y Troubleshooting
  -Dynamic Partitioning Error: Si Hive arroja errores durante la inserción en tablas particionadas, asegúrese de que el modo esté en nonstrict.
