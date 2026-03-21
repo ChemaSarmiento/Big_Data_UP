@@ -99,7 +99,7 @@ gcloud dataproc clusters create $CLUSTER_NAME \
 
 ### B.1) Clúster listo para usar hugging-face
 
-Primero, crear un .sh que subiremos a un bucket, debe tener el código que encontrarás en [hugging_face_deps.sh](este script), suponiendo que la ruta es gs://tubucket/hugging_face_deps.sh :
+Primero, crear un .sh que subiremos a un bucket, debe tener el código que encontrarás en [este script](hugging_face_deps.sh), suponiendo que la ruta es gs://tubucket/hugging_face_deps.sh :
 
 ```
 export PROJECT_ID=$(gcloud config get-value project)
