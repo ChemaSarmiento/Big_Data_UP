@@ -34,8 +34,9 @@ Instalación fácil de Sqoop
 ``` diff
 Modificación de librerias para scrapper de Twitter (y otras redes...)	
 ```
-- [MLOPS](MLOPS)
+- [MLOPS](MLOPS/Instalacion_Cluster)
 ``` diff
-Para crear tu cluster e instancias
+Para crear tu cluster 
 ```
+
 

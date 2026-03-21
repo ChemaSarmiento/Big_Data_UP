@@ -97,6 +97,40 @@ gcloud dataproc clusters create $CLUSTER_NAME \
     --properties="dataproc:jupyter.notebook.gcs.dir=gs://$BUCKET_NAME/notebooks"
 ```
 
+### B.1) Clúster listo para usar hugging-face
+
+Primero, crear un .sh que subiremos a un bucket, debe tener el código que encontrarás en [hugging_face_deps.sh](este script), suponiendo que la ruta es gs://tubucket/hugging_face_deps.sh :
+
+```
+export PROJECT_ID=$(gcloud config get-value project)
+export REGION=us-central1
+export ZONE=us-central1-a
+export CLUSTER_NAME=hive-learning-cluster
+export BUCKET_NAME=mi-bucket-creado
+
+gcloud dataproc clusters create $CLUSTER_NAME \
+    --project=$PROJECT_ID \
+    --region=$REGION \
+    --zone=$ZONE \
+    --image-version=2.1-ubuntu20 \
+    --master-machine-type=n1-standard-2 \
+    --master-boot-disk-size=50 \
+    --num-workers=2 \
+    --worker-machine-type=n1-standard-4 \
+    --worker-boot-disk-size=100 \
+    --initialization-actions=gs://$BUCKET_NAME/hugging_face_deps.sh \
+    --metadata=PIP_PACKAGES="transformers datasets torch" \
+    --enable-component-gateway \
+    --max-idle=1h \
+    --max-age=3h \
+    --scopes='https://www.googleapis.com/auth/cloud-platform' \
+    --properties="dataproc:jupyter.notebook.gcs.dir=gs://$BUCKET_NAME/notebooks"
+```
+
+Nota que los workers son menos, pero mas poderosos, y también agregamos "initialization-actions", esto permite correr scripts para hacer instalaciones al crearse el cluster, 
+y tienen 30 GB de RAM, para usar el modelo BART.
+
+
 ### C) Crear una VM con MariaDB
 
 
