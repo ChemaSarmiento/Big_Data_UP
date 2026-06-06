@@ -1,9 +1,11 @@
 #!/bin/bash
-# Script de Inicialización para Dataproc: Instalar dependencias de Hugging Face
-set -e
+# Forzar la actualización de paquetes e instalar pip para Python 3
+apt-get update
+apt-get install -y python3-pip
 
-# Actualizar pip e instalar librerías base de IA
-/opt/conda/default/bin/pip install --upgrade pip
-/opt/conda/default/bin/pip install transformers datasets pandas numpy torch
+# Instalar las librerías en el entorno global de Python del clúster
+# Usamos --no-cache-dir para no llenar el disco del worker
+/usr/bin/python3 -m pip install --upgrade pip
+/usr/bin/python3 -m pip install transformers datasets torch pandas numpy
 
 echo "Dependencias de Hugging Face instaladas correctamente."

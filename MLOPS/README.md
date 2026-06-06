@@ -31,11 +31,12 @@ gcloud dataproc clusters create $CLUSTER_NAME \
     --region=$REGION \
     --zone=$ZONE \
     --image-version=2.1-ubuntu20 \
-    --master-machine-type n4-standard-2 \
-    --master-boot-disk-size 100 \
-    --num-workers 3 \
-    --worker-machine-type n2-standard-2 \
+    --master-machine-type=e2-highmem-2 \
+    --master-boot-disk-size 50 \
+    --num-workers=3 \
+    --worker-machine-type=e2-standard-2 \
     --worker-boot-disk-size 100 \
+	--no-address \
     --optional-components JUPYTER,ZEPPELIN \
     --enable-component-gateway \
     --scopes 'https://www.googleapis.com/auth/cloud-platform' \
@@ -84,11 +85,12 @@ gcloud dataproc clusters create $CLUSTER_NAME \
     --region=$REGION \
     --zone=$ZONE \
     --image-version=2.1-ubuntu20 \
-    --master-machine-type n4-standard-2 \
-    --master-boot-disk-size 100 \
-    --num-workers 3 \
-    --worker-machine-type n2-standard-2 \
+    --master-machine-type=e2-highmem-2 \
+    --master-boot-disk-size 50 \
+    --num-workers=3 \
+    --worker-machine-type=e2-standard-2 \
     --worker-boot-disk-size 100 \
+	--no-address \
     --optional-components JUPYTER,ZEPPELIN \
     --enable-component-gateway \
     --max-idle=1h \
@@ -129,6 +131,14 @@ gcloud dataproc clusters create $CLUSTER_NAME \
 
 Nota que los workers son menos, pero mas poderosos, y también agregamos "initialization-actions", esto permite correr scripts para hacer instalaciones al crearse el cluster, 
 y tienen 30 GB de RAM, para usar el modelo BART.
+
+
+
+**Nota** Revisa tus cuotas desde gcloud con el siguiente comando:
+
+```
+gcloud compute regions describe us-central1
+```
 
 
 ### C) Crear una VM con MariaDB
