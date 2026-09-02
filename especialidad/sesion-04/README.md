@@ -14,10 +14,10 @@ Notebook "fill-in-the-blanks": completar líneas específicas de un pipeline ya 
 Notebook completado.
 
 ## Ejemplo / material de apoyo
-Versión simplificada de `recursos/spark/02_dataframes.py`: quitar las líneas de `.explain()` y el guardado en Parquet particionado (eso es Maestría), dejar solo lectura + `filter` + `groupBy` + `show()` para que el grupo complete los argumentos de cada función.
+Versión simplificada de `recursos/spark/02_dataframes.ipynb`: quitar las celdas de `.explain()` y el guardado en Parquet particionado (eso es Maestría), dejar solo lectura + `filter` + `groupBy` + `show()` para que el grupo complete los argumentos de cada función sobre el catálogo de precios PROFECO.
 
 ## Recursos vinculados
-- [`recursos/spark/02_dataframes.py`](../../recursos/spark/02_dataframes.py) — usar como base para la versión simplificada
+- [`recursos/spark/02_dataframes.ipynb`](../../recursos/spark/02_dataframes.ipynb) — usar como base para la versión simplificada
 
 ## Slides
 - `slides/07_spark_explained.pptx`

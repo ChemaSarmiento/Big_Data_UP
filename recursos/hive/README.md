@@ -16,15 +16,17 @@ el SQL.
 
 ## El dataset real: Carpetas de investigación (CDMX)
 
-El repo original apuntaba a un bucket propio del curso (`public-bucket-up-2022`) que no
-pude verificar que siga activo desde mi entorno. En su lugar, la Sección 3 apunta
-directamente a la **fuente oficial**, que sí es pública, viva, y se actualiza cada mes:
+**Actualización:** `carpetas_investigacion.csv` (~226.9 MB) está directamente disponible
+en el Drive del curso — ver `recursos/datasets/README.md`, Sección 2. No hace falta
+descargarlo del portal de CDMX; súbelo directo desde ahí:
 
+```bash
+gsutil cp carpetas_investigacion.csv gs://<TU-BUCKET>/carpetas_investigacion/
+```
+
+Si en algún momento ese archivo queda desactualizado, la fuente oficial (pública, viva,
+se actualiza cada mes) sigue siendo una buena alternativa:
 **https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico**
-
-Descarga el CSV desde ahí, súbelo a tu bucket de Cloud Storage
-(`gsutil cp carpetas-de-investigacion-fgj.csv gs://<TU-BUCKET>/carpetas_investigacion/`)
-y usa esa ruta en las tablas de la Sección 3.
 
 ## Conceptos clave (glosario del lab original)
 

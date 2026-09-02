@@ -14,10 +14,10 @@ Entrenar y comparar 2-3 modelos con Spark MLlib sobre el pipeline de features de
 Modelo entrenado + comparación de métricas + justificación del modelo elegido.
 
 ## Ejemplo / material de apoyo
-Extender `recursos/spark/04_pipeline_ml.py`: ya entrena una `LogisticRegression` dentro del `Pipeline` y reporta AUC — el ejercicio de esta sesión es envolver ese mismo `Pipeline` en un `CrossValidator` con una rejilla de hiperparámetros y comparar contra un segundo algoritmo (por ejemplo `GBTClassifier`).
+Extender `recursos/spark/04_pipeline_ml.ipynb`: ya entrena una `LogisticRegression` dentro del `Pipeline` sobre `bank_transactions.csv` y reporta AUC — el ejercicio de esta sesión es envolver ese mismo `Pipeline` en un `CrossValidator` con una rejilla de hiperparámetros y comparar contra un segundo algoritmo (por ejemplo `GBTClassifier`).
 
 ## Recursos vinculados
-- [`recursos/spark/04_pipeline_ml.py`](../../recursos/spark/04_pipeline_ml.py)
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb)
 - [`recursos/managed-spark-cluster/hugging_face_deps.sh`](../../recursos/managed-spark-cluster/hugging_face_deps.sh) — si el modelo elegido requiere transformers/torch
 
 ## Slides

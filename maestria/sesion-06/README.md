@@ -15,10 +15,11 @@ Migrar el pipeline de features de la Sesión 4 a arquitectura medallion, con ver
 Diagrama de arquitectura + pipeline versionado.
 
 ## Ejemplo / material de apoyo
-`recursos/etl-tipo-cambio/` ya sigue el patrón bronze (`data/raw/` JSON crudo) → silver (`data/processed/` CSV limpio y validado) → gold (la tabla en MariaDB). Es el mismo patrón medallion que este lab pide migrar a Cloud Storage con Parquet particionado.
+`recursos/etl-tipo-cambio/` ya sigue el patrón bronze (`data/raw/` JSON crudo) → silver (`data/processed/` CSV limpio y validado) → gold (la tabla en MariaDB). Es el mismo patrón medallion que este lab pide migrar a Cloud Storage con Parquet particionado. `recursos/spark/05_data_cleansing.ipynb` es el mismo patrón a escala real: convierte `quien_es_quien.csv` (crudo, sin encabezados, con `\N`) en una capa silver tipada y particionada.
 
 ## Recursos vinculados
 - [`recursos/etl-tipo-cambio/`](../../recursos/etl-tipo-cambio/) — patrón bronze/silver/gold ya implementado
+- [`recursos/spark/05_data_cleansing.ipynb`](../../recursos/spark/05_data_cleansing.ipynb) — bronze/silver a escala real (15 GB)
 - [`recursos/hive/hive-queries.sql`](../../recursos/hive/hive-queries.sql) — tabla particionada (Sección 3.2)
 
 ## Slides

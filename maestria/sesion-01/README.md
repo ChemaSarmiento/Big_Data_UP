@@ -15,10 +15,10 @@ Crear un cluster de Managed Service for Apache Spark (Dataproc), correr un word 
 Benchmark propio (tiempos, uso de memoria) MapReduce vs Spark.
 
 ## Ejemplo / material de apoyo
-`recursos/spark/01_rdd_basico.py` — el mismo contraste MapReduce-vs-Spark del lab, ya escrito: agrupa transacciones por sucursal con `reduceByKey` y explica en comentarios qué pasaría en Hadoop MapReduce puro en cada paso.
+`recursos/spark/01_rdd_basico.ipynb` — el mismo contraste MapReduce-vs-Spark del lab, ya escrito: cuenta palabras sobre `war_tweets.txt` con `reduceByKey` y explica en celdas de markdown qué pasaría en Hadoop MapReduce puro en cada paso.
 
 ## Recursos vinculados
-- [`recursos/spark/01_rdd_basico.py`](../../recursos/spark/01_rdd_basico.py)
+- [`recursos/spark/01_rdd_basico.ipynb`](../../recursos/spark/01_rdd_basico.ipynb)
 - [`recursos/managed-spark-cluster/`](../../recursos/managed-spark-cluster/) — comandos de creación de cluster
 
 ## Slides

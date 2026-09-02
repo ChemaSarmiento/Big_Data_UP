@@ -14,10 +14,10 @@ Construir un pipeline de features reproducible con Spark MLlib sobre un dataset 
 Pipeline de features serializado y reproducible.
 
 ## Ejemplo / material de apoyo
-`recursos/spark/04_pipeline_ml.py` — Pipeline completo de MLlib (`Imputer` → `StringIndexer`/`OneHotEncoder` → `VectorAssembler` → `StandardScaler` → modelo), listo para correr sobre cualquiera de los datasets de `recursos/datasets/`.
+`recursos/spark/04_pipeline_ml.ipynb` — Pipeline completo de MLlib (`Imputer` → `StringIndexer`/`OneHotEncoder` → `VectorAssembler` → `StandardScaler` → modelo) sobre `bank_transactions.csv`, listo para correr o extender con más features de `recursos/datasets/`.
 
 ## Recursos vinculados
-- [`recursos/spark/04_pipeline_ml.py`](../../recursos/spark/04_pipeline_ml.py)
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb)
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — Credit Card Fraud / Home Credit Default Risk
 
 ## Slides
