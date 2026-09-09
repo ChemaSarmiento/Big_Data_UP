@@ -1,6 +1,7 @@
 # Sesión 06 — Data Lakes / Lakehouse
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Parquet vs. ORC vs. Avro

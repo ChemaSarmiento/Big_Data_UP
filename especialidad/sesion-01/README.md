@@ -1,6 +1,7 @@
 # Sesión 01 — Big Data para decisiones de negocio
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Las 5 V's, con ejemplos de industria (banca, retail, salud)

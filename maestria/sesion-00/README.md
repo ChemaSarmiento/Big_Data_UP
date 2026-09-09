@@ -1,6 +1,7 @@
 # Sesión 00 — Prerequisito obligatorio (Linux, Python, SQL, GCP)
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Linux: terminal avanzada, SSH, gestión de procesos, permisos

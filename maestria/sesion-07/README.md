@@ -1,6 +1,7 @@
 # Sesión 07 — Streaming e inferencia en tiempo real
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Windowing y watermarks

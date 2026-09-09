@@ -1,6 +1,7 @@
 # Sesión 06 — Data Lakes y gobierno del dato
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Qué es un data lake, explicado para negocio (bodega vs. archivero organizado)

@@ -1,6 +1,7 @@
 # Sesión 07 — Datos en tiempo real
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Diferencia entre batch y tiempo real (reporte mensual vs. detección de fraude en el momento)

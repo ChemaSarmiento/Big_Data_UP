@@ -1,6 +1,7 @@
 # Sesión 04 — Introducción a Spark
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Qué problema resuelve Spark que SQL no resuelve

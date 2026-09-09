@@ -1,6 +1,7 @@
 # Sesión 05 — Cómo se ve un pipeline de datos real
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Qué es un ETL

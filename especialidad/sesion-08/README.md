@@ -1,6 +1,7 @@
 # Sesión 08 — Costos, gobernanza y cómo evaluar un proyecto de datos
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Cómo se cobra la nube (por uso, por hora, por almacenamiento)

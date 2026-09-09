@@ -1,6 +1,7 @@
 # Sesión 01 — Arquitecturas distribuidas
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. HDFS: NameNode/DataNode, replicación, bloques

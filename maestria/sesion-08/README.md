@@ -1,6 +1,7 @@
 # Sesión 08 — Model serving, monitoreo y MLOps
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Patrones de serving (batch, online, streaming)

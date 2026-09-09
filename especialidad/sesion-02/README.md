@@ -1,6 +1,7 @@
 # Sesión 02 — Cómo funciona por dentro (sin código pesado)
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Almacenamiento y cómputo distribuido, explicado con analogías (biblioteca, equipo dividiendo tareas)

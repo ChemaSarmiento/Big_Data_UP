@@ -1,6 +1,7 @@
 # Sesión 05 — Entrenamiento de modelos distribuido
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Algoritmos de Spark MLlib (regresión, árboles, gradient boosting) y su paralelización

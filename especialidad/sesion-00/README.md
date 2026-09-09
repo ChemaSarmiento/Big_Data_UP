@@ -1,6 +1,7 @@
 # Sesión 00 — Nivelación
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Linux esencial: qué es una terminal, navegación básica (analogía a un explorador de archivos)

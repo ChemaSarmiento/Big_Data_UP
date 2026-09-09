@@ -1,6 +1,7 @@
 # Sesión 04 — Ingeniería de features a escala
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Feature engineering distribuido: `Pipeline`, `Transformer`, `Estimator` de Spark MLlib

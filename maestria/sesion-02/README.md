@@ -1,6 +1,7 @@
 # Sesión 02 — SQL distribuido avanzado
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
 1. Motor de ejecución de BigQuery
