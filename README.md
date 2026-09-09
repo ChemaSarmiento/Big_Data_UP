@@ -8,7 +8,7 @@ y el mismo mapa temático general, pero con profundidad y objetivos distintos.
 | Perfil | Diverso (negocio, riesgo, producto, etc.) | Ciencia de datos |
 | Interés | Ejecutivo/estratégico | Técnico profundo |
 | Código | Guiado y acotado (notebooks para completar) | Escrito desde cero, con tuning y optimización |
-| Llega hasta | Propuesta de arquitectura + caso de negocio | Modelo entrenado, servido y monitoreado en producción |
+| Llega hasta | Mismo proyecto final institucional (ETL + datos reales ≥15GB + visualización + documento), con código guiado/low-code | Mismo proyecto final institucional, con un pipeline productivo: modelo entrenado, servido y monitoreado |
 | Duración | 9 sesiones · 3h/semana (27h) | 9 sesiones · 3h/semana (27h) |
 | Programa | [`especialidad/PROGRAMA.md`](especialidad/PROGRAMA.md) | [`maestria/PROGRAMA.md`](maestria/PROGRAMA.md) |
 
@@ -22,7 +22,11 @@ big-data-course/
 ├── recursos/                     # Material técnico reutilizable en ambos tracks
 │   ├── mariadb/                  # Instancia + regla de VPC/firewall en un solo script
 │   ├── managed-spark-cluster/    # Creación de cluster (antes "Dataproc") + init-actions
-│   ├── spark/                    # 4 scripts: RDD -> DataFrames -> Spark SQL -> Pipeline ML
+│   ├── spark/                    # 5 scripts: RDD -> DataFrames -> Spark SQL -> Pipeline ML -> data cleansing
+│   ├── lakehouse-iceberg/        # Maestría S6: tabla Iceberg real (MERGE INTO, time travel, evolución de esquema)
+│   ├── streaming/                # Maestría S7: Structured Streaming real sobre Pub/Sub Lite + scoring
+│   ├── airflow/                  # Maestría S8: DAG de MLOps (ingesta -> features -> entrenamiento -> despliegue)
+│   ├── serving/                  # Maestría S8: endpoint de modelo (FastAPI) + monitoreo de drift (PSI)
 │   ├── hive/                     # Queries: fundamentos + caso real (datos abiertos CDMX)
 │   ├── sql-practica/             # SQL de nivelación sobre la base "test_db" de empleados
 │   ├── datasets/                 # Datasets reales (BigQuery, Kaggle, CDMX, FRED) + generador sintético

@@ -8,16 +8,18 @@
 3. Orquestación del ciclo completo con Airflow (reentrenamiento programado, triggers por drift)
 
 ## Lab
-Desplegar el modelo de la Sesión 5 como endpoint (Vertex AI o serving simple vía API), instrumentar métricas básicas de monitoreo, y armar el DAG de Airflow que conecta ingesta → features → entrenamiento → evaluación.
+Desplegar el modelo de la Sesión 5 como endpoint (`recursos/serving/serve_fraude.py`), correr `monitor_drift.py` sobre los scores que produce el streaming de la Sesión 7, y desplegar `mlops_pipeline_dag.py` en Airflow — el DAG conecta ingesta → features → entrenamiento → evaluación → despliegue condicional (recarga el endpoint solo si el AUC nuevo pasa el umbral).
 
 ## Entregable
-DAG de MLOps funcional + endpoint de modelo respondiendo.
+DAG de MLOps corriendo en Airflow (captura del grafo con las tareas en verde) + endpoint de modelo respondiendo a `/score` + una corrida de `monitor_drift.py` con su PSI interpretado.
 
 ## Ejemplo / material de apoyo
-`recursos/etl-cripto/` y `recursos/etl-tipo-cambio/` ya están escritos como etapas independientes (`extract.py`, `transform.py`, `load.py` / funciones equivalentes) — exactamente la forma en la que se estructura un DAG de Airflow, con cada etapa como una `PythonOperator` separada.
+`recursos/airflow/dags/mlops_pipeline_dag.py` — DAG real con `DataprocSubmitJobOperator` + una puerta de calidad (`BranchPythonOperator`) que decide desplegar o no según el AUC. `recursos/serving/serve_fraude.py` — endpoint FastAPI que carga el `PipelineModel` de la Sesión 4/5. `recursos/etl-tipo-cambio/` y `recursos/etl-cripto/` (etapas como funciones separadas) siguen siendo la referencia conceptual de "por qué el código ya viene listo para orquestarse" antes de ver el DAG real.
 
 ## Recursos vinculados
-- [`recursos/etl-tipo-cambio/run_etl.py`](../../recursos/etl-tipo-cambio/run_etl.py) — orquestador de referencia
+- [`recursos/airflow/`](../../recursos/airflow/) — DAG de MLOps completo
+- [`recursos/serving/`](../../recursos/serving/) — endpoint de modelo + monitoreo de drift (PSI)
+- [`recursos/etl-tipo-cambio/run_etl.py`](../../recursos/etl-tipo-cambio/run_etl.py) — orquestador de referencia, más simple
 - [`environment/gcp-setup.md`](../../environment/gcp-setup.md) — nota sobre Cloud Composer vs. Airflow standalone
 
 ## Slides

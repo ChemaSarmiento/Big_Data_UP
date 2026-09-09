@@ -10,16 +10,18 @@
 5. Presentación del capstone técnico (20 min c/u)
 
 ## Actividad principal
-Presentación del capstone técnico: pipeline completo ingesta → features → entrenamiento → serving, con al menos un componente de streaming u orquestación.
+Presentación del capstone técnico (máx. 15 min c/u): pipeline completo ingesta → features → entrenamiento → serving, con al menos un componente de streaming u orquestación, visualizaciones de los resultados y evidencia de pruebas.
 
 ## Entregable
-Pipeline reproducible en código con: (1) ingesta distribuida, (2) feature engineering con Spark MLlib, (3) modelo entrenado y evaluado, (4) serving o inferencia batch programada, (5) streaming u orquestación con Airflow.
+Documento + presentación con la estructura institucional completa (resumen ejecutivo, visión general, revisión y uso de datos, proceso de desarrollo con metodología y pruebas, resultados y conclusiones) más el pipeline reproducible en código: (1) ingesta distribuida, (2) feature engineering con Spark MLlib, (3) modelo entrenado y evaluado, (4) serving o inferencia batch programada, (5) streaming u orquestación con Airflow, (6) **al menos una visualización** de las conclusiones, (7) evidencia de **pruebas** (validación de calidad de datos + comparación de métricas antes/después de al menos una optimización).
 
 ## Ejemplo / material de apoyo
-`recursos/mariadb/crear_firewall_y_instancia.sh` es en sí mismo un caso de estudio de gobernanza/seguridad: compara el diseño original (`0.0.0.0/0` abierto, passwords hardcodeadas) contra el rediseño (rango de IAP, credenciales generadas en tiempo de ejecución) — buen material de discusión para la sesión.
+`recursos/mariadb/crear_firewall_y_instancia.sh` es en sí mismo un caso de estudio de gobernanza/seguridad: compara el diseño original (`0.0.0.0/0` abierto, passwords hardcodeadas) contra el rediseño (rango de IAP, credenciales generadas en tiempo de ejecución) — buen material de discusión para la sesión. Para el requisito de visualización y pruebas del capstone, el hilo completo Sesión 5 → 8 ya deja el material: gráficas de comparación de métricas (S5), `monitor_drift.py` con PSI (S8) sirve tanto de "prueba" (¿el dato de entrada se parece al de entrenamiento?) como de visualización si se grafica.
 
 ## Recursos vinculados
 - [`recursos/mariadb/README.md`](../../recursos/mariadb/README.md) — antes/después de seguridad
+- [`recursos/serving/monitor_drift.py`](../../recursos/serving/monitor_drift.py) — evidencia de pruebas de calidad de datos (PSI)
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb) — `metrics.json`, base para la comparación antes/después
 
 ## Slides
 - `slides/03_casos_de_uso_arquitectura.pptx`

@@ -9,17 +9,18 @@
 4. Feature freshness
 
 ## Lab
-Pipeline de Spark Structured Streaming que consume de Pub/Sub, aplica el pipeline de features de la Sesión 4 y genera un score con el modelo de la Sesión 5.
+Correr `producer_transacciones_stream.py` (publica `bank_transactions.csv` a Pub/Sub Lite, simulando llegada en tiempo real) y `07_streaming_scoring.py` (Structured Streaming, aplica el `PipelineModel` de la Sesión 4/5 y genera un score por transacción + un conteo de alertas por ventana de 1 minuto).
 
 ## Entregable
-Pipeline de streaming con inferencia funcionando end-to-end.
+Pipeline de streaming con inferencia funcionando end-to-end: captura de la consola con las ventanas de alertas actualizándose en vivo, y muestra del Parquet de scores generado.
 
 ## Ejemplo / material de apoyo
-`recursos/etl-cripto/` no es streaming real, pero sí introduce el patrón más cercano dentro del curso: un segundo Extract que depende de una decisión tomada por un Transform anterior ("top movers"). Es un buen punto de partida conceptual antes de pasar a Structured Streaming, donde esa misma idea ocurre continuamente en vez de una sola vez.
+`recursos/streaming/07_streaming_scoring.py` — Structured Streaming real sobre Pub/Sub Lite (el conector oficial de Google para Spark; Pub/Sub estándar no tiene uno). `recursos/etl-cripto/` sigue siendo útil como puente conceptual antes de este lab: introduce, en batch, la idea de un segundo paso que depende de una decisión tomada por el paso anterior — la misma idea que aquí ocurre de forma continua, no una sola vez.
 
 ## Recursos vinculados
-- [`recursos/etl-cripto/`](../../recursos/etl-cripto/) — patrón de enriquecimiento en dos rondas
-- [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md) — diagrama del flujo
+- [`recursos/streaming/`](../../recursos/streaming/) — productor + consumidor de streaming real
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb) — el `PipelineModel` que este lab carga y aplica
+- [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md) — puente conceptual antes del lab
 
 ## Slides
 - `slides/03_casos_de_uso_arquitectura.pptx`

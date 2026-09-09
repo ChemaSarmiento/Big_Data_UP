@@ -9,16 +9,17 @@
 4. Versionado de datasets y de modelos
 
 ## Lab
-Migrar el pipeline de features de la Sesión 4 a arquitectura medallion, con versionado explícito de cada capa.
+Migrar la tabla de features de `bank_transactions.csv` (Sesión 4/5) a una tabla **Iceberg** real con `06_lakehouse_iceberg.py`, y demostrar sobre ella las tres cosas que Parquet plano en carpetas no puede hacer sin reescribir todo: `MERGE INTO`, time travel y evolución de esquema.
 
 ## Entregable
-Diagrama de arquitectura + pipeline versionado.
+Diagrama de arquitectura + pipeline versionado + capturas de las tres demostraciones del script (el MERGE, la consulta de snapshots antes/después, y el `ALTER TABLE` sin romper la tabla).
 
 ## Ejemplo / material de apoyo
-`recursos/etl-tipo-cambio/` ya sigue el patrón bronze (`data/raw/` JSON crudo) → silver (`data/processed/` CSV limpio y validado) → gold (la tabla en MariaDB). Es el mismo patrón medallion que este lab pide migrar a Cloud Storage con Parquet particionado. `recursos/spark/05_data_cleansing.ipynb` es el mismo patrón a escala real: convierte `quien_es_quien.csv` (crudo, sin encabezados, con `\N`) en una capa silver tipada y particionada.
+`recursos/lakehouse-iceberg/06_lakehouse_iceberg.py` — script completo, corre sobre el mismo `bank_transactions.csv` de las Sesiones 4/5. `recursos/etl-tipo-cambio/` (bronze `data/raw/` → silver `data/processed/` → gold en MariaDB) y `recursos/spark/05_data_cleansing.ipynb` (mismo patrón a escala real sobre `quien_es_quien.csv`) siguen siendo la referencia de "medallion con Parquet plano" — útiles para contrastar en vivo contra la tabla Iceberg: mismo problema, un nivel de madurez distinto.
 
 ## Recursos vinculados
-- [`recursos/etl-tipo-cambio/`](../../recursos/etl-tipo-cambio/) — patrón bronze/silver/gold ya implementado
+- [`recursos/lakehouse-iceberg/`](../../recursos/lakehouse-iceberg/) — tabla Iceberg real (MERGE INTO, time travel, evolución de esquema)
+- [`recursos/etl-tipo-cambio/`](../../recursos/etl-tipo-cambio/) — patrón bronze/silver/gold con Parquet plano, para contraste
 - [`recursos/spark/05_data_cleansing.ipynb`](../../recursos/spark/05_data_cleansing.ipynb) — bronze/silver a escala real (15 GB)
 - [`recursos/hive/hive-queries.sql`](../../recursos/hive/hive-queries.sql) — tabla particionada (Sección 3.2)
 

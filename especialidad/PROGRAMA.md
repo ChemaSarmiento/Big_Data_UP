@@ -3,7 +3,7 @@
 
 **Perfil de entrada:** perfiles diversos (negocio, producto, riesgo, actuaría, ingeniería no-software, etc.) que buscan especializarse. El interés es principalmente **ejecutivo/estratégico**: entender qué es posible, cuándo tiene sentido invertir en Big Data, cómo se ve un proyecto de datos por dentro y cómo evaluarlo — no formar ingenieros de datos.
 
-**Diferencia clave vs. el track de Maestría:** aquí sí hay código y bases de datos (no se puede entender Big Data sin tocarlo), pero **siempre guiado y acotado**: notebooks para completar, no para escribir desde cero; demos en vivo con participación interactiva; menos tiempo de tuning y optimización profunda, más tiempo de "para qué sirve esto y cuándo lo uso". El entregable final es una **propuesta de arquitectura con caso de negocio**, no un pipeline productivo.
+**Diferencia clave vs. el track de Maestría:** aquí sí hay código y bases de datos (no se puede entender Big Data sin tocarlo), pero **siempre guiado y acotado**: notebooks para completar, no para escribir desde cero; demos en vivo con participación interactiva; menos tiempo de tuning y optimización profunda, más tiempo de "para qué sirve esto y cuándo lo uso". El entregable final responde a la misma exigencia institucional que Maestría — una pregunta de negocio real resuelta con datos reales (≥15GB), con ETL, visualizaciones y el mismo documento final — pero el **cómo** se adapta al perfil: código guiado/low-code (Looker Studio, notebooks para completar) y apoyo del equipo técnico del grupo, en vez de un pipeline productivo con tuning y MLOps.
 
 ---
 
@@ -15,7 +15,7 @@ Al terminar, el participante podrá:
 - Leer y modificar consultas SQL sobre datos a gran escala (BigQuery).
 - Ejecutar y ajustar un notebook guiado de procesamiento distribuido (Spark) sin necesidad de escribirlo desde cero.
 - Evaluar propuestas técnicas de su equipo: hacer las preguntas correctas sobre costo, arquitectura y riesgo.
-- Presentar una propuesta de arquitectura de datos con caso de negocio justificado.
+- Presentar, con apoyo de su equipo, una solución de Big Data a una pregunta de negocio real: ETL sobre datos reales (≥15GB), una visualización de las conclusiones, y el documento + presentación (≤15 min) que exige la evaluación institucional del curso.
 
 ---
 
@@ -90,8 +90,8 @@ Aquí sí es puramente introductorio y no se evalúa — el objetivo es que nadi
 - **Taller:** aplicar el framework a un caso ficticio en equipos.
 - **Entregable:** framework aplicado al caso ficticio.
 
-### Sesión 9 — Presentación de propuestas
-- **Actividad principal:** cada participante o equipo presenta una **propuesta de arquitectura con caso de negocio** (10 min c/u) para un problema real de su área: qué se necesita, por qué, costo aproximado y riesgos.
+### Sesión 9 — Presentación del proyecto final
+- **Actividad principal:** cada equipo presenta (máx. 15 min) su solución a una pregunta de negocio real, con datos reales (≥15GB), procesamiento (ETL guiado/low-code) y al menos una visualización de las conclusiones — el mismo estándar institucional que Maestría, con el código adaptado al nivel del track (ver Sección 5).
 - **Cierre:** retroalimentación cruzada, mapa de siguientes pasos (para quien quiera profundizar técnicamente, mención del track de Maestría).
 
 ---
@@ -102,9 +102,9 @@ Aquí sí es puramente introductorio y no se evalúa — el objetivo es que nadi
 |---|---|
 | Entregables guiados (Sesiones 1, 3, 4, 5, 8) | 40% |
 | Participación en discusiones y casos | 20% |
-| Propuesta final (arquitectura + caso de negocio + presentación) | 40% |
+| Proyecto final (documento + ETL + visualización + presentación) | 40% |
 
-**Criterios de la propuesta final:** debe identificar (1) el problema de negocio y por qué justifica Big Data, (2) un esquema de arquitectura a nivel conceptual (qué componentes, no necesariamente código), (3) una estimación de costo/beneficio, y (4) riesgos y consideraciones de gobernanza. No se evalúa código productivo.
+**Criterios del proyecto final** (documento + presentación ≤15 min, mismo formato institucional que Maestría — ver las instrucciones del proyecto final publicadas en la plataforma del curso): (1) resumen ejecutivo y pregunta de negocio específica que justifica Big Data, (2) revisión y uso de datos: origen, preparación, limpieza e integridad de un dataset real ≥15GB, con sus limitaciones documentadas, (3) proceso de desarrollo: metodología del ETL guiado/low-code usado (no se exige código escrito desde cero ni tuning — sí se exige mostrarlo, aunque sea generado con apoyo del equipo técnico o de una herramienta guiada), (4) resultados y conclusiones con **al menos una visualización**, y (5) a quién beneficia la solución y estimación de costo/riesgo. La diferencia real con Maestría es de profundidad de código, no de rigor del documento ni del dato.
 
 ---
 
@@ -113,3 +113,4 @@ Aquí sí es puramente introductorio y no se evalúa — el objetivo es que nadi
 - El error más común en este track es que el facilitador "se emocione" y profundice en código — hay que resistir la tentación y mantener el nivel ejecutivo; quien quiera más profundidad, se le puede dirigir al track de Maestría.
 - Los labs guiados funcionan mejor con apoyo técnico circulando en la sala (o breakout rooms con soporte), porque el grupo es heterogéneo y algunos se bloquean más rápido que otros.
 - Priorizar ejemplos y casos del sector de los participantes (si el grupo es mayormente de banca/finanzas, usar esos casos) — aquí el enganche es la relevancia al negocio, no la elegancia técnica.
+- El proyecto final exige ETL + visualización reales (mismo estándar institucional que Maestría, ver Sección 5), pero la forma de llegar ahí sigue siendo low-code/guiada (Looker Studio, notebooks para completar, apoyo del equipo técnico) — nunca "escribe tu propio pipeline". Si un equipo se atora en la parte técnica, dirigirlo a los ejemplos ya armados de `recursos/` en vez de dejarlo intentar escribir código desde cero.

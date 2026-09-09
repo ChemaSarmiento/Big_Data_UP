@@ -11,7 +11,7 @@
 Entrenar y comparar 2-3 modelos con Spark MLlib sobre el pipeline de features de la Sesión 4, con tuning vía `CrossValidator`.
 
 ## Entregable
-Modelo entrenado + comparación de métricas + justificación del modelo elegido.
+Modelo entrenado + comparación de métricas + justificación del modelo elegido, con **una gráfica comparativa** (barras de AUC/F1 por modelo, o curva ROC superpuesta de ambos) — es la misma evidencia que después se reusa en el capstone (Sesión 9), donde el documento final exige visualizaciones sobre las conclusiones.
 
 ## Ejemplo / material de apoyo
 Extender `recursos/spark/04_pipeline_ml.ipynb`: ya entrena una `LogisticRegression` dentro del `Pipeline` sobre `bank_transactions.csv` y reporta AUC — el ejercicio de esta sesión es envolver ese mismo `Pipeline` en un `CrossValidator` con una rejilla de hiperparámetros y comparar contra un segundo algoritmo (por ejemplo `GBTClassifier`).

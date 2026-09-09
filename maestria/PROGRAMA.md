@@ -45,9 +45,9 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 | 3 | Spark Core avanzado: tuning, shuffle, skew, Catalyst | Managed Service for Apache Spark |
 | 4 | Ingeniería de features a escala (Spark MLlib pipelines) | Managed Service for Apache Spark |
 | 5 | Entrenamiento de modelos distribuido + tuning de hiperparámetros a escala | Managed Service for Apache Spark + Vertex AI (intro) |
-| 6 | Data Lakes / Lakehouse: Parquet, Iceberg/Delta, versionado de datos | Cloud Storage |
-| 7 | Streaming + inferencia en tiempo real | Pub/Sub + Managed Service for Apache Spark |
-| 8 | Model serving, monitoreo y MLOps (drift, latencia, orquestación) | Vertex AI / Airflow |
+| 6 | Data Lakes / Lakehouse: Parquet, Iceberg/Delta, versionado de datos | Cloud Storage + Apache Iceberg |
+| 7 | Streaming + inferencia en tiempo real | Pub/Sub Lite + Managed Service for Apache Spark |
+| 8 | Model serving, monitoreo y MLOps (drift, latencia, orquestación) | Endpoint propio (FastAPI) / Airflow |
 | 9 | Gobernanza, seguridad, costos + capstone técnico | IAM, Data Catalog |
 
 ---
@@ -81,22 +81,22 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 
 ### Sesión 6 — Data Lakes / Lakehouse
 - **Teoría:** Parquet vs ORC vs Avro, arquitectura medallion, formatos de tabla transaccionales (Iceberg/Delta) para ACID sobre el lake, versionado de datasets y de modelos (por qué es distinto a versionar código).
-- **Lab:** migrar el pipeline de features a arquitectura medallion con versionado explícito de cada capa.
-- **Entregable:** diagrama de arquitectura + pipeline versionado.
+- **Lab:** migrar la tabla de features de `bank_transactions.csv` a una tabla **Apache Iceberg** real (`recursos/lakehouse-iceberg/06_lakehouse_iceberg.py`) y demostrar `MERGE INTO`, time travel y evolución de esquema — lo que Parquet plano en carpetas no puede hacer sin reescribir todo.
+- **Entregable:** diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones transaccionales.
 
 ### Sesión 7 — Streaming e inferencia en tiempo real
 - **Teoría:** windowing, watermarks, exactly-once vs at-least-once, patrones de scoring en tiempo real (modelo cargado en el stream vs llamada a un endpoint externo), feature freshness.
-- **Lab:** pipeline de Spark Structured Streaming que consume de Pub/Sub, aplica el pipeline de features de la Sesión 4 y genera un score con el modelo de la Sesión 5.
+- **Lab:** Structured Streaming real sobre **Pub/Sub Lite** (el conector oficial de Google para Spark) — `recursos/streaming/producer_transacciones_stream.py` publica `bank_transactions.csv` simulando llegada en tiempo real, `07_streaming_scoring.py` aplica el `PipelineModel` de la Sesión 4/5 y calcula alertas por ventana de 1 minuto con watermark.
 - **Entregable:** pipeline de streaming con inferencia funcionando end-to-end.
 
 ### Sesión 8 — Model serving, monitoreo y MLOps
 - **Teoría:** patrones de serving (batch, online, streaming), monitoreo de drift de datos y de modelo, orquestación del ciclo completo con Airflow (reentrenamiento programado, triggers por drift).
-- **Lab:** desplegar el modelo de la Sesión 5 como endpoint (Vertex AI o serving simple vía API), instrumentar métricas básicas de monitoreo, armar el DAG de Airflow que conecta ingesta → features → entrenamiento → evaluación.
-- **Entregable:** DAG de MLOps funcional + endpoint de modelo respondiendo.
+- **Lab:** desplegar el modelo de la Sesión 5 como endpoint (`recursos/serving/serve_fraude.py`, FastAPI), correr `monitor_drift.py` (Population Stability Index) sobre los scores del streaming de la Sesión 7, y desplegar `recursos/airflow/dags/mlops_pipeline_dag.py` — ingesta → features → entrenamiento → evaluación → despliegue condicional según una puerta de calidad de AUC.
+- **Entregable:** DAG de MLOps funcional + endpoint de modelo respondiendo + corrida de monitoreo de drift.
 
 ### Sesión 9 — Gobernanza, seguridad y capstone
 - **Teoría:** IAM a nivel dataset/tabla, Data Catalog, linaje de datos y de modelos, cumplimiento en contextos regulados (relevante para banca/finanzas), FinOps de un pipeline de ML a escala.
-- **Actividad principal:** presentación del **capstone técnico** (20 min c/u): pipeline completo ingesta → features → entrenamiento → serving, con al menos un componente de streaming u orquestación.
+- **Actividad principal:** presentación del **capstone técnico** (máx. 15 min c/u — mismo límite institucional que Especialidad): pipeline completo ingesta → features → entrenamiento → serving, con al menos un componente de streaming u orquestación, visualizaciones sobre los resultados y evidencia de pruebas.
 - **Cierre:** temas de profundización sugeridos (Delta Lake/Iceberg avanzado, entrenamiento distribuido con GPUs, feature stores productivos, BigQuery ML).
 
 ---
@@ -109,7 +109,7 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 | Participación técnica en clase (code review entre pares) | 10% |
 | Capstone técnico (pipeline + modelo funcionando + presentación) | 55% |
 
-**Criterios del capstone:** pipeline reproducible en código (no solo notebook exploratorio), con al menos (1) ingesta distribuida, (2) feature engineering con Spark MLlib, (3) modelo entrenado y evaluado con métricas justificadas, (4) serving o inferencia batch programada, y (5) al menos un componente de streaming u orquestación con Airflow.
+**Criterios del capstone** (documento + presentación ≤15 min, formato institucional — ver las instrucciones del proyecto final publicadas en la plataforma del curso): pipeline reproducible en código (no solo notebook exploratorio) sobre un dataset real ≥15GB, con al menos (1) ingesta distribuida, (2) feature engineering con Spark MLlib, (3) modelo entrenado y evaluado con métricas justificadas, (4) serving o inferencia batch programada, (5) al menos un componente de streaming u orquestación con Airflow, (6) **al menos una visualización** de los resultados/conclusiones (no basta con una tabla de métricas), y (7) evidencia de **pruebas** (al menos: validación de la calidad del dato de entrada, y comparación de métricas antes/después de cada optimización — Sesiones 3 y 4 ya dejan ese hábito). El documento sigue la estructura institucional: resumen ejecutivo, visión general, revisión y uso de datos, proceso de desarrollo (metodología y pruebas), resultados y conclusiones — con el código entregado o mostrado.
 
 ---
 
