@@ -1,92 +1,83 @@
-# Teoría — Sesión 08: Model serving, monitoreo y MLOps
+# Teoría — Sesión 08: Data Lakes / Lakehouse II — transacciones y versionado
 
-> El modelo de la Sesión 5 no sirve de nada si nadie puede consultarlo, y va a dejar
-> de ser bueno tarde o temprano sin que nadie lo note, salvo que exista monitoreo. Hoy
-> se cierra el ciclo completo.
+> Segunda de dos sesiones sobre lakehouse. La Sesión 7 dejó una tabla Iceberg lista;
+> hoy se usan las tres operaciones que justifican que exista un formato de tabla
+> transaccional en vez de solo Parquet bien organizado.
 
-## 1. Patrones de serving
+## 1. `MERGE INTO`: actualizar sin reescribir la tabla completa
 
-Tres formas distintas de "poner un modelo a trabajar", cada una con un caso de uso
-propio:
+En un data lake de Parquet plano, corregir un lote de filas ya cargado obliga a
+reescribir el archivo o la partición completa — no hay forma de tocar solo las filas
+afectadas. Un formato de tabla transaccional resuelve esto con `MERGE INTO`, la misma
+sintaxis conceptual de un upsert en una base de datos relacional, pero operando sobre
+archivos Parquet subyacentes:
 
-- **Batch:** el modelo se aplica sobre un lote completo de datos, en un horario
-  programado (ej. cada noche, sobre todas las transacciones del día). No hay
-  restricción de latencia por petición — el trabajo completo puede tardar minutos u
-  horas.
-- **Online (síncrono):** el modelo responde a peticiones individuales en tiempo real,
-  típicamente vía un endpoint HTTP — `recursos/serving/serve_fraude.py` es este
-  patrón: cada `POST /score` espera una respuesta en menos de un segundo.
-- **Streaming:** el modelo se aplica sobre un flujo continuo de eventos, sin peticiones
-  individuales explícitas — el patrón de la Sesión 7 (`07_streaming_scoring.py`).
-
-La decisión de diseño de `serve_fraude.py` — cargar el `PipelineModel` en una
-SparkSession **local**, dentro del mismo proceso de la API, en vez de en el cluster de
-Dataproc — es exactamente el trade-off de "online" vs. "batch": un cluster completo
-tiene overhead de coordinación que lo hace mal candidato para responder una sola
-petición HTTP rápido; libera ese mismo cluster para lo que sí necesita paralelismo real
-(entrenar, o procesar un lote de millones de filas).
-
-## 2. Monitoreo de drift
-
-Un modelo entrenado con datos de un momento dado empieza a degradarse en cuanto el
-mundo real se aleja de esos datos — **drift**. Dos tipos:
-
-- **Drift de datos:** la distribución de las features de entrada cambia (ej. el monto
-  promedio de las transacciones sube por inflación, o cambia el comportamiento de
-  fraude por una nueva técnica de ataque) — el modelo sigue funcionando técnicamente,
-  pero sobre datos distintos a los que aprendió.
-- **Drift de modelo (concept drift):** la relación misma entre features y el resultado
-  cambia — lo que antes predecía fraude ya no lo hace, porque el patrón de fraude
-  cambió, no solo su frecuencia.
-
-`recursos/serving/monitor_drift.py` mide drift de datos con el **Population Stability
-Index (PSI)**: compara la distribución de una feature (`amount`) entre el set de
-entrenamiento y un lote reciente de producción, en 10 buckets de percentiles. Es un
-solo número interpretable, sin asumir una forma particular de la distribución — el
-estándar de la industria para esto:
-
-```
-PSI < 0.1   → sin drift relevante
-0.1 – 0.25  → drift moderado, vigilar
-> 0.25      → drift significativo, considerar reentrenar
+```sql
+MERGE INTO local.curso_bigdata.transacciones_silver t
+USING correcciones c
+ON t.transaction_id = c.transaction_id
+WHEN MATCHED THEN UPDATE SET t.currency = c.currency
 ```
 
-## 3. Orquestación con Airflow
+Internamente, Iceberg no reescribe todo el archivo — identifica qué archivos
+contienen las filas afectadas, escribe *nuevos* archivos solo con esas filas
+corregidas, y actualiza la metadata de la tabla para apuntar a la combinación correcta
+de archivos viejos (sin tocar) y nuevos (con la corrección). Ese mecanismo de
+metadata es justo lo que hace posible el punto 2.
 
-Un modelo en producción necesita un ciclo que se repita sin intervención manual:
-ingesta → features → entrenamiento → evaluación → despliegue (si pasa la evaluación).
-Airflow expresa este ciclo como un **DAG** (grafo acíclico dirigido) de tareas con
-dependencias explícitas:
+## 2. Time travel: consultar un snapshot anterior
 
+Cada escritura a una tabla Iceberg (incluyendo un `MERGE INTO`) crea un nuevo
+**snapshot** — un punto en el tiempo con su propia versión completa y consistente de
+la tabla, sin duplicar físicamente los datos que no cambiaron. Esto permite consultar
+la tabla exactamente como estaba antes de una operación:
+
+```sql
+SELECT snapshot_id, committed_at, operation
+FROM local.curso_bigdata.transacciones_silver.snapshots
+ORDER BY committed_at;
+
+SELECT * FROM local.curso_bigdata.transacciones_silver
+VERSION AS OF <snapshot_id>;
 ```
-entrenamiento_y_features (Dataproc)
-        │
-        ▼
-  evaluar_metricas (lee metrics.json)
-        │
-        ▼
-  puerta_calidad (¿AUC >= umbral?)
-       ╱      ╲
-desplegar   no_desplegar
+
+**Por qué esto no es solo una curiosidad técnica:** es la base de auditoría real en
+un contexto regulado (banca, salud) — "¿qué decía esta tabla el día que se tomó esta
+decisión de negocio?" es una pregunta que Parquet plano no puede responder sin que
+alguien haya guardado copias manualmente.
+
+## 3. Evolución de esquema sin romper lectores existentes
+
+```sql
+ALTER TABLE local.curso_bigdata.transacciones_silver ADD COLUMN es_horario_nocturno BOOLEAN;
 ```
 
-`recursos/airflow/dags/mlops_pipeline_dag.py` implementa exactamente esto — la pieza
-que un simple script secuencial (`recursos/etl-tipo-cambio/run_etl.py`) no puede dar:
-reintentos automáticos por tarea, una decisión condicional real (`BranchPythonOperator`)
-según el resultado de una tarea anterior, y visibilidad de qué falló y dónde, sin tener
-que leer logs de un script monolítico de punta a punta.
+Con Parquet plano, agregar una columna nueva rompe cualquier proceso que ya lee la
+tabla asumiendo el esquema anterior, o fuerza a versionar la carpeta entera. Iceberg
+resuelve esto porque el esquema es parte de la metadata versionada de la tabla, no
+algo inferido del archivo — un lector antiguo sigue funcionando (ve la tabla sin la
+columna nueva en snapshots anteriores a la migración), y uno nuevo la ve sin fricción.
 
-**Reentrenamiento por triggers de drift:** el DAG de este curso corre en un schedule
-fijo (`@weekly`), pero el patrón de producción real conecta `monitor_drift.py` como un
-disparador adicional — si el PSI supera 0.25, se dispara el DAG manualmente en vez de
-esperar al ciclo semanal. Es la misma idea de "puerta de calidad" aplicada del lado de
-los datos de entrada, no solo del modelo de salida.
+## 4. Versionado de datasets y de modelos
+
+Versionar código (git) es familiar. Versionar **datos** y **modelos** es un problema
+distinto:
+
+- **Datasets** cambian de tamaño (GB, no KB) — no se puede versionar un dataset de
+  20GB con la misma estrategia que un archivo de texto en git. Los snapshots de
+  Iceberg resuelven esto de forma nativa: cada escritura crea una nueva versión
+  referenciable sin duplicar físicamente los datos que no cambiaron.
+- **Modelos** necesitan versionarse junto con el dataset y los hiperparámetros que los
+  produjeron — sin eso, "¿con qué datos se entrenó este modelo?" se vuelve
+  irrespondible seis meses después. `recursos/spark/04_pipeline_ml.ipynb` guarda el
+  `PipelineModel` completo (no solo los pesos) precisamente para que sea reproducible
+  de punta a punta — feature engineering incluido, no solo el algoritmo final.
 
 ---
 
 ## Referencias
 
-- [Google Cloud — ML serving patterns overview](https://cloud.google.com/architecture/ml-on-gcp-best-practices)
-- [Google Cloud — Vertex AI Model Monitoring (drift/skew)](https://cloud.google.com/vertex-ai/docs/model-monitoring/overview)
-- [Apache Airflow — Concepts: DAGs, Operators, Tasks](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html)
-- [Google Cloud — MLOps: Continuous delivery and automation pipelines in machine learning](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+- [Apache Iceberg — Table Spec (documentación oficial)](https://iceberg.apache.org/spec/)
+- [Apache Iceberg — Spark Writes (MERGE INTO)](https://iceberg.apache.org/docs/latest/spark-writes/)
+- [Apache Iceberg — Spark Queries (time travel)](https://iceberg.apache.org/docs/latest/spark-queries/#time-travel)
+- [Delta Lake — documentación oficial (para contraste)](https://docs.delta.io/latest/index.html)

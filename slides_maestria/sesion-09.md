@@ -4,92 +4,90 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 09 — Gobernanza, seguridad y capstone"
+title: "Sesión 09 — Streaming I: fundamentos y setup"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 09: IAM, Data Catalog, cumplimiento, FinOps, capstone técnico
+  Sesión 09: windowing, watermarks, exactly-once, setup de Pub/Sub Lite
 ---
 
 # Sesión 09
-## Gobernanza, seguridad y capstone
+## Streaming I
+### Fundamentos y setup
 
 <div class="pt-6 text-sm opacity-60">
-Cómo un pipeline de curso se vuelve algo que un equipo de banca podría operar de verdad
+Datos que nunca terminan de llegar — hoy el mecanismo, sin modelo todavía. La Sesión 10 agrega el scoring.
 </div>
 
 ---
 
-# IAM a nivel tabla, no solo proyecto
-
-<v-clicks>
-
-- Módulo 0: IAM de proyecto — quién crea/borra recursos
-- Hoy: **mínimo privilegio** por dataset/columna/fila
-- Ej: un analista ve montos, no nombres completos sin enmascarar
-
-</v-clicks>
-
-<div v-click class="mt-8 text-blue-500 font-bold">
-"Todos con Owner porque es más simple" — exactamente lo que un auditor rechaza
-</div>
-
----
-
-# Data Catalog + linaje
+# Windowing + watermark
 
 ```mermaid {scale: 0.6}
 flowchart LR
-    Raw[Dato crudo] -->|linaje| Bronze
-    Bronze -->|linaje| Silver
-    Silver -->|linaje| Gold[Dashboard]
+    subgraph "Ventana 12:00-12:01"
+    E1[evento 12:00:05]
+    E2[evento 12:00:40]
+    E3["evento 12:00:55<br/>(llega tarde, watermark 2min)"]
+    end
+    E1 --> R[Resultado ventana]
+    E2 --> R
+    E3 -.tolerado.-> R
 ```
 
-<div v-click class="mt-6">
-Con 5 datasets, cualquiera recuerda qué hay en cada uno. Con 500, sin catálogo nadie sabe qué existe.
-</div>
+```python
+transacciones
+    .withWatermark("timestamp", "2 minutes")
+    .groupBy(F.window("timestamp", "1 minute"), "currency")
+    .count()
+```
 
 ---
 
-# Cumplimiento en banca: tres exigencias reales
-
-| Exigencia | Por qué |
-|---|---|
-| **Explicabilidad** | Negar una transacción real necesita justificación, no solo un score |
-| **Trazabilidad** | Cada predicción rastreable hasta modelo + dato exactos |
-| **Retención/borrado** | Un lake particionado facilita borrar por petición del titular |
-
-<div v-click class="mt-4 text-sm opacity-70">
-Regresión logística (Sesión 5) tiene ventaja aquí: coeficientes directamente interpretables
-</div>
-
----
-
-# FinOps: el costo es una decisión técnica disfrazada
+# Exactly-once ≠ sin duplicados en el broker
 
 <v-clicks>
 
-- ¿Cuánto cuesta cada etapa del DAG? (ingesta, entrenamiento, serving)
-- Reentrenar tiene costo explícito — **no** reentrenar con drift tiene costo implícito
-- La puerta de calidad (AUC mínimo) **es** una decisión de FinOps
+- El checkpoint + watermark dan exactly-once en el **cálculo de la ventana**
+- Esa es una garantía distinta de "el mensaje nunca llegó dos veces"
+- Esa segunda garantía la da **Pub/Sub Lite**, del lado del envío
 
 </v-clicks>
 
----
-
-# El capstone: demostrar que las 8 sesiones son un solo sistema
-
-<div class="grid grid-cols-2 gap-2 mt-6 text-sm">
-<div class="p-2 border rounded">✓ Ingesta distribuida</div>
-<div class="p-2 border rounded">✓ Features con MLlib</div>
-<div class="p-2 border rounded">✓ Modelo evaluado</div>
-<div class="p-2 border rounded">✓ Serving programado</div>
-<div class="p-2 border rounded">✓ Streaming/orquestación</div>
-<div class="p-2 border rounded border-blue-500">✓ Visualización</div>
-<div class="p-2 border rounded border-blue-500">✓ Evidencia de pruebas</div>
+<div v-click class="mt-8 p-4 border-l-4 border-blue-500">
+Confundir ambas garantías lleva a asumir más seguridad de la que realmente se tiene
 </div>
 
-<div class="mt-8 text-blue-500 font-bold text-center">
-Máx. 15 minutos — mismo límite institucional que Especialidad
+---
+
+# Por qué Pub/Sub Lite
+
+<v-clicks>
+
+- Spark no tiene conector nativo para Pub/Sub estándar
+- **Pub/Sub Lite sí** — el único conector oficial de Google para Structured Streaming
+- Se cobra por capacidad reservada, no por mensaje (no es Always Free)
+
+</v-clicks>
+
+```bash
+gcloud pubsub lite-topics create transacciones-stream --location=us-central1-a --partitions=1 --per-partition-bytes=30GiB
+gcloud pubsub lite-subscriptions create transacciones-stream-sub --location=us-central1-a --topic=transacciones-stream
+```
+
+---
+
+# Lab de hoy
+
+```mermaid {scale: 0.55}
+flowchart LR
+    P[producer_transacciones_stream.py] -->|Pub/Sub Lite| S[07a_streaming_conteo.py]
+    S --> W[Conteo por ventana 1min]
+```
+
+Deliberadamente **sin modelo** — para ver windowing/watermarks funcionar solos.
+
+<div class="mt-6 text-blue-500 font-bold">
+Entregable: captura de las ventanas de conteo actualizándose en consola
 </div>
 
 ---
@@ -97,6 +95,6 @@ layout: center
 class: text-center
 ---
 
-# Fin del programa técnico
+# → Sesión 10
 
-Profundización sugerida: Iceberg/Delta avanzado · GPUs distribuidas · feature stores productivos · BigQuery ML
+Streaming II — inferencia en tiempo real con el modelo de la Sesión 6

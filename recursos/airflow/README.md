@@ -1,6 +1,6 @@
 # Orquestación MLOps con Airflow
 
-Material técnico de Maestría Sesión 8: un DAG de Airflow real, no solo un script
+Material técnico de Maestría Sesión 12: un DAG de Airflow real, no solo un script
 con etapas separadas. `recursos/etl-tipo-cambio/run_etl.py` sigue siendo útil
 para introducir la idea de "cada etapa es una función independiente" — el paso
 que falta, y que este DAG sí da, es la orquestación en sí: reintentos,
@@ -29,7 +29,7 @@ recursos/serving/)
 ```
 
 La puerta de calidad (`AUC_MINIMO = 0.75`) es exactamente el tipo de decisión que
-Sesión 9 (Gobernanza) pide justificar: ¿por qué ese umbral y no otro? Buen tema de
+Sesión 13 (Gobernanza) pide justificar: ¿por qué ese umbral y no otro? Buen tema de
 discusión antes de la presentación del capstone.
 
 ## Dónde correrlo

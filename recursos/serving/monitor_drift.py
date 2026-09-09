@@ -53,7 +53,7 @@ def interpretar(psi: float) -> str:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--referencia", required=True, help="CSV/Parquet usado para entrenar (Sesión 4/5)")
+    parser.add_argument("--referencia", required=True, help="CSV/Parquet usado para entrenar (Sesión 5/6)")
     parser.add_argument("--lote_reciente", required=True, help="Parquet de scores recientes (salida de 07_streaming_scoring.py)")
     parser.add_argument("--columna", default="amount")
     args = parser.parse_args()

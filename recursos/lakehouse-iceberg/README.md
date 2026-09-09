@@ -1,12 +1,12 @@
 # Lakehouse transaccional con Apache Iceberg
 
-Material técnico de Maestría Sesión 6. Un data lake con Parquet bien organizado en
+Material técnico de Maestría Sesiones 7-8. Un data lake con Parquet bien organizado en
 carpetas (`raw/`→`processed/`, ver `recursos/etl-tipo-cambio/`) resuelve
 almacenamiento y formato columnar, pero no resuelve transacciones: corregir un
 lote de filas ya cargado, ver el dato como estaba ayer, o agregar una columna sin
 romper a quien ya lee la tabla. Ese es el problema que resuelve un lakehouse
 transaccional (Iceberg/Delta), y este script lo demuestra sobre el mismo
-`bank_transactions.csv` que ya atraviesa las Sesiones 4 y 5.
+`bank_transactions.csv` que ya atraviesa las Sesiones 5 y 6.
 
 ## Por qué Iceberg y no Delta Lake
 

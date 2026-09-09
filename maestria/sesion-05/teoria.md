@@ -1,87 +1,76 @@
-# Teoría — Sesión 05: Entrenamiento de modelos distribuido
+# Teoría — Sesión 05: Ingeniería de features a escala
 
-> La Sesión 4 dejó las features listas. Hoy se entrena, se compara, y se decide qué
-> modelo justifica llevar a producción — con evidencia, no con "se ve bien el AUC".
+> El puente entre "procesar datos" (Sesiones 1-4) y "entrenar modelos" (Sesión 6). Si
+> el feature engineering está mal hecho aquí, ningún modelo lo compensa después.
 
-## 1. Algoritmos de MLlib y su paralelización
+## 1. Spark MLlib: Pipeline, Transformer, Estimator
 
-MLlib no reimplementa scikit-learn distribuido tal cual — cada algoritmo tiene una
-estrategia de paralelización distinta, porque no todos los algoritmos se paralelizan
-de la misma forma:
+MLlib organiza el feature engineering y el modelado alrededor de tres abstracciones,
+diseñadas para que todo el flujo (desde datos crudos hasta predicción) sea un solo
+objeto reproducible:
 
-- **Regresión (lineal/logística):** se entrena con descenso de gradiente distribuido —
-  cada worker calcula el gradiente sobre su porción de datos, y se agregan (suman) los
-  gradientes parciales en cada iteración antes de actualizar los pesos del modelo.
-- **Árboles de decisión:** MLlib usa una estrategia de particionamiento por niveles
-  (*level-wise*) — en vez de construir un árbol nodo por nodo secuencialmente (como
-  scikit-learn en una sola máquina), calcula todas las decisiones de un mismo nivel de
-  profundidad en paralelo sobre todo el cluster antes de pasar al siguiente nivel.
-- **Gradient Boosting (`GBTClassifier`):** entrena árboles de forma *secuencial* (cada
-  árbol corrige los errores del anterior — no se puede paralelizar entre árboles), pero
-  cada árbol individual sí se entrena de forma distribuida con la estrategia de arriba.
-  Por diseño, GBT es más lento de entrenar que Random Forest a la misma profundidad,
-  porque no puede aprovechar paralelismo entre árboles.
+- **Transformer** — toma un DataFrame y devuelve otro DataFrame transformado, sin
+  necesidad de "aprender" nada de los datos primero. `VectorAssembler` (junta varias
+  columnas en un solo vector de features) es un Transformer: la operación es la misma
+  sin importar los datos que le pases.
+- **Estimator** — un algoritmo que *aprende* de los datos vía `.fit()`, y como
+  resultado produce un Transformer ya ajustado. `StandardScaler` es un Estimator:
+  `.fit()` calcula la media y desviación estándar de tus datos de entrenamiento, y el
+  Transformer resultante (`StandardScalerModel`) aplica esa transformación aprendida a
+  cualquier DataFrame nuevo — incluyendo datos que nunca vio en el entrenamiento.
+- **Pipeline** — encadena Transformers y Estimators en una sola secuencia. Al llamar
+  `.fit()` sobre el Pipeline completo, cada Estimator interno aprende en orden, y el
+  resultado es un `PipelineModel`: un solo objeto que reproduce *exactamente* la misma
+  secuencia de transformaciones sobre datos nuevos, sin tener que recordar manualmente
+  el orden ni los parámetros aprendidos de cada paso.
 
-## 2. Tuning de hiperparámetros con `CrossValidator`
+`recursos/spark/04_pipeline_ml.ipynb` implementa exactamente esta secuencia —
+`Imputer → StringIndexer → OneHotEncoder → VectorAssembler → StandardScaler → modelo`
+— sobre `bank_transactions.csv`. Vale la pena notar que ese mismo `PipelineModel`
+guardado se reutiliza sin cambios en la Sesión 10 (streaming) y la Sesión 11 (serving) —
+es el mismo objeto, no una reimplementación.
 
-`CrossValidator` combina dos ideas: validación cruzada (entrenar y evaluar sobre
-varios splits del dataset, no solo uno, para una estimación más confiable del
-desempeño) y búsqueda de hiperparámetros (probar varias combinaciones de parámetros
-y quedarse con la mejor).
+## 2. Encoding y escalado a escala
 
-```python
-from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
-from pyspark.ml.evaluation import BinaryClassificationEvaluator
+Dos transformaciones estándar, pero que a escala distribuida tienen matices:
 
-grid = (
-    ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
-    .build()
-)
+- **Encoding** (convertir categorías en números): `StringIndexer` asigna un entero a
+  cada categoría distinta, y `OneHotEncoder` convierte ese entero en un vector binario
+  disperso. El detalle que importa a escala: `StringIndexer` necesita ver *todas* las
+  categorías posibles antes de asignar índices — sobre un dataset de millones de filas,
+  eso implica un paso de agregación distribuida (`.fit()` no es gratis).
+- **Escalado** (`StandardScaler`, `MinMaxScaler`): normaliza el rango de valores
+  numéricos. El error común es calcular la media/desviación sobre *todo* el dataset
+  (incluyendo el set de prueba) antes de dividir en train/test — eso es fuga de
+  información: el modelo "ve" estadísticas del conjunto que se supone evalúa a ciegas.
+  El patrón correcto es `.fit()` solo sobre `train_df`, y aplicar ese mismo
+  `StandardScalerModel` (ya aprendido) sobre `test_df` — exactamente lo que hace el
+  `Pipeline` cuando se estructura bien.
 
-cv = CrossValidator(
-    estimator=pipeline,
-    estimatorParamMaps=grid,
-    evaluator=BinaryClassificationEvaluator(labelCol="is_suspicious"),
-    numFolds=3,
-)
-modelo_cv = cv.fit(train_df)  # entrena len(grid) * numFolds modelos completos
-```
+## 3. Feature stores: qué problema resuelven
 
-**El costo real:** con 9 combinaciones de la rejilla anterior y 3 folds, esto entrena
-27 pipelines completos — cada uno repitiendo todo el feature engineering de la Sesión 4.
-A escala distribuida esto es viable porque cada entrenamiento individual usa el
-cluster completo, pero el costo total (tiempo de cluster, y en GCP, dinero) crece
-linealmente con `len(grid) * numFolds` — vale la pena empezar con una rejilla pequeña.
+Un feature store es un sistema centralizado para calcular, guardar y servir features
+— pensado para un problema muy concreto que aparece cuando hay *varios* modelos en
+producción: sin un feature store, cada equipo recalcula sus propias features desde
+cero, con lógica ligeramente distinta, lo que produce **inconsistencia
+entrenamiento-servicio** (training-serving skew) — el modelo se entrenó con una
+definición de "hora_del_dia" y en producción se calcula con otra ligeramente distinta,
+degradando el modelo sin que nadie note por qué.
 
-## 3. Cuándo MLlib no alcanza: deep learning
-
-MLlib está optimizado para algoritmos que se paralelizan bien por *datos* (cada worker
-ve una porción distinta del dataset). Deep learning necesita paralelizar por *modelo*
-además de por datos — redes con millones de parámetros no caben ni se entrenan
-eficientemente con la misma estrategia. Dos alternativas que este curso solo menciona
-como panorama (no las implementa):
-
-- **Vertex AI Training** — entrenamiento gestionado en GCP, con soporte nativo para
-  GPUs/TPUs y frameworks como PyTorch/TensorFlow — la ruta recomendada si el curso
-  necesitara deep learning real sobre GCP.
-- **Horovod** — framework open-source (originado en Uber) para entrenamiento
-  distribuido de redes neuronales sobre múltiples GPUs/máquinas, usando
-  comunicación *allreduce* en vez de la estrategia map-reduce de MLlib — el estándar
-  de facto para deep learning distribuido fuera de un proveedor cloud específico.
-
-La pregunta que importa no es "¿cuál es mejor?" sino "¿mi problema necesita esto?" —
-para tabular/estructurado (como `bank_transactions.csv`), gradient boosting o
-regresión logística suelen igualar o superar a deep learning con una fracción del
-costo de cómputo. Deep learning se justifica en datos no estructurados (imágenes,
-texto libre, audio) — fuera del alcance de este capstone.
+Un feature store resuelve esto con dos garantías: (1) una sola definición de cada
+feature, calculada una vez y reutilizada por todos los modelos, y (2) *feature
+freshness* consistente entre el pipeline de entrenamiento (batch) y el de inferencia
+en tiempo real (lo que la Sesión 10 va a necesitar). Este curso no implementa un feature
+store real (Feast, Vertex AI Feature Store) — el `PipelineModel` guardado cumple un rol
+similar a pequeña escala (una sola definición reutilizada en S4, S7 y S8), pero vale la
+pena reconocer la diferencia: un `PipelineModel` sirve un modelo; un feature store sirve
+*features* a muchos modelos.
 
 ---
 
 ## Referencias
 
-- [Apache Spark MLlib — Classification and Regression](https://spark.apache.org/docs/latest/ml-classification-regression.html)
-- [Apache Spark MLlib — Model selection and hyperparameter tuning](https://spark.apache.org/docs/latest/ml-tuning.html)
-- [Google Cloud — Vertex AI Training overview](https://cloud.google.com/vertex-ai/docs/training/overview)
-- [Sergeev, Del Balso — Horovod: fast and easy distributed deep learning (paper, 2018)](https://arxiv.org/abs/1802.05799)
+- [Apache Spark MLlib — ML Pipelines (docs oficiales)](https://spark.apache.org/docs/latest/ml-pipeline.html)
+- [Apache Spark MLlib — Extracting, transforming and selecting features](https://spark.apache.org/docs/latest/ml-features.html)
+- [Google Cloud — Vertex AI Feature Store overview](https://cloud.google.com/vertex-ai/docs/featurestore/overview)
+- [Feast — Feature Store for Machine Learning (documentación del proyecto open-source)](https://docs.feast.dev/)

@@ -9,7 +9,7 @@ y el mismo mapa temático general, pero con profundidad y objetivos distintos.
 | Interés | Ejecutivo/estratégico | Técnico profundo |
 | Código | Guiado y acotado (notebooks para completar) | Escrito desde cero, con tuning y optimización |
 | Llega hasta | Mismo proyecto final institucional (ETL + datos reales ≥15GB + visualización + documento), con código guiado/low-code | Mismo proyecto final institucional, con un pipeline productivo: modelo entrenado, servido y monitoreado |
-| Duración | 9 sesiones · 3h/semana (27h) | 9 sesiones · 3h/semana (27h) |
+| Duración | 9 sesiones · 3h/semana (27h) | 13 sesiones · 3h/semana (39h) — 4 temas que no cabían en 3h se dividieron en 2 sesiones completas cada uno |
 | Programa | [`especialidad/PROGRAMA.md`](especialidad/PROGRAMA.md) | [`maestria/PROGRAMA.md`](maestria/PROGRAMA.md) |
 
 ## Estructura del repo
@@ -39,7 +39,7 @@ big-data-course/
 │   └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + teoria.md + slides.md)
 └── maestria/
     ├── PROGRAMA.md
-    └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + teoria.md)
+    └── sesion-00 ... sesion-13/  # Cada una con README (índice + ejemplo + recursos + teoria.md) — 13 sesiones, no 9 (ver Sección "Teoría y presentaciones")
 ```
 
 ## Teoría y presentaciones por sesión

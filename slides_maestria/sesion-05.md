@@ -4,82 +4,114 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 05 — Entrenamiento de modelos distribuido"
+title: "Sesión 05 — Ingeniería de features a escala"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 05: MLlib, CrossValidator, límites de Spark MLlib
+  Sesión 05: Spark MLlib Pipeline, Transformer, Estimator, feature stores
 ---
 
 # Sesión 05
-## Entrenamiento de modelos distribuido
+## Ingeniería de features a escala
 
 <div class="pt-6 text-sm opacity-60">
-Se entrena, se compara, y se decide qué modelo justifica producción — con evidencia, no con "se ve bien el AUC"
+El puente entre "procesar datos" y "entrenar modelos" — si esto está mal, ningún modelo lo compensa
 </div>
 
 ---
 
-# No todos los algoritmos se paralelizan igual
+# Tres piezas, un solo objeto reproducible
 
-| Algoritmo | Estrategia |
-|---|---|
-| Regresión (lineal/logística) | Gradiente distribuido — cada worker calcula su porción, se suman |
-| Árboles de decisión | *Level-wise* — todo un nivel de profundidad en paralelo |
-| **Gradient Boosting** | Árboles **secuenciales** (cada uno corrige al anterior) — no paraleliza entre árboles |
-
-<div v-click class="mt-6 text-sm opacity-70">
-Por diseño, GBT es más lento de entrenar que Random Forest a la misma profundidad
-</div>
-
----
-
-# CrossValidator: el costo real de "solo probar unos parámetros"
-
-```python {1-6|8-13}
-grid = (ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
-    .build())
-# 3 x 3 = 9 combinaciones
-
-cv = CrossValidator(
-    estimator=pipeline,
-    estimatorParamMaps=grid,
-    numFolds=3,
-)
-modelo_cv = cv.fit(train_df)
-# 9 combinaciones x 3 folds = 27 pipelines completos entrenados
+```mermaid {scale: 0.6}
+flowchart LR
+    A[Imputer] --> B[StringIndexer]
+    B --> C[OneHotEncoder]
+    C --> D[VectorAssembler]
+    D --> E[StandardScaler]
+    E --> F[LogisticRegression]
+    subgraph Pipeline
+    A
+    B
+    C
+    D
+    E
+    F
+    end
 ```
-
-<div v-click class="mt-4 text-blue-500 font-bold">
-El costo crece linealmente con combinaciones × folds — empieza con una rejilla pequeña
-</div>
-
----
-
-# Cuándo Spark MLlib no alcanza
 
 <v-clicks>
 
-- MLlib paraleliza bien por **datos** — deep learning necesita paralelizar por **modelo** también
-- **Vertex AI Training** — GPUs/TPUs gestionadas, la ruta recomendada en GCP
-- **Horovod** — allreduce, el estándar fuera de un proveedor específico
+- **Transformer** — transforma, no aprende (`VectorAssembler`)
+- **Estimator** — aprende vía `.fit()` (`StandardScaler`, el modelo mismo)
+- **Pipeline** — encadena ambos en un solo objeto reproducible
 
 </v-clicks>
 
-<div v-click class="mt-8 p-4 border-l-4 border-blue-500">
-Para datos tabulares (bank_transactions.csv), gradient boosting suele igualar o superar deep learning con una fracción del costo
+---
+
+# El mismo `PipelineModel`, reusado 3 veces
+
+<div class="grid grid-cols-3 gap-4 mt-8 text-center text-sm">
+<div class="p-4 border rounded">
+<b>Sesión 5-6</b><br/>Se entrena y guarda
+</div>
+<div class="p-4 border rounded border-blue-500">
+<b>Sesión 10</b><br/>Scoring en streaming
+</div>
+<div class="p-4 border rounded">
+<b>Sesión 11</b><br/>Endpoint de serving
+</div>
+</div>
+
+<div v-click class="mt-8">
+No es una reimplementación en cada sesión — es <b>el mismo objeto</b>, cargado con <code>PipelineModel.load()</code>
+</div>
+
+---
+
+# El error que arruina un modelo sin que se note
+
+```python {1-2|4-5}
+# MAL: fuga de información
+scaler.fit(df_completo)  # ve estadísticas del set de prueba
+
+# BIEN: fit solo sobre train
+scaler.fit(train_df)  # aplica lo aprendido a test_df después
+```
+
+<div v-click class="mt-6 text-blue-500 font-bold">
+El modelo "ve" el conjunto que se supone evalúa a ciegas
+</div>
+
+---
+
+# Feature stores: qué problema resuelven
+
+<v-clicks>
+
+- Sin uno: cada equipo recalcula sus features, con lógica ligeramente distinta
+- Resultado: **training-serving skew** — el modelo se entrenó con una definición, producción usa otra
+- Solución: una sola definición, calculada una vez, reutilizada por todos los modelos
+
+</v-clicks>
+
+<div v-click class="mt-8 text-sm opacity-70">
+Este curso no implementa un feature store real (Feast, Vertex AI) — el PipelineModel cumple un rol similar a pequeña escala
 </div>
 
 ---
 
 # Lab de hoy
 
-Extender `04_pipeline_ml.ipynb`: envolver el Pipeline en un `CrossValidator`
-y comparar contra un segundo algoritmo (`GBTClassifier`)
+Pipeline de features reproducible sobre **+5M filas** de `bank_transactions.csv`
 
-<div class="mt-8 p-4 border-l-4 border-blue-500">
-Entregable: modelo entrenado + comparación de métricas + <b>una gráfica comparativa</b> (AUC/F1 por modelo, o curva ROC) + justificación
+```python
+imputer = Imputer(inputCols=["amount", "hora_del_dia"], ...)
+indexer = StringIndexer(inputCol="currency", ...)
+pipeline = Pipeline(stages=[imputer, indexer, encoder, assembler, scaler])
+```
+
+<div class="mt-8 text-blue-500 font-bold">
+Entregable: pipeline de features serializado y reproducible
 </div>
 
 ---
@@ -89,4 +121,4 @@ class: text-center
 
 # → Sesión 06
 
-Data Lakes / Lakehouse — Parquet, medallion, y por qué Iceberg va más allá
+Entrenamiento distribuido — algoritmos de MLlib, CrossValidator, y cuándo MLlib no alcanza

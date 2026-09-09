@@ -14,8 +14,8 @@
 |---|---|---|
 | BigQuery | 1 TB de consultas/mes, 10 GB almacenamiento | Sesión 3 (SQL distribuido) |
 | Cloud Storage | 5 GB regional (us-*) | Data lake (Sesiones 5, 6) |
-| Compute Engine | 1 VM `e2-micro` en us-west1/us-central1/us-east1 | Práctica ligera de Spark standalone, Airflow (Sesión 8) |
-| Pub/Sub | 10 GB/mes | Mencionado como panorama; el lab de Streaming (Sesión 7) usa **Pub/Sub Lite** (ver nota abajo), que no está en el tier Always Free |
+| Compute Engine | 1 VM `e2-micro` en us-west1/us-central1/us-east1 | Práctica ligera de Spark standalone, Airflow (Maestría S12) |
+| Pub/Sub | 10 GB/mes | Mencionado como panorama; el lab de Streaming (Maestría S9-10) usa **Pub/Sub Lite** (ver nota abajo), que no está en el tier Always Free |
 
 ## 4. Servicios que consumen el crédito de $300
 > **Nota de nombres (2026):** Google renombró Dataproc a **"Managed Service for Apache Spark"**
@@ -36,9 +36,9 @@
   ```bash
   gcloud dataproc clusters delete curso-cluster --region=us-central1
   ```
-- **Cloud Composer** (Sesión 8, opcional): siempre encendido, es el servicio más caro del curso. Se recomienda usar Airflow standalone en la VM `e2-micro` en su lugar — ver `recursos/airflow/README.md`.
-- **Pub/Sub Lite** (Sesión 7): se cobra por capacidad reservada (partición + throughput), no por mensaje — no está en Always Free como Pub/Sub estándar. Es la opción usada en `recursos/streaming/` porque es el único conector de Structured Streaming para Pub/Sub que Google mantiene oficialmente. Revisar cuota y borrar el topic/suscripción al terminar el lab (`gcloud pubsub lite-topics delete ...`).
-- **Iceberg en Dataproc** (Sesión 6): no cobra aparte, pero el cluster necesita las propiedades de `recursos/lakehouse-iceberg/README.md` (runtime + extensión SQL) al crearse — no se pueden agregar después sin recrear el cluster.
+- **Cloud Composer** (Maestría S12, opcional): siempre encendido, es el servicio más caro del curso. Se recomienda usar Airflow standalone en la VM `e2-micro` en su lugar — ver `recursos/airflow/README.md`.
+- **Pub/Sub Lite** (Maestría S9-10): se cobra por capacidad reservada (partición + throughput), no por mensaje — no está en Always Free como Pub/Sub estándar. Es la opción usada en `recursos/streaming/` porque es el único conector de Structured Streaming para Pub/Sub que Google mantiene oficialmente. Revisar cuota y borrar el topic/suscripción al terminar el lab (`gcloud pubsub lite-topics delete ...`).
+- **Iceberg en Dataproc** (Maestría S7-8): no cobra aparte, pero el cluster necesita las propiedades de `recursos/lakehouse-iceberg/README.md` (runtime + extensión SQL) al crearse — no se pueden agregar después sin recrear el cluster.
 
 ## 5. Checklist antes de la Sesión 1
 - [ ] Proyecto de GCP creado y facturación activa

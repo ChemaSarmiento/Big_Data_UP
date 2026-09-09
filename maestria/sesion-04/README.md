@@ -1,26 +1,25 @@
-# Sesión 04 — Ingeniería de features a escala
+# Sesión 04 — Spark Core avanzado II: skew y diagnóstico
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
-> Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
-1. Feature engineering distribuido: `Pipeline`, `Transformer`, `Estimator` de Spark MLlib
-2. Encoding y escalado a escala
-3. Introducción a feature stores: qué problema resuelven
+1. Causas de skew (desbalance de datos)
+2. Estrategias de mitigación: salting, broadcast joins, AQE
+3. Diagnóstico completo: plan de ejecución antes/después de corregir
 
 ## Lab
-Construir un pipeline de features reproducible con Spark MLlib sobre un dataset de +5M filas (imputación, encoding, escalado, ensamblado de vector de features).
+Diagnosticar y resolver un job con **skew severo** sobre un dataset sintético desbalanceado, retomando `02_dataframes.ipynb`/`03_spark_sql.ipynb` de la Sesión 3 — ahora sí con un caso donde el plan revela el problema, no solo se lee.
 
 ## Entregable
-Pipeline de features serializado y reproducible.
+Notebook con el diagnóstico (plan de ejecución "antes"), la solución aplicada, y métricas de mejora (plan "después" + tiempos comparados).
 
 ## Ejemplo / material de apoyo
-`recursos/spark/04_pipeline_ml.ipynb` — Pipeline completo de MLlib (`Imputer` → `StringIndexer`/`OneHotEncoder` → `VectorAssembler` → `StandardScaler` → modelo) sobre `bank_transactions.csv`, listo para correr o extender con más features de `recursos/datasets/`.
+Mismo par de notebooks de la Sesión 3, ahora extendidos con un dataset desbalanceado a propósito (una moneda o sucursal que concentra la mayoría de las filas). Correr los dos (uno sobre PROFECO, otro sobre transacciones bancarias) y comparar planes antes/después de aplicar salting o broadcast join es el ejercicio central.
 
 ## Recursos vinculados
-- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb)
-- [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — Credit Card Fraud / Home Credit Default Risk
+- [`recursos/spark/02_dataframes.ipynb`](../../recursos/spark/02_dataframes.ipynb)
+- [`recursos/spark/03_spark_sql.ipynb`](../../recursos/spark/03_spark_sql.ipynb)
 
 ## Slides
 - **Deck nuevo:** [`slides_maestria/sesion-04.md`](../../slides_maestria/sesion-04.md) (Slidev) — `npx slidev sesion-04.md --open` desde `slides_maestria/`

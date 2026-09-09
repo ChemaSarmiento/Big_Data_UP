@@ -1,6 +1,6 @@
 # Model serving y monitoreo de drift
 
-Material técnico de Maestría Sesión 8: un endpoint de modelo real y el monitoreo
+Material técnico de Maestría Sesión 11: un endpoint de modelo real y el monitoreo
 de drift que la teoría de la sesión exige como parte de un ciclo de MLOps
 completo — un modelo entrenado sin un endpoint que lo sirva, y sin una forma de
 detectar cuándo se volvió obsoleto, no cierra el ciclo ingesta→features→
@@ -8,11 +8,11 @@ entrenamiento→serving que pide el capstone.
 
 ## `serve_fraude.py` — endpoint HTTP
 
-Carga el `PipelineModel` de la Sesión 4/5 en una SparkSession **local** dentro del
+Carga el `PipelineModel` de la Sesión 5/6 en una SparkSession **local** dentro del
 mismo proceso (no en el cluster de Dataproc) — es una decisión de diseño
 deliberada, no un atajo: un cluster completo no es para responder una sola
 petición HTTP en menos de un segundo. Vale la pena discutirlo en clase junto con
-"cuándo Spark MLlib no alcanza" de la Sesión 5.
+"cuándo Spark MLlib no alcanza" de la Sesión 6.
 
 ```bash
 pip install fastapi uvicorn pyspark
@@ -45,7 +45,7 @@ python monitor_drift.py \
 
 PSI > 0.25 es la señal para disparar `mlops_pipeline_dag.py` manualmente (fuera de
 su corrida semanal) — así se cierra el ciclo completo que pide la teoría de la
-Sesión 8: "reentrenamiento programado, triggers por drift".
+Sesión 12: "reentrenamiento programado, triggers por drift".
 
 ## Ver también
 

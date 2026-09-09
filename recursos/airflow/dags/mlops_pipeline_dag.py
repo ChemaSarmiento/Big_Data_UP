@@ -2,7 +2,7 @@
 mlops_pipeline_dag.py
 DAG de Airflow que conecta ingesta -> features -> entrenamiento -> evaluación ->
 (condicional) despliegue, sobre bank_transactions.csv y el mismo Pipeline de
-MLlib de la Sesión 4/5 de Maestría. Corre en Airflow standalone en la VM
+MLlib de la Sesión 5/6 de Maestría. Corre en Airflow standalone en la VM
 e2-micro Always Free (ver environment/gcp-setup.md) o en Cloud Composer si el
 crédito de $300 alcanza -- Composer es el servicio más caro del curso, por eso
 gcp-setup.md recomienda standalone por default.
@@ -44,7 +44,7 @@ with DAG(
 
     # --- Ingesta + features + entrenamiento en un solo job de Dataproc ---
     # Reusa recursos/spark/04_pipeline_ml.py tal cual (subido antes a
-    # gs://<TU-BUCKET>/scripts/), el mismo Pipeline de MLlib de la Sesión 4/5.
+    # gs://<TU-BUCKET>/scripts/), el mismo Pipeline de MLlib de la Sesión 5/6.
     features_job = {
         "reference": {"project_id": PROJECT_ID},
         "placement": {"cluster_name": CLUSTER_NAME},
@@ -62,7 +62,7 @@ with DAG(
     )
 
     def leer_auc_del_job(**contexto):
-        # El notebook de la Sesión 4/5 (recursos/spark/04_pipeline_ml.ipynb, celda
+        # El notebook de la Sesión 5/6 (recursos/spark/04_pipeline_ml.ipynb, celda
         # final) escribe metrics.json explícitamente para este paso -- no se parsea
         # el log del job de Dataproc, es frágil y cambia de formato entre versiones.
         import json
@@ -95,7 +95,7 @@ with DAG(
         # PipelineModel más reciente sin reiniciar el proceso. Con Vertex AI
         # Endpoints en vez de serving propio, este paso sería
         # `gcloud ai endpoints deploy-model ...` -- se deja como comentario porque
-        # el curso usa Vertex AI solo como panorama (ver PROGRAMA.md, Sesión 5).
+        # el curso usa Vertex AI solo como panorama (ver PROGRAMA.md, Sesión 6).
         import requests
 
         requests.post("http://{{ var.value.serving_host }}/reload", timeout=30)

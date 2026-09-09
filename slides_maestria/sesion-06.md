@@ -4,105 +4,82 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 06 — Data Lakes / Lakehouse"
+title: "Sesión 06 — Entrenamiento de modelos distribuido"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 06: Parquet, medallion, Iceberg (MERGE INTO, time travel, evolución de esquema)
+  Sesión 06: MLlib, CrossValidator, límites de Spark MLlib
 ---
 
 # Sesión 06
-## Data Lakes / Lakehouse
+## Entrenamiento de modelos distribuido
 
 <div class="pt-6 text-sm opacity-60">
-Parquet bien organizado no es lo mismo que un lakehouse transaccional — hoy vemos por qué
+Se entrena, se compara, y se decide qué modelo justifica producción — con evidencia, no con "se ve bien el AUC"
 </div>
 
 ---
 
-# Tres formatos columnares, tres casos de uso
+# No todos los algoritmos se paralelizan igual
 
-| Formato | Diseño | Mejor para |
-|---|---|---|
-| **Parquet** | Columnar + compresión | Analítica — el estándar en Spark/BigQuery |
-| ORC | Columnar + índices integrados | Hive clásico |
-| Avro | Por filas, esquema evolutivo | Streaming, ingesta evento por evento |
-
----
-
-# Medallion: bronze → silver → gold
-
-```mermaid {scale: 0.6}
-flowchart LR
-    B["🟤 Bronze<br/>crudo, sin validar"] --> S["⚪ Silver<br/>limpio, tipado"]
-    S --> G["🟡 Gold<br/>agregado, listo para usar"]
-```
+| Algoritmo | Estrategia |
+|---|---|
+| Regresión (lineal/logística) | Gradiente distribuido — cada worker calcula su porción, se suman |
+| Árboles de decisión | *Level-wise* — todo un nivel de profundidad en paralelo |
+| **Gradient Boosting** | Árboles **secuenciales** (cada uno corrige al anterior) — no paraleliza entre árboles |
 
 <div v-click class="mt-6 text-sm opacity-70">
-recursos/etl-tipo-cambio/ (raw/ → processed/ → MariaDB) y 05_data_cleansing.ipynb — mismo patrón, a escala de 15GB
+Por diseño, GBT es más lento de entrenar que Random Forest a la misma profundidad
 </div>
 
 ---
 
-# Lo que Parquet plano no puede hacer
+# CrossValidator: el costo real de "solo probar unos parámetros"
 
-<div class="grid grid-cols-2 gap-6 mt-6">
-<div class="p-4 border rounded">
-<b>Con carpetas Parquet</b>
-<ul class="text-sm mt-2">
-<li>Corregir filas = reescribir el archivo entero</li>
-<li>Ver el dato de ayer = solo si lo versionaste tú mismo</li>
-<li>Agregar columna = rompe lectores existentes</li>
-</ul>
-</div>
-<div class="p-4 border rounded border-blue-500">
-<b>Con Iceberg</b>
-<ul class="text-sm mt-2">
-<li><code>MERGE INTO</code> — solo las filas afectadas</li>
-<li>Time travel — <code>SELECT * FROM tabla.snapshots</code></li>
-<li><code>ALTER TABLE ADD COLUMN</code> — sin tocar nada existente</li>
-</ul>
-</div>
-</div>
+```python {1-6|8-13}
+grid = (ParamGridBuilder()
+    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
+    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+    .build())
+# 3 x 3 = 9 combinaciones
 
----
-
-# Time travel en acción
-
-```sql {1-3|5-7}
-SELECT snapshot_id, committed_at, operation
-FROM local.curso_bigdata.transacciones_silver.snapshots
-ORDER BY committed_at;
-
--- Consultar la tabla como estaba ANTES del MERGE
-SELECT * FROM local.curso_bigdata.transacciones_silver
-VERSION AS OF <snapshot_id>;
+cv = CrossValidator(
+    estimator=pipeline,
+    estimatorParamMaps=grid,
+    numFolds=3,
+)
+modelo_cv = cv.fit(train_df)
+# 9 combinaciones x 3 folds = 27 pipelines completos entrenados
 ```
 
-<div v-click class="mt-4 text-sm opacity-70">
-recursos/lakehouse-iceberg/06_lakehouse_iceberg.py — las tres operaciones, sobre bank_transactions.csv
+<div v-click class="mt-4 text-blue-500 font-bold">
+El costo crece linealmente con combinaciones × folds — empieza con una rejilla pequeña
 </div>
 
 ---
 
-# Versionar datos y modelos no es como versionar código
+# Cuándo Spark MLlib no alcanza
 
 <v-clicks>
 
-- Datasets: **GB, no KB** — snapshots de Iceberg evitan duplicar lo que no cambió
-- Modelos: sin versionar el dataset + hiperparámetros, "¿con qué se entrenó esto?" es irrespondible en 6 meses
-- `04_pipeline_ml.ipynb` guarda el `PipelineModel` **completo** — feature engineering incluido, no solo el algoritmo
+- MLlib paraleliza bien por **datos** — deep learning necesita paralelizar por **modelo** también
+- **Vertex AI Training** — GPUs/TPUs gestionadas, la ruta recomendada en GCP
+- **Horovod** — allreduce, el estándar fuera de un proveedor específico
 
 </v-clicks>
+
+<div v-click class="mt-8 p-4 border-l-4 border-blue-500">
+Para datos tabulares (bank_transactions.csv), gradient boosting suele igualar o superar deep learning con una fracción del costo
+</div>
 
 ---
 
 # Lab de hoy
 
-1. Migrar la tabla de features a una tabla **Iceberg** real
-2. Demostrar `MERGE INTO`, time travel, evolución de esquema
+Extender `04_pipeline_ml.ipynb`: envolver el Pipeline en un `CrossValidator`
+y comparar contra un segundo algoritmo (`GBTClassifier`)
 
-<div class="mt-8 text-blue-500 font-bold">
-Entregable: diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones
+<div class="mt-8 p-4 border-l-4 border-blue-500">
+Entregable: modelo entrenado + comparación de métricas + <b>una gráfica comparativa</b> (AUC/F1 por modelo, o curva ROC) + justificación
 </div>
 
 ---
@@ -112,4 +89,4 @@ class: text-center
 
 # → Sesión 07
 
-Streaming e inferencia en tiempo real — windowing, watermarks, Pub/Sub Lite
+Data Lakes / Lakehouse — Parquet, medallion, y por qué Iceberg va más allá

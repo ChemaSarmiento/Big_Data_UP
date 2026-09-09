@@ -2,7 +2,7 @@
 06_lakehouse_iceberg.py
 Objetivo: mostrar por qué Parquet plano en carpetas (bronze/silver/gold de
 recursos/etl-tipo-cambio/) no es lo mismo que un lakehouse transaccional real.
-Migra la tabla de features de bank_transactions.csv (Sesión 4/5 de Maestría) a
+Migra la tabla de features de bank_transactions.csv (Sesión 5/6 de Maestría) a
 Apache Iceberg y demuestra las tres cosas que Parquet plano en una carpeta NO
 puede hacer sin reescribir todo: MERGE INTO (upsert), time travel (consultar un
 snapshot anterior) y evolución de esquema sin romper lecturas viejas.
@@ -36,7 +36,7 @@ RAW = f"{args.bucket}/raw/bank_transactions/bank_transactions.csv"
 TABLA_SILVER = "local.curso_bigdata.transacciones_silver"
 TABLA_GOLD = "local.curso_bigdata.transacciones_gold"
 
-# --- BRONZE: leer el CSV crudo, igual que en la Sesión 4 ---
+# --- BRONZE: leer el CSV crudo, igual que en la Sesión 5 ---
 bronze = spark.read.csv(RAW, header=True, inferSchema=True)
 bronze = bronze.withColumn("is_suspicious", F.col("is_suspicious").cast("int"))
 bronze = bronze.withColumn("hora_del_dia", F.hour("timestamp"))

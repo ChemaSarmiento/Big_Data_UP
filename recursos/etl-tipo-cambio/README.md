@@ -94,7 +94,7 @@ del propio notebook) que permite tráfico desde el rango fijo de IAP hacia el pu
   de un día supera un umbral irreal (ej. 20%), como se vería un chequeo de calidad real
   en un pipeline bancario.
 - **Orquestación:** convertir `run_etl.py` en un DAG de Airflow que corra diario (conecta
-  directo con la Sesión 8 de Maestría).
+  directo con la Sesión 12 de Maestría).
 - **Data Lake:** en vez de cargar directo a MariaDB, escribir la capa `processed/` como
   Parquet particionado por año-mes en Cloud Storage antes de cargar a la base (conecta
-  con la Sesión 6 de arquitectura medallion).
+  con la Sesión 7 de arquitectura medallion).

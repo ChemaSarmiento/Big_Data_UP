@@ -1,33 +1,29 @@
-# Sesión 06 — Data Lakes / Lakehouse
+# Sesión 06 — Entrenamiento de modelos distribuido
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
-1. Parquet vs. ORC vs. Avro
-2. Arquitectura medallion (bronze / silver / gold)
-3. Formatos de tabla transaccionales (Iceberg/Delta) para ACID sobre el lake
-4. Versionado de datasets y de modelos
+1. Algoritmos de Spark MLlib (regresión, árboles, gradient boosting) y su paralelización
+2. Tuning de hiperparámetros a escala con `CrossValidator` distribuido
+3. Cuándo Spark MLlib no alcanza (deep learning) y alternativas: Vertex AI Training, Horovod (panorama)
 
 ## Lab
-Migrar la tabla de features de `bank_transactions.csv` (Sesión 4/5) a una tabla **Iceberg** real con `06_lakehouse_iceberg.py`, y demostrar sobre ella las tres cosas que Parquet plano en carpetas no puede hacer sin reescribir todo: `MERGE INTO`, time travel y evolución de esquema.
+Entrenar y comparar 2-3 modelos con Spark MLlib sobre el pipeline de features de la Sesión 5, con tuning vía `CrossValidator`.
 
 ## Entregable
-Diagrama de arquitectura + pipeline versionado + capturas de las tres demostraciones del script (el MERGE, la consulta de snapshots antes/después, y el `ALTER TABLE` sin romper la tabla).
+Modelo entrenado + comparación de métricas + justificación del modelo elegido, con **una gráfica comparativa** (barras de AUC/F1 por modelo, o curva ROC superpuesta de ambos) — es la misma evidencia que después se reusa en el capstone (Sesión 13), donde el documento final exige visualizaciones sobre las conclusiones.
 
 ## Ejemplo / material de apoyo
-`recursos/lakehouse-iceberg/06_lakehouse_iceberg.py` — script completo, corre sobre el mismo `bank_transactions.csv` de las Sesiones 4/5. `recursos/etl-tipo-cambio/` (bronze `data/raw/` → silver `data/processed/` → gold en MariaDB) y `recursos/spark/05_data_cleansing.ipynb` (mismo patrón a escala real sobre `quien_es_quien.csv`) siguen siendo la referencia de "medallion con Parquet plano" — útiles para contrastar en vivo contra la tabla Iceberg: mismo problema, un nivel de madurez distinto.
+Extender `recursos/spark/04_pipeline_ml.ipynb`: ya entrena una `LogisticRegression` dentro del `Pipeline` sobre `bank_transactions.csv` y reporta AUC — el ejercicio de esta sesión es envolver ese mismo `Pipeline` en un `CrossValidator` con una rejilla de hiperparámetros y comparar contra un segundo algoritmo (por ejemplo `GBTClassifier`).
 
 ## Recursos vinculados
-- [`recursos/lakehouse-iceberg/`](../../recursos/lakehouse-iceberg/) — tabla Iceberg real (MERGE INTO, time travel, evolución de esquema)
-- [`recursos/etl-tipo-cambio/`](../../recursos/etl-tipo-cambio/) — patrón bronze/silver/gold con Parquet plano, para contraste
-- [`recursos/spark/05_data_cleansing.ipynb`](../../recursos/spark/05_data_cleansing.ipynb) — bronze/silver a escala real (15 GB)
-- [`recursos/hive/hive-queries.sql`](../../recursos/hive/hive-queries.sql) — tabla particionada (Sección 3.2)
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb)
+- [`recursos/managed-spark-cluster/hugging_face_deps.sh`](../../recursos/managed-spark-cluster/hugging_face_deps.sh) — si el modelo elegido requiere transformers/torch
 
 ## Slides
 - **Deck nuevo:** [`slides_maestria/sesion-06.md`](../../slides_maestria/sesion-06.md) (Slidev) — `npx slidev sesion-06.md --open` desde `slides_maestria/`
-- `slides/02_fuentes_y_manejo.pptx`
-- `slides/06_grandes_bases_de_datos.pptx`
+- `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión
 - [ ] Contenido revisado

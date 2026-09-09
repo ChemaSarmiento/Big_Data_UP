@@ -1,9 +1,13 @@
 """
 07_streaming_scoring.py
 Objetivo: consumir un stream de transacciones desde Pub/Sub Lite y aplicar el
-MISMO PipelineModel entrenado en la Sesión 4/5 (recursos/spark/04_pipeline_ml.ipynb)
+MISMO PipelineModel entrenado en la Sesión 5/6 (recursos/spark/04_pipeline_ml.ipynb)
 para generar un score de fraude en tiempo real -- el mismo pipeline de features,
 ahora sobre datos que llegan continuamente en vez de un CSV ya completo.
+
+Material de la Sesión 10 (Maestría). Retoma el esqueleto de lectura/windowing de
+07a_streaming_conteo.py (Sesión 9) y agrega el modelo -- correr aquel primero si
+windowing/watermarks todavía no quedaron claros.
 
 Requiere:
   Cluster con --properties="spark:spark.jars.packages=com.google.cloud:pubsublite-spark-sql-streaming:1.0.0"
@@ -27,7 +31,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--project", required=True)
 parser.add_argument("--subscription", required=True, help="nombre de la suscripción de Pub/Sub Lite")
 parser.add_argument("--location", default="us-central1-a", help="zona de Pub/Sub Lite")
-parser.add_argument("--modelo", required=True, help="PipelineModel guardado en la Sesión 4/5")
+parser.add_argument("--modelo", required=True, help="PipelineModel guardado en la Sesión 5/6")
 parser.add_argument("--salida", required=True, help="gs://<TU-BUCKET>/streaming/scores")
 args = parser.parse_args()
 

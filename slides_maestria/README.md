@@ -1,12 +1,12 @@
 # Slides de Maestría (Slidev)
 
-Un deck de [Slidev](https://sli.dev) por sesión — `sesion-00.md` a `sesion-09.md`.
+Un deck de [Slidev](https://sli.dev) por sesión — `sesion-00.md` a `sesion-13.md`.
 Se eligió Slidev para este track (y no Marp, que usa Especialidad) porque el
 contenido técnico se apoya en diagramas Mermaid y bloques de código resaltado —
 ver la comparación completa de herramientas en la conversación que originó esta
 carpeta, o simplemente abrir cualquier deck para ver el patrón.
 
-`slides.md` es el índice — no tiene contenido de sesión, solo enlaza a los 10 decks.
+`slides.md` es el índice — no tiene contenido de sesión, solo enlaza a los 14 decks.
 
 ## Setup
 

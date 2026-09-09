@@ -1,25 +1,26 @@
-# Sesión 05 — Entrenamiento de modelos distribuido
+# Sesión 05 — Ingeniería de features a escala
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
+> Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
-1. Algoritmos de Spark MLlib (regresión, árboles, gradient boosting) y su paralelización
-2. Tuning de hiperparámetros a escala con `CrossValidator` distribuido
-3. Cuándo Spark MLlib no alcanza (deep learning) y alternativas: Vertex AI Training, Horovod (panorama)
+1. Feature engineering distribuido: `Pipeline`, `Transformer`, `Estimator` de Spark MLlib
+2. Encoding y escalado a escala
+3. Introducción a feature stores: qué problema resuelven
 
 ## Lab
-Entrenar y comparar 2-3 modelos con Spark MLlib sobre el pipeline de features de la Sesión 4, con tuning vía `CrossValidator`.
+Construir un pipeline de features reproducible con Spark MLlib sobre un dataset de +5M filas (imputación, encoding, escalado, ensamblado de vector de features).
 
 ## Entregable
-Modelo entrenado + comparación de métricas + justificación del modelo elegido, con **una gráfica comparativa** (barras de AUC/F1 por modelo, o curva ROC superpuesta de ambos) — es la misma evidencia que después se reusa en el capstone (Sesión 9), donde el documento final exige visualizaciones sobre las conclusiones.
+Pipeline de features serializado y reproducible.
 
 ## Ejemplo / material de apoyo
-Extender `recursos/spark/04_pipeline_ml.ipynb`: ya entrena una `LogisticRegression` dentro del `Pipeline` sobre `bank_transactions.csv` y reporta AUC — el ejercicio de esta sesión es envolver ese mismo `Pipeline` en un `CrossValidator` con una rejilla de hiperparámetros y comparar contra un segundo algoritmo (por ejemplo `GBTClassifier`).
+`recursos/spark/04_pipeline_ml.ipynb` — Pipeline completo de MLlib (`Imputer` → `StringIndexer`/`OneHotEncoder` → `VectorAssembler` → `StandardScaler` → modelo) sobre `bank_transactions.csv`, listo para correr o extender con más features de `recursos/datasets/`.
 
 ## Recursos vinculados
 - [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb)
-- [`recursos/managed-spark-cluster/hugging_face_deps.sh`](../../recursos/managed-spark-cluster/hugging_face_deps.sh) — si el modelo elegido requiere transformers/torch
+- [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — Credit Card Fraud / Home Credit Default Risk
 
 ## Slides
 - **Deck nuevo:** [`slides_maestria/sesion-05.md`](../../slides_maestria/sesion-05.md) (Slidev) — `npx slidev sesion-05.md --open` desde `slides_maestria/`

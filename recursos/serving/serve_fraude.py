@@ -1,6 +1,6 @@
 """
 serve_fraude.py
-Endpoint HTTP simple para el PipelineModel entrenado en la Sesión 4/5 de Maestría
+Endpoint HTTP simple para el PipelineModel entrenado en la Sesión 5/6 de Maestría
 (recursos/spark/04_pipeline_ml.ipynb) -- la opción "serving simple vía API" que
 menciona el PROGRAMA.md de Maestría como alternativa a Vertex AI Endpoints.
 
@@ -9,7 +9,7 @@ dentro del mismo proceso de la API, no en el cluster de Dataproc. Es el patrón
 correcto para *baja latencia por request* (Vertex AI/un cluster completo son para
 scoring batch de alto volumen, no para responder una petición HTTP en <1s) --
 vale la pena decirlo explícito en clase: "por qué Spark MLlib no es para esto"
-es justo lo que la Sesión 5 ya adelanta como límite de Spark MLlib.
+es justo lo que la Sesión 6 ya adelanta como límite de Spark MLlib.
 
 pip install fastapi uvicorn pyspark
 

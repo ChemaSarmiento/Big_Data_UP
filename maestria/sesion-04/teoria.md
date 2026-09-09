@@ -1,76 +1,90 @@
-# Teoría — Sesión 04: Ingeniería de features a escala
+# Teoría — Sesión 04: Spark Core avanzado II — Skew y diagnóstico
 
-> El puente entre "procesar datos" (Sesiones 1-3) y "entrenar modelos" (Sesión 5). Si
-> el feature engineering está mal hecho aquí, ningún modelo lo compensa después.
+> Segunda de dos sesiones sobre el motor interno de Spark. La Sesión 3 dejó el
+> diagnóstico (leer un plan, identificar shuffles); hoy se resuelve el caso más común
+> y más caro de performance distribuido: una clave que concentra el trabajo.
 
-## 1. Spark MLlib: Pipeline, Transformer, Estimator
+## 1. Qué es skew, con un caso real
 
-MLlib organiza el feature engineering y el modelado alrededor de tres abstracciones,
-diseñadas para que todo el flujo (desde datos crudos hasta predicción) sea un solo
-objeto reproducible:
+**Skew** (desbalance) ocurre cuando una clave concentra muchas más filas que las
+demás — el trabajador que procesa esa clave se convierte en cuello de botella mientras
+el resto del cluster espera ocioso. Es la causa #1 de "mi job tarda 10x más de lo que
+debería" en producción, y es engañoso de detectar solo con `.count()` o promedios:
+el trabajo total puede verse balanceado en agregado, mientras una sola partición carga
+el 80% del tiempo real.
 
-- **Transformer** — toma un DataFrame y devuelve otro DataFrame transformado, sin
-  necesidad de "aprender" nada de los datos primero. `VectorAssembler` (junta varias
-  columnas en un solo vector de features) es un Transformer: la operación es la misma
-  sin importar los datos que le pases.
-- **Estimator** — un algoritmo que *aprende* de los datos vía `.fit()`, y como
-  resultado produce un Transformer ya ajustado. `StandardScaler` es un Estimator:
-  `.fit()` calcula la media y desviación estándar de tus datos de entrenamiento, y el
-  Transformer resultante (`StandardScalerModel`) aplica esa transformación aprendida a
-  cualquier DataFrame nuevo — incluyendo datos que nunca vio en el entrenamiento.
-- **Pipeline** — encadena Transformers y Estimators en una sola secuencia. Al llamar
-  `.fit()` sobre el Pipeline completo, cada Estimator interno aprende en orden, y el
-  resultado es un `PipelineModel`: un solo objeto que reproduce *exactamente* la misma
-  secuencia de transformaciones sobre datos nuevos, sin tener que recordar manualmente
-  el orden ni los parámetros aprendidos de cada paso.
+**Ejemplo concreto sobre `bank_transactions.csv`:** si la mayoría de las transacciones
+del dataset están en `MXN` y solo una fracción pequeña en otras monedas, un
+`groupBy("currency")` reparte casi todo el trabajo a una sola partición — las demás
+particiones (`USD`, `EUR`, etc.) terminan en segundos, la partición de `MXN` puede
+tardar minutos, y el job completo espera a que termine esa sola partición.
 
-`recursos/spark/04_pipeline_ml.ipynb` implementa exactamente esta secuencia —
-`Imputer → StringIndexer → OneHotEncoder → VectorAssembler → StandardScaler → modelo`
-— sobre `bank_transactions.csv`. Vale la pena notar que ese mismo `PipelineModel`
-guardado se reutiliza sin cambios en la Sesión 7 (streaming) y la Sesión 8 (serving) —
-es el mismo objeto, no una reimplementación.
+## 2. Cómo se ve un skew severo en el plan
 
-## 2. Encoding y escalado a escala
+Antes de corregir, hay que confirmar que el problema es skew y no otra cosa (cluster
+subdimensionado, I/O lento). Señales en el Spark UI (no solo en `.explain()`):
 
-Dos transformaciones estándar, pero que a escala distribuida tienen matices:
+- Una tarea (*task*) dentro de una etapa (*stage*) tarda notablemente más que las
+  demás — visible en la pestaña "Stages" del Spark UI, columna de duración por task.
+- El tamaño de datos leído/escrito (*shuffle read/write*) de esa tarea es
+  desproporcionadamente mayor que el resto.
 
-- **Encoding** (convertir categorías en números): `StringIndexer` asigna un entero a
-  cada categoría distinta, y `OneHotEncoder` convierte ese entero en un vector binario
-  disperso. El detalle que importa a escala: `StringIndexer` necesita ver *todas* las
-  categorías posibles antes de asignar índices — sobre un dataset de millones de filas,
-  eso implica un paso de agregación distribuida (`.fit()` no es gratis).
-- **Escalado** (`StandardScaler`, `MinMaxScaler`): normaliza el rango de valores
-  numéricos. El error común es calcular la media/desviación sobre *todo* el dataset
-  (incluyendo el set de prueba) antes de dividir en train/test — eso es fuga de
-  información: el modelo "ve" estadísticas del conjunto que se supone evalúa a ciegas.
-  El patrón correcto es `.fit()` solo sobre `train_df`, y aplicar ese mismo
-  `StandardScalerModel` (ya aprendido) sobre `test_df` — exactamente lo que hace el
-  `Pipeline` cuando se estructura bien.
+`.explain(mode="formatted")` (Sesión 3) confirma *dónde* ocurre el shuffle; el Spark
+UI confirma *si está desbalanceado* — son dos herramientas complementarias, no una
+sustituye a la otra.
 
-## 3. Feature stores: qué problema resuelven
+## 3. Tres estrategias de mitigación
 
-Un feature store es un sistema centralizado para calcular, guardar y servir features
-— pensado para un problema muy concreto que aparece cuando hay *varios* modelos en
-producción: sin un feature store, cada equipo recalcula sus propias features desde
-cero, con lógica ligeramente distinta, lo que produce **inconsistencia
-entrenamiento-servicio** (training-serving skew) — el modelo se entrenó con una
-definición de "hora_del_dia" y en producción se calcula con otra ligeramente distinta,
-degradando el modelo sin que nadie note por qué.
+| Estrategia | Cómo funciona | Cuándo usarla |
+|---|---|---|
+| **Salting** | Se agrega un sufijo aleatorio a la clave sesgada antes del shuffle (ej. `"MXN"` → `"MXN_0"`, `"MXN_1"`, ...), repartiendo artificialmente esa clave entre más particiones, y se agrega en dos etapas | Cuando una sola clave (ej. una moneda dominante) concentra la mayoría de las filas |
+| **Broadcast join** | Si una de las dos tablas del join es pequeña (cabe en memoria de cada worker), se envía una copia completa a cada nodo en vez de hacer shuffle de ambas | Join entre una tabla grande y una tabla de catálogo/dimensión pequeña — el patrón más común en la práctica |
+| **AQE** (Adaptive Query Execution) | Spark re-optimiza el plan de ejecución *durante* la corrida, con estadísticas reales (no estimadas) — puede convertir un shuffle join en broadcast join sobre la marcha, o repartir automáticamente particiones desbalanceadas | Activado por default desde Spark 3.x (`spark.sql.adaptive.enabled`); reduce la necesidad de salting manual en muchos casos |
 
-Un feature store resuelve esto con dos garantías: (1) una sola definición de cada
-feature, calculada una vez y reutilizada por todos los modelos, y (2) *feature
-freshness* consistente entre el pipeline de entrenamiento (batch) y el de inferencia
-en tiempo real (lo que la Sesión 7 va a necesitar). Este curso no implementa un feature
-store real (Feast, Vertex AI Feature Store) — el `PipelineModel` guardado cumple un rol
-similar a pequeña escala (una sola definición reutilizada en S4, S7 y S8), pero vale la
-pena reconocer la diferencia: un `PipelineModel` sirve un modelo; un feature store sirve
-*features* a muchos modelos.
+### Salting, en código
+
+```python
+from pyspark.sql import functions as F
+
+# Antes: groupBy("currency") concentra casi todo en la partición "MXN"
+# Después: se agrega un salt aleatorio (0-9) para repartir esa clave en 10 sub-particiones
+df_salado = df.withColumn("salt", (F.rand() * 10).cast("int"))
+resumen_parcial = (
+    df_salado.groupBy("currency", "salt")
+    .agg(F.sum("amount").alias("suma_parcial"))
+)
+# Segunda etapa: agregar los resultados parciales por clave real, sin el salt
+resumen_final = (
+    resumen_parcial.groupBy("currency")
+    .agg(F.sum("suma_parcial").alias("suma_total"))
+)
+```
+
+**Por qué funciona:** la primera agregación reparte el trabajo de `MXN` entre 10
+particiones distintas (por el salt), y la segunda agregación —mucho más barata—
+solo suma 10 resultados parciales por moneda en vez de procesar millones de filas
+en una sola partición.
+
+## 4. Por qué AQE no siempre es suficiente
+
+AQE ayuda mucho, pero tiene límites que vale la pena conocer antes de asumir que
+"ya no hace falta pensar en skew":
+
+- AQE detecta y corrige skew **entre etapas** (usando estadísticas reales de la etapa
+  anterior) — no puede anticipar skew *dentro* de la primera lectura de datos si el
+  archivo de origen ya viene desbalanceado por partición física.
+- El umbral de qué cuenta como "partición sesgada" (`skewedPartitionFactor`,
+  `skewedPartitionThresholdInBytes`) tiene defaults razonables, pero en datasets muy
+  grandes (como `bank_transactions.csv`, 7.5GB) puede necesitar ajuste manual.
+
+El ejercicio de hoy resuelve el caso "a mano" con salting explícito precisamente para
+entender qué está haciendo AQE automáticamente en otros casos — no tiene sentido
+depender de una herramienta que no se entiende.
 
 ---
 
 ## Referencias
 
-- [Apache Spark MLlib — ML Pipelines (docs oficiales)](https://spark.apache.org/docs/latest/ml-pipeline.html)
-- [Apache Spark MLlib — Extracting, transforming and selecting features](https://spark.apache.org/docs/latest/ml-features.html)
-- [Google Cloud — Vertex AI Feature Store overview](https://cloud.google.com/vertex-ai/docs/featurestore/overview)
-- [Feast — Feature Store for Machine Learning (documentación del proyecto open-source)](https://docs.feast.dev/)
+- [Databricks — Handling Data Skew in Apache Spark](https://www.databricks.com/blog/2020/12/16/managing-data-skew-in-apache-spark.html)
+- [Apache Spark — Adaptive Query Execution](https://spark.apache.org/docs/latest/sql-performance-tuning.html#adaptive-query-execution)
+- [Apache Spark — Monitoring and Instrumentation (Spark UI)](https://spark.apache.org/docs/latest/monitoring.html)

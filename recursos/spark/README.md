@@ -10,10 +10,10 @@ nada sintético.
 | Notebook | Sesión sugerida | Dataset | Qué enseña |
 |---|---|---|---|
 | `01_rdd_basico.ipynb` | Maestría S1 / Especialidad S4 | `war_tweets.txt` (~22.6 GB) | RDDs, word count, y cuándo usar `read.json()` para JSON con esquema anidado real |
-| `02_dataframes.ipynb` | Maestría S3 | `all_data.csv` — PROFECO (~19.7 GB) | DataFrame API, `explain()` para leer el plan físico, guardado particionado |
-| `03_spark_sql.ipynb` | Maestría S2 / S3 | `bank_transactions.csv` (~7.5 GB) | Spark SQL, vistas temporales, window functions |
-| `04_pipeline_ml.ipynb` | Maestría S4-S5 | `bank_transactions.csv` (~7.5 GB) | `Pipeline` de Spark MLlib: imputación → encoding → escalado → modelo |
-| `05_data_cleansing.ipynb` | Maestría S6 | `quien_es_quien.csv` (~15.4 GB) | Esquema sin encabezados, nulos no estándar (`\N`), estandarización de tipos y texto |
+| `02_dataframes.ipynb` | Maestría S3-S4 | `all_data.csv` — PROFECO (~19.7 GB) | DataFrame API, `explain()` para leer el plan físico, guardado particionado |
+| `03_spark_sql.ipynb` | Maestría S2 / S3-S4 | `bank_transactions.csv` (~7.5 GB) | Spark SQL, vistas temporales, window functions |
+| `04_pipeline_ml.ipynb` | Maestría S5-S6 | `bank_transactions.csv` (~7.5 GB) | `Pipeline` de Spark MLlib: imputación → encoding → escalado → modelo |
+| `05_data_cleansing.ipynb` | Maestría S7-S8 | `quien_es_quien.csv` (~15.4 GB) | Esquema sin encabezados, nulos no estándar (`\N`), estandarización de tipos y texto |
 
 Se cambió de `.py` a `.ipynb` a propósito: estos datasets son grandes (7-22 GB) y corren
 mejor en un cluster con Jupyter habilitado (`--optional-components=JUPYTER`, ver

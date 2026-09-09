@@ -4,100 +4,76 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 07 — Streaming e inferencia en tiempo real"
+title: "Sesión 07 — Data Lakes / Lakehouse I: formatos y medallion"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 07: windowing, watermarks, Pub/Sub Lite, scoring en el stream
+  Sesión 07: Parquet vs ORC vs Avro, medallion, intro a Iceberg
 ---
 
 # Sesión 07
-## Streaming e inferencia en tiempo real
+## Data Lakes / Lakehouse I
+### Formatos y medallion
 
 <div class="pt-6 text-sm opacity-60">
-El modelo de la Sesión 4/5 se reutiliza sin cambios — lo que cambia es el contexto: datos que nunca terminan de llegar
+Primera de dos sesiones de lakehouse — hoy se prepara el terreno; la Sesión 8 resuelve las transacciones
 </div>
 
 ---
 
-# Windowing + watermark
+# Tres formatos columnares, tres casos de uso
+
+| Formato | Diseño | Mejor para |
+|---|---|---|
+| **Parquet** | Columnar + compresión | Analítica — el estándar en Spark/BigQuery |
+| ORC | Columnar + índices integrados | Hive clásico |
+| Avro | Por filas, esquema evolutivo | Streaming, ingesta evento por evento |
+
+---
+
+# Medallion: bronze → silver → gold
 
 ```mermaid {scale: 0.6}
 flowchart LR
-    subgraph "Ventana 12:00-12:01"
-    E1[evento 12:00:05]
-    E2[evento 12:00:40]
-    E3["evento 12:00:55<br/>(llega tarde, watermark 2min)"]
-    end
-    E1 --> R[Resultado ventana]
-    E2 --> R
-    E3 -.tolerado.-> R
+    B["🟤 Bronze<br/>crudo, sin validar"] --> S["⚪ Silver<br/>limpio, tipado"]
+    S --> G["🟡 Gold<br/>agregado, listo para usar"]
 ```
-
-```python
-scoreadas
-    .withWatermark("timestamp", "2 minutes")
-    .groupBy(F.window("timestamp", "1 minute"))
-    .count()
-```
-
----
-
-# Exactly-once ≠ sin duplicados en el broker
-
-<v-clicks>
-
-- El checkpoint + watermark dan exactly-once en el **cálculo de la ventana**
-- Esa es una garantía distinta de "el mensaje nunca llegó dos veces"
-- Esa segunda garantía la da **Pub/Sub Lite**, del lado del envío
-
-</v-clicks>
-
-<div v-click class="mt-8 p-4 border-l-4 border-blue-500">
-Confundir ambas garantías lleva a asumir más seguridad de la que realmente se tiene
-</div>
-
----
-
-# Dos patrones de scoring en tiempo real
-
-| Patrón | Cómo | Trade-off |
-|---|---|---|
-| **Modelo en el stream** | `PipelineModel` cargado una vez, aplicado directo | Baja latencia, se actualiza solo al reiniciar el job |
-| Endpoint externo | `POST` HTTP por evento/microlote | Se actualiza sin tocar el streaming, a cambio de latencia de red |
 
 <div v-click class="mt-6 text-sm opacity-70">
-Este curso usa el primero en streaming (Sesión 7) y el segundo en serving (Sesión 8) — mismo modelo, comparación directa
+recursos/etl-tipo-cambio/ (raw/ → processed/ → MariaDB) y 05_data_cleansing.ipynb — mismo patrón, a escala de 15GB
 </div>
 
 ---
 
-# Feature freshness: un detalle que rompe modelos en producción
+# Lo que Parquet plano NO puede hacer
 
-```python {1|3}
-# BIEN: derivado del timestamp del EVENTO
-.withColumn("hora_del_dia", F.hour("timestamp"))
+<div class="grid grid-cols-1 gap-2 mt-6 text-left">
 
-# MAL: derivado del momento de PROCESAMIENTO
-.withColumn("hora_del_dia", F.hour(F.current_timestamp()))
-```
+- Corregir un lote de filas ya cargado → reescribir el archivo/partición completa
+- Ver el dato como estaba ayer → solo si guardaste una copia versionada tú mismo
+- Agregar una columna nueva → rompe lectores existentes, o fuerza a versionar toda la carpeta
 
-<div v-click class="mt-6 text-blue-500 font-bold">
-Si el stream se atrasa, la versión "MAL" queda sistemáticamente equivocada
+</div>
+
+<div v-click class="mt-8 text-xl text-blue-500 text-center">
+Eso es lo que resuelve un lakehouse transaccional (Iceberg/Delta) — la Sesión 8
 </div>
 
 ---
 
-# Pipeline de hoy
+# Lab de hoy
 
-```mermaid {scale: 0.55}
-flowchart LR
-    P[producer_transacciones_stream.py] -->|Pub/Sub Lite| S[07_streaming_scoring.py]
-    S -->|PipelineModel S4/5| Score[Score por transacción]
-    S --> W[Alertas por ventana 1min]
+Preparar el cluster con el runtime de Iceberg y crear la primera tabla:
+
+```bash
+--properties="spark:spark.jars.packages=org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1,..."
 ```
+
+1. Cargar `bank_transactions.csv` como bronze
+2. Escribirlo como tabla **silver** particionada en Iceberg
+3. Confirmar el snapshot inicial
 
 <div class="mt-6 text-blue-500 font-bold">
-Entregable: pipeline funcionando end-to-end — captura de ventanas en vivo + Parquet de scores
+Entregable: tabla Iceberg creada y cargada + captura del primer snapshot
 </div>
 
 ---
@@ -107,4 +83,4 @@ class: text-center
 
 # → Sesión 08
 
-Model serving, monitoreo y MLOps — endpoint, drift (PSI), Airflow
+Data Lakes / Lakehouse II — MERGE INTO, time travel, evolución de esquema

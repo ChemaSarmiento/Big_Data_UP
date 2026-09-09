@@ -1,80 +1,61 @@
-# Teoría — Sesión 07: Streaming e inferencia en tiempo real
+# Teoría — Sesión 07: Data Lakes / Lakehouse I — formatos y medallion
 
-> Todo lo construido en las Sesiones 4-5 (features, modelo) se reutiliza hoy sin
-> cambios — lo que cambia es el contexto de ejecución: datos que nunca "terminan" de
-> llegar, y garantías distintas sobre tiempo y duplicados.
+> Primera de dos sesiones sobre lakehouse. Hoy se prepara el terreno: formato de
+> archivo, organización en capas, y por qué ninguna de las dos cosas por sí sola
+> resuelve transacciones. La Sesión 8 resuelve eso con Iceberg a fondo.
 
-## 1. Windowing y watermarks
+## 1. Parquet vs. ORC vs. Avro
 
-Un stream, por definición, no tiene fin — "agrupa todos los eventos" no tiene sentido
-sin acotar de alguna forma el tiempo. **Windowing** resuelve esto: agrupa eventos en
-ventanas de tiempo fijas (ej. "cuenta las alertas cada minuto") en vez de intentar
-agregar un stream infinito de una sola vez.
+Tres formatos de archivo columnar/binario que compiten por el mismo espacio, con
+diferencias de diseño que importan según el caso de uso:
 
-El problema que windowing por sí solo no resuelve: los eventos no siempre llegan en
-orden — la red puede retrasar un mensaje, y llega "tarde" a una ventana que
-lógicamente ya debería estar cerrada. Un **watermark** es la respuesta a "¿cuánto
-tiempo espero antes de dar por cerrada una ventana?" — declara explícitamente cuánta
-tardanza estás dispuesto a tolerar antes de calcular el resultado final de esa ventana.
-
-```python
-# recursos/streaming/07_streaming_scoring.py
-scoreadas
-    .withWatermark("timestamp", "2 minutes")  # tolera hasta 2 min de retraso
-    .groupBy(F.window("timestamp", "1 minute"))  # ventanas de 1 minuto
-    .count()
-```
-
-Con esta configuración: si un evento llega con más de 2 minutos de retraso respecto al
-cierre de su ventana, se descarta — es la contraparte necesaria de la promesa de
-"resultados en tiempo real": nunca vas a esperar indefinidamente a un evento rezagado.
-
-## 2. Exactly-once vs. at-least-once
-
-Dos garantías distintas sobre qué tan seguro es que un evento se procesó exactamente
-una vez:
-
-- **At-least-once:** un evento puede llegar a procesarse más de una vez (por ejemplo,
-  si el sistema falla justo después de procesar pero antes de confirmar que lo hizo, y
-  reintenta) — nunca se pierde un evento, pero puede duplicarse.
-- **Exactly-once:** cada evento se procesa exactamente una vez, sin pérdidas ni
-  duplicados — la garantía más fuerte, y la más cara de implementar correctamente.
-
-El detalle que suele confundirse (marcado explícitamente en
-`recursos/streaming/07_streaming_scoring.py`): un `checkpointLocation` con watermark
-da exactly-once en el **cálculo de la agregación** (cada ventana se calcula una sola
-vez, de forma determinística), pero eso es una garantía distinta de "no duplicados en
-el broker" — esa segunda garantía la da Pub/Sub Lite del lado del envío de mensajes.
-Confundir ambas lleva a asumir garantías más fuertes de las que realmente se tienen.
-
-## 3. Patrones de scoring en tiempo real
-
-Dos formas de aplicar un modelo entrenado a datos que llegan en streaming:
-
-| Patrón | Cómo funciona | Trade-off |
+| Formato | Diseño | Mejor para |
 |---|---|---|
-| **Modelo cargado en el stream** | El `PipelineModel` se carga una vez, en memoria del job de streaming, y se aplica directo sobre cada microlote (`recursos/streaming/07_streaming_scoring.py`) | Baja latencia (no hay llamada de red por evento), pero el modelo solo se actualiza si se reinicia el job |
-| **Llamada a un endpoint externo** | El job de streaming hace una petición HTTP a un servicio de serving (`recursos/serving/serve_fraude.py`) por cada evento o microlote | El modelo se puede actualizar sin tocar el job de streaming (solo el endpoint), a cambio de latencia de red y un punto de falla adicional |
+| **Parquet** | Columnar, con metadata de esquema embebida, compresión por columna | Analítica (leer pocas columnas de muchas) — el estándar de facto en el ecosistema Spark/BigQuery |
+| **ORC** | Columnar, optimizado originalmente para Hive, con índices integrados a nivel de bloque | Cargas de trabajo muy pesadas en consultas con predicados (`WHERE`) sobre Hive/Hadoop clásico |
+| **Avro** | Orientado a **filas**, no a columnas, con esquema evolutivo integrado (el esquema viaja con cada archivo) | Streaming e ingesta — cuando escribes fila por fila conforme llega, no en lote |
 
-Este curso usa el primer patrón en streaming (Sesión 7) y el segundo en serving batch
-(Sesión 8) — la comparación directa entre ambos, con el mismo modelo, es justo el
-ejercicio que conecta las dos sesiones.
+La elección de Parquet en este curso no es arbitraria: como el patrón de acceso es
+"escribir en lote, leer analíticamente después", columnar gana. Avro tendría más
+sentido si el patrón fuera "escribir evento por evento" — justo lo que ocurre en la
+Sesión 9-10 (streaming), aunque ahí seguimos escribiendo el resultado a Parquet por
+consistencia con el resto del pipeline.
 
-## 4. Feature freshness
+## 2. Arquitectura medallion (bronze/silver/gold)
 
-Una feature "fresca" es una que refleja el estado real del mundo en el momento de la
-predicción, no un valor calculado hace horas. En streaming esto tiene un matiz sutil:
-`hora_del_dia` debe derivarse del **timestamp del evento** (`F.hour("timestamp")`),
-no del momento en que el job lo procesa (`current_timestamp()`) — si el stream se
-atrasa por cualquier razón (una ráfaga de eventos, un reinicio del job), una feature
-basada en tiempo de procesamiento estaría sistemáticamente equivocada, mientras que
-una basada en tiempo del evento sigue siendo correcta sin importar cuándo se procesó
-realmente.
+`recursos/etl-tipo-cambio/` (bronze en `data/raw/`, silver en `data/processed/`) y
+`recursos/spark/05_data_cleansing.ipynb` (la misma idea, a escala real de 15GB,
+convirtiendo `quien_es_quien.csv` — sin encabezados, con `\N` como nulo no estándar —
+en una capa silver tipada) son la referencia real de este patrón. El detalle técnico
+que vale la pena notar hoy: cada capa normalmente cambia de formato además de
+calidad — bronze puede ser CSV/JSON crudo, silver y gold casi siempre son Parquet
+(o, como se arma en el lab de hoy, Iceberg).
+
+## 3. Por qué Parquet plano no es un lakehouse transaccional
+
+Parquet resuelve el formato del archivo. No resuelve la **tabla** — un conjunto de
+archivos Parquet en una carpeta no tiene transacciones, ni forma de saber qué versión
+de la tabla estás leyendo si alguien la está escribiendo al mismo tiempo. Tres
+problemas concretos que un lakehouse transaccional (Iceberg, Delta Lake) resuelve y
+Parquet plano no:
+
+- **Corregir un lote de filas ya cargado** — con Parquet plano, obliga a reescribir
+  el archivo o la partición completa.
+- **Ver el dato como estaba ayer** — con Parquet plano, solo si tú mismo guardaste una
+  copia versionada manualmente.
+- **Agregar una columna nueva** — con Parquet plano, rompe lectores que no esperan la
+  columna nueva, o fuerza a versionar toda la carpeta.
+
+La Sesión 8 resuelve las tres, con código real, sobre la tabla que se crea hoy. El
+lab de hoy se queda en el primer paso: tener la tabla Iceberg lista y cargada —
+`recursos/lakehouse-iceberg/06_lakehouse_iceberg.py`, primera mitad (hasta el
+snapshot inicial, antes del `MERGE INTO`).
 
 ---
 
 ## Referencias
 
-- [Apache Spark — Structured Streaming Programming Guide (windowing, watermarks)](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html)
-- [Google Cloud — Pub/Sub Lite overview](https://cloud.google.com/pubsub/lite/docs/overview)
-- [Akidau et al. — The Dataflow Model (el paper que formalizó windowing/watermarks, Google, VLDB 2015)](https://research.google/pubs/the-dataflow-model-a-practical-approach-to-balancing-correctness-latency-and-cost-in-massive-scale-unbounded-out-of-order-data-processing/)
+- [Apache Parquet — documentación oficial](https://parquet.apache.org/docs/)
+- [Apache Avro — documentación oficial](https://avro.apache.org/docs/++version++/)
+- [Databricks — Medallion Architecture explained](https://www.databricks.com/glossary/medallion-architecture)
+- [Apache Iceberg — Table Spec (documentación oficial)](https://iceberg.apache.org/spec/)

@@ -1,83 +1,87 @@
-# Teoría — Sesión 06: Data Lakes / Lakehouse
+# Teoría — Sesión 06: Entrenamiento de modelos distribuido
 
-> El salto de esta sesión: un data lake bien organizado (medallion, formato columnar)
-> sigue siendo un montón de archivos — sin transacciones. Un lakehouse le agrega
-> garantías que hasta hace pocos años solo existían en bases de datos tradicionales.
+> La Sesión 5 dejó las features listas. Hoy se entrena, se compara, y se decide qué
+> modelo justifica llevar a producción — con evidencia, no con "se ve bien el AUC".
 
-## 1. Parquet vs. ORC vs. Avro
+## 1. Algoritmos de MLlib y su paralelización
 
-Tres formatos de archivo columnar/binario que compiten por el mismo espacio, con
-diferencias de diseño que importan según el caso de uso:
+MLlib no reimplementa scikit-learn distribuido tal cual — cada algoritmo tiene una
+estrategia de paralelización distinta, porque no todos los algoritmos se paralelizan
+de la misma forma:
 
-| Formato | Diseño | Mejor para |
-|---|---|---|
-| **Parquet** | Columnar, con metadata de esquema embebida, compresión por columna | Analítica (leer pocas columnas de muchas) — el estándar de facto en el ecosistema Spark/BigQuery |
-| **ORC** | Columnar, optimizado originalmente para Hive, con índices integrados a nivel de bloque | Cargas de trabajo muy pesadas en consultas con predicados (`WHERE`) sobre Hive/Hadoop clásico |
-| **Avro** | Orientado a **filas**, no a columnas, con esquema evolutivo integrado (el esquema viaja con cada archivo) | Streaming e ingesta — cuando escribes fila por fila conforme llega, no en lote |
+- **Regresión (lineal/logística):** se entrena con descenso de gradiente distribuido —
+  cada worker calcula el gradiente sobre su porción de datos, y se agregan (suman) los
+  gradientes parciales en cada iteración antes de actualizar los pesos del modelo.
+- **Árboles de decisión:** MLlib usa una estrategia de particionamiento por niveles
+  (*level-wise*) — en vez de construir un árbol nodo por nodo secuencialmente (como
+  scikit-learn en una sola máquina), calcula todas las decisiones de un mismo nivel de
+  profundidad en paralelo sobre todo el cluster antes de pasar al siguiente nivel.
+- **Gradient Boosting (`GBTClassifier`):** entrena árboles de forma *secuencial* (cada
+  árbol corrige los errores del anterior — no se puede paralelizar entre árboles), pero
+  cada árbol individual sí se entrena de forma distribuida con la estrategia de arriba.
+  Por diseño, GBT es más lento de entrenar que Random Forest a la misma profundidad,
+  porque no puede aprovechar paralelismo entre árboles.
 
-La elección de Parquet en este curso (`recursos/spark/04_pipeline_ml.ipynb`, el
-lakehouse de esta sesión) no es arbitraria: como el patrón de acceso del curso es
-"escribir en lote, leer analíticamente después", columnar gana. Avro tendría más
-sentido si el patrón fuera "escribir evento por evento" — justo lo que sí ocurre en
-la Sesión 7 (streaming), aunque ahí seguimos escribiendo el resultado a Parquet por
-consistencia con el resto del pipeline.
+## 2. Tuning de hiperparámetros con `CrossValidator`
 
-## 2. Arquitectura medallion (bronze/silver/gold)
+`CrossValidator` combina dos ideas: validación cruzada (entrenar y evaluar sobre
+varios splits del dataset, no solo uno, para una estimación más confiable del
+desempeño) y búsqueda de hiperparámetros (probar varias combinaciones de parámetros
+y quedarse con la mejor).
 
-Mismo patrón conceptual que Especialidad (ver su `teoria.md` de esta sesión para la
-analogía), pero aquí con la implementación real: `recursos/etl-tipo-cambio/` (bronze
-en `data/raw/`, silver en `data/processed/`) y `recursos/spark/05_data_cleansing.ipynb`
-(la misma idea, a escala real de 15GB, convirtiendo `quien_es_quien.csv` — sin
-encabezados, con `\N` como nulo no estándar — en una capa silver tipada). El detalle
-técnico que Especialidad no necesita pero Maestría sí: cada capa normalmente cambia de
-formato además de calidad — bronze puede ser CSV/JSON crudo, silver y gold casi
-siempre son Parquet (o, como en esta sesión, Iceberg).
+```python
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
 
-## 3. Formatos de tabla transaccionales: Iceberg y Delta Lake
+grid = (
+    ParamGridBuilder()
+    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
+    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+    .build()
+)
 
-Parquet resuelve el formato del archivo. No resuelve la **tabla** — un conjunto de
-archivos Parquet en una carpeta no tiene transacciones, ni forma de saber qué versión
-de la tabla estás leyendo si alguien la está escribiendo al mismo tiempo. Ahí entran
-los formatos de tabla transaccionales:
+cv = CrossValidator(
+    estimator=pipeline,
+    estimatorParamMaps=grid,
+    evaluator=BinaryClassificationEvaluator(labelCol="is_suspicious"),
+    numFolds=3,
+)
+modelo_cv = cv.fit(train_df)  # entrena len(grid) * numFolds modelos completos
+```
 
-- **Apache Iceberg** (originado en Netflix) y **Delta Lake** (originado en Databricks)
-  resuelven el mismo problema: agregar una capa de metadata transaccional sobre
-  archivos Parquet, dando ACID (Atomicidad, Consistencia, Aislamiento, Durabilidad) —
-  las mismas garantías que una base de datos relacional, pero sobre un data lake.
-- Concretamente, ambos permiten: **`MERGE INTO`** (actualizar filas específicas sin
-  reescribir el archivo completo), **time travel** (consultar la tabla como estaba en
-  un momento pasado, vía snapshots), y **evolución de esquema** (agregar/quitar
-  columnas sin romper lectores existentes de la tabla).
-- Este curso usa Iceberg (ver `recursos/lakehouse-iceberg/README.md` para el porqué
-  específico de esa elección sobre Delta) — el mecanismo interno difiere entre ambos,
-  pero el problema que resuelven y las garantías que dan son equivalentes.
+**El costo real:** con 9 combinaciones de la rejilla anterior y 3 folds, esto entrena
+27 pipelines completos — cada uno repitiendo todo el feature engineering de la Sesión 5.
+A escala distribuida esto es viable porque cada entrenamiento individual usa el
+cluster completo, pero el costo total (tiempo de cluster, y en GCP, dinero) crece
+linealmente con `len(grid) * numFolds` — vale la pena empezar con una rejilla pequeña.
 
-`recursos/lakehouse-iceberg/06_lakehouse_iceberg.py` demuestra las tres operaciones
-sobre la tabla de features de `bank_transactions.csv` — correrlo y comparar contra el
-patrón de carpetas de `recursos/etl-tipo-cambio/` hace tangible por qué "Parquet bien
-organizado" y "lakehouse transaccional" no son lo mismo.
+## 3. Cuándo MLlib no alcanza: deep learning
 
-## 4. Versionado de datasets y de modelos
+MLlib está optimizado para algoritmos que se paralelizan bien por *datos* (cada worker
+ve una porción distinta del dataset). Deep learning necesita paralelizar por *modelo*
+además de por datos — redes con millones de parámetros no caben ni se entrenan
+eficientemente con la misma estrategia. Dos alternativas que este curso solo menciona
+como panorama (no las implementa):
 
-Versionar código (git) es familiar. Versionar **datos** y **modelos** es un problema
-distinto, con retos propios:
+- **Vertex AI Training** — entrenamiento gestionado en GCP, con soporte nativo para
+  GPUs/TPUs y frameworks como PyTorch/TensorFlow — la ruta recomendada si el curso
+  necesitara deep learning real sobre GCP.
+- **Horovod** — framework open-source (originado en Uber) para entrenamiento
+  distribuido de redes neuronales sobre múltiples GPUs/máquinas, usando
+  comunicación *allreduce* en vez de la estrategia map-reduce de MLlib — el estándar
+  de facto para deep learning distribuido fuera de un proveedor cloud específico.
 
-- **Datasets** cambian de tamaño (GB, no KB) — no se puede versionar un dataset de
-  20GB con la misma estrategia que un archivo de texto en git. Iceberg/Delta resuelven
-  esto con snapshots: cada escritura crea una nueva versión referenciable sin duplicar
-  físicamente los datos que no cambiaron.
-- **Modelos** necesitan versionarse junto con el dataset y los hiperparámetros que los
-  produjeron — sin eso, "¿con qué datos se entrenó este modelo?" se vuelve
-  irrespondible seis meses después. `recursos/spark/04_pipeline_ml.ipynb` guarda el
-  `PipelineModel` completo (no solo los pesos) precisamente para que sea reproducible
-  de punta a punta — feature engineering incluido, no solo el algoritmo final.
+La pregunta que importa no es "¿cuál es mejor?" sino "¿mi problema necesita esto?" —
+para tabular/estructurado (como `bank_transactions.csv`), gradient boosting o
+regresión logística suelen igualar o superar a deep learning con una fracción del
+costo de cómputo. Deep learning se justifica en datos no estructurados (imágenes,
+texto libre, audio) — fuera del alcance de este capstone.
 
 ---
 
 ## Referencias
 
-- [Apache Parquet — documentación oficial](https://parquet.apache.org/docs/)
-- [Apache Avro — documentación oficial](https://avro.apache.org/docs/++version++/)
-- [Apache Iceberg — Table Spec (documentación oficial)](https://iceberg.apache.org/spec/)
-- [Delta Lake — documentación oficial](https://docs.delta.io/latest/index.html)
-- [Databricks — Medallion Architecture explained](https://www.databricks.com/glossary/medallion-architecture)
+- [Apache Spark MLlib — Classification and Regression](https://spark.apache.org/docs/latest/ml-classification-regression.html)
+- [Apache Spark MLlib — Model selection and hyperparameter tuning](https://spark.apache.org/docs/latest/ml-tuning.html)
+- [Google Cloud — Vertex AI Training overview](https://cloud.google.com/vertex-ai/docs/training/overview)
+- [Sergeev, Del Balso — Horovod: fast and easy distributed deep learning (paper, 2018)](https://arxiv.org/abs/1802.05799)

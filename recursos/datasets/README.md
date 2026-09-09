@@ -79,7 +79,7 @@ sector de interés en vez de que todos usen el mismo dataset:
 ## 6. Cómo subir estos archivos a tu proyecto
 
 Descárgalos del Drive del curso y súbelos a Cloud Storage (no a BigQuery directo, son
-CSV/texto crudo — eso es justamente parte del ejercicio de la Sesión 6, Data Lakes):
+CSV/texto crudo — eso es justamente parte del ejercicio de las Sesiones 7-8, Data Lakes):
 
 ```bash
 gsutil cp bank_transactions.csv gs://<TU-BUCKET>/raw/bank_transactions/

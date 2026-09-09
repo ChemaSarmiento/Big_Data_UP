@@ -1,30 +1,31 @@
-# Sesión 08 — Model serving, monitoreo y MLOps
+# Sesión 08 — Data Lakes / Lakehouse II: transacciones y versionado
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
-1. Patrones de serving (batch, online, streaming)
-2. Monitoreo de drift de datos y de modelo
-3. Orquestación del ciclo completo con Airflow (reentrenamiento programado, triggers por drift)
+1. `MERGE INTO` — actualizar sin reescribir la tabla completa
+2. Time travel — consultar un snapshot anterior
+3. Evolución de esquema sin romper lectores existentes
+4. Versionado de datasets y de modelos
 
 ## Lab
-Desplegar el modelo de la Sesión 5 como endpoint (`recursos/serving/serve_fraude.py`), correr `monitor_drift.py` sobre los scores que produce el streaming de la Sesión 7, y desplegar `mlops_pipeline_dag.py` en Airflow — el DAG conecta ingesta → features → entrenamiento → evaluación → despliegue condicional (recarga el endpoint solo si el AUC nuevo pasa el umbral).
+Retomar la tabla Iceberg creada en la Sesión 7 y completar la segunda mitad de `06_lakehouse_iceberg.py`: aplicar `MERGE INTO` (corrección simulada), consultar el snapshot anterior al merge (time travel), agregar una columna con `ALTER TABLE` sin romper la tabla, y escribir la capa gold agregada.
 
 ## Entregable
-DAG de MLOps corriendo en Airflow (captura del grafo con las tareas en verde) + endpoint de modelo respondiendo a `/score` + una corrida de `monitor_drift.py` con su PSI interpretado.
+Diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones transaccionales (capturas del `MERGE INTO`, la consulta de snapshots antes/después, y el `ALTER TABLE`).
 
 ## Ejemplo / material de apoyo
-`recursos/airflow/dags/mlops_pipeline_dag.py` — DAG real con `DataprocSubmitJobOperator` + una puerta de calidad (`BranchPythonOperator`) que decide desplegar o no según el AUC. `recursos/serving/serve_fraude.py` — endpoint FastAPI que carga el `PipelineModel` de la Sesión 4/5. `recursos/etl-tipo-cambio/` y `recursos/etl-cripto/` (etapas como funciones separadas) siguen siendo la referencia conceptual de "por qué el código ya viene listo para orquestarse" antes de ver el DAG real.
+`recursos/lakehouse-iceberg/06_lakehouse_iceberg.py` completo — script corrido de punta a punta hoy. `recursos/spark/04_pipeline_ml.ipynb` es la referencia de "versionar un modelo completo" (no solo el algoritmo, el `PipelineModel` entero) — el mismo principio de versionado, aplicado a un objeto distinto.
 
 ## Recursos vinculados
-- [`recursos/airflow/`](../../recursos/airflow/) — DAG de MLOps completo
-- [`recursos/serving/`](../../recursos/serving/) — endpoint de modelo + monitoreo de drift (PSI)
-- [`recursos/etl-tipo-cambio/run_etl.py`](../../recursos/etl-tipo-cambio/run_etl.py) — orquestador de referencia, más simple
-- [`environment/gcp-setup.md`](../../environment/gcp-setup.md) — nota sobre Cloud Composer vs. Airflow standalone
+- [`recursos/lakehouse-iceberg/`](../../recursos/lakehouse-iceberg/) — tabla Iceberg real (MERGE INTO, time travel, evolución de esquema)
+- [`recursos/hive/hive-queries.sql`](../../recursos/hive/hive-queries.sql) — tabla particionada (Sección 3.2), para contraste sin transacciones
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb) — versionado de modelos
 
 ## Slides
 - **Deck nuevo:** [`slides_maestria/sesion-08.md`](../../slides_maestria/sesion-08.md) (Slidev) — `npx slidev sesion-08.md --open` desde `slides_maestria/`
+- `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 
 ## Checklist de la sesión

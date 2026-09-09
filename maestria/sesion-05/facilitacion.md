@@ -1,4 +1,4 @@
-# Facilitación — Sesión 04: Ingeniería de features a escala
+# Facilitación — Sesión 05: Ingeniería de features a escala
 
 > Guion de 3 horas: talking points + lab guiado paso a paso. Los bloques de tiempo
 > son un punto de partida, no una camisa de fuerza — el grupo manda. Todo lo técnico
@@ -11,8 +11,8 @@
 gcloud dataproc clusters list --region=us-central1
 ```
 
-**Por qué esto primero:** para la Sesión 4, ya van 3 sesiones creando clusters (S1,
-S3). Es común que alguien del grupo se haya olvidado uno prendido desde la semana
+**Por qué esto primero:** para la Sesión 5, ya van 4 sesiones creando clusters (S1,
+S3, S4). Es común que alguien del grupo se haya olvidado uno prendido desde la semana
 pasada — revisa esto *tú*, no asumas que `--max-idle=1h` atrapó todos los casos.
 Si encuentras uno huérfano, bórralo antes de que arranque la sesión.
 
@@ -62,7 +62,7 @@ Sigue `teoria.md` como guion de contenido. Aquí el *cómo* explicarlo:
 > aprender viendo unas piezas de muestra (`.fit()`), y después queda configurada como
 > Transformer para el resto de la línea."
 
-Escribe en el pizarrón/slide (ya está en `slides_maestria/sesion-04.md`) el diagrama
+Escribe en el pizarrón/slide (ya está en `slides_maestria/sesion-05.md`) el diagrama
 de 6 etapas. Pregunta al grupo: **"¿cuáles de estas 6 etapas creen que son
 Estimators, y cuáles Transformers puros?"** — respuesta: `StringIndexer`,
 `StandardScaler` y el modelo (`LogisticRegression`) son Estimators porque aprenden
@@ -216,8 +216,8 @@ modelo_features.write().overwrite().save("gs://<TU-BUCKET>/modelos/features_bank
 **Talking point de cierre técnico:**
 
 > "Esto que acaban de guardar no es un archivo de configuración — es el pipeline
-> *completo, ya entrenado*. La Sesión 5 lo va a cargar tal cual para entrenar el
-> modelo encima. La Sesión 7 lo va a volver a cargar para aplicarlo a datos que
+> *completo, ya entrenado*. La Sesión 6 lo va a cargar tal cual para entrenar el
+> modelo encima. La Sesión 10 lo va a volver a cargar para aplicarlo a datos que
 > llegan en tiempo real. Es el mismo objeto las tres veces — no lo van a reescribir."
 
 ### Paso 4 — Verificación de reproducibilidad (15 min)
@@ -235,7 +235,7 @@ resultado.select("features").show(3, truncate=False)
 
 **Por qué este paso importa más de lo que parece:** demuestra en vivo que el
 Pipeline guardado es reusable sobre datos que nunca vio en el `.fit()` original —
-la propiedad central que hace posible la Sesión 7 (streaming). Si tienen tiempo
+la propiedad central que hace posible la Sesión 10 (streaming). Si tienen tiempo
 corto, este es el paso que se puede comprimir a demo del facilitador en vez de
 que todos lo corran.
 
@@ -261,12 +261,12 @@ gcloud dataproc clusters delete curso-cluster --region=us-central1
 tienen en `gs://<TU-BUCKET>/modelos/features_bank_transactions`. No hay entrega
 adicional de código, el archivo guardado *es* el entregable.
 
-**Pregunta de cierre para abrir la Sesión 5:**
+**Pregunta de cierre para abrir la Sesión 6:**
 
 > "La próxima sesión vamos a entrenar 2-3 modelos sobre este mismo pipeline. ¿Alguien
 > ya tiene una hipótesis de qué feature va a pesar más para detectar fraude?"
 
-(No la respondas hoy — es el gancho de apertura de la Sesión 5.)
+(No la respondas hoy — es el gancho de apertura de la Sesión 6.)
 
 ---
 

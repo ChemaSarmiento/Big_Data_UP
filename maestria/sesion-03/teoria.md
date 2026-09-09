@@ -1,8 +1,8 @@
-# Teoría — Sesión 03: Spark Core avanzado
+# Teoría — Sesión 03: Spark Core avanzado I — Catalyst y shuffle
 
-> Hasta ahora Spark ha sido "la herramienta que procesa rápido". Hoy se abre la caja:
-> por qué es rápido, qué puede salir mal a escala, y cómo diagnosticarlo con evidencia
-> en vez de a prueba y error.
+> Primera de dos sesiones sobre el motor interno de Spark. Hoy: por qué Spark es
+> rápido y cómo leer lo que realmente va a ejecutar. La Sesión 4 retoma exactamente
+> este mismo par de notebooks para diagnosticar y resolver un caso real de skew.
 
 ## 1. Catalyst optimizer y Tungsten
 
@@ -22,8 +22,8 @@ Cuando escribes una transformación en Spark (`.filter()`, `.groupBy()`, una con
 
 Juntos explican por qué el mismo cálculo escrito con la DataFrame API o con SQL puro
 produce planes de ejecución equivalentes — ambos pasan por Catalyst. Verificarlo es
-justo el ejercicio de `recursos/spark/03_spark_sql.ipynb`: compara el plan de
-`02_dataframes.ipynb` (API) contra su versión en SQL.
+justo el ejercicio de hoy: compara el plan de `02_dataframes.ipynb` (API) contra su
+versión en `03_spark_sql.ipynb` (SQL).
 
 ## 2. Tipos de shuffle
 
@@ -39,20 +39,10 @@ Spark, y distinguir cuándo ocurre es la base del diagnóstico de performance:
 - **Shuffle por repartición explícita** (`.repartition()`, `.coalesce()` con
   `shuffle=True`): cuando tú mismo pides cambiar el número de particiones.
 
-## 3. Skew: causas y mitigación
+La Sesión 4 profundiza en qué hacer cuando uno de estos shuffles está desbalanceado
+(skew) — hoy el objetivo es solo reconocerlos con certeza en un plan de ejecución.
 
-**Skew** (desbalance) ocurre cuando una clave concentra muchas más filas que las
-demás — el trabajador que procesa esa clave se convierte en cuello de botella mientras
-el resto del cluster espera ocioso. Es la causa #1 de "mi job tarda 10x más de lo que
-debería" en producción.
-
-| Estrategia | Cómo funciona | Cuándo usarla |
-|---|---|---|
-| **Salting** | Se agrega un sufijo aleatorio a la clave sesgada antes del shuffle (ej. `"MXN"` → `"MXN_0"`, `"MXN_1"`, ...), repartiendo artificialmente esa clave entre más particiones, y se agrega en dos etapas | Cuando una sola clave (ej. una moneda dominante) concentra la mayoría de las filas |
-| **Broadcast join** | Si una de las dos tablas del join es pequeña (cabe en memoria de cada worker), se envía una copia completa a cada nodo en vez de hacer shuffle de ambas | Join entre una tabla grande y una tabla de catálogo/dimensión pequeña — el patrón más común en la práctica |
-| **AQE** (Adaptive Query Execution) | Spark re-optimiza el plan de ejecución *durante* la corrida, con estadísticas reales (no estimadas) — puede convertir un shuffle join en broadcast join sobre la marcha, o repartir automáticamente particiones desbalanceadas | Activado por default desde Spark 3.x (`spark.sql.adaptive.enabled`); reduce la necesidad de salting manual en muchos casos |
-
-## 4. Leer planes físicos con `.explain()`
+## 3. Leer planes físicos con `.explain()`
 
 `.explain(mode="formatted")` imprime el plan de ejecución real que Catalyst decidió —
 no lo que tú escribiste, sino cómo se va a ejecutar. Tres cosas a buscar:
@@ -65,9 +55,10 @@ no lo que tú escribiste, sino cómo se va a ejecutar. Tres cosas a buscar:
   (leyendo menos) o se aplicó después de leer todo.
 
 `recursos/spark/02_dataframes.ipynb` y `03_spark_sql.ipynb` imprimen exactamente esto
-antes de ejecutar — es la herramienta de diagnóstico central del lab de hoy: correr un
-job con skew, leer su plan, aplicar salting o broadcast join, y comparar el plan
-"antes" contra el "después".
+antes de ejecutar. El lab de hoy es puramente de lectura y diagnóstico — correr ambos
+notebooks, comparar sus planes lado a lado, y contar cuántos `Exchange` aparecen en
+cada uno. La Sesión 4 usa esta misma habilidad para resolver un caso donde el plan
+revela un problema real.
 
 ---
 
@@ -75,5 +66,4 @@ job con skew, leer su plan, aplicar salting o broadcast join, y comparar el plan
 
 - [Apache Spark — SQL, DataFrames and Datasets Guide (Catalyst)](https://spark.apache.org/docs/latest/sql-programming-guide.html)
 - [Databricks — Deep Dive into Spark SQL's Catalyst Optimizer](https://www.databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html)
-- [Apache Spark — Performance Tuning (shuffle, AQE)](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
-- [Databricks — Handling Data Skew in Apache Spark](https://www.databricks.com/blog/2020/12/16/managing-data-skew-in-apache-spark.html)
+- [Apache Spark — Performance Tuning (shuffle)](https://spark.apache.org/docs/latest/sql-performance-tuning.html)

@@ -4,76 +4,74 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 08 — Model serving, monitoreo y MLOps"
+title: "Sesión 08 — Data Lakes / Lakehouse II: transacciones y versionado"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 08: serving, drift (PSI), Airflow
+  Sesión 08: MERGE INTO, time travel, evolución de esquema, versionado
 ---
 
 # Sesión 08
-## Model serving, monitoreo y MLOps
+## Data Lakes / Lakehouse II
+### Transacciones y versionado
 
 <div class="pt-6 text-sm opacity-60">
-Un modelo que nadie puede consultar no sirve, y uno sin monitoreo se degrada sin que nadie note. Hoy se cierra el ciclo.
+La Sesión 7 dejó una tabla Iceberg lista — hoy se usan las tres operaciones que justifican que exista
 </div>
 
 ---
 
-# Tres patrones de serving
+# Lo que Iceberg SÍ puede hacer
 
-| Patrón | Latencia | Ejemplo en el curso |
-|---|---|---|
-| Batch | Minutos/horas, sin restricción por petición | — |
-| **Online (síncrono)** | &lt;1s por petición | `serve_fraude.py` — `POST /score` |
-| Streaming | Continuo, sin petición explícita | Sesión 7 |
+<div class="grid grid-cols-1 gap-2 mt-6 text-left">
 
-<div v-click class="mt-6 text-sm opacity-70">
-serve_fraude.py carga el PipelineModel en Spark local — un cluster completo tiene overhead de coordinación que lo hace mal candidato para responder 1 petición rápido
+- <code>MERGE INTO</code> — solo las filas afectadas, sin reescribir la tabla
+- Time travel — <code>SELECT * FROM tabla.snapshots</code>, consultar el pasado
+- <code>ALTER TABLE ADD COLUMN</code> — sin tocar nada existente
+
 </div>
 
 ---
 
-# Drift: el modelo se degrada sin que nadie lo note
+# MERGE INTO, en acción
 
-```mermaid {scale: 0.6}
-flowchart LR
-    T[Datos de entrenamiento] -.compara.-> R[Referencia]
-    P[Lote reciente de producción] -.compara.-> R
-    R --> PSI["PSI"]
-    PSI -->|"< 0.1"| OK[Sin drift relevante]
-    PSI -->|"0.1 - 0.25"| W[Vigilar]
-    PSI -->|"> 0.25"| RT[Reentrenar]
+```sql
+MERGE INTO local.curso_bigdata.transacciones_silver t
+USING correcciones c
+ON t.transaction_id = c.transaction_id
+WHEN MATCHED THEN UPDATE SET t.currency = c.currency
 ```
 
 <div v-click class="mt-4 text-sm opacity-70">
-monitor_drift.py — Population Stability Index sobre `amount`, 10 buckets de percentiles
+Internamente: Iceberg escribe SOLO archivos nuevos con las filas corregidas — no reescribe la tabla completa
 </div>
 
 ---
 
-# El DAG de MLOps
+# Time travel en acción
 
-```mermaid {scale: 0.55}
-flowchart TD
-    A[entrenamiento_y_features<br/>Dataproc] --> B[evaluar_metricas<br/>lee metrics.json]
-    B --> C{puerta_calidad<br/>AUC >= 0.75?}
-    C -->|sí| D[desplegar_modelo<br/>POST /reload]
-    C -->|no| E[no_desplegar]
+```sql {1-3|5-7}
+SELECT snapshot_id, committed_at, operation
+FROM local.curso_bigdata.transacciones_silver.snapshots
+ORDER BY committed_at;
+
+-- Consultar la tabla como estaba ANTES del MERGE
+SELECT * FROM local.curso_bigdata.transacciones_silver
+VERSION AS OF <snapshot_id>;
 ```
 
-<div v-click class="mt-4 text-sm opacity-70">
-mlops_pipeline_dag.py — reintentos automáticos, decisión condicional real, visibilidad de qué falló y dónde
+<div v-click class="mt-4 text-blue-500 font-bold">
+"¿Qué decía esta tabla el día que se tomó esta decisión?" — Parquet plano no puede responder esto
 </div>
 
 ---
 
-# Por qué esto no es solo "el script de siempre"
+# Versionar datos y modelos no es como versionar código
 
 <v-clicks>
 
-- `run_etl.py` (etl-tipo-cambio) es secuencial — si algo falla, hay que leer el log completo
-- Un DAG da dependencias explícitas + reintentos por tarea + una decisión condicional real
-- El trigger de reentrenamiento puede ser **drift**, no solo el schedule semanal
+- Datasets: **GB, no KB** — snapshots de Iceberg evitan duplicar lo que no cambió
+- Modelos: sin versionar el dataset + hiperparámetros, "¿con qué se entrenó esto?" es irrespondible en 6 meses
+- `04_pipeline_ml.ipynb` guarda el `PipelineModel` **completo** — feature engineering incluido, no solo el algoritmo
 
 </v-clicks>
 
@@ -81,12 +79,15 @@ mlops_pipeline_dag.py — reintentos automáticos, decisión condicional real, v
 
 # Lab de hoy
 
-1. Desplegar el endpoint (`serve_fraude.py`)
-2. Correr `monitor_drift.py` sobre los scores de la Sesión 7
-3. Desplegar el DAG en Airflow
+Retomar la tabla de la Sesión 7 y completar `06_lakehouse_iceberg.py`:
 
-<div class="mt-8 text-blue-500 font-bold">
-Entregable: DAG corriendo + endpoint respondiendo + corrida de monitoreo con PSI interpretado
+1. `MERGE INTO` — corrección simulada
+2. Consultar el snapshot anterior (time travel)
+3. `ALTER TABLE` — agregar columna sin romper nada
+4. Escribir la capa **gold** agregada
+
+<div class="mt-6 text-blue-500 font-bold">
+Entregable: diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones
 </div>
 
 ---
@@ -96,4 +97,4 @@ class: text-center
 
 # → Sesión 09
 
-Gobernanza, seguridad y capstone técnico
+Streaming I — windowing, watermarks, setup de Pub/Sub Lite

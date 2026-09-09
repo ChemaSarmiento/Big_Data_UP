@@ -73,7 +73,7 @@ localmente — ver `environment/gcp-setup.md` completo (no solo los primeros 3 p
   proyecto activo"; olvidar configurarlo es la causa #1 de "¿por qué mi cluster no
   aparece?" (se creó en otro proyecto sin que te dieras cuenta).
 - **IAM básico** — quién puede hacer qué. Roles como `roles/dataproc.editor` o
-  `roles/storage.objectViewer` son granulares a propósito: en la Sesión 9
+  `roles/storage.objectViewer` son granulares a propósito: en la Sesión 13
   (Gobernanza) vas a ver por qué "darle a todos rol de Owner" es exactamente el tipo
   de decisión que un pipeline de datos regulado (banca, salud) no se puede permitir.
 

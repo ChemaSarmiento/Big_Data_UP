@@ -4,17 +4,18 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 03 — Spark Core avanzado"
+title: "Sesión 03 — Spark Core avanzado I: Catalyst y shuffle"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 03: Catalyst, shuffle, skew, .explain()
+  Sesión 03: Catalyst, Tungsten, tipos de shuffle, .explain()
 ---
 
 # Sesión 03
-## Spark Core avanzado
+## Spark Core avanzado I
+### Catalyst y shuffle
 
 <div class="pt-6 text-sm opacity-60">
-Hoy se abre la caja: por qué Spark es rápido, y qué puede salir mal a escala
+Primera de dos sesiones sobre el motor interno de Spark — hoy: por qué es rápido, y cómo leer lo que va a ejecutar
 </div>
 
 ---
@@ -53,35 +54,8 @@ DataFrame API y SQL puro generan el mismo plan — ambos pasan por Catalyst
 Un shuffle mueve datos por la red entre máquinas — eso es lo que cuesta
 </div>
 
----
-
-# Skew: cuando una clave concentra el trabajo
-
-```mermaid {scale: 0.55}
-flowchart TD
-    W1[Worker 1: MXN<br/>2M filas] -->|tarda 10x más| Wait[Todos esperan]
-    W2[Worker 2: USD<br/>50K filas] --> Wait
-    W3[Worker 3: EUR<br/>30K filas] --> Wait
-```
-
-<div v-click class="mt-4">
-El resto del cluster termina y <b>espera ocioso</b> a que uno solo acabe
-</div>
-
----
-
-# Tres formas de mitigar skew
-
-<v-clicks>
-
-- **Salting** — sufijo aleatorio a la clave sesgada, repartiendo artificialmente
-- **Broadcast join** — la tabla pequeña se copia entera a cada worker, sin shuffle
-- **AQE** (Adaptive Query Execution) — Spark re-optimiza *durante* la corrida, con estadísticas reales
-
-</v-clicks>
-
-<div v-click class="mt-8 text-sm opacity-70">
-AQE está activado por default desde Spark 3.x — reduce la necesidad de salting manual
+<div v-click class="mt-6 text-sm opacity-70">
+La Sesión 4 profundiza en qué hacer cuando uno de estos shuffles está desbalanceado
 </div>
 
 ---
@@ -103,15 +77,12 @@ df.explain(mode="formatted")
 
 # Lab de hoy
 
-1. Diagnosticar un job con **skew severo** (dataset sintético desbalanceado)
-2. Comparar el plan de ejecución **antes** y **después** de la corrección
+1. Correr `02_dataframes.ipynb` (DataFrame API) y `03_spark_sql.ipynb` (SQL puro) sobre el mismo dataset
+2. Comparar ambos planes — confirmar que son equivalentes
+3. Identificar cada `Exchange` y qué operación lo generó
 
-<div class="mt-8 p-4 border-l-4 border-blue-500">
-recursos/spark/02_dataframes.ipynb y 03_spark_sql.ipynb ya imprimen el plan físico — úsalos como punto de partida
-</div>
-
-<div class="mt-6 text-blue-500 font-bold">
-Entregable: notebook con diagnóstico + solución + métricas de mejora
+<div class="mt-8 text-blue-500 font-bold">
+Entregable: capturas de los dos planes comparados + lista de shuffles identificados
 </div>
 
 ---
@@ -121,4 +92,4 @@ class: text-center
 
 # → Sesión 04
 
-Ingeniería de features a escala — Pipeline, Transformer, Estimator de MLlib
+Spark Core avanzado II — skew y diagnóstico completo

@@ -1,31 +1,31 @@
-# Sesión 07 — Streaming e inferencia en tiempo real
+# Sesión 07 — Data Lakes / Lakehouse I: formatos y medallion
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
 
 ## Índice
-1. Windowing y watermarks
-2. Exactly-once vs. at-least-once
-3. Patrones de scoring en tiempo real (modelo en el stream vs. llamada a un endpoint externo)
-4. Feature freshness
+1. Parquet vs. ORC vs. Avro
+2. Arquitectura medallion (bronze/silver/gold)
+3. Por qué Parquet plano en carpetas no es un lakehouse transaccional — introducción a Iceberg/Delta
 
 ## Lab
-Correr `producer_transacciones_stream.py` (publica `bank_transactions.csv` a Pub/Sub Lite, simulando llegada en tiempo real) y `07_streaming_scoring.py` (Structured Streaming, aplica el `PipelineModel` de la Sesión 4/5 y genera un score por transacción + un conteo de alertas por ventana de 1 minuto).
+Preparar el cluster con el runtime de Iceberg (propiedades del cluster, ver `recursos/lakehouse-iceberg/README.md`) y crear la primera tabla Iceberg: cargar `bank_transactions.csv` como bronze y escribirlo como tabla `silver` particionada — la primera mitad de `06_lakehouse_iceberg.py`, hasta el snapshot inicial (antes del `MERGE INTO`).
 
 ## Entregable
-Pipeline de streaming con inferencia funcionando end-to-end: captura de la consola con las ventanas de alertas actualizándose en vivo, y muestra del Parquet de scores generado.
+Tabla Iceberg creada y cargada + captura del primer snapshot (`SELECT * FROM tabla.snapshots`).
 
 ## Ejemplo / material de apoyo
-`recursos/streaming/07_streaming_scoring.py` — Structured Streaming real sobre Pub/Sub Lite (el conector oficial de Google para Spark; Pub/Sub estándar no tiene uno). `recursos/etl-cripto/` sigue siendo útil como puente conceptual antes de este lab: introduce, en batch, la idea de un segundo paso que depende de una decisión tomada por el paso anterior — la misma idea que aquí ocurre de forma continua, no una sola vez.
+`recursos/etl-tipo-cambio/` (bronze `data/raw/` → silver `data/processed/`) y `recursos/spark/05_data_cleansing.ipynb` siguen siendo la referencia de "medallion con Parquet plano" — el contraste directo contra lo que se arma hoy con Iceberg. La Sesión 8 retoma esta misma tabla para las operaciones transaccionales.
 
 ## Recursos vinculados
-- [`recursos/streaming/`](../../recursos/streaming/) — productor + consumidor de streaming real
-- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb) — el `PipelineModel` que este lab carga y aplica
-- [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md) — puente conceptual antes del lab
+- [`recursos/lakehouse-iceberg/`](../../recursos/lakehouse-iceberg/) — setup del cluster y primera carga
+- [`recursos/etl-tipo-cambio/`](../../recursos/etl-tipo-cambio/) — patrón bronze/silver/gold con Parquet plano, para contraste
+- [`recursos/spark/05_data_cleansing.ipynb`](../../recursos/spark/05_data_cleansing.ipynb) — bronze/silver a escala real (15 GB)
 
 ## Slides
 - **Deck nuevo:** [`slides_maestria/sesion-07.md`](../../slides_maestria/sesion-07.md) (Slidev) — `npx slidev sesion-07.md --open` desde `slides_maestria/`
-- `slides/03_casos_de_uso_arquitectura.pptx`
+- `slides/02_fuentes_y_manejo.pptx`
+- `slides/06_grandes_bases_de_datos.pptx`
 
 ## Checklist de la sesión
 - [ ] Contenido revisado

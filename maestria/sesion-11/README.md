@@ -1,0 +1,30 @@
+# Sesión 11 — Model serving y monitoreo
+
+> Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
+> Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
+
+## Índice
+1. Patrones de serving (batch, online, streaming)
+2. Monitoreo de drift de datos y de modelo
+
+## Lab
+Desplegar el modelo de la Sesión 6 como endpoint (`recursos/serving/serve_fraude.py`, FastAPI) y correr `monitor_drift.py` (Population Stability Index) sobre los scores que produce el streaming de la Sesión 10.
+
+## Entregable
+Endpoint de modelo respondiendo a `POST /score` + una corrida de `monitor_drift.py` con su PSI interpretado.
+
+## Ejemplo / material de apoyo
+`recursos/serving/serve_fraude.py` — endpoint FastAPI que carga el `PipelineModel` de la Sesión 5/6 en una SparkSession local. `recursos/serving/monitor_drift.py` — PSI sobre `amount`, comparando el set de entrenamiento contra un lote reciente de producción.
+
+## Recursos vinculados
+- [`recursos/serving/`](../../recursos/serving/) — endpoint de modelo + monitoreo de drift (PSI)
+- [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb) — el modelo que este endpoint sirve
+
+## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-11.md`](../../slides_maestria/sesion-11.md) (Slidev) — `npx slidev sesion-11.md --open` desde `slides_maestria/`
+- `slides/06_grandes_bases_de_datos.pptx`
+
+## Checklist de la sesión
+- [ ] Contenido revisado
+- [ ] Actividad completada
+- [ ] Entregable subido (si aplica)
