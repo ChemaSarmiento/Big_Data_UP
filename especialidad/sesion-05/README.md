@@ -21,6 +21,7 @@ Diagrama del flujo armado + captura del resultado, incluyendo la captura del das
 - [`recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb`](../../recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb) — celda `create_dashboard()`, para mostrar el consumo final del dato
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

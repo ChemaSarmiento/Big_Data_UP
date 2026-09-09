@@ -22,6 +22,7 @@ Framework aplicado al caso ficticio.
 - [`environment/gcp-setup.md`](../../environment/gcp-setup.md) — sección de presupuesto y alertas
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/03_casos_de_uso_arquitectura.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

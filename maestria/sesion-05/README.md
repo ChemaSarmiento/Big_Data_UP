@@ -22,6 +22,7 @@ Extender `recursos/spark/04_pipeline_ml.ipynb`: ya entrena una `LogisticRegressi
 - [`recursos/managed-spark-cluster/hugging_face_deps.sh`](../../recursos/managed-spark-cluster/hugging_face_deps.sh) — si el modelo elegido requiere transformers/torch
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-05.md`](../../slides_maestria/sesion-05.md) (Slidev) — `npx slidev sesion-05.md --open` desde `slides_maestria/`
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

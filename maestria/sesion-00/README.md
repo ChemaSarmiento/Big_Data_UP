@@ -28,6 +28,7 @@ El curso usa `bank_transactions.csv` como dataset transversal en las Sesiones 2-
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — catálogo de datasets reales (≥15GB)
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-00.md`](../../slides_maestria/sesion-00.md) (Slidev) — `npx slidev sesion-00.md --open` desde `slides_maestria/`
 - `slides/04_python_fasttrack.pptx`
 - `slides/05_sql_fasttrack.pptx`
 

@@ -27,6 +27,7 @@ No hay que decidirlo hoy, pero conviene tenerlo en mente desde la primera sesió
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — catálogo de datasets reales, Sección 5 (asignación por perfil)
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/04_python_fasttrack.pptx`
 - `slides/05_sql_fasttrack.pptx`
 

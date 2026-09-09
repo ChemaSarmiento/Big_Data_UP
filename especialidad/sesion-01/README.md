@@ -21,6 +21,7 @@ Caso de discusión: "Un banco quiere saber cuántas transacciones tuvo cada sucu
 - [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md) — diagrama de referencia (solo para mostrar, no para correr)
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/01_introduccion.pptx`
 - `slides/03_casos_de_uso_arquitectura.pptx`
 

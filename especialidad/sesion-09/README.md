@@ -29,7 +29,7 @@ Usar la tabla de criterios de evaluación de `PROGRAMA.md` (Sección 5) como rú
 - [`recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb`](../../recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb) — referencia de visualización si el equipo no usó Looker Studio
 
 ## Slides
-
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 
 ## Checklist de la sesión
 - [ ] Contenido revisado

@@ -21,6 +21,7 @@ Ninguno formal; quiz corto de conceptos.
 - [`recursos/spark/01_rdd_basico.ipynb`](../../recursos/spark/01_rdd_basico.ipynb) — para que el facilitador lo corra en vivo
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

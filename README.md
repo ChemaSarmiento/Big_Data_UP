@@ -32,14 +32,31 @@ big-data-course/
 │   ├── datasets/                 # Datasets reales (BigQuery, Kaggle, CDMX, FRED) + generador sintético
 │   ├── etl-tipo-cambio/          # Ejercicio de ETL: API pública -> Python -> MariaDB (+ versión Colab)
 │   └── etl-cripto/               # Segundo ETL: enriquecimiento en 2 rondas E-T, carga en 4 tablas
-├── slides/                       # Las 7 presentaciones del curso, mapeadas a sesiones
+├── slides/                       # Las 7 presentaciones originales (.pptx), mapeadas a sesiones
+├── slides_maestria/              # Decks nuevos de Maestría (Slidev) — uno por sesión, código+diagramas en vivo
 ├── especialidad/
 │   ├── PROGRAMA.md
-│   └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + slides)
+│   └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + teoria.md + slides.md)
 └── maestria/
     ├── PROGRAMA.md
-    └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + slides)
+    └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + teoria.md)
 ```
+
+## Teoría y presentaciones por sesión
+
+Cada `sesion-XX/` tiene, además del README:
+
+- **`teoria.md`** — explicación en prosa de cada punto del índice, con analogías
+  (Especialidad) o profundidad técnica (Maestría), tablas comparativas, código
+  donde aplica, y una sección de Referencias con fuentes reales.
+- **Slides** — Especialidad usa [Marp](https://marp.app/) (`sesion-XX/slides.md`,
+  un archivo autocontenido, sin instalación — `npx @marp-team/marp-cli`);
+  Maestría usa [Slidev](https://sli.dev) (`slides_maestria/sesion-XX.md`, con
+  diagramas Mermaid y bloques de código resaltado en vivo — ver
+  [`slides_maestria/README.md`](slides_maestria/README.md) para setup y
+  exportación a PDF/PPTX). Ambos siguen los principios de Cole Nussbaumer
+  Knaflic (*Storytelling with Data*): título = conclusión, un solo acento de
+  color, nunca pie charts, etiqueta directa en vez de leyenda.
 
 ## Cómo usar este repo
 

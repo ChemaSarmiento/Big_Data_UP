@@ -21,6 +21,7 @@ Versión simplificada de `recursos/spark/02_dataframes.ipynb`: quitar las celdas
 - [`recursos/spark/02_dataframes.ipynb`](../../recursos/spark/02_dataframes.ipynb) — usar como base para la versión simplificada
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

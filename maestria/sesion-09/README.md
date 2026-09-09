@@ -25,6 +25,7 @@ Documento + presentación con la estructura institucional completa (resumen ejec
 - [`recursos/spark/04_pipeline_ml.ipynb`](../../recursos/spark/04_pipeline_ml.ipynb) — `metrics.json`, base para la comparación antes/después
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-09.md`](../../slides_maestria/sesion-09.md) (Slidev) — `npx slidev sesion-09.md --open` desde `slides_maestria/`
 - `slides/03_casos_de_uso_arquitectura.pptx`
 
 ## Checklist de la sesión

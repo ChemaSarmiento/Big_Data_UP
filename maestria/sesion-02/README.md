@@ -24,6 +24,7 @@ Reporte de optimización (antes/después) con evidencia de costo, incluyendo **u
 - [`recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb`](../../recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb) — referencia de estilo para la gráfica antes/después
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-02.md`](../../slides_maestria/sesion-02.md) (Slidev) — `npx slidev sesion-02.md --open` desde `slides_maestria/`
 - `slides/05_sql_fasttrack.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

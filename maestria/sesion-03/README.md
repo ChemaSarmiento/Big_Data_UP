@@ -23,6 +23,7 @@ Notebook con el diagnóstico y la solución aplicada, con métricas de mejora.
 - [`recursos/spark/03_spark_sql.ipynb`](../../recursos/spark/03_spark_sql.ipynb)
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-03.md`](../../slides_maestria/sesion-03.md) (Slidev) — `npx slidev sesion-03.md --open` desde `slides_maestria/`
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

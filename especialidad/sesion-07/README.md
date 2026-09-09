@@ -20,6 +20,7 @@ Ninguno formal.
 - [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md)
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/03_casos_de_uso_arquitectura.pptx`
 
 ## Checklist de la sesión

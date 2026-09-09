@@ -24,6 +24,7 @@ DAG de MLOps corriendo en Airflow (captura del grafo con las tareas en verde) + 
 - [`environment/gcp-setup.md`](../../environment/gcp-setup.md) — nota sobre Cloud Composer vs. Airflow standalone
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-08.md`](../../slides_maestria/sesion-08.md) (Slidev) — `npx slidev sesion-08.md --open` desde `slides_maestria/`
 - `slides/06_grandes_bases_de_datos.pptx`
 
 ## Checklist de la sesión

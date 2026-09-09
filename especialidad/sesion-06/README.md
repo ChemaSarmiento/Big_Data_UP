@@ -21,6 +21,7 @@ Ninguno formal.
 - [`recursos/etl-tipo-cambio/README.md`](../../recursos/etl-tipo-cambio/README.md) — sección de arquitectura bronze/silver/gold
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

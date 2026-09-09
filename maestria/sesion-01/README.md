@@ -23,6 +23,7 @@ Benchmark propio (tiempos, uso de memoria) MapReduce vs Spark.
 - [`recursos/managed-spark-cluster/`](../../recursos/managed-spark-cluster/) — comandos de creación de cluster
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-01.md`](../../slides_maestria/sesion-01.md) (Slidev) — `npx slidev sesion-01.md --open` desde `slides_maestria/`
 - `slides/01_introduccion.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

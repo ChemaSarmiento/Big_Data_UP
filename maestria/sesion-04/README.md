@@ -22,6 +22,7 @@ Pipeline de features serializado y reproducible.
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — Credit Card Fraud / Home Credit Default Risk
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-04.md`](../../slides_maestria/sesion-04.md) (Slidev) — `npx slidev sesion-04.md --open` desde `slides_maestria/`
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

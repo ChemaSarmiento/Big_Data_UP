@@ -25,6 +25,7 @@ Diagrama de arquitectura + pipeline versionado + capturas de las tres demostraci
 - [`recursos/hive/hive-queries.sql`](../../recursos/hive/hive-queries.sql) — tabla particionada (Sección 3.2)
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-06.md`](../../slides_maestria/sesion-06.md) (Slidev) — `npx slidev sesion-06.md --open` desde `slides_maestria/`
 - `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

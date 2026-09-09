@@ -24,6 +24,7 @@ Pipeline de streaming con inferencia funcionando end-to-end: captura de la conso
 - [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md) — puente conceptual antes del lab
 
 ## Slides
+- **Deck nuevo:** [`slides_maestria/sesion-07.md`](../../slides_maestria/sesion-07.md) (Slidev) — `npx slidev sesion-07.md --open` desde `slides_maestria/`
 - `slides/03_casos_de_uso_arquitectura.pptx`
 
 ## Checklist de la sesión

@@ -23,6 +23,7 @@ Las consultas completadas + interpretación en una frase de qué responde cada u
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — dataset de NYC Taxi en BigQuery
 
 ## Slides
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
 - `slides/05_sql_fasttrack.pptx`
 
 ## Checklist de la sesión
