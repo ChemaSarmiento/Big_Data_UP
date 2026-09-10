@@ -2,6 +2,7 @@
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
+> Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
 1. Linux esencial: qué es una terminal, navegación básica (analogía a un explorador de archivos)

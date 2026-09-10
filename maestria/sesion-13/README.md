@@ -2,13 +2,14 @@
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
+> Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
 1. IAM a nivel dataset/tabla
 2. Data Catalog, linaje de datos y de modelos
 3. Cumplimiento en contextos regulados (banca/finanzas)
 4. FinOps de un pipeline de ML a escala
-5. Presentación del capstone técnico (20 min c/u)
+5. Presentación del capstone técnico (máx. 15 min c/u)
 
 ## Actividad principal
 Presentación del capstone técnico (máx. 15 min c/u): pipeline completo ingesta → features → entrenamiento → serving, con al menos un componente de streaming u orquestación, visualizaciones de los resultados y evidencia de pruebas.

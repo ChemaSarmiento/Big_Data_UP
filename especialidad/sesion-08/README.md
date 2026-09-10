@@ -2,6 +2,7 @@
 
 > Programa completo (evaluación, notas de facilitación): [`PROGRAMA.md`](../PROGRAMA.md)
 > Teoría con explicaciones y referencias: [`teoria.md`](teoria.md)
+> Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
 1. Cómo se cobra la nube (por uso, por hora, por almacenamiento)
