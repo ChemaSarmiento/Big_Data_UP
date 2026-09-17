@@ -38,18 +38,13 @@ preparando datos para que un modelo los pueda usar.
 
 ```mermaid {scale: 0.55}
 flowchart LR
+    subgraph Pipeline
+    direction LR
     A[Imputer] --> B[StringIndexer]
     B --> C[OneHotEncoder]
     C --> D[VectorAssembler]
     D --> E[StandardScaler]
     E --> F[LogisticRegression]
-    subgraph Pipeline
-    A
-    B
-    C
-    D
-    E
-    F
     end
 ```
 

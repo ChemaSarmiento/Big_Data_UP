@@ -32,15 +32,21 @@ Tres decisiones de diseño explican su comportamiento:
 
 </v-clicks>
 
-```mermaid {scale: 0.55}
-flowchart LR
-    subgraph Fila["Tradicional (por fila)"]
-    F1["id, nombre, monto, fecha..."]
-    end
-    subgraph Columna["BigQuery (columnar)"]
-    C1[id] ~~~ C2[nombre] ~~~ C3[monto] ~~~ C4[fecha]
-    end
-```
+<div class="grid grid-cols-2 gap-6 mt-4">
+<div>
+<div class="text-sm font-bold opacity-70 mb-2">Tradicional (por fila)</div>
+<div class="p-3 border rounded bg-gray-500/10 text-sm">id, nombre, monto, fecha...</div>
+</div>
+<div>
+<div class="text-sm font-bold opacity-70 mb-2">BigQuery (columnar)</div>
+<div class="flex gap-2">
+<div class="p-3 border rounded bg-yellow-500/10 text-sm">id</div>
+<div class="p-3 border rounded bg-yellow-500/10 text-sm">nombre</div>
+<div class="p-3 border rounded bg-yellow-500/10 text-sm">monto</div>
+<div class="p-3 border rounded bg-yellow-500/10 text-sm">fecha</div>
+</div>
+</div>
+</div>
 
 <div v-click class="mt-4 text-xl">
 <code>SELECT *</code> cuesta como si necesitaras todas las columnas — aunque uses 3 de 50
