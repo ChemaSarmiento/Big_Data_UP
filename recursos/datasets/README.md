@@ -115,6 +115,13 @@ datasets de práctica pequeños:
 - **FRED**, **S&P 500 histórico** (Kaggle), **Open Banking Tracker** (GitHub) — datos
   macro/mercado para variar el caso de negocio en Especialidad.
 
+Todas estas son datasets estáticos, ya sentados en BigQuery o descargables de un jalón —
+ninguna requiere diseñar una ingesta real. Si lo que se quiere practicar es justo esa
+etapa (llamar APIs en vivo, manejar auth, streaming, polling), ver
+[`recursos/proyecto-5vs/`](../proyecto-5vs/README.md) — combina GDELT, Wikipedia
+EventStreams, USGS, OpenAQ y tipo de cambio/cripto para demostrar cada una de las 5 V's
+con una fuente real y gratuita.
+
 ## 8. Generador sintético (solo si nada de lo anterior está disponible)
 
 ```python
