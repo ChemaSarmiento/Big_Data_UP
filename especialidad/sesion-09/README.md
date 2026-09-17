@@ -30,7 +30,14 @@ Usar la tabla de criterios de evaluación de `PROGRAMA.md` (Sección 5) como rú
 - [`recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb`](../../recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb) — referencia de visualización si el equipo no usó Looker Studio
 
 ## Slides
-- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp)
+
+**Cómo presentar** (desde esta carpeta):
+```bash
+npx @marp-team/marp-cli slides.md -o slides.html   # exporta y abre slides.html en el navegador
+```
+Pantalla completa: F11 en el navegador. Flechas ←/→ para navegar entre slides.
+Alternativa en PDF (modo presentación del lector): `npx @marp-team/marp-cli slides.md -o slides.pdf`.
 
 ## Checklist de la sesión
 - [ ] Contenido revisado

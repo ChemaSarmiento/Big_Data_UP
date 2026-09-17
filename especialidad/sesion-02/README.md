@@ -22,7 +22,16 @@ Ninguno formal; quiz corto de conceptos.
 - [`recursos/spark/01_rdd_basico.ipynb`](../../recursos/spark/01_rdd_basico.ipynb) — para que el facilitador lo corra en vivo
 
 ## Slides
-- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp)
+
+**Cómo presentar** (desde esta carpeta):
+```bash
+npx @marp-team/marp-cli slides.md -o slides.html   # exporta y abre slides.html en el navegador
+```
+Pantalla completa: F11 en el navegador. Flechas ←/→ para navegar entre slides.
+Alternativa en PDF (modo presentación del lector): `npx @marp-team/marp-cli slides.md -o slides.pdf`.
+
+Material de apoyo (pptx original):
 - `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

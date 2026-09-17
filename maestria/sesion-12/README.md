@@ -23,7 +23,13 @@ DAG de MLOps corriendo en Airflow (captura del grafo con las tareas en verde), c
 - [`environment/gcp-setup.md`](../../environment/gcp-setup.md) — nota sobre Cloud Composer vs. Airflow standalone
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-12.md`](../../slides_maestria/sesion-12.md) (Slidev) — `npx slidev sesion-12.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-12.md`](../../slides_maestria/sesion-12.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-12.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/06_grandes_bases_de_datos.pptx`
 
 ## Checklist de la sesión

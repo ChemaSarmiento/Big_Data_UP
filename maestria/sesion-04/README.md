@@ -23,7 +23,13 @@ Mismo par de notebooks de la Sesión 3, ahora extendidos con un dataset desbalan
 - [`recursos/spark/03_spark_sql.ipynb`](../../recursos/spark/03_spark_sql.ipynb)
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-04.md`](../../slides_maestria/sesion-04.md) (Slidev) — `npx slidev sesion-04.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-04.md`](../../slides_maestria/sesion-04.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-04.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

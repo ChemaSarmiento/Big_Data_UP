@@ -23,7 +23,13 @@ Pipeline de features serializado y reproducible.
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — Credit Card Fraud / Home Credit Default Risk
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-05.md`](../../slides_maestria/sesion-05.md) (Slidev) — `npx slidev sesion-05.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-05.md`](../../slides_maestria/sesion-05.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-05.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

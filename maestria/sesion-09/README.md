@@ -23,7 +23,13 @@ Captura de las ventanas de conteo actualizándose en consola + confirmación de 
 - [`recursos/etl-cripto/FLUJO.md`](../../recursos/etl-cripto/FLUJO.md) — puente conceptual desde batch
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-09.md`](../../slides_maestria/sesion-09.md) (Slidev) — `npx slidev sesion-09.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-09.md`](../../slides_maestria/sesion-09.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-09.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/03_casos_de_uso_arquitectura.pptx`
 
 ## Checklist de la sesión

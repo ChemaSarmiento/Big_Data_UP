@@ -28,7 +28,16 @@ No hay que decidirlo hoy, pero conviene tenerlo en mente desde la primera sesió
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — catálogo de datasets reales, Sección 5 (asignación por perfil)
 
 ## Slides
-- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp)
+
+**Cómo presentar** (desde esta carpeta):
+```bash
+npx @marp-team/marp-cli slides.md -o slides.html   # exporta y abre slides.html en el navegador
+```
+Pantalla completa: F11 en el navegador. Flechas ←/→ para navegar entre slides.
+Alternativa en PDF (modo presentación del lector): `npx @marp-team/marp-cli slides.md -o slides.pdf`.
+
+Material de apoyo (pptx original):
 - `slides/04_python_fasttrack.pptx`
 - `slides/05_sql_fasttrack.pptx`
 

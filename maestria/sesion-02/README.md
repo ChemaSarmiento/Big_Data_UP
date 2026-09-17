@@ -25,7 +25,13 @@ Reporte de optimización (antes/después) con evidencia de costo, incluyendo **u
 - [`recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb`](../../recursos/etl-cripto/ETL_Crypto_Dash_mejorado.ipynb) — referencia de estilo para la gráfica antes/después
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-02.md`](../../slides_maestria/sesion-02.md) (Slidev) — `npx slidev sesion-02.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-02.md`](../../slides_maestria/sesion-02.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-02.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/05_sql_fasttrack.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

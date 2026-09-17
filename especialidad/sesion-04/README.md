@@ -22,7 +22,16 @@ Versión simplificada de `recursos/spark/02_dataframes.ipynb`: quitar las celdas
 - [`recursos/spark/02_dataframes.ipynb`](../../recursos/spark/02_dataframes.ipynb) — usar como base para la versión simplificada
 
 ## Slides
-- **Deck nuevo:** [`slides.md`](slides.md) (Marp) — `npx @marp-team/marp-cli slides.md -o out.pdf`
+- **Deck nuevo:** [`slides.md`](slides.md) (Marp)
+
+**Cómo presentar** (desde esta carpeta):
+```bash
+npx @marp-team/marp-cli slides.md -o slides.html   # exporta y abre slides.html en el navegador
+```
+Pantalla completa: F11 en el navegador. Flechas ←/→ para navegar entre slides.
+Alternativa en PDF (modo presentación del lector): `npx @marp-team/marp-cli slides.md -o slides.pdf`.
+
+Material de apoyo (pptx original):
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

@@ -24,7 +24,13 @@ Benchmark propio (tiempos, uso de memoria) MapReduce vs Spark.
 - [`recursos/managed-spark-cluster/`](../../recursos/managed-spark-cluster/) — comandos de creación de cluster
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-01.md`](../../slides_maestria/sesion-01.md) (Slidev) — `npx slidev sesion-01.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-01.md`](../../slides_maestria/sesion-01.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-01.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/01_introduccion.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

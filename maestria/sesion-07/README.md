@@ -24,7 +24,13 @@ Tabla Iceberg creada y cargada + captura del primer snapshot (`SELECT * FROM tab
 - [`recursos/spark/05_data_cleansing.ipynb`](../../recursos/spark/05_data_cleansing.ipynb) — bronze/silver a escala real (15 GB)
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-07.md`](../../slides_maestria/sesion-07.md) (Slidev) — `npx slidev sesion-07.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-07.md`](../../slides_maestria/sesion-07.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-07.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/02_fuentes_y_manejo.pptx`
 - `slides/06_grandes_bases_de_datos.pptx`
 

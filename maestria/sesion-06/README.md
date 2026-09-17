@@ -23,7 +23,13 @@ Extender `recursos/spark/04_pipeline_ml.ipynb`: ya entrena una `LogisticRegressi
 - [`recursos/managed-spark-cluster/hugging_face_deps.sh`](../../recursos/managed-spark-cluster/hugging_face_deps.sh) — si el modelo elegido requiere transformers/torch
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-06.md`](../../slides_maestria/sesion-06.md) (Slidev) — `npx slidev sesion-06.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-06.md`](../../slides_maestria/sesion-06.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-06.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/07_spark_explained.pptx`
 
 ## Checklist de la sesión

@@ -29,7 +29,13 @@ El curso usa `bank_transactions.csv` como dataset transversal en las Sesiones 2-
 - [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — catálogo de datasets reales (≥15GB)
 
 ## Slides
-- **Deck nuevo:** [`slides_maestria/sesion-00.md`](../../slides_maestria/sesion-00.md) (Slidev) — `npx slidev sesion-00.md --open` desde `slides_maestria/`
+- **Deck nuevo:** [`slides_maestria/sesion-00.md`](../../slides_maestria/sesion-00.md) (Slidev)
+
+**Cómo presentar** (desde `slides_maestria/`, `npm install` una sola vez):
+```bash
+npx slidev sesion-00.md --open
+```
+Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incluye los `v-click`), `f` pantalla completa, `o` vista de overview. Atajos completos y export a PDF/PPTX: [`slides_maestria/README.md`](../../slides_maestria/README.md).
 - `slides/04_python_fasttrack.pptx`
 - `slides/05_sql_fasttrack.pptx`
 
