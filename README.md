@@ -31,14 +31,17 @@ big-data-course/
 │   ├── sql-practica/             # SQL de nivelación sobre la base "test_db" de empleados
 │   ├── datasets/                 # Datasets reales (BigQuery, Kaggle, CDMX, FRED) + generador sintético
 │   ├── etl-tipo-cambio/          # Ejercicio de ETL: API pública -> Python -> MariaDB (+ versión Colab)
-│   └── etl-cripto/               # Segundo ETL: enriquecimiento en 2 rondas E-T, carga en 4 tablas
+│   ├── etl-cripto/               # Segundo ETL: enriquecimiento en 2 rondas E-T, carga en 4 tablas
+│   └── proyecto-ejemplo/         # Proyecto final imaginado de punta a punta (ambos tracks), datos reales de PROFECO
 ├── slides/                       # Las 7 presentaciones originales (.pptx), mapeadas a sesiones
 ├── slides_maestria/              # Decks nuevos de Maestría (Slidev) — uno por sesión, código+diagramas en vivo
 ├── especialidad/
 │   ├── PROGRAMA.md
+│   ├── TEMARIO.md                # Temas y subtemas por sesión
 │   └── sesion-00 ... sesion-09/  # Cada una con README (índice + ejemplo + recursos + teoria.md + slides.md)
 └── maestria/
     ├── PROGRAMA.md
+    ├── TEMARIO.md                # Temas y subtemas por sesión
     └── sesion-00 ... sesion-13/  # Cada una con README (índice + ejemplo + recursos + teoria.md) — 13 sesiones, no 9 (ver Sección "Teoría y presentaciones")
 ```
 

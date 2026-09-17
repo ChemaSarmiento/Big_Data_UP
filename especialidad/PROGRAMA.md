@@ -1,5 +1,6 @@
 # Programa: Big Data — Track Especialidad
 ### 9 sesiones · 3 horas/semana · 27 horas totales · Entorno: GCP (free tier)
+> Desglose de temas y subtemas: [`TEMARIO.md`](TEMARIO.md) · Ejemplo completo de proyecto final: [`recursos/proyecto-ejemplo/`](../recursos/proyecto-ejemplo/)
 
 **Perfil de entrada:** perfiles diversos (negocio, producto, riesgo, actuaría, ingeniería no-software, etc.) que buscan especializarse. El interés es principalmente **ejecutivo/estratégico**: entender qué es posible, cuándo tiene sentido invertir en Big Data, cómo se ve un proyecto de datos por dentro y cómo evaluarlo — no formar ingenieros de datos.
 

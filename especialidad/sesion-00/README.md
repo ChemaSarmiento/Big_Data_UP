@@ -20,7 +20,7 @@ Ninguno formal.
 `recursos/sql-practica/employee_db_queries.sql` — las primeras 3-4 consultas (exploración básica, sin joins todavía) son un buen punto de entrada: se leen y se corren, no hace falta escribirlas desde cero.
 
 ## Mirando hacia el proyecto final
-No hay que decidirlo hoy, pero conviene tenerlo en mente desde la primera sesión: el proyecto final pide una pregunta de negocio específica respondida con datos reales (≥15GB, procesamiento y visualizaciones). [`recursos/datasets/README.md`](../../recursos/datasets/README.md), Sección 5, sugiere una asignación de dataset por sector (retail, banca/riesgo, ciberseguridad) — es un buen punto de partida para ir pensando en qué pregunta de tu propia industria te gustaría contestar para la Sesión 9.
+No hay que decidirlo hoy, pero conviene tenerlo en mente desde la primera sesión: el proyecto final pide una pregunta de negocio específica respondida con datos reales (≥15GB, procesamiento y visualizaciones). [`recursos/datasets/README.md`](../../recursos/datasets/README.md), Sección 5, sugiere una asignación de dataset por sector (retail, banca/riesgo, ciberseguridad) — es un buen punto de partida para ir pensando en qué pregunta de tu propia industria te gustaría contestar para la Sesión 9. [`recursos/proyecto-ejemplo/`](../../recursos/proyecto-ejemplo/) desarrolla un proyecto completo de principio a fin (detección de alzas de precio con datos reales de PROFECO) — úsalo como referencia de a qué se debería parecer el tuyo, no para copiarlo.
 
 ## Recursos vinculados
 - [`recursos/sql-practica/`](../../recursos/sql-practica/) — SQL de nivelación

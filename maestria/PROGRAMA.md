@@ -1,5 +1,6 @@
 # Programa: Big Data — Track Maestría en Ciencia de Datos
 ### 13 sesiones · 3 horas/semana · 39 horas totales · Entorno: GCP (free tier)
+> Desglose de temas y subtemas: [`TEMARIO.md`](TEMARIO.md) · Ejemplo completo de proyecto final: [`recursos/proyecto-ejemplo/`](../recursos/proyecto-ejemplo/)
 
 **Perfil de entrada:** estudiantes de maestría en ciencia de datos. Se asume dominio funcional de Python, SQL y estadística/ML "single-node" (pandas, scikit-learn). Linux/GCP básico se nivela como **prerequisito obligatorio** (Módulo 0), no dentro de las 39 horas de clase — aquí el tiempo se invierte en profundidad técnica, no en alfabetización.
 
