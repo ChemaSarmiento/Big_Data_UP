@@ -95,15 +95,58 @@ El ejercicio de hoy resuelve "a mano" con salting explícito — para entender q
 
 # Lab de hoy
 
-1. Diagnosticar un job con **skew severo** (dataset sintético desbalanceado)
-2. Comparar el plan de ejecución **antes** y **después** de la corrección
+Mismo par de notebooks de la Sesión 3 (`02_dataframes.ipynb`,
+`03_spark_sql.ipynb`) — ahora con un caso real de skew sobre
+`bank_transactions.csv`
 
-<div class="mt-8 p-4 border-l-4 border-blue-500">
-recursos/spark/02_dataframes.ipynb y 03_spark_sql.ipynb — mismo par de la Sesión 3, ahora con un caso real de skew
+---
+
+# Paso 1 — Reproducir el skew
+
+```python
+df = spark.read.csv(RUTA_BANK_TRANSACTIONS, header=True, inferSchema=True)
+df.groupBy("currency").count().show()  # confirmar el desbalance real
+```
+
+```python
+resumen = df.groupBy("currency").agg(F.sum("amount"))
+resumen.explain(mode="formatted")  # capturar el plan ANTES de corregir
+```
+
+<div class="mt-4 text-sm opacity-70">
+<b>Deberías ver:</b> una moneda con órdenes de magnitud más filas que las demás
 </div>
 
+---
+
+# Paso 2 — Aplicar salting
+
+```python
+df_salado = df.withColumn("salt", (F.rand() * 10).cast("int"))
+resumen_parcial = df_salado.groupBy("currency", "salt").agg(F.sum("amount").alias("suma_parcial"))
+resumen_final = resumen_parcial.groupBy("currency").agg(F.sum("suma_parcial").alias("suma_total"))
+resumen_final.explain(mode="formatted")  # capturar el plan DESPUÉS
+```
+
+<div class="mt-4 text-sm opacity-70">
+<b>Si no ves mejora:</b> confirma el skew real con <code>df.rdd.glom().map(len).collect()</code> antes de asumir que salting no funcionó
+</div>
+
+---
+
+# Paso 3 — Comparar con broadcast join
+
+```python
+from pyspark.sql.functions import broadcast
+resultado = df.join(broadcast(df_catalogo), "currency")
+```
+
 <div class="mt-6 text-blue-500 font-bold">
-Entregable: notebook con diagnóstico + solución + métricas de mejora
+¿Cuándo elegirías salting sobre broadcast join, si ambos resuelven skew?
+</div>
+
+<div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
+Entregable: notebook con diagnóstico + solución aplicada + métricas de mejora (plan antes/después + tiempos)
 </div>
 
 ---
