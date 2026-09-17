@@ -31,42 +31,10 @@ class: text-center
 
 ---
 
-# Las 5 V's de Big Data
+<img src="/infograficos/5vs.png" class="w-full rounded-lg shadow-md" />
 
-<div class="grid grid-cols-5 gap-3 mt-8">
-<div class="text-center">
-<div class="text-4xl">📊</div>
-<div class="font-bold mt-2">Volumen</div>
-<div class="text-xs opacity-70 mt-1">Magnitud masiva — hoy, en petabytes</div>
-</div>
-<div class="text-center">
-<div class="text-4xl">⚡</div>
-<div class="font-bold mt-2">Velocidad</div>
-<div class="text-xs opacity-70 mt-1">Tiempo real, casi real, o por lotes</div>
-</div>
-<div class="text-center">
-<div class="text-4xl">🧩</div>
-<div class="font-bold mt-2">Variedad</div>
-<div class="text-xs opacity-70 mt-1">Estructurado, semi, no estructurado</div>
-</div>
-<div class="text-center">
-<div class="text-4xl">✅</div>
-<div class="font-bold mt-2">Veracidad</div>
-<div class="text-xs opacity-70 mt-1">¿Podemos confiar en el dato?</div>
-</div>
-<div class="text-center">
-<div class="text-4xl">💎</div>
-<div class="font-bold mt-2">Valor</div>
-<div class="text-xs opacity-70 mt-1">Decisiones accionables, ROI real</div>
-</div>
-</div>
-
-<div class="mt-10 text-sm opacity-70">
-1 Petabyte = 1,000,000,000,000,000 bytes — 1024 Terabytes
-</div>
-
-<div class="mt-2 text-xs opacity-40">
-→ Cada V, a detalle, en las siguientes slides · infográfico completo en slides/infograficos/infografico_5vs.pptx
+<div class="mt-1 text-xs opacity-60">
+1 PB = 1024 TB · cada V, a detalle, en las siguientes slides
 </div>
 
 ---
@@ -450,30 +418,7 @@ flowchart LR
 
 ---
 
-# Anatomía de un producto de datos
-
-<div class="grid grid-cols-4 gap-3 mt-8 text-center text-sm">
-<div class="p-3 border rounded"><div class="text-2xl">🗄️</div><b>Datos crudos</b><br/><span class="opacity-70">Transacciones, clics, sensores</span></div>
-<div class="p-3 border rounded"><div class="text-2xl">🧠</div><b>Modelo</b><br/><span class="opacity-70">Aprende patrones históricos</span></div>
-<div class="p-3 border rounded bg-blue-500/10"><div class="text-2xl">📦</div><b>Producto de datos</b><br/><span class="opacity-70">Predicción, score, recomendación</span></div>
-<div class="p-3 border rounded"><div class="text-2xl">👉</div><b>Decisión</b><br/><span class="opacity-70">El usuario actúa</span></div>
-</div>
-
-<div class="grid grid-cols-5 gap-2 mt-10 text-center text-xs">
-<div>🎬 Netflix<br/><span class="opacity-60">recomienda qué ver</span></div>
-<div>🎵 Spotify<br/><span class="opacity-60">arma tu playlist</span></div>
-<div>🗺️ Maps<br/><span class="opacity-60">elige la ruta rápida</span></div>
-<div>💳 FICO<br/><span class="opacity-60">califica tu riesgo</span></div>
-<div>📈 Trading<br/><span class="opacity-60">señales de compra/venta</span></div>
-</div>
-
-<div class="mt-8 text-xs opacity-60 text-center">
-"Producto de datos" se formalizó con Data Mesh (Dehghani, O'Reilly, 2022)
-</div>
-
-<div class="mt-1 text-xs opacity-40 text-center">
-infográfico completo en slides/infograficos/infografico_producto_de_datos.pptx
-</div>
+<img src="/infograficos/producto_de_datos.png" class="w-full rounded-lg shadow-md" />
 
 ---
 layout: center
@@ -486,38 +431,7 @@ class: text-center
 
 ---
 
-# On-Premise vs. Cloud Computing
-
-<div class="grid grid-cols-2 gap-6 mt-6">
-<div class="p-5 rounded bg-gray-500/10">
-<div class="font-bold text-lg text-center">🏢 On-Premise</div>
-<ul class="text-sm mt-4 space-y-3 opacity-80 list-none pl-0">
-<li><b>Costo inicial</b> — Alto: hardware, espacio, licencias</li>
-<li><b>Elasticidad</b> — Limitada al hardware adquirido</li>
-<li><b>Control</b> — Total, físico y lógico</li>
-<li><b>Mantenimiento</b> — Tu equipo responde a fallas</li>
-<li><b>Tecnología</b> — Sujeta al ciclo de vida del hardware</li>
-</ul>
-</div>
-<div class="p-5 rounded bg-blue-500/10">
-<div class="font-bold text-lg text-center">☁️ Cloud Computing</div>
-<ul class="text-sm mt-4 space-y-3 opacity-80 list-none pl-0">
-<li><b>Costo inicial</b> — Se paga por consumo</li>
-<li><b>Elasticidad</b> — Prácticamente ilimitada, en minutos</li>
-<li><b>Control</b> — Compartido con el proveedor</li>
-<li><b>Mantenimiento</b> — El proveedor gestiona la plataforma</li>
-<li><b>Tecnología</b> — Acceso inmediato a lo nuevo</li>
-</ul>
-</div>
-</div>
-
-<div class="mt-6 text-blue-500 font-bold text-center">
-En Big Data, la elasticidad de la nube es lo que permite responder a picos de Volumen y Velocidad
-</div>
-
-<div class="mt-1 text-xs opacity-40 text-center">
-infográfico completo en slides/infograficos/infografico_onprem_vs_cloud.pptx
-</div>
+<img src="/infograficos/onprem_vs_cloud.png" class="w-full rounded-lg shadow-md" />
 
 ---
 
@@ -546,44 +460,10 @@ Cuanto más a la derecha, menos infraestructura gestionas tú, menos control tie
 
 ---
 
-# ¿Y qué hay en la nube?
-
-<div class="grid grid-cols-3 gap-4 mt-8">
-<div class="p-4 rounded bg-gray-500/10">
-<div class="font-bold text-center mb-1">📦 Almacenamiento</div>
-<div class="text-xs text-center opacity-60 mb-3">Guardar datos de forma duradera y barata</div>
-<div class="text-xs space-y-1">
-<div><b class="text-orange-500">AWS</b> — Amazon S3</div>
-<div><b class="text-blue-500">Azure</b> — Data Lake Storage</div>
-<div><b class="text-blue-400">Google</b> — Cloud Storage</div>
-</div>
-</div>
-<div class="p-4 rounded bg-gray-500/10">
-<div class="font-bold text-center mb-1">⚙️ Procesamiento</div>
-<div class="text-xs text-center opacity-60 mb-3">Transformar y agregar datos a escala</div>
-<div class="text-xs space-y-1">
-<div><b class="text-orange-500">AWS</b> — Amazon EMR</div>
-<div><b class="text-blue-500">Azure</b> — HDInsight</div>
-<div><b class="text-blue-400">Google</b> — Managed Service for Apache Spark</div>
-</div>
-</div>
-<div class="p-4 rounded bg-gray-500/10">
-<div class="font-bold text-center mb-1">🔀 Orquestación</div>
-<div class="text-xs text-center opacity-60 mb-3">Encadenar y programar pipelines completos</div>
-<div class="text-xs space-y-1">
-<div><b class="text-orange-500">AWS</b> — MWAA (Airflow)</div>
-<div><b class="text-blue-500">Azure</b> — Data Factory</div>
-<div><b class="text-blue-400">Google</b> — Cloud Composer</div>
-</div>
-</div>
-</div>
-
-<div class="mt-6 text-xs opacity-60 text-center">
-+ Terraform — infraestructura como código, multicloud · nombres de servicio vigentes en 2026
-</div>
+<img src="/infograficos/que_hay_en_la_nube.png" class="w-full rounded-lg shadow-md" />
 
 <div class="mt-2 text-xs opacity-40">
-→ Para qué sirve cada rubro, a detalle, en las siguientes slides · infográfico completo en slides/infograficos/infografico_que_hay_en_la_nube.pptx
+→ Para qué sirve cada rubro, a detalle, en las siguientes slides
 </div>
 
 ---

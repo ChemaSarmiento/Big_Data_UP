@@ -1,5 +1,41 @@
 # Infográficos nuevos — Introducción a Big Data
 
+## También viven como PNG en intro-big-data/
+
+Estas 4 slides también están insertadas como imagen, tal cual, dentro del
+deck compartido `intro-big-data/slides.md` (slides "Las 5 V's de Big Data",
+"On-Premise vs. Cloud Computing", "¿Y qué hay en la nube?" y "Anatomía de un
+producto de datos") — los PNG viven en `intro-big-data/public/infograficos/`.
+Como este entorno no tiene LibreOffice para rasterizar el `.pptx` directo,
+`render_html.js` reconstruye cada infográfico como HTML/CSS a partir de los
+mismos datos (posiciones, colores, texto, íconos) que originalmente generaron
+el `.pptx`, reusando `icon_helper.js` para los íconos (react-icons + sharp).
+Para regenerar los PNG tras un cambio de contenido:
+
+```
+npm install                      # en esta carpeta — react, react-dom, react-icons, sharp
+node render_html.js              # escribe ./html/*.html
+# luego, con playwright-chromium instalado (ya está en intro-big-data/):
+node -e "
+const { chromium } = require('playwright-chromium');
+(async () => {
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 2 });
+  for (const f of ['5vs','onprem_vs_cloud','que_hay_en_la_nube','producto_de_datos']) {
+    await page.goto('file://' + __dirname + '/html/' + f + '.html');
+    await page.screenshot({ path: '../../intro-big-data/public/infograficos/' + f + '.png' });
+  }
+  await browser.close();
+})();
+" # ejecutar desde intro-big-data/ para que resuelva playwright-chromium
+```
+
+Si el contenido del `.pptx` cambia, actualiza los datos correspondientes en
+`render_html.js` para que ambas versiones (pptx e imagen embebida) no
+diverjan.
+
+## Las 4 slides .pptx originales
+
 Cuatro slides construidas para cerrar huecos reales encontrados al revisar
 `01_introduccion.pptx`, `02_fuentes_y_manejo.pptx` y
 `03_casos_de_uso_arquitectura.pptx` — slides con solo texto o completamente
