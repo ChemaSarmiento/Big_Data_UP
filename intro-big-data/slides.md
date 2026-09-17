@@ -55,6 +55,9 @@ class: text-center
 <div class="p-3 rounded bg-blue-500/10 text-sm">
 <b>Ejemplo</b> — Walmart procesa 2.5 petabytes de datos de transacciones por hora; su Data Café analiza más de 40 petabytes de historial de clientes para responder preguntas de negocio en minutos, no semanas. <span class="opacity-60">(Forbes / Bernard Marr)</span>
 </div>
+<div class="text-xs opacity-60">
+🔗 <a href="https://www.forbes.com/sites/bernardmarr/2017/01/23/really-big-data-at-walmart-real-time-insights-from-their-40-petabyte-data-cloud/" target="_blank" class="text-blue-500">Really Big Data At Walmart — Forbes</a> · revisar en clase
+</div>
 </div>
 
 ---
@@ -74,6 +77,9 @@ class: text-center
 </div>
 <div class="p-3 rounded bg-amber-500/10 text-sm">
 <b>Ejemplo</b> — cada minuto del año, según Domo (Data Never Sleeps 12, 2025): YouTube recibe 3.4 millones de vistas, Netflix transmite más de 362,000 horas de contenido, y se envían 251.1 millones de correos.
+</div>
+<div class="text-xs opacity-60">
+🔗 <a href="https://www.domo.com/learn/infographic/data-never-sleeps-12" target="_blank" class="text-blue-500">Data Never Sleeps 12 — Domo</a> · infográfico completo, revisar en clase
 </div>
 </div>
 
@@ -115,6 +121,9 @@ class: text-center
 <div class="p-3 rounded bg-green-500/10 text-sm">
 <b>Ejemplo</b> — IBM / Harvard Business Review estimó que la mala calidad de datos le cuesta a la economía de EE.UU. cerca de $3.1 billones de dólares al año (~18% del PIB en ese momento) — casi todo por decisiones tomadas sobre datos que nadie verificó. <span class="opacity-60">(Redman, HBR / IBM, 2016)</span>
 </div>
+<div class="text-xs opacity-60">
+🔗 <a href="https://www.ibm.com/think/insights/cost-of-poor-data-quality" target="_blank" class="text-blue-500">The True Cost of Poor Data Quality — IBM</a> · revisar en clase
+</div>
 </div>
 
 ---
@@ -135,6 +144,9 @@ class: text-center
 <div class="p-3 rounded bg-pink-500/10 text-sm">
 <b>Ejemplo</b> — el motor de recomendaciones de Netflix le ahorra a la empresa más de mil millones de dólares al año, al reducir cuántos suscriptores cancelan su cuenta cada mes. <span class="opacity-60">(The Motley Fool, 2016)</span>
 </div>
+<div class="text-xs opacity-60">
+🔗 <a href="https://www.fool.com/investing/2016/06/19/how-netflixs-ai-saves-it-1-billion-every-year.aspx" target="_blank" class="text-blue-500">How Netflix's AI Saves It $1 Billion Every Year — The Motley Fool</a> · revisar en clase
+</div>
 </div>
 
 ---
@@ -152,7 +164,12 @@ class: text-center
 <div class="mt-10 text-xl">
 181 ZB en 2025 → proyección de <b>221-240 ZB para 2026</b>
 </div>
-<div class="text-sm opacity-60 mt-2">Fuente: Statista / IDC</div>
+<div class="text-sm opacity-60 mt-2">
+Fuente: <a href="https://www.statista.com/statistics/871513/worldwide-data-created/" target="_blank" class="text-blue-500">Statista — Data generation volume worldwide</a>
+</div>
+<div class="text-xs opacity-60 mt-4">
+🔗 <a href="https://www.internetlivestats.com/" target="_blank" class="text-blue-500">Internet Live Stats</a> · contador en tiempo real — abrir en clase y ver los números subir en vivo
+</div>
 
 ---
 
@@ -326,6 +343,10 @@ Data Mart ⊂ Data Warehouse (una vista de un solo departamento vs. la consolida
 </div>
 </div>
 
+<div class="mt-4 text-xs opacity-60">
+🔗 <a href="https://www.databricks.com/blog/2020/01/30/what-is-a-data-lakehouse.html" target="_blank" class="text-blue-500">What Is a Lakehouse? — Databricks</a> · el artículo que originó el término, revisar en clase
+</div>
+
 ---
 
 # El riesgo de no gobernar: Data Swamp
@@ -353,6 +374,10 @@ Data Mart ⊂ Data Warehouse (una vista de un solo departamento vs. la consolida
 
 <div class="mt-8 text-center text-blue-500 font-bold">
 Un data lake sin gobierno no es un lake — es un pantano
+</div>
+
+<div class="mt-4 text-xs opacity-60 text-center">
+🔗 <a href="https://tdwi.org/articles/2016/03/23/data-lake-become-swamp-1.aspx" target="_blank" class="text-blue-500">Don't Let Your Data Lake Become a Swamp — TDWI</a> · revisar en clase
 </div>
 
 ---
@@ -416,9 +441,17 @@ flowchart LR
 
 </v-clicks>
 
+<div class="mt-4 text-xs opacity-60">
+🔗 <a href="https://engineering.atspotify.com/2015/11/what-made-discover-weekly-one-of-our-most-successful-feature-launches-to-date" target="_blank" class="text-blue-500">What made Discover Weekly one of our most successful feature launches — Spotify Engineering</a> · revisar en clase
+</div>
+
 ---
 
 <img src="/infograficos/producto_de_datos.png" class="w-full rounded-lg shadow-md" />
+
+<div class="mt-1 text-xs opacity-60">
+🔗 <a href="https://martinfowler.com/articles/data-monolith-to-mesh.html" target="_blank" class="text-blue-500">Data Mesh, artículo original — Zhamak Dehghani, martinfowler.com</a>
+</div>
 
 ---
 layout: center
