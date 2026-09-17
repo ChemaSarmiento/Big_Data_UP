@@ -23,3 +23,11 @@ contenido — no edité el contenido de las slides (son binarios de PowerPoint, 
 alcance de esta revisión fue el código y los README). Si vas a reusarlas en clase, vale
 la pena actualizar esa mención al nombre 2026 ("Managed Service for Apache Spark") para
 que quede consistente con el resto del material.
+
+## Infográficos nuevos
+
+[`infograficos/`](infograficos/) — 4 slides construidas para cerrar huecos reales de
+`01_introduccion.pptx`, `02_fuentes_y_manejo.pptx` y `03_casos_de_uso_arquitectura.pptx`
+(slides vacías o solo texto, y capturas de pantalla que ya se ven viejas), con fuentes
+verificadas de la industria. Ver el README de esa carpeta para el detalle de qué
+reemplaza cada una y por qué.
