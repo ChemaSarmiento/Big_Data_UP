@@ -34,6 +34,15 @@ La Sesión 7 dejó una tabla Iceberg lista — hoy se usan las tres operaciones 
 
 # MERGE INTO, en acción
 
+```python
+correcciones = (
+    spark.table("local.curso_bigdata.transacciones_silver")
+    .filter(F.col("currency") == "USD").limit(1000)
+    .withColumn("currency", F.lit("MXN"))
+)
+correcciones.createOrReplaceTempView("correcciones")
+```
+
 ```sql
 MERGE INTO local.curso_bigdata.transacciones_silver t
 USING correcciones c
@@ -77,17 +86,46 @@ VERSION AS OF <snapshot_id>;
 
 ---
 
-# Lab de hoy
+# Paso — Time travel real
 
-Retomar la tabla de la Sesión 7 y completar `06_lakehouse_iceberg.py`:
+```python
+primer_snapshot_id = snapshots.first()["snapshot_id"]
+antes_del_merge = (
+    spark.read.format("iceberg")
+    .option("snapshot-id", primer_snapshot_id)
+    .load("local.curso_bigdata.transacciones_silver")
+)
+```
 
-1. `MERGE INTO` — corrección simulada
-2. Consultar el snapshot anterior (time travel)
-3. `ALTER TABLE` — agregar columna sin romper nada
-4. Escribir la capa **gold** agregada
+<div class="mt-4 text-sm opacity-70">
+Deberías ver: al filtrar por currency='USD' sobre antes_del_merge, las 1000 filas siguen ahí — la tabla "recordó" cómo estaba
+</div>
 
-<div class="mt-6 text-blue-500 font-bold">
-Entregable: diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones
+---
+
+# Paso — Evolución de esquema + capa gold
+
+```sql
+ALTER TABLE local.curso_bigdata.transacciones_silver ADD COLUMN es_horario_nocturno BOOLEAN;
+UPDATE local.curso_bigdata.transacciones_silver
+SET es_horario_nocturno = (hora_del_dia < 6 OR hora_del_dia > 22);
+```
+
+```python
+gold = (
+    spark.table("local.curso_bigdata.transacciones_silver")
+    .groupBy("currency", "es_horario_nocturno")
+    .agg(F.count("*").alias("num_transacciones"), F.avg("amount").alias("monto_promedio"))
+)
+gold.writeTo("local.curso_bigdata.transacciones_gold").using("iceberg").createOrReplace()
+```
+
+<div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
+Entregable: diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones (MERGE, snapshots antes/después, ALTER TABLE)
+</div>
+
+<div class="mt-2 text-sm opacity-70">
+Ahora sí: apagar el cluster con Iceberg
 </div>
 
 ---
