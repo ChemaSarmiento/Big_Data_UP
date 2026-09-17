@@ -19,9 +19,20 @@ No es "SQL más complejo" — es entender qué pasa adentro para no optimizar a 
 
 ---
 
-# BigQuery guarda columnas, no filas
+# BigQuery no es "una base de datos grande"
 
-```mermaid {scale: 0.6}
+Está diseñado desde cero para escalar horizontalmente (arquitectura Dremel).
+Tres decisiones de diseño explican su comportamiento:
+
+<v-clicks>
+
+- **Almacenamiento columnar** — cada columna se guarda por separado
+- **Separación de storage y cómputo** — puedes escalar cómputo sin mover datos
+- **Ejecución en árbol** — miles de "hojas" procesan en paralelo, resultados se agregan hacia arriba
+
+</v-clicks>
+
+```mermaid {scale: 0.55}
 flowchart LR
     subgraph Fila["Tradicional (por fila)"]
     F1["id, nombre, monto, fecha..."]
@@ -31,7 +42,7 @@ flowchart LR
     end
 ```
 
-<div v-click class="mt-6 text-xl">
+<div v-click class="mt-4 text-xl">
 <code>SELECT *</code> cuesta como si necesitaras todas las columnas — aunque uses 3 de 50
 </div>
 
@@ -43,7 +54,7 @@ flowchart LR
 
 - Sin partición: `WHERE fecha = '2026-01-01'` escanea **toda** la tabla
 - Con partición por fecha: solo abre el cajón de ese día
-- **Clustering** (hasta 4 columnas): ordena físicamente *dentro* de cada partición
+- **Clustering** (hasta 4 columnas): ordena físicamente *dentro* de cada partición — salta bloques enteros sin necesitar partición separada
 
 </v-clicks>
 
@@ -62,6 +73,10 @@ recursos/hive/hive-queries.sql Sección 3 — compara el tiempo real, sin partic
 
 <div v-click class="mt-8 text-blue-500 font-bold">
 Cada byte de más (por un SELECT * innecesario) sale directo de tu presupuesto mensual de 1TB
+</div>
+
+<div v-click class="mt-4 text-sm opacity-70">
+El estimador de bytes de la consola te dice el costo ANTES de ejecutar — hábito a construir desde hoy
 </div>
 
 ---
@@ -89,16 +104,59 @@ WITH RECURSIVE cadena_referidos AS (
 SELECT * FROM cadena_referidos ORDER BY nivel;
 ```
 
+<div class="mt-2 text-sm opacity-70">
+Una CTE recursiva se define en términos de sí misma: un caso base + un paso que se repite hasta que no quedan más filas
+</div>
+
+---
+layout: center
+class: text-center
 ---
 
-# Lab + entregable de hoy
+# Lab de hoy
 
-1. Rediseñar una tabla mal particionada
-2. Medir la reducción de costo/latencia — **con evidencia visual**
-3. Escribir consultas con window functions anidadas y CTEs recursivos
+Sobre datos reales de Carpetas de investigación de la FGJ CDMX
 
-<div class="mt-8 p-4 border-l-4 border-blue-500">
-Entregable: reporte antes/después + <b>una gráfica de barras</b> (bytes escaneados o tiempo) — no basta el número en texto
+---
+
+# Paso 1 — Rediseñar una tabla mal particionada
+
+```sql
+-- 3.1: escanea toda la tabla
+SELECT delito, COUNT(*) FROM carpetas_investigacion_sin_particion
+WHERE anio = 2024 GROUP BY delito;
+
+-- 3.2: solo la partición de 2024
+SELECT delito, COUNT(*) FROM carpetas_investigacion_particionada
+WHERE anio = 2024 GROUP BY delito;
+```
+
+<div class="mt-6 p-3 border-l-4 border-blue-500 text-sm text-left">
+<b>Deberías ver:</b> el mismo resultado, con una diferencia notable en bytes
+procesados. Anota el número exacto de cada una — es la base del reporte.
+</div>
+
+---
+
+# Paso 2 — Completar window functions y CTEs
+
+Mismo estilo de las diapositivas anteriores, pero ahora las escribes tú —
+sobre `transacciones`, con el ranking por tipo de transacción, y la cadena de
+referidos completa.
+
+---
+
+# Paso 3 — La gráfica del entregable
+
+```python
+import matplotlib.pyplot as plt
+plt.bar(["Sin particionar", "Particionada"], [bytes_sin, bytes_con])
+plt.ylabel("Bytes escaneados")
+plt.show()
+```
+
+<div class="mt-6 p-4 border-l-4 border-blue-500 font-bold">
+Entregable: reporte antes/después + la gráfica de barras + las consultas de window functions/CTEs completadas
 </div>
 
 ---
@@ -108,4 +166,4 @@ class: text-center
 
 # → Sesión 03
 
-Spark Core avanzado — Catalyst, shuffle, skew, y cómo leer un plan de ejecución
+Spark Core avanzado I — Catalyst, tipos de shuffle, y cómo leer un plan de ejecución

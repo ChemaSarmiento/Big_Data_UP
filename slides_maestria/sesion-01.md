@@ -31,7 +31,10 @@ Si esto no queda sólido, Spark se siente como sintaxis — no como una solució
 
 ---
 
-# HDFS: partición + replicación
+# HDFS: bloques, partición, replicación
+
+Un archivo se corta en **bloques** (típicamente 128MB), y cada bloque se guarda
+en el disco local de alguna máquina del cluster.
 
 ```mermaid {scale: 0.6}
 flowchart LR
@@ -43,6 +46,10 @@ flowchart LR
     NN -.índice.-> D2
     NN -.índice.-> D3
 ```
+
+- **NameNode** — no guarda datos, guarda *metadata*: qué bloques componen un
+  archivo y en qué DataNodes viven
+- **DataNode** — guarda los bloques en su disco local
 
 <div v-click>
 
@@ -71,7 +78,7 @@ Tolerancia a particiones
 </div>
 
 <div v-click class="mt-8 text-lg">
-La red <b>siempre</b> se va a particionar eventualmente — la decisión real es entre <b>C</b> y <b>A</b>
+La red <b>siempre</b> se va a particionar eventualmente (un cable se corta, un switch falla) — la decisión real es entre <b>C</b> y <b>A</b>
 </div>
 
 <div v-click class="mt-4 text-sm opacity-70">
@@ -97,6 +104,11 @@ flowchart LR
     end
 ```
 
+1. **Map** — cada máquina procesa su porción, emite pares `(clave, valor)`
+2. **Shuffle** — el framework redistribuye para que la misma clave termine en
+   la misma máquina (la etapa más cara: mueve datos por la red)
+3. **Reduce** — cada máquina agrega los valores que le tocaron por clave
+
 <div v-click class="text-sm opacity-70 mt-4">
 `recursos/spark/01_rdd_basico.ipynb` implementa esto con reduceByKey sobre war_tweets.txt
 </div>
@@ -115,20 +127,75 @@ flowchart LR
 </v-clicks>
 
 ---
+layout: center
+class: text-center
+---
 
 # Lab de hoy
 
+Primer cluster del curso — dedica tiempo a crearlo bien, no lo hagas tú por el grupo
+
+---
+
+# Paso 1 — Crear el cluster
+
 ```bash
-gcloud dataproc clusters create curso-cluster --num-workers=2 ...
+export BUCKET_NAME=<tu-bucket>
+gcloud dataproc clusters create curso-cluster \
+    --region=us-central1 --num-workers=3 \
+    --optional-components=JUPYTER,ZEPPELIN --enable-component-gateway \
+    --max-idle=1h --max-age=3h
 ```
 
-1. Crear un cluster de Managed Service for Apache Spark
-2. Correr un word count en MapReduce clásico **y** su equivalente en Spark
-3. Leer los logs (YARN/Spark UI) para diagnosticar cuellos de botella
-
-<div class="mt-8 text-blue-500 font-bold">
-Entregable: benchmark propio (tiempos, memoria) MapReduce vs Spark
+<div class="mt-6 p-3 border-l-4 border-blue-500 text-sm text-left">
+<b>Deberías ver:</b> el cluster pasa a <code>RUNNING</code> en 7-10 minutos.
+<br><b>Si falla por cuota:</b> revisa <code>gcloud compute regions describe us-central1</code> antes de reintentar.
 </div>
+
+---
+
+# Paso 2 — Word count: MapReduce vs. Spark
+
+```python
+conteo = (
+    sc.textFile("gs://<TU-BUCKET>/war_tweets.txt")
+    .flatMap(lambda linea: linea.split())
+    .map(lambda palabra: (palabra, 1))
+    .reduceByKey(lambda a, b: a + b)
+)
+conteo.take(10)
+```
+
+<div class="mt-6 text-sm opacity-70">
+Mientras corre: abre el Spark UI — la pestaña Stages muestra exactamente las
+etapas de map y shuffle que acabas de escribir en código. No es una caja negra.
+</div>
+
+<div class="mt-4 text-sm opacity-70">
+Si el archivo completo (22GB) tarda demasiado para la sesión, usa una muestra (<code>head -n 100000</code>)
+</div>
+
+---
+
+# Paso 3 — Leer los logs para diagnosticar
+
+Abre el Spark UI (componente gateway del cluster), pestaña **Stages**.
+
+<div class="mt-6 text-blue-500 font-bold">
+¿Cuál etapa tardó más, y por qué?
+</div>
+
+<div class="mt-8 p-4 border-l-4 border-blue-500">
+Entregable: benchmark propio (tiempos, uso de memoria) MapReduce vs Spark — capturar del Spark UI antes de apagar el cluster
+</div>
+
+---
+
+# No olvides apagar el cluster
+
+```bash
+gcloud dataproc clusters delete curso-cluster --region=us-central1
+```
 
 ---
 layout: center
