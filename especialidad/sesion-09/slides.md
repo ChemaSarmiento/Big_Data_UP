@@ -6,6 +6,7 @@ style: |
   section { font-family: 'Helvetica Neue', Arial, sans-serif; }
   h1, h2 { color: #1d4ed8; }
   .accent { color: #1d4ed8; font-weight: bold; }
+  .box { border-left: 4px solid #1d4ed8; padding: 0.5em 1em; background: rgba(29,78,216,0.05); }
   table { font-size: 0.85em; }
 ---
 
@@ -16,7 +17,7 @@ Especialidad — Big Data
 
 ---
 
-# Seis secciones, seis preguntas reales
+## Seis secciones, seis preguntas reales
 
 | Sección | Responde |
 |---|---|
@@ -29,15 +30,18 @@ Especialidad — Big Data
 
 ---
 
-# Escribe el resumen al final, ponlo primero
+## Escribe el resumen al final, ponlo primero
 
 Un error común: escribir en el orden en que se hizo el trabajo.
 
-Eso invierte la prioridad de quien lo lee — <span class="accent">el resumen ejecutivo va primero en el documento, aunque lo escribas al final.</span>
+<div class="box">
+Eso invierte la prioridad de quien lo lee — el resumen ejecutivo va primero
+en el documento, aunque lo escribas al final.
+</div>
 
 ---
 
-# Tres principios para 15 minutos
+## Tres principios para 15 minutos
 
 1. **Una visualización vale más que una tabla** — es un requisito, no un extra
 2. **Empieza con la pregunta de negocio**, no con la herramienta
@@ -47,13 +51,16 @@ Eso invierte la prioridad de quien lo lee — <span class="accent">el resumen ej
 
 # Actividad principal
 
-Cada equipo presenta su solución a una pregunta real de su área — datos reales (≥15GB), ETL guiado, al menos una visualización.
+Cada equipo presenta su solución a una pregunta real de su área — datos
+reales (≥15GB), ETL guiado, al menos una visualización.
 
-**Mismo estándar institucional que Maestría — código adaptado al nivel del track.**
+<div class="box" style="text-align:center;">
+Mismo estándar institucional que Maestría — código adaptado al nivel del track
+</div>
 
 ---
 
-# Cierre
+## Cierre
 
 Retroalimentación cruzada · mapa de siguientes pasos
 

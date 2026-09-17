@@ -86,7 +86,33 @@ flowchart LR
 
 Deliberadamente **sin modelo** — para ver windowing/watermarks funcionar solos.
 
-<div class="mt-6 text-blue-500 font-bold">
+---
+
+# Paso 1 — Correr el productor
+
+```bash
+pip install google-cloud-pubsublite pandas
+python producer_transacciones_stream.py --project <PROJECT_ID> --tasa 20
+```
+
+<div class="mt-4 text-sm opacity-70">
+Deberías ver: "Publicando N transacciones..." — déjalo corriendo en una terminal visible
+</div>
+
+---
+
+# Paso 2 — Correr el consumidor de conteo
+
+```bash
+spark-submit --master yarn 07a_streaming_conteo.py \
+    --project <PROJECT_ID> --subscription transacciones-stream-sub
+```
+
+<div class="mt-4 text-sm opacity-70">
+Deberías ver: cada 30 segundos, una tabla en consola con window, currency, count
+</div>
+
+<div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
 Entregable: captura de las ventanas de conteo actualizándose en consola
 </div>
 
