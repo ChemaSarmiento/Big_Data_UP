@@ -53,14 +53,53 @@ monitor_drift.py — Population Stability Index sobre `amount`, 10 buckets de pe
 PSI > 0.25 es la señal que la Sesión 12 conecta a un disparador real de reentrenamiento
 </div>
 
+<div v-click class="mt-4 text-sm opacity-70">
+Drift de datos (la distribución de entrada cambia) ≠ drift de modelo/concept drift (la relación features→resultado cambia) — PSI mide el primero
+</div>
+
+---
+layout: center
+class: text-center
 ---
 
 # Lab de hoy
 
-1. Desplegar el endpoint (`serve_fraude.py`)
-2. Correr `monitor_drift.py` sobre los scores de la Sesión 10
+---
 
-<div class="mt-8 text-blue-500 font-bold">
+# Paso 1 — Desplegar el endpoint
+
+```bash
+pip install fastapi uvicorn pyspark
+MODELO=gs://<TU-BUCKET>/modelos/fraude_bank_transactions_pipeline \
+  uvicorn serve_fraude:app --host 0.0.0.0 --port 8080
+```
+
+```bash
+curl -X POST localhost:8080/score -H "Content-Type: application/json" -d '{
+  "transaction_id": "t1", "timestamp": "2026-03-01T14:00:00", "amount": 12000, "currency": "MXN"
+}'
+```
+
+<div class="mt-4 text-sm opacity-70">
+Deberías ver: JSON con es_sospechosa_pred y prob_sospechosa. Primera petición tarda (Spark inicializando); las siguientes son rápidas.
+</div>
+
+---
+
+# Paso 2 — Monitoreo de drift
+
+```bash
+python monitor_drift.py \
+    --referencia gs://<TU-BUCKET>/raw/bank_transactions/bank_transactions.csv \
+    --lote_reciente gs://<TU-BUCKET>/streaming/scores \
+    --columna amount
+```
+
+<div class="mt-4 text-sm opacity-70">
+Deberías ver: un PSI impreso con su interpretación ("sin drift relevante", "vigilar", "considerar reentrenar")
+</div>
+
+<div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
 Entregable: endpoint respondiendo + corrida de monitoreo con PSI interpretado
 </div>
 

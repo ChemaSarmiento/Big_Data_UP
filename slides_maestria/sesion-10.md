@@ -31,6 +31,12 @@ El modelo de la Sesión 6 se reutiliza sin cambios — mismo pipeline de la Sesi
 Este curso usa el primero hoy y el segundo en serving (Sesión 11) — mismo modelo, comparación directa
 </div>
 
+<div v-click class="mt-4 text-sm opacity-70">
+¿Por qué PipelineModel.transform() funciona igual en streaming? Ninguna etapa
+(Imputer, Indexer, Encoder, Assembler, Scaler, LogisticRegression, ya fit)
+mantiene estado nuevo entre filas — todas son row-wise.
+</div>
+
 ---
 
 # Feature freshness: un detalle que rompe modelos en producción
@@ -58,11 +64,29 @@ flowchart LR
     S --> W[Alertas por ventana 1min]
 ```
 
-<div v-click class="mt-4 text-sm opacity-70">
-Mismo esqueleto de la Sesión 9 (07a_streaming_conteo.py) + el modelo cargado
+Mismo esqueleto de la Sesión 9 (`07a_streaming_conteo.py`) + el modelo cargado
+
+---
+
+# Correr el pipeline completo
+
+```bash
+python producer_transacciones_stream.py --project <PROJECT_ID> --tasa 20
+```
+
+```bash
+spark-submit --master yarn 07_streaming_scoring.py \
+    --project <PROJECT_ID> --subscription transacciones-stream-sub \
+    --modelo gs://<TU-BUCKET>/modelos/fraude_bank_transactions_pipeline \
+    --salida gs://<TU-BUCKET>/streaming/scores
+```
+
+<div class="mt-4 p-3 border-l-4 border-blue-500 text-sm text-left">
+<b>Deberías ver:</b> el Parquet de scores escribiéndose (<code>gsutil ls</code>
+en otra terminal) + ventanas de alertas en consola cada 30s
 </div>
 
-<div class="mt-6 text-blue-500 font-bold">
+<div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
 Entregable: pipeline funcionando end-to-end — captura de ventanas en vivo + Parquet de scores
 </div>
 

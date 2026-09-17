@@ -64,13 +64,38 @@ Hoy, por primera vez, todas las piezas corren automatizadas como un solo sistema
 
 ---
 
-# Lab de hoy
+# Paso 1 — Setup de Airflow
 
-Desplegar `mlops_pipeline_dag.py` en Airflow y correrlo end-to-end:
+```bash
+pip install apache-airflow apache-airflow-providers-google
+airflow db init
+airflow variables set gcp_project_id <PROJECT_ID>
+airflow variables set gcp_bucket gs://<TU-BUCKET>
+airflow variables set serving_host <host-del-endpoint>:8080
+cp dags/mlops_pipeline_dag.py $AIRFLOW_HOME/dags/
+airflow standalone
+```
 
-ingesta → features → entrenamiento → evaluación → despliegue condicional
+<div class="mt-4 text-sm opacity-70">
+Deberías ver: Airflow standalone arranca y muestra una URL local
+</div>
 
-<div class="mt-8 text-blue-500 font-bold">
+---
+
+# Paso 2 — Disparar el DAG y ver el ciclo completo
+
+Desde la UI: activar el DAG y disparar una corrida manual (trigger).
+
+<div class="mt-4">
+Vean el grafo en la UI — cada tarea se pone verde conforme termina. Esa es la
+visibilidad que un script secuencial no da.
+</div>
+
+<div class="mt-4 text-sm opacity-70">
+Si evaluar_metricas falla: confirmar que 04_pipeline_ml.ipynb escribió metrics.json en la ruta esperada
+</div>
+
+<div class="mt-6 p-4 border-l-4 border-blue-500 font-bold">
 Entregable: DAG corriendo (captura del grafo en verde), conectado al endpoint de la Sesión 11
 </div>
 
