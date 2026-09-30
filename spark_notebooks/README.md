@@ -7,6 +7,7 @@ Notebooks de PySpark para la clase, pensados para verse **en este orden**: cada 
 | 1 | [`PySpark_Intro`](PySpark_Intro.ipynb) | **Spark Core** (transformaciones vs. acciones, RDD, cache, plan de ejecución), **Spark SQL** y un primer modelo de ML | `war_tweets.txt` (tweets, JSON anidado, ~22 GB) | B |
 | 2 | [`Fraud_Detection`](Fraud_Detection.ipynb) | ML con `Pipeline`: clustering (K-Means + PCA), clasificación (Random Forest, desbalance de clases) y detección de anomalías por error de reconstrucción | Tabla `bank_transactions` en BigQuery | B |
 | 2b | [`Fraud_Detection_AML_HF`](Fraud_Detection_AML_HF.ipynb) | El mismo Bloque A/B/C de `Fraud_Detection`, sobre el dataset real de AML de IBM (desbalance ~0.10%, no sintético) | `HI-Small_Trans.csv` (~5M filas, 476 MB) vía Hugging Face | **B.1** |
+| 2c | [`Fraud_Detection_Synthetic_GCP`](Fraud_Detection_Synthetic_GCP.ipynb) | El mismo Bloque A/B/C, sobre datos sintéticos propios ([`Synthetic_Data`](https://github.com/ChemaSarmiento/Synthetic_Data)) generados y subidos en shards a Cloud Storage — une `transactions/` y `ground_truth/` por `(shard_id, transaction_id)` | Parquet particionado en `gs://<BUCKET>/datasets/<EXECUTION>/shard_id=*/` | B |
 | 3 | [`PySpark_NLP_Steam`](PySpark_NLP_Steam.ipynb) | Texto + ML: TF-IDF, regresión logística, qué palabras pesan, comparar contra un modelo con variables estructuradas | `steam_reviews.csv` (~7.8 GB) | B |
 | 4 | [`PySpark_Recommenders`](PySpark_Recommenders.ipynb) | Recomendación con ALS: línea base, checkpoints, revisar si las recomendaciones tienen sentido | `animes.csv`, `reviews.csv` (anime) | B |
 
@@ -31,6 +32,7 @@ Cada notebook trae en su primera celdas las rutas que hay que ajustar a tu proye
 | `PySpark_NLP_Steam` | `gs://<BUCKET>/steam/steam_reviews.csv`. La primera vez, `CONVERTIR_A_PARQUET = True` |
 | `PySpark_Recommenders` | `gs://<BUCKET>/reviews/animes.csv` y `reviews.csv`; carpeta de checkpoints en el mismo bucket |
 | `Fraud_Detection_AML_HF` | Nada previo — descarga `HI-Small_Trans.csv` de Hugging Face (`bbfizp/AMLSim-HI-Small`, sin login) y lo sube solo a `gs://<BUCKET>/raw/aml/`. Ajustar `BUCKET`; `DESCARGAR_DE_HF = False` en corridas posteriores para no repetir la descarga |
+| `Fraud_Detection_Synthetic_GCP` | Que el run de [`Synthetic_Data`](https://github.com/ChemaSarmiento/Synthetic_Data) en Cloud Run haya terminado y publicado `dataset.json` (el notebook lo valida con un `assert` antes de leer nada más). Completar `BUCKET` y `EXECUTION` con los valores reales del job |
 
 ## Notas para dar la clase
 
