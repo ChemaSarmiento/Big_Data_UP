@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Big Data · Aula</title><meta name="description" content="Presentaciones de Big Data: introducción, Especialidad y Maestría en Ciencia de Datos.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232345cc'/%3E%3Cpath d='M8 23V14h4v9m2 0V8h4v15m2 0V11h4v12' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><a class="brand" href="#">BD<span> / AULA</span></a><span class="header-note">DE LOS DATOS A LAS DECISIONES</span><button id="catalog" hidden>Todos los temas ↗</button></header>
+<main id="home"><div class="intro"><p class="eyebrow">BIG DATA · DOS RUTAS, UN MISMO MAPA</p><h1>Entender la escala.<br><em>Crear valor.</em></h1><p class="lede">De la primera pregunta de negocio a un pipeline en producción. Elige tu ruta y presenta una sesión.</p></div><nav class="filters" aria-label="Filtrar presentaciones"><button data-track="all" aria-pressed="true">Todo el curso</button><button data-track="base" aria-pressed="false">Introducción</button><button data-track="especialidad" aria-pressed="false">Especialidad</button><button data-track="maestria" aria-pressed="false">Maestría</button></nav><div id="decks" class="deck-grid"></div><p id="load-status" role="status">Cargando presentaciones…</p></main>
+<main id="player" hidden><div class="session-bar"><span id="session-label"></span><span id="phase"></span></div><div id="stage" tabindex="0" aria-label="Diapositiva. Haz clic para avanzar."><article id="slide"></article></div><footer><span id="counter" aria-live="polite"></span><span class="hint">Clic o → para avanzar · O índice · F pantalla completa</span><div class="controls"><button id="overview-button" aria-label="Índice de diapositivas">Índice</button><button id="fullscreen" aria-label="Pantalla completa">⛶</button><button id="previous" aria-label="Diapositiva anterior">←</button><button id="next" aria-label="Diapositiva siguiente">→</button></div></footer><div class="progress"><div id="progress"></div></div></main>
+<dialog id="overview"><div class="dialog-header"><h2>Mapa de la sesión</h2><button id="close-overview" aria-label="Cerrar índice">Cerrar ×</button></div><div id="slide-list"></div></dialog>
+<script type="module" src="app.js"></script>
+</body></html>

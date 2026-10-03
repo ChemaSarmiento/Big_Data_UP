@@ -76,7 +76,7 @@ Regresión logística (Sesión 6) tiene ventaja aquí: coeficientes directamente
 
 ---
 
-# El capstone: demostrar que las 8 sesiones anteriores son un solo sistema
+# El capstone: demostrar que las 12 sesiones anteriores son un solo sistema
 
 No basta con "el modelo funciona" — el criterio pide evidencia de cada etapa:
 

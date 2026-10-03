@@ -45,6 +45,19 @@ big-data-course/
     └── sesion-00 ... sesion-13/  # Cada una con README (índice + ejemplo + recursos + teoria.md) — 13 sesiones, no 9 (ver Sección "Teoría y presentaciones")
 ```
 
+## Presentaciones web para clase
+
+Los dos tracks y la introducción comparten ahora un [sitio de presentaciones](presentaciones/README.md), con navegación por clic y teclado, entradas escalonadas, índice de diapositivas y pantalla completa. Mantiene una identidad visual consistente, añade rutas de aprendizaje y checkpoints, y complementa los temas detectados como incompletos.
+
+```bash
+cd slides_maestria
+npm ci
+npm run build:web
+npm run serve:web
+```
+
+Abre http://localhost:4173. El sitio se genera desde los decks Markdown y los temarios; los PPTX originales se conservan como referencia.
+
 ## Teoría y presentaciones por sesión
 
 Cada `sesion-XX/` tiene, además del README:

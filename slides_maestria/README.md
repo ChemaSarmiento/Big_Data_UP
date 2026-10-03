@@ -50,3 +50,7 @@ cargar las 10 sesiones para presentar una sola, y un cambio en la Sesión 6 no
 arriesga romper el archivo de la Sesión 1. Todos comparten el mismo
 `package.json`/tema, así que el estilo es consistente sin necesitar un proyecto
 Node por sesión.
+
+## Sitio unificado de presentaciones
+
+Para presentar ambos tracks con el mismo tema, entradas temporizadas y navegación por clic: `npm run build:web` y `npm run serve:web`. Ver [instrucciones del sitio](../presentaciones/README.md).
