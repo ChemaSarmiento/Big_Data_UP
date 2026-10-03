@@ -133,6 +133,40 @@ Nota que los workers son menos, pero mas poderosos, y también agregamos "initia
 
 **Corrección (verificado contra la especificación oficial de GCP):** `n1-standard-4` tiene **15 GB de RAM** por worker (4 vCPU), no 30 GB — la cifra anterior estaba mal. Para modelos chicos (DistilBERT, ~300 MB cargado) sobra margen de sobra. Para BART-base (~560 MB) también alcanza. Para BART-large o para correr inferencia sobre el dataset completo sin muestrear, conviene subir a `n1-highmem-4` (26 GB) o acotar el volumen de texto procesado — no asumir que "cabe cualquier cosa" sin volver a calcular.
 
+#### Pasar un token (Hugging Face u otro) al Jupyter de este cluster
+
+El Jupyter que levanta `--enable-component-gateway` corre como **servicio administrado**
+(systemd) en el master, no como algo que tú arrancas a mano desde una terminal. Por eso
+`export MI_VARIABLE=valor` en una sesión SSH **no le llega al kernel de forma
+confiable** — el proceso del servicio no hereda el entorno de una shell interactiva
+abierta después. No lo documentamos como solución porque no se pudo verificar que
+funcione de manera consistente.
+
+Lo que sí funciona, verificado y ya usado en este mismo repo (`Synthetic_Data/deploy/gcp/run_pilot.py`
+lee su propio token de servicio exactamente así): la **metadata de la instancia de GCE**.
+Cualquier proceso corriendo en el master —sin importar cómo se haya lanzado— puede leerla
+vía `http://metadata.google.internal/computeMetadata/v1/instance/attributes/<NOMBRE>`.
+
+**Opción 1 — al crear el cluster**, agregando la variable al mismo `--metadata` que ya
+usa `PIP_PACKAGES` (un solo flag, separado por comas):
+
+```
+--metadata=PIP_PACKAGES="transformers datasets torch",HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+**Opción 2 — con el cluster ya creado**, sin recrearlo (en un cluster estándar de un solo
+master, el nombre de la instancia es `<CLUSTER_NAME>-m`):
+
+```
+gcloud compute instances add-metadata $CLUSTER_NAME-m --zone=$ZONE \
+    --metadata=HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+En el notebook, se lee con una petición HTTP a esa URL (header `Metadata-Flavor: Google`)
+— el código ya está en `PySpark_Recommenders_Steam.ipynb`. **Nunca pegues el token
+directo en una celda de un notebook**: este repo es público, y queda en el historial de
+git en cuanto alguien lo commitee.
+
 
 
 **Nota** Revisa tus cuotas desde gcloud con el siguiente comando:
