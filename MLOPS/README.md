@@ -135,37 +135,32 @@ Nota que los workers son menos, pero mas poderosos, y también agregamos "initia
 
 #### Pasar un token (Hugging Face u otro) al Jupyter de este cluster
 
-El Jupyter que levanta `--enable-component-gateway` corre como **servicio administrado**
-(systemd) en el master, no como algo que tú arrancas a mano desde una terminal. Por eso
-`export MI_VARIABLE=valor` en una sesión SSH **no le llega al kernel de forma
-confiable** — el proceso del servicio no hereda el entorno de una shell interactiva
-abierta después. No lo documentamos como solución porque no se pudo verificar que
-funcione de manera consistente.
+**Forma por defecto, la que usa `PySpark_Recommenders_Steam.ipynb`:** pegar el token
+directo en la variable `HF_TOKEN` de la celda de parámetros, igual que `BUCKET`. Es
+explícito y no depende de nada del cluster. El costo: **este repo es público en
+GitHub** — si haces commit/push del notebook después de correrlo con el token real
+puesto, queda en el historial de git para siempre, aunque lo borres en un commit
+posterior. La misma celda lo recuerda con un comentario; antes de guardar cualquier
+cambio que vaya a Git, vuelve a dejar el placeholder (`<TU_TOKEN_DE_HUGGING_FACE>`).
 
-Lo que sí funciona, verificado y ya usado en este mismo repo (`Synthetic_Data/deploy/gcp/run_pilot.py`
-lee su propio token de servicio exactamente así): la **metadata de la instancia de GCE**.
-Cualquier proceso corriendo en el master —sin importar cómo se haya lanzado— puede leerla
-vía `http://metadata.google.internal/computeMetadata/v1/instance/attributes/<NOMBRE>`.
-
-**Opción 1 — al crear el cluster**, agregando la variable al mismo `--metadata` que ya
-usa `PIP_PACKAGES` (un solo flag, separado por comas):
+**Alternativa que nunca toca el archivo** (la celda la detecta sola si el placeholder
+sigue puesto): el Jupyter que levanta `--enable-component-gateway` corre como **servicio
+administrado** (systemd) en el master, no como algo que tú arrancas a mano desde una
+terminal — por eso un `export MI_VARIABLE=valor` por SSH no le llega al kernel de forma
+confiable, y no lo documentamos como solución por esa razón. Lo que sí funciona,
+verificado y ya usado en este mismo repo (`Synthetic_Data/deploy/gcp/run_pilot.py` lee su
+propio token de servicio exactamente así): la **metadata de la instancia de GCE**.
+Cualquier proceso en el master —sin importar cómo se haya lanzado— puede leerla vía
+`http://metadata.google.internal/computeMetadata/v1/instance/attributes/<NOMBRE>`.
 
 ```
+# Opción 1 — al crear el cluster, en el mismo --metadata que ya usa PIP_PACKAGES:
 --metadata=PIP_PACKAGES="transformers datasets torch",HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
 
-**Opción 2 — con el cluster ya creado**, sin recrearlo (en un cluster estándar de un solo
-master, el nombre de la instancia es `<CLUSTER_NAME>-m`):
-
-```
+# Opción 2 — con el cluster ya creado, sin recrearlo (nombre del master: <CLUSTER_NAME>-m):
 gcloud compute instances add-metadata $CLUSTER_NAME-m --zone=$ZONE \
     --metadata=HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
-
-En el notebook, se lee con una petición HTTP a esa URL (header `Metadata-Flavor: Google`)
-— el código ya está en `PySpark_Recommenders_Steam.ipynb`. **Nunca pegues el token
-directo en una celda de un notebook**: este repo es público, y queda en el historial de
-git en cuanto alguien lo commitee.
 
 
 
