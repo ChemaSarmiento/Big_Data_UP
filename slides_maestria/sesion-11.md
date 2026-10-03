@@ -50,7 +50,7 @@ monitor_drift.py — Population Stability Index sobre `amount`, 10 buckets de pe
 </div>
 
 <div v-click class="mt-4 text-blue-500 font-bold">
-PSI > 0.25 es una regla docente para investigar: revisar datos y performance antes de pedir un candidato nuevo.
+PSI > 0.25 es una heurística de ejemplo para investigar: revisar datos y performance antes de pedir un candidato nuevo.
 </div>
 
 <div v-click class="mt-4 text-sm opacity-70">
@@ -66,7 +66,7 @@ class: text-center
 
 ---
 
-# Paso 1 — Medir el endpoint docente
+# Paso 1 — Medir el endpoint del laboratorio
 
 Configurar `MODELO_ROOT` y `RELOAD_TOKEN` según `recursos/serving/README.md`; medir latencia, no asumir SLA.
 

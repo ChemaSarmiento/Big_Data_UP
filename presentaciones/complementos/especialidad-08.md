@@ -18,7 +18,7 @@ No basta con recomendar «sí» o «no». Cada riesgo debe convertirse en una co
 
 <figure data-infographic="presupuesto"></figure>
 
-Asignación docente de planificación, no cotización. Estima tu configuración real y revisa el saldo.
+Asignación de planificación, no cotización. Estima tu configuración real y revisa el saldo.
 
 ---
 

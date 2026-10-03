@@ -78,9 +78,7 @@ completo.
 
 ## `recursos/spark/01_rdd_basico.ipynb`
 
-El facilitador corre un `reduceByKey` contando palabras sobre tweets reales —
-sin que nadie escriba código. Es la versión en código de la analogía de los
-10,000 documentos.
+`reduceByKey` cuenta palabras sobre tweets reales. Observa cómo se agrupan los resultados parciales: es la versión en código de la analogía de los 10,000 documentos.
 
 Si el cluster real es pesado para una demo en vivo, se usa una muestra pequeña
 del archivo para que corra en segundos.

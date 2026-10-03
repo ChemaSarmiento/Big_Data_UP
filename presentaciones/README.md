@@ -59,3 +59,7 @@ Ocho SVG editables en `infograficos/`, embebidos por el generador en los complem
 Los títulos explican la conclusión; color y etiquetas enfocan lo relevante. Los números esquemáticos están identificados como ejemplos y la asignación presupuestaria no se presenta como tarifa. Se añaden ejercicios de visualización dentro de S5/S8 de Especialidad y S2/S6/S11 de Maestría, sin incrementar horas del programa.
 
 Referencias: [Cole Nussbaumer Knaflic: comunicar el hallazgo](https://www.storytellingwithdata.com/blog/2017/3/22/so-what), [evidencia y anotaciones](https://www.storytellingwithdata.com/blog/2021/1/14/data-doesnt-speak-for-itself).
+
+## Big Data y cloud computing
+
+Cada sesión incluye una diapositiva que distingue Big Data (escala y procesamiento), cloud computing (recursos y servicios bajo demanda) y conocimientos complementarios (SQL, ML, visualización, gobernanza o MLOps). Las etiquetas del catálogo y de la sesión muestran los ámbitos presentes, sin equiparar el uso de GCP con Big Data. La clasificación editorial se mantiene en `ambitos.json`. Las presentaciones se dirigen al alumnado y no incluyen referencias al presentador.

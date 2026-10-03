@@ -40,9 +40,23 @@ function render(source) {
 function section(source, heading) {
   return source.match(new RegExp(`^## ${heading}[^\\n]*\\n([\\s\\S]*?)(?=^## |$(?![\\s\\S]))`, 'm'))?.[1]?.trim() || '';
 }
+const scopes = JSON.parse(await read('presentaciones/ambitos.json'));
+function scopeSlide(id) {
+  const s = scopes[id];
+  if (!s) throw new Error(`Missing scope: ${id}`);
+  return `# Big Data y cloud computing: el foco de esta sesión
+
+| Ámbito | Contenido |
+|---|---|
+| **Big Data** | ${s.bigData || 'Sin contenido específico en esta sesión.'} |
+| **Cloud computing** | ${s.cloud || 'No es el foco: estos conceptos también pueden trabajarse localmente.'} |
+| **Complementario** | ${s.complementario || 'La práctica conecta procesamiento e infraestructura.'} |
+
+> Big Data aborda la escala y el procesamiento de datos. Cloud computing aporta recursos y servicios bajo demanda. Usar cloud no convierte por sí solo una tarea en Big Data.`;
+}
 const decks = [];
 const intro = await read('intro-big-data/slides.md');
-decks.push({ id: 'introduccion', track: 'base', number: 'BASE', title: 'Introducción a Big Data', source: 'intro-big-data/slides.md', slides: split(intro).map(render) });
+decks.push({ id: 'introduccion', track: 'base', number: 'BASE', title: 'Introducción a Big Data', source: 'intro-big-data/slides.md', slides: [...split(intro).slice(0,1), scopeSlide('introduccion'), ...split(intro).slice(1)].map(render) });
 for (const track of ['especialidad', 'maestria']) {
   const syllabus = await read(`${track}/TEMARIO.md`);
   for (let n = 0; n <= (track === 'maestria' ? 13 : 9); n++) {
@@ -65,9 +79,11 @@ for (const track of ['especialidad', 'maestria']) {
     } catch (error) { if (error.code !== 'ENOENT') throw error; }
     const deliverable = section(notes, 'Entregable');
     slides.splice(Math.max(1, slides.length - 1), 0, `# Cierra el ciclo\n\n- ¿Qué problema resuelve lo que aprendiste hoy?\n- ¿Qué alternativa elegirías y bajo qué condiciones?\n- ¿Qué evidencia mostrarías para justificar tu decisión?${deliverable ? `\n\n## Evidencia de aprendizaje\n\n${deliverable}` : ''}`);
+    slides.splice(3, 0, scopeSlide(`${track}-${number}`));
     decks.push({ id: `${track}-${number}`, track, number, title, source, slides: slides.map(render) });
   }
 }
+for (const d of decks) { d.scope = scopes[d.id]; d.areas = ['Big Data', ...(d.scope.cloud ? ['Cloud computing'] : [])]; }
 await fs.mkdir(output, { recursive: true });
 for (const name of ['index.html', 'styles.css', 'app.js']) await fs.copyFile(path.join(root, 'presentaciones', name), path.join(output, name));
 await fs.writeFile(path.join(output, 'decks.json'), JSON.stringify(decks));

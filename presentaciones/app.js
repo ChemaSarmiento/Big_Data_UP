@@ -12,6 +12,8 @@ async function route() {
   index = Math.max(0, Math.min(current.slides.length - 1, (Number(page) || 1) - 1));
   document.title = `${current.title} · ${index + 1} · Big Data`;
   $('session-label').textContent = `${current.track === 'base' ? 'BASE COMPARTIDA' : current.track.toUpperCase() + ' / ' + current.number} — ${current.title}`;
+  $('subject').textContent = current.areas.join(' · ');
+  $('subject').title = `Big Data: ${current.scope.bigData}${current.scope.cloud ? '; Cloud computing: ' + current.scope.cloud : ''}`;
   $('phase').textContent = index === 0 ? 'APERTURA' : index < 3 ? 'RUTA DE APRENDIZAJE' : /lab|paso|actividad|práctica/i.test(titles(current.slides[index])) ? 'PRÁCTICA' : /cierra|fin del|→|checkpoint/i.test(titles(current.slides[index])) ? 'CIERRE' : 'CONCEPTOS';
   const slide = $('slide'); slide.replaceChildren(); slide.innerHTML = current.slides[index];
   slide.className = index === 0 ? 'cover' : '';
@@ -56,7 +58,8 @@ try {
     const num = document.createElement('span'); num.className = 'deck-number'; num.textContent = d.number;
     const h = document.createElement('h2'); h.textContent = d.title;
     const meta = document.createElement('span'); meta.className = 'deck-meta'; meta.textContent = `${d.slides.length} diapositivas · Abrir sesión ↗`;
-    a.append(label, num, h, meta); $('decks').append(a);
+    const areas = document.createElement('span'); areas.className = 'deck-areas'; areas.textContent = d.areas.join(' · ');
+    a.append(label, num, h, areas, meta); $('decks').append(a);
   }
   $('load-status').hidden = true;
   document.querySelectorAll('[data-track][aria-pressed]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-track][aria-pressed]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); document.querySelectorAll('.deck').forEach(d => { d.hidden = b.dataset.track !== 'all' && d.dataset.track !== b.dataset.track; }); });

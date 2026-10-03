@@ -11,3 +11,5 @@
 
 .infographic{margin:16px 0;overflow-x:auto}.infographic svg{display:block;width:100%;max-height:360px}.visual-node{animation:enter .55s both;animation-delay:var(--node-delay,0ms)}#slide.compact .infographic svg{max-height:290px}
 @media(max-width:800px){.infographic svg{min-width:760px;max-height:none}.infographic{padding-bottom:12px}}
+
+.session-tags{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:flex-end}#subject{color:var(--ink);letter-spacing:.5px}.deck-areas{font-size:12px;color:var(--accent);margin-bottom:14px}@media(max-width:800px){.session-bar{flex-wrap:wrap;gap:8px}.session-tags{justify-content:flex-start}#subject{font-size:10px}}

@@ -60,8 +60,7 @@ Es el mismo error de sobre-ingeniería de la Sesión 1, con otro disfraz.
 
 ## Un flujo de eventos simple
 
-El facilitador corre un flujo en vivo — narra cada evento conforme llega:
-"esto está pasando ahora mismo, no es un archivo que ya estaba esperando".
+Observa un flujo en vivo: identifica cuándo llega cada evento y cuándo aparece en el resultado. Compara esa latencia con la de un proceso batch.
 
 ---
 

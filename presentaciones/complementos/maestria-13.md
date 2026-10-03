@@ -16,7 +16,7 @@
 
 <figure data-infographic="presupuesto"></figure>
 
-Asignación docente de planificación, no cotización. Estima tu configuración real y revisa el saldo.
+Asignación de planificación, no cotización. Estima tu configuración real y revisa el saldo.
 
 ---
 

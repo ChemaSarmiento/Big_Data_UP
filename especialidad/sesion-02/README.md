@@ -10,7 +10,7 @@
 3. Qué significa "procesar en paralelo"
 
 ## Actividad
-Demo en vivo: el facilitador corre un job distribuido y el grupo interactúa (cambia parámetros simples, observa el efecto en tiempo/recursos).
+Demo de un job distribuido: cambiar parámetros simples y observar su efecto en tiempo y recursos.
 
 ## Entregable
 Ninguno formal; quiz corto de conceptos.

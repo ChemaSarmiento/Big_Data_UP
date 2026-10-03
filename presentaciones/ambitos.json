@@ -1,0 +1,127 @@
+{
+  "introduccion": {
+    "bigData": "Volumen, velocidad, variedad y procesamiento distribuido",
+    "cloud": "Servicios elásticos como opción de infraestructura",
+    "complementario": "Decisiones y valor para el negocio"
+  },
+  "especialidad-00": {
+    "bigData": "Contexto y vocabulario de datos a escala",
+    "cloud": "Proyecto GCP, cuenta, crédito, recursos y permisos",
+    "complementario": "Linux, Python y SQL básicos"
+  },
+  "especialidad-01": {
+    "bigData": "Cuándo el volumen o la velocidad requieren otra arquitectura",
+    "cloud": "",
+    "complementario": "Problema, evidencia y valor de negocio"
+  },
+  "especialidad-02": {
+    "bigData": "Particiones, MapReduce y ejecución distribuida",
+    "cloud": "Cluster como recurso de ejecución",
+    "complementario": ""
+  },
+  "especialidad-03": {
+    "bigData": "Consultas analíticas sobre grandes conjuntos",
+    "cloud": "BigQuery gestionado, cuotas y costo por consulta",
+    "complementario": "SQL también funciona con datos pequeños"
+  },
+  "especialidad-04": {
+    "bigData": "DataFrames, particiones y transformaciones Spark",
+    "cloud": "Cluster temporal en GCP",
+    "complementario": "Python y SQL para expresar transformaciones"
+  },
+  "especialidad-05": {
+    "bigData": "ETL a escala, validación y etapas del pipeline",
+    "cloud": "GCS como almacenamiento del pipeline",
+    "complementario": "Calidad y visualización del resultado"
+  },
+  "especialidad-06": {
+    "bigData": "Data lake, formatos y organización para analítica",
+    "cloud": "Buckets GCS, acceso y servicios de catálogo",
+    "complementario": "Gobierno, propiedad y trazabilidad"
+  },
+  "especialidad-07": {
+    "bigData": "Eventos, batch frente a streaming y latencia",
+    "cloud": "Pub/Sub y almacenamiento GCS",
+    "complementario": "Justificación del costo frente al valor"
+  },
+  "especialidad-08": {
+    "bigData": "Escala y requisitos del proyecto de datos",
+    "cloud": "Crédito, presupuesto, recursos y cierre",
+    "complementario": "Gobernanza, riesgos y comunicación visual"
+  },
+  "especialidad-09": {
+    "bigData": "ETL y evidencia de escala del proyecto",
+    "cloud": "Recursos usados, costo y cierre",
+    "complementario": "Conclusiones, visualización y limitaciones"
+  },
+  "maestria-00": {
+    "bigData": "Contexto del procesamiento a escala",
+    "cloud": "GCP, ADC, IAM, almacenamiento y crédito",
+    "complementario": "Linux, Python, SQL y Git"
+  },
+  "maestria-01": {
+    "bigData": "Distribución, particiones, resiliencia y HDFS",
+    "cloud": "Cluster gestionado y ciclo de vida",
+    "complementario": ""
+  },
+  "maestria-02": {
+    "bigData": "SQL distribuido, planes y costo de escaneo",
+    "cloud": "BigQuery como servicio gestionado",
+    "complementario": "SQL y visualización de evidencia"
+  },
+  "maestria-03": {
+    "bigData": "Catalyst, shuffle y optimización Spark",
+    "cloud": "Cluster donde se ejecuta el laboratorio",
+    "complementario": ""
+  },
+  "maestria-04": {
+    "bigData": "Skew, particiones, diagnóstico y rendimiento",
+    "cloud": "Capacidad y recursos del cluster",
+    "complementario": "Medición y comparación de planes"
+  },
+  "maestria-05": {
+    "bigData": "Transformación distribuida de features",
+    "cloud": "GCS para datos y artefactos",
+    "complementario": "Validación temporal y prevención de fuga de datos"
+  },
+  "maestria-06": {
+    "bigData": "Entrenamiento distribuido con Spark ML",
+    "cloud": "Cluster temporal y almacenamiento de modelos",
+    "complementario": "CV, ROC-AUC, PR-AUC y selección de modelos"
+  },
+  "maestria-07": {
+    "bigData": "Parquet, particionado y arquitectura medallion",
+    "cloud": "GCS y configuración del cluster",
+    "complementario": "Calidad y contratos por capa"
+  },
+  "maestria-08": {
+    "bigData": "Lakehouse, snapshots y transacciones Iceberg",
+    "cloud": "Almacenamiento y cómputo gestionados",
+    "complementario": "Versionado, retención y trazabilidad"
+  },
+  "maestria-09": {
+    "bigData": "Structured Streaming, ventanas, watermark y deduplicación",
+    "cloud": "Pub/Sub estándar y puente durable a GCS",
+    "complementario": "Garantías y pruebas de recuperación"
+  },
+  "maestria-10": {
+    "bigData": "Inferencia sobre un flujo distribuido",
+    "cloud": "Ingesta Pub/Sub, GCS y cluster temporal",
+    "complementario": "Consistencia de features y del modelo"
+  },
+  "maestria-11": {
+    "bigData": "Relación del modelo con el pipeline de datos",
+    "cloud": "VM y almacenamiento cuando el API se despliega en GCP",
+    "complementario": "Serving, latencia y drift: también aplican a datos pequeños"
+  },
+  "maestria-12": {
+    "bigData": "Job de entrenamiento distribuido que orquesta el DAG",
+    "cloud": "Dataproc, GCS y VM temporal",
+    "complementario": "Airflow, métricas y despliegue condicionado son MLOps"
+  },
+  "maestria-13": {
+    "bigData": "Arquitectura, escala y resultados del capstone",
+    "cloud": "IAM, servicios, presupuesto y cierre de recursos",
+    "complementario": "Gobernanza, seguridad, ética y comunicación"
+  }
+}

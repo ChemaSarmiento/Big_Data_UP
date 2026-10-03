@@ -19,6 +19,10 @@ await page.keyboard.press('o');
 await page.waitForSelector('dialog[open]');
 await page.locator('#close-overview').click();
 const decks = JSON.parse(await fs.readFile('../presentaciones/dist/decks.json','utf8'));
+for (const d of decks) {
+ if (!d.scope || !d.areas?.length || !d.slides.some(s => s.includes('Big Data y cloud computing:'))) throw new Error(`Missing classification: ${d.id}`);
+ if (d.slides.some(s => /presentador|facilitador|profesor|instructor|docente/i.test(s))) throw new Error(`Presenter reference: ${d.id}`);
+}
 let diagrams = 0, overflow = [], images = [];
 const visualNames = new Set();
 let visualErrors = [];
@@ -36,7 +40,8 @@ for (const d of decks) {
   images.push(...info.images);
  }
 }
-await page.goto('http://localhost:4173/#maestria-01/5');
+const architecture = decks.find(d => d.id === 'maestria-01');
+await page.goto(`http://localhost:4173/#maestria-01/${architecture.slides.findIndex(s => s.includes('class="mermaid"')) + 1}`);
 await page.waitForSelector('.mermaid svg');
 await page.waitForTimeout(1200);
 await page.screenshot({path:'/tmp/big-data-slide.png'});

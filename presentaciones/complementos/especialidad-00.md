@@ -11,4 +11,4 @@ Ubica el hito de hoy y el artefacto que usarás en el proyecto final.
 
 <figure data-infographic="presupuesto"></figure>
 
-Asignación docente de planificación, no cotización. Estima tu configuración real y revisa el saldo.
+Asignación de planificación, no cotización. Estima tu configuración real y revisa el saldo.
