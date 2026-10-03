@@ -10,6 +10,7 @@ Notebooks de PySpark para la clase, pensados para verse **en este orden**: cada 
 | 2c | [`Fraud_Detection_Synthetic_GCP`](Fraud_Detection_Synthetic_GCP.ipynb) | El mismo Bloque A/B/C, sobre datos sintéticos propios ([`Synthetic_Data`](https://github.com/ChemaSarmiento/Synthetic_Data)) generados y subidos en shards a Cloud Storage — une `transactions/` y `ground_truth/` por `(shard_id, transaction_id)` | Parquet particionado en `gs://<BUCKET>/datasets/<EXECUTION>/shard_id=*/` | B |
 | 3 | [`PySpark_NLP_Steam`](PySpark_NLP_Steam.ipynb) | Texto + ML: TF-IDF, regresión logística, qué palabras pesan, comparar contra un modelo con variables estructuradas | `steam_reviews.csv` (~7.8 GB) | B |
 | 4 | [`PySpark_Recommenders`](PySpark_Recommenders.ipynb) | Recomendación con ALS: línea base, checkpoints, revisar si las recomendaciones tienen sentido | `animes.csv`, `reviews.csv` (anime) | B |
+| 5 | [`PySpark_Recommenders_Steam`](PySpark_Recommenders_Steam.ipynb) | **Cierre de curso.** Junta `NLP_Steam` + `Recommenders`: ALS con **feedback implícito** (playtime + recomendado, no una calificación 1-10), evaluación con `RankingMetrics` (no RMSE), y el modelo propio de `NLP_Steam` comparado contra un modelo preentrenado de Hugging Face sobre las mismas reseñas | `steam_reviews.csv`, más el `PipelineModel` guardado por `NLP_Steam` | **B.1** |
 
 `outdated/` guarda versiones anteriores. En particular `PySpark_Models` fue reemplazado por `Fraud_Detection` (mismo contenido, con matplotlib en vez de Plotly y corregido).
 
@@ -17,7 +18,7 @@ Notebooks de PySpark para la clase, pensados para verse **en este orden**: cada 
 
 Casi todos corren en el cluster de la **sección B** de [`MLOPS/README.md`](../MLOPS/README.md): Dataproc `2.1-ubuntu20`, master `e2-highmem-2`, 3 workers `e2-standard-2` (6 tareas en paralelo), con Jupyter por Component Gateway. Es un cluster **pequeño**: varios notebooks trabajan sobre una muestra o guardan el dato en Parquet la primera vez, y traen un parámetro (`FRACCION`, `K_MAX`, `MAX_ROWS`...) para escalar.
 
-**`Fraud_Detection_AML_HF` es la excepción:** necesita `huggingface_hub` (y por transitividad `datasets`/`transformers`/`torch`), que no están en el cluster B. Usa el cluster de la **sección B.1** (mismo `MLOPS/README.md`), que instala esas librerías vía `hugging_face_deps.sh` como initialization action en los 3 nodos, sin tocar el script. El resto de notebooks **no** necesitan el cluster B.1 — usarlo para todos sería pagar workers más grandes sin razón.
+**`Fraud_Detection_AML_HF` y `PySpark_Recommenders_Steam` son la excepción:** necesitan `huggingface_hub`/`transformers`/`torch`, que no están en el cluster B. Usan el cluster de la **sección B.1** (mismo `MLOPS/README.md`), que instala esas librerías vía `hugging_face_deps.sh` como initialization action en los 3 nodos, sin tocar el script. El resto de notebooks **no** necesitan el cluster B.1 — usarlo para todos sería pagar workers más grandes sin razón. La sección B.1 decía "30 GB de RAM" por worker — es incorrecto, la especificación oficial de `n1-standard-4` es **15 GB**; corregido en el README de MLOPS. Sigue alcanzando para modelos chicos tipo DistilBERT, pero sin GPU — la inferencia es lenta, acotar siempre la muestra de texto, nunca correr sobre el dataset completo.
 
 Los notebooks se guardan en `gs://<TU-BUCKET>/notebooks` (propiedad `dataproc:jupyter.notebook.gcs.dir` al crear el cluster), así que sobreviven si se borra el cluster.
 
@@ -33,6 +34,7 @@ Cada notebook trae en su primera celdas las rutas que hay que ajustar a tu proye
 | `PySpark_Recommenders` | `gs://<BUCKET>/reviews/animes.csv` y `reviews.csv`; carpeta de checkpoints en el mismo bucket |
 | `Fraud_Detection_AML_HF` | Nada previo — descarga `HI-Small_Trans.csv` de Hugging Face (`bbfizp/AMLSim-HI-Small`, sin login) y lo sube solo a `gs://<BUCKET>/raw/aml/`. Ajustar `BUCKET`; `DESCARGAR_DE_HF = False` en corridas posteriores para no repetir la descarga |
 | `Fraud_Detection_Synthetic_GCP` | Que el run de [`Synthetic_Data`](https://github.com/ChemaSarmiento/Synthetic_Data) en Cloud Run haya terminado y publicado `dataset.json` (el notebook lo valida con un `assert` antes de leer nada más). Completar `BUCKET` y `EXECUTION` con los valores reales del job |
+| `PySpark_Recommenders_Steam` | Haber corrido `PySpark_NLP_Steam` antes (necesita el Parquet y el `PipelineModel` guardado en `gs://<BUCKET>/modelos/steam_nlp`). **Verificar primero que el CSV real tenga una columna de ID de usuario** (`author.steamid` o similar) — la celda 1 del notebook lo comprueba y se detiene con un mensaje claro si no la encuentra, antes de gastar cluster |
 
 ## Notas para dar la clase
 

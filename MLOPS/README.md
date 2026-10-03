@@ -129,8 +129,9 @@ gcloud dataproc clusters create $CLUSTER_NAME \
     --properties="dataproc:jupyter.notebook.gcs.dir=gs://$BUCKET_NAME/notebooks"
 ```
 
-Nota que los workers son menos, pero mas poderosos, y también agregamos "initialization-actions", esto permite correr scripts para hacer instalaciones al crearse el cluster, 
-y tienen 30 GB de RAM, para usar el modelo BART.
+Nota que los workers son menos, pero mas poderosos, y también agregamos "initialization-actions", esto permite correr scripts para hacer instalaciones al crearse el cluster.
+
+**Corrección (verificado contra la especificación oficial de GCP):** `n1-standard-4` tiene **15 GB de RAM** por worker (4 vCPU), no 30 GB — la cifra anterior estaba mal. Para modelos chicos (DistilBERT, ~300 MB cargado) sobra margen de sobra. Para BART-base (~560 MB) también alcanza. Para BART-large o para correr inferencia sobre el dataset completo sin muestrear, conviene subir a `n1-highmem-4` (26 GB) o acotar el volumen de texto procesado — no asumir que "cabe cualquier cosa" sin volver a calcular.
 
 
 
