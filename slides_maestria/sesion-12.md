@@ -24,8 +24,8 @@ La Sesión 11 dejó un endpoint y una señal de drift — hoy se conecta todo en
 ```mermaid {scale: 0.55}
 flowchart TD
     A[entrenamiento_y_features<br/>Dataproc] --> B[evaluar_metricas<br/>lee metrics.json]
-    B --> C{puerta_calidad<br/>AUC >= 0.75?}
-    C -->|sí| D[desplegar_modelo<br/>POST /reload]
+    B --> C{puerta_calidad<br/>ROC/PR-AUC y baseline?}
+    C -->|sí| D[desplegar_modelo<br/>POST /reload con URI/token]
     C -->|no| E[no_desplegar]
 ```
 
@@ -67,12 +67,13 @@ Hoy, por primera vez, todas las piezas corren automatizadas como un solo sistema
 # Paso 1 — Setup de Airflow
 
 ```bash
-pip install apache-airflow apache-airflow-providers-google
-airflow db init
+# Entorno Python 3.11 / Airflow 2.11 con constraints
+# Setup completo: recursos/airflow/README.md
+airflow db migrate
 airflow variables set gcp_project_id <PROJECT_ID>
-airflow variables set gcp_bucket gs://<TU-BUCKET>
+airflow variables set gcp_bucket <BUCKET_UNICO>
 airflow variables set serving_host <host-del-endpoint>:8080
-cp dags/mlops_pipeline_dag.py $AIRFLOW_HOME/dags/
+cp recursos/airflow/dags/mlops_pipeline_dag.py $AIRFLOW_HOME/dags/
 airflow standalone
 ```
 
@@ -84,7 +85,9 @@ Deberías ver: Airflow standalone arranca y muestra una URL local
 
 # Paso 2 — Disparar el DAG y ver el ciclo completo
 
-Desde la UI: activar el DAG y disparar una corrida manual (trigger).
+Configurar todas las variables del README; levantar cluster temporal y API en red privada. Desde la UI, disparar una corrida manual.
+
+El DAG no crea ni borra el cluster: pausar y limpiar al cerrar la clase.
 
 <div class="mt-4">
 Vean el grafo en la UI — cada tarea se pone verde conforme termina. Esa es la
@@ -92,7 +95,7 @@ visibilidad que un script secuencial no da.
 </div>
 
 <div class="mt-4 text-sm opacity-70">
-Si evaluar_metricas falla: confirmar que 04_pipeline_ml.ipynb escribió metrics.json en la ruta esperada
+Si evaluar_metricas falla: confirmar que el job 04_pipeline_ml.py escribió metrics.json bajo el RUN_ID de esa ejecución
 </div>
 
 <div class="mt-6 p-4 border-l-4 border-blue-500 font-bold">

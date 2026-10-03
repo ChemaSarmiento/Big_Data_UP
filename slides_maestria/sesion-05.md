@@ -200,9 +200,12 @@ scaler = StandardScaler(inputCol="features_raw", outputCol="features")
 # Paso 2 (cont.) — Armar el Pipeline completo
 
 ```python
-pipeline = Pipeline(stages=[imputer, indexer, encoder, assembler, scaler])
-modelo_features = pipeline.fit(df)
-df_features = modelo_features.transform(df)
+from ml_common import temporal_split, feature_pipeline
+# El pipeline incluye la hora derivada de timestamp en UTC.
+pipeline = feature_pipeline()
+train_df, test_df = temporal_split(df, CUTOFF)
+modelo_features = pipeline.fit(train_df)
+df_features = modelo_features.transform(test_df)
 df_features.select("features").show(5, truncate=False)
 ```
 
@@ -218,7 +221,7 @@ error si se ve raro la primera vez.
 
 ```python
 modelo_features.write().overwrite().save(
-    "gs://<TU-BUCKET>/modelos/features_bank_transactions"
+    "gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features"
 )
 ```
 
@@ -232,7 +235,7 @@ Esto no es un archivo de configuración — es el pipeline completo, ya entrenad
 
 ```python
 from pyspark.ml import PipelineModel
-modelo_cargado = PipelineModel.load("gs://<TU-BUCKET>/modelos/features_bank_transactions")
+modelo_cargado = PipelineModel.load("gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features")
 muestra_nueva = df.sample(0.001, seed=99)
 resultado = modelo_cargado.transform(muestra_nueva)
 resultado.select("features").show(3, truncate=False)
@@ -243,7 +246,7 @@ Demuestra en vivo que el Pipeline guardado es reusable sobre datos que <b>nunca 
 </div>
 
 <div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
-Entregable: pipeline de features serializado y reproducible en gs://&lt;TU-BUCKET&gt;/modelos/features_bank_transactions
+Entregable: pipeline de features serializado y reproducible en gs://&lt;TU-BUCKET&gt;/modelos/runs/<RUN_ID>/features
 </div>
 
 ---

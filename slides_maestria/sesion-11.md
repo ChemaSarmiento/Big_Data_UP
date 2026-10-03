@@ -42,7 +42,7 @@ flowchart LR
     R --> PSI["PSI"]
     PSI -->|"< 0.1"| OK[Sin drift relevante]
     PSI -->|"0.1 - 0.25"| W[Vigilar]
-    PSI -->|"> 0.25"| RT[Reentrenar]
+    PSI -->|"> 0.25"| RT[Investigar y evaluar candidato]
 ```
 
 <div v-click class="mt-4 text-sm opacity-70">
@@ -50,7 +50,7 @@ monitor_drift.py — Population Stability Index sobre `amount`, 10 buckets de pe
 </div>
 
 <div v-click class="mt-4 text-blue-500 font-bold">
-PSI > 0.25 es la señal que la Sesión 12 conecta a un disparador real de reentrenamiento
+PSI > 0.25 es una regla docente para investigar: revisar datos y performance antes de pedir un candidato nuevo.
 </div>
 
 <div v-click class="mt-4 text-sm opacity-70">
@@ -66,12 +66,14 @@ class: text-center
 
 ---
 
-# Paso 1 — Desplegar el endpoint
+# Paso 1 — Medir el endpoint docente
+
+Configurar `MODELO_ROOT` y `RELOAD_TOKEN` según `recursos/serving/README.md`; medir latencia, no asumir SLA.
 
 ```bash
-pip install fastapi uvicorn pyspark
-MODELO=gs://<TU-BUCKET>/modelos/fraude_bank_transactions_pipeline \
-  uvicorn serve_fraude:app --host 0.0.0.0 --port 8080
+pip install -r environment/requirements-lab.txt
+MODELO=gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/pipeline \
+  uvicorn serve_fraude:app --app-dir recursos/serving --host 127.0.0.1 --port 8080
 ```
 
 ```bash
@@ -89,9 +91,10 @@ Deberías ver: JSON con es_sospechosa_pred y prob_sospechosa. Primera petición 
 # Paso 2 — Monitoreo de drift
 
 ```bash
-python monitor_drift.py \
-    --referencia gs://<TU-BUCKET>/raw/bank_transactions/bank_transactions.csv \
-    --lote_reciente gs://<TU-BUCKET>/streaming/scores \
+python recursos/serving/monitor_drift.py \
+    --referencia gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/referencia.parquet \
+    --lote-reciente gs://<TU-BUCKET>/monitoreo/reciente.parquet \
+    --salida drift.json \
     --columna amount
 ```
 

@@ -1,106 +1,79 @@
-"""
-mlops_pipeline_dag.py
-DAG de Airflow que conecta ingesta -> features -> entrenamiento -> evaluación ->
-(condicional) despliegue, sobre bank_transactions.csv y el mismo Pipeline de
-MLlib de la Sesión 5/6 de Maestría. Corre en Airflow standalone en la VM
-e2-micro Always Free (ver environment/gcp-setup.md) o en Cloud Composer si el
-crédito de $300 alcanza -- Composer es el servicio más caro del curso, por eso
-gcp-setup.md recomienda standalone por default.
-
-pip install apache-airflow apache-airflow-providers-google
-
-Variables de Airflow requeridas (Admin > Variables):
-  gcp_project_id, gcp_bucket (gs://...), serving_host (host:puerto del endpoint
-  de recursos/serving/serve_fraude.py)
+"""Airflow 2.11 / Python 3.11. Entrena un candidato versionado y evalúa antes de recargar.
+Cluster efímero existente durante el lab; ver README para límites y limpieza.
 """
 from datetime import datetime, timedelta
-
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import BranchPythonOperator, PythonOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocSubmitJobOperator
 
-PROJECT_ID = "{{ var.value.gcp_project_id }}"
-REGION = "us-central1"
-CLUSTER_NAME = "curso-cluster"
-BUCKET = "{{ var.value.gcp_bucket }}"
-AUC_MINIMO = 0.75
+RUN_ROOT = "gs://{{ var.value.gcp_bucket }}/modelos/runs/{{ ts_nodash }}"
 
-default_args = {
-    "owner": "curso-bigdata",
-    "retries": 1,
-    "retry_delay": timedelta(minutes=5),
-}
+
+def gate_training(dag_run=None, **context):
+    # A monitor may trigger this DAG with a reviewed drift report in dag_run.conf.
+    # Scheduled/manual runs without a report train normally; drift alone never deploys.
+    config = (dag_run.conf or {}) if dag_run else {}
+    if config.get("reason") == "drift":
+        psi = float(config["psi"])
+        if psi < 0 or psi != psi or psi == float("inf"):
+            raise ValueError("PSI inválido")
+        if psi < float(config.get("threshold", 0.25)): return "sin_reentrenamiento"
+    return "entrenamiento_y_features"
+
+
+def read_metrics(bucket, run_id, **context):
+    import json
+    from google.cloud import storage
+    blob = storage.Client().bucket(bucket).blob(f"modelos/runs/{run_id}/metrics.json")
+    metrics = json.loads(blob.download_as_text())
+    expected = f"gs://{bucket}/modelos/runs/{run_id}/pipeline"
+    if metrics.get("model_uri") != expected or metrics.get("test_rows", 0) <= 0:
+        raise ValueError("Las métricas no corresponden al candidato de este run")
+    context["ti"].xcom_push(key="metrics", value=metrics)
+    return metrics
+
+
+def choose_deployment(auc_min, pr_auc_min, **context):
+    metrics = context["ti"].xcom_pull(task_ids="evaluar_metricas", key="metrics")
+    return "desplegar_modelo" if metrics["auc"] >= float(auc_min) and metrics["pr_auc"] >= float(pr_auc_min) else "no_desplegar"
+
+
+def deploy(host, token, **context):
+    import requests
+    metrics = context["ti"].xcom_pull(task_ids="evaluar_metricas", key="metrics")
+    response = requests.post(f"http://{host}/reload", json={"model_uri": metrics["model_uri"]},
+                             headers={"X-Reload-Token": token}, timeout=120)
+    response.raise_for_status()
+    return response.json()
+
 
 with DAG(
-    dag_id="mlops_fraude_bank_transactions",
-    description="Ingesta -> features -> entrenamiento -> evaluación -> despliegue (bank_transactions.csv)",
-    schedule="@weekly",
-    start_date=datetime(2026, 1, 1),
-    catchup=False,
-    default_args=default_args,
-    tags=["maestria", "sesion-08"],
+    dag_id="mlops_fraude_bank_transactions", schedule="@weekly", start_date=datetime(2026, 1, 1),
+    catchup=False, max_active_runs=1,
+    default_args={"owner": "curso-bigdata", "retries": 1, "retry_delay": timedelta(minutes=1)},
+    tags=["maestria", "sesion-12"],
 ) as dag:
-
-    # --- Ingesta + features + entrenamiento en un solo job de Dataproc ---
-    # Reusa recursos/spark/04_pipeline_ml.py tal cual (subido antes a
-    # gs://<TU-BUCKET>/scripts/), el mismo Pipeline de MLlib de la Sesión 5/6.
-    features_job = {
-        "reference": {"project_id": PROJECT_ID},
-        "placement": {"cluster_name": CLUSTER_NAME},
+    revisar_trigger = BranchPythonOperator(task_id="revisar_trigger", python_callable=gate_training)
+    sin_reentrenamiento = EmptyOperator(task_id="sin_reentrenamiento")
+    job = {
+        "reference": {"project_id": "{{ var.value.gcp_project_id }}"},
+        "placement": {"cluster_name": "{{ var.value.gcp_cluster }}"},
         "pyspark_job": {
-            "main_python_file_uri": f"{BUCKET}/scripts/04_pipeline_ml.py",
-            "args": ["--input", f"{BUCKET}/raw/bank_transactions/bank_transactions.csv"],
+            "main_python_file_uri": "gs://{{ var.value.gcp_bucket }}/scripts/04_pipeline_ml.py",
+            "python_file_uris": ["gs://{{ var.value.gcp_bucket }}/scripts/ml_common.py"],
+            "args": ["--input", "gs://{{ var.value.gcp_bucket }}/raw/bank_transactions/bank_transactions.csv",
+                     "--output", RUN_ROOT, "--cutoff", "{{ var.value.training_cutoff }}"],
         },
     }
-
-    entrenamiento_y_features = DataprocSubmitJobOperator(
-        task_id="entrenamiento_y_features",
-        job=features_job,
-        region=REGION,
-        project_id=PROJECT_ID,
-    )
-
-    def leer_auc_del_job(**contexto):
-        # El notebook de la Sesión 5/6 (recursos/spark/04_pipeline_ml.ipynb, celda
-        # final) escribe metrics.json explícitamente para este paso -- no se parsea
-        # el log del job de Dataproc, es frágil y cambia de formato entre versiones.
-        import json
-
-        from google.cloud import storage
-
-        bucket_nombre = BUCKET.replace("gs://", "")
-        cliente = storage.Client()
-        blob = cliente.bucket(bucket_nombre).blob("modelos/metrics.json")
-        metricas = json.loads(blob.download_as_text())
-        contexto["ti"].xcom_push(key="auc", value=metricas["auc"])
-        return metricas["auc"]
-
-    evaluar_metricas = PythonOperator(
-        task_id="evaluar_metricas",
-        python_callable=leer_auc_del_job,
-    )
-
-    def decidir_despliegue(**contexto):
-        auc = contexto["ti"].xcom_pull(task_ids="evaluar_metricas", key="auc")
-        return "desplegar_modelo" if auc >= AUC_MINIMO else "no_desplegar"
-
-    puerta_calidad = BranchPythonOperator(
-        task_id="puerta_calidad",
-        python_callable=decidir_despliegue,
-    )
-
-    def desplegar(**contexto):
-        # recursos/serving/serve_fraude.py expone POST /reload para recargar el
-        # PipelineModel más reciente sin reiniciar el proceso. Con Vertex AI
-        # Endpoints en vez de serving propio, este paso sería
-        # `gcloud ai endpoints deploy-model ...` -- se deja como comentario porque
-        # el curso usa Vertex AI solo como panorama (ver PROGRAMA.md, Sesión 6).
-        import requests
-
-        requests.post("http://{{ var.value.serving_host }}/reload", timeout=30)
-
-    desplegar_modelo = PythonOperator(task_id="desplegar_modelo", python_callable=desplegar)
+    entrenamiento_y_features = DataprocSubmitJobOperator(task_id="entrenamiento_y_features", job=job,
+        region="us-central1", project_id="{{ var.value.gcp_project_id }}")
+    evaluar_metricas = PythonOperator(task_id="evaluar_metricas", python_callable=read_metrics,
+        op_kwargs={"bucket": "{{ var.value.gcp_bucket }}", "run_id": "{{ ts_nodash }}"})
+    puerta_calidad = BranchPythonOperator(task_id="puerta_calidad", python_callable=choose_deployment,
+        op_kwargs={"auc_min": "{{ var.value.auc_min }}", "pr_auc_min": "{{ var.value.pr_auc_min }}"})
+    desplegar_modelo = PythonOperator(task_id="desplegar_modelo", python_callable=deploy,
+        op_kwargs={"host": "{{ var.value.serving_host }}", "token": "{{ var.value.reload_token }}"})
     no_desplegar = EmptyOperator(task_id="no_desplegar")
-
+    revisar_trigger >> [entrenamiento_y_features, sin_reentrenamiento]
     entrenamiento_y_features >> evaluar_metricas >> puerta_calidad >> [desplegar_modelo, no_desplegar]

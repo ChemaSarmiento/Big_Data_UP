@@ -1,6 +1,6 @@
 # Big Data para Data Scientists — Dos tracks
 
-El programa se divide en dos tracks paralelos que comparten el mismo entorno (GCP free tier)
+El programa se divide en dos tracks paralelos que comparten el mismo entorno (GCP: crédito de prueba US$300 / 90 días)
 y el mismo mapa temático general, pero con profundidad y objetivos distintos.
 
 | | **Especialidad** | **Maestría en Ciencia de Datos** |
@@ -8,7 +8,7 @@ y el mismo mapa temático general, pero con profundidad y objetivos distintos.
 | Perfil | Diverso (negocio, riesgo, producto, etc.) | Ciencia de datos |
 | Interés | Ejecutivo/estratégico | Técnico profundo |
 | Código | Guiado y acotado (notebooks para completar) | Escrito desde cero, con tuning y optimización |
-| Llega hasta | Mismo proyecto final institucional (ETL + datos reales ≥15GB + visualización + documento), con código guiado/low-code | Mismo proyecto final institucional, con un pipeline productivo: modelo entrenado, servido y monitoreado |
+| Llega hasta | Mismo proyecto final institucional (ETL + datos reales ≥15GB + visualización + documento), con código guiado/low-code | Mismo proyecto final institucional, con un prototipo reproducible: modelo entrenado, servido y monitoreado |
 | Duración | 9 sesiones · 3h/semana (27h) | 13 sesiones · 3h/semana (39h) — 4 temas que no cabían en 3h se dividieron en 2 sesiones completas cada uno |
 | Programa | [`especialidad/PROGRAMA.md`](especialidad/PROGRAMA.md) | [`maestria/PROGRAMA.md`](maestria/PROGRAMA.md) |
 
@@ -24,7 +24,7 @@ big-data-course/
 │   ├── managed-spark-cluster/    # Creación de cluster (antes "Dataproc") + init-actions
 │   ├── spark/                    # 5 scripts: RDD -> DataFrames -> Spark SQL -> Pipeline ML -> data cleansing
 │   ├── lakehouse-iceberg/        # Maestría S6: tabla Iceberg real (MERGE INTO, time travel, evolución de esquema)
-│   ├── streaming/                # Maestría S7: Structured Streaming real sobre Pub/Sub Lite + scoring
+│   ├── streaming/                # Maestría S7: Pub/Sub estándar → GCS → Structured Streaming + scoring
 │   ├── airflow/                  # Maestría S8: DAG de MLOps (ingesta -> features -> entrenamiento -> despliegue)
 │   ├── serving/                  # Maestría S8: endpoint de modelo (FastAPI) + monitoreo de drift (PSI)
 │   ├── hive/                     # Queries: fundamentos + caso real (datos abiertos CDMX)
@@ -72,7 +72,7 @@ Cada `sesion-XX/` tiene, además del README:
   [`slides_maestria/README.md`](slides_maestria/README.md) para setup y
   exportación a PDF/PPTX). Ambos siguen los principios de Cole Nussbaumer
   Knaflic (*Storytelling with Data*): título = conclusión, un solo acento de
-  color, nunca pie charts, etiqueta directa en vez de leyenda.
+  color, evitar pie charts cuando dificulten la comparación, etiqueta directa en vez de leyenda.
 
 ## Cómo usar este repo
 
@@ -114,3 +114,7 @@ principales sobre esa versión:
 - Cuenta de Google Cloud (idealmente nueva, para aprovechar el crédito de $300 USD / 90 días).
 - Especialidad: sin requisitos técnicos previos formales.
 - Maestría: dominio funcional de Python, SQL y ML "single-node" (pandas, scikit-learn).
+
+## Revisión curricular y validación
+
+Ver [REVISION_CURRICULAR.md](REVISION_CURRICULAR.md) para las correcciones, perfiles inferidos, fuentes y límites de las pruebas.

@@ -20,7 +20,7 @@ puente natural hacia la Sesión 2 (SQL distribuido) si se quiere profundizar.
 | Operación | Con Parquet en carpetas (`etl-tipo-cambio/`) | Con Iceberg (este script) |
 |---|---|---|
 | Corregir un lote de filas ya cargado | Reescribir el archivo/partición completa | `MERGE INTO` solo sobre las filas afectadas |
-| Ver el dato como estaba ayer | Solo si guardaste una copia versionada tú mismo | `SELECT ... FROM tabla.snapshots` + time travel, gratis |
+| Ver el dato como estaba ayer | Solo si guardaste una copia versionada tú mismo | Snapshots + time travel; retener versiones consume almacenamiento |
 | Agregar una columna nueva | Rompe lectores que no esperan la columna nueva, o forzar a versionar toda la carpeta | `ALTER TABLE ... ADD COLUMN`, sin tocar los archivos ya escritos |
 
 ## Cluster requerido
@@ -28,6 +28,8 @@ puente natural hacia la Sesión 2 (SQL distribuido) si se quiere profundizar.
 Ver el bloque de configuración al inicio de `06_lakehouse_iceberg.py` — necesita el
 runtime de Iceberg (`iceberg-spark-runtime`) y la extensión SQL de Iceberg en las
 propiedades del cluster de `recursos/managed-spark-cluster/`.
+
+Usar Spark 3.5 / Scala 2.12 e Iceberg runtime 1.6.1, como en la receta del cluster. En una red sin salida a Internet, preparar el JAR en GCS antes del lab. El cluster y las versiones retenidas consumen crédito; borrar el cluster al terminar y aplicar una política de snapshots.
 
 ## Correr
 

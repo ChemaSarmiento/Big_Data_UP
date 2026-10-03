@@ -13,10 +13,10 @@
 Notebook "fill-in-the-blanks": completar líneas específicas de un pipeline ya armado y observar el resultado.
 
 ## Entregable
-Notebook completado.
+Notebook ejecutado + captura + conclusión y limitación de la comparación.
 
 ## Ejemplo / material de apoyo
-Versión simplificada de `recursos/spark/02_dataframes.ipynb`: quitar las celdas de `.explain()` y el guardado en Parquet particionado (eso es Maestría), dejar solo lectura + `filter` + `groupBy` + `show()` para que el grupo complete los argumentos de cada función sobre el catálogo de precios PROFECO.
+Usar `recursos/especialidad/04_spark_guiado.ipynb`, listo con cuatro argumentos por completar, validación de columnas y preguntas de interpretación. El docente prepara una muestra PROFECO con encabezados y valores de producto/estado; no pedir al grupo que simplifique el notebook técnico.
 
 ## Recursos vinculados
 - [`recursos/spark/02_dataframes.ipynb`](../../recursos/spark/02_dataframes.ipynb) — usar como base para la versión simplificada

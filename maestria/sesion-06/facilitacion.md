@@ -77,7 +77,7 @@ learning con una fracción del costo.
 
 ```python
 from pyspark.ml import PipelineModel
-pipeline_features = PipelineModel.load("gs://<TU-BUCKET>/modelos/features_bank_transactions")
+pipeline_features = PipelineModel.load("gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features")
 ```
 
 **Talking point:** "Noten que no estamos recalculando ni una sola feature —
@@ -88,8 +88,10 @@ literalmente cargamos el objeto que guardaron la sesión pasada."
 ```python
 from pyspark.ml.classification import LogisticRegression
 lr = LogisticRegression(featuresCol="features", labelCol="is_suspicious")
-modelo_base = lr.fit(train_df)
-auc_base = evaluador.evaluate(modelo_base.transform(test_df))
+train_features = pipeline_features.transform(train_df)
+test_features = pipeline_features.transform(test_df)
+modelo_base = lr.fit(train_features)
+auc_base = evaluador.evaluate(modelo_base.transform(test_features))
 print(f"AUC baseline: {auc_base:.4f}")
 ```
 
@@ -103,7 +105,7 @@ grid = (ParamGridBuilder()
     .addGrid(lr.regParam, [0.01, 0.1, 1.0])
     .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
     .build())
-cv = CrossValidator(estimator=lr, estimatorParamMaps=grid,
+cv = CrossValidator(estimator=Pipeline(stages=feature_stages() + [lr]), estimatorParamMaps=grid,
                      evaluator=evaluador, numFolds=3)
 modelo_cv = cv.fit(train_df)
 ```
@@ -119,8 +121,8 @@ y explicar por qué (menos combinaciones = menos tiempo, mismo concepto).
 ```python
 from pyspark.ml.classification import GBTClassifier
 gbt = GBTClassifier(featuresCol="features", labelCol="is_suspicious")
-modelo_gbt = gbt.fit(train_df)
-auc_gbt = evaluador.evaluate(modelo_gbt.transform(test_df))
+modelo_gbt = gbt.fit(train_features)
+auc_gbt = evaluador.evaluate(modelo_gbt.transform(test_features))
 ```
 
 ```python
@@ -155,3 +157,7 @@ justificación de un párrafo de por qué eligieron uno sobre el otro.
   cluster de todo el curso hasta ahora — si el grupo es numeroso y cada quien
   corre su propio `CrossValidator` completo, considera coordinar turnos o
   reducir la rejilla para todos.
+
+## Contrato de práctica actualizado
+
+Usar `recursos/spark/04_pipeline_ml.ipynb` y `ml_common.py`. Fijar CUTOFF tras revisar fechas; separar train/test antes de ajustar. El pipeline de features guardado en S5 se ajusta solo con train. S6 aplica ese objeto para el baseline, y CV reajusta el pipeline completo por fold. Guardar el candidato elegido, su referencia y métricas en el mismo RUN_ID. La hora se deriva desde timestamp con UTC.

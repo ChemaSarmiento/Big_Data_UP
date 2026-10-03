@@ -5,18 +5,18 @@
 > Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
-1. Windowing y watermarks
-2. Exactly-once vs. at-least-once
-3. Setup de Pub/Sub Lite (topic, suscripción) y primer stream corriendo
+1. Tiempo de evento, ventanas y watermark
+2. Reentregas, deduplicación y recuperación con checkpoint
+3. Pub/Sub estándar → puente Python → JSON GCS → Spark
 
 ## Lab
-Crear el topic y la suscripción de Pub/Sub Lite, correr `producer_transacciones_stream.py` (publica `bank_transactions.csv` simulando llegada en tiempo real), y correr `07a_streaming_conteo.py` — un consumidor de Structured Streaming que solo cuenta transacciones por ventana de 1 minuto, sin scoring todavía. El objetivo es ver windowing/watermarks funcionar en vivo antes de agregar el modelo la próxima sesión.
+Seguir `recursos/streaming/README.md`: topic/suscripción estándar, puente de persistencia, productor acotado y consumidor de conteo. Medir ventanas, latencia y un evento repetido/tardío.
 
 ## Entregable
-Captura de las ventanas de conteo actualizándose en consola + confirmación de que el productor y el consumidor corrieron simultáneamente sin errores.
+Captura de ventanas + explicación de evento/procesamiento + prueba de reentrega y recuperación. Documentar límites de la garantía; consola no demuestra exactly-once.
 
 ## Ejemplo / material de apoyo
-`recursos/streaming/07a_streaming_conteo.py` — Structured Streaming real sobre Pub/Sub Lite (el conector oficial de Google para Spark; Pub/Sub estándar no tiene uno), aislando windowing/watermark del scoring. `recursos/etl-cripto/` sigue siendo útil como puente conceptual desde batch.
+`pubsub_to_gcs.py` persiste antes de ACK. `stream_common.py` declara esquema y deduplica por ID dentro del watermark. `07a_streaming_conteo.py` agrupa por minuto/moneda.
 
 ## Recursos vinculados
 - [`recursos/streaming/`](../../recursos/streaming/) — productor + consumidor de conteo

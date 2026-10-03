@@ -71,6 +71,7 @@
    - El error de fuga de información (fit sobre todo el dataset)
 3. Feature stores: qué problema resuelven
    - Training-serving skew
+4. Contrato bancario único, corte temporal y ajuste de transformaciones solo en train
 
 ## Sesión 06: Entrenamiento de modelos distribuido
 1. Algoritmos de MLlib y su paralelización
@@ -79,6 +80,7 @@
    - El costo real: combinaciones × folds
 3. Cuándo MLlib no alcanza: deep learning
    - Vertex AI Training, Horovod (panorama)
+4. Evaluación con desbalance: PR-AUC, baseline, umbral y costo de falsos positivos
 
 ## Sesión 07: Lakehouse I — formatos y medallion
 1. Parquet vs. ORC vs. Avro
@@ -98,8 +100,9 @@
    - Cuánta tardanza tolerar antes de cerrar una ventana
 2. Exactly-once vs. at-least-once
    - Exactly-once en el cálculo ≠ sin duplicados en el broker
-3. Setup de Pub/Sub Lite
-   - Por qué Lite y no Pub/Sub estándar (único conector oficial de Spark)
+3. Pub/Sub estándar → puente de persistencia → GCS → Spark
+   - ACK después de persistir, checkpoints y deduplicación acotada por ID
+   - Latencia de microlotes y recuperación; no prometer exactly-once por el watermark
 
 ## Sesión 10: Streaming II — inferencia en tiempo real
 1. Dos patrones de scoring en tiempo real
@@ -116,6 +119,7 @@
 2. Monitoreo de drift
    - Drift de datos vs. drift de modelo (concept drift)
    - Population Stability Index (PSI) y sus umbrales
+3. Distribuciones y performance: drift como señal de investigación, latencia y versión servida
 
 ## Sesión 12: MLOps con Airflow
 1. Orquestación con Airflow
@@ -123,11 +127,12 @@
 2. Reentrenamiento programado vs. por triggers de drift
 3. Dónde correr esto
    - Airflow standalone vs. Cloud Composer
+4. Artefactos por ejecución, puerta de calidad, trigger revisado de drift y recuperación
 
 ## Sesión 13: Gobernanza, seguridad y capstone
 1. IAM a nivel dataset/tabla
    - Mínimo privilegio, seguridad a nivel columna/fila
-2. Data Catalog y linaje
+2. Knowledge Catalog y linaje
    - Por qué escala con el éxito del programa de datos
 3. Cumplimiento en contextos regulados
    - Explicabilidad, trazabilidad, retención/borrado

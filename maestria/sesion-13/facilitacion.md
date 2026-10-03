@@ -26,7 +26,7 @@ Conecta con el Módulo 0 (IAM de proyecto) — hoy es más fino: dataset, column
 fila. Pregunta: **"¿alguno de sus capstones maneja datos que ameritarían este
 nivel de control?"**
 
-### Data Catalog y linaje (10 min)
+### Knowledge Catalog y linaje (10 min)
 
 Pregunta rápida: **"¿podrían responder ahora mismo 'de dónde viene exactamente
 este número' en su propio capstone, sin revisar el código?"** — es el problema

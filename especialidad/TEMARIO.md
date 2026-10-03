@@ -62,6 +62,7 @@
 2. De dónde vienen los datos, a dónde van
    - Quién consume el dato al final: dashboard, modelo, reporte
    - Por qué "nadie lo usa" es el fracaso silencioso de un ETL técnicamente correcto
+3. Contratos del ETL y primera visualización: conteos, nulos, duplicados, consumidor y conclusión
 
 ## Sesión 06: Data Lakes y gobierno del dato
 1. Qué es un data lake
@@ -85,6 +86,7 @@
    - Las 5 preguntas de evaluación
 3. Framework para evaluar una propuesta técnica
    - Arquitectura, Costo, Riesgo, Tiempo
+4. Comunicación de evidencia: elegir gráfico, escala, etiquetas directas y conclusión accionable
 
 ## Sesión 09: Presentación del proyecto final
 1. Por qué la estructura del documento no es arbitraria

@@ -1,65 +1,71 @@
-# Streaming e inferencia en tiempo real (Pub/Sub Lite + Structured Streaming)
+# Streaming S9–10 — Pub/Sub estándar, GCS y Spark
 
-Material técnico de Maestría Sesiones 9-10: streaming real sobre Google Cloud, con el
-mismo modelo entrenado en la Sesión 5/6. `recursos/etl-cripto/` (Sesión 1) introduce
-la idea en batch como puente conceptual, pero un pipeline en batch, sin importar qué
-tan rápido corra, no tiene windowing, watermarks ni estado — por eso estas sesiones
-necesitan un motor de streaming real y no solo "correr el batch más seguido".
+Pub/Sub Lite fue retirado el 18 de marzo de 2026 ([Google](https://docs.cloud.google.com/pubsub/lite/docs/release-notes)). El lab usa un productor acotado, un puente de persistencia y el file source nativo de Spark. No requiere Kafka ni un conector comunitario. El puente escribe microlotes mientras Spark procesa nuevos objetos: **medir latencia de segundos/microlotes**, no anunciar tiempo real de milisegundos.
 
-## Por qué Pub/Sub Lite y no Pub/Sub estándar
+## Contrato y garantías
 
-Apache Spark no trae un conector nativo de Structured Streaming para Pub/Sub
-estándar. **Pub/Sub Lite sí tiene un conector oficial de Google**
-(`pubsublite-spark-sql-streaming`), mantenido por el mismo equipo de Dataproc —
-es la opción real y soportada para conectar Spark a un stream de eventos en GCP,
-no un rodeo. (`environment/gcp-setup.md` menciona Pub/Sub estándar en la tabla de
-Always Free — Pub/Sub Lite se cobra distinto, por capacidad reservada, revisar
-cuota antes del lab.)
+Evento: `transaction_id`, `timestamp` del evento, `amount`, `currency`. El label no viaja. El replay conserva timestamps históricos: watermark avanza con el máximo tiempo del evento observado, no con el reloj de pared. Repetir un replay requiere un prefijo/checkpoint nuevo para comparar resultados; reutilizar el checkpoint continúa el mismo stream.
 
-## Los tres scripts, repartidos en dos sesiones
+Pub/Sub entrega al menos una vez por defecto. El puente confirma mensajes **después** de persistir un objeto inmutable; si falla antes del ACK, puede haber reentrega. IDs de lote repetidos no sobrescriben el objeto. Reagrupaciones pueden crear duplicados: Spark aplica `dropDuplicatesWithinWatermark` por `transaction_id`. Esa deduplicación tiene horizonte acotado; no garantiza unicidad histórica ilimitada. Watermark controla estado/eventos tardíos, no garantiza exactly-once por sí solo. El sink de consola es evidencia docente, no un sink transaccional.
 
-| Archivo | Qué hace | Sesión |
-|---|---|---|
-| `producer_transacciones_stream.py` | Lee `bank_transactions.csv` fila por fila y publica cada una como evento JSON, a una tasa controlada | 9 y 10 (el mismo productor alimenta ambas) |
-| `07a_streaming_conteo.py` | Consume el stream, aplica windowing + watermark, cuenta transacciones por ventana de 1 minuto — sin modelo todavía | **Sesión 9** |
-| `07_streaming_scoring.py` | Mismo esqueleto que `07a`, pero aplica el `PipelineModel` de la Sesión 6 y genera un score por transacción + conteo de alertas | **Sesión 10** |
+## Preparación (terminal local/VM)
 
-La razón de dividirlo en dos: windowing/watermarks y scoring son dos ideas densas por
-separado — meterlas en el mismo lab hacía que la sesión completa se sintiera
-sobrecargada. Aislar windowing primero (sin modelo) deja que el grupo vea el
-mecanismo de streaming funcionar antes de agregarle la complejidad del modelo.
-
-## Lo que enseña cada sesión
-
-**Sesión 9 (`07a_streaming_conteo.py`):**
-- **Windowing + watermark:** `groupBy(F.window(...))` con `withWatermark("timestamp", "2 minutes")` — ver los comentarios del script para la distinción entre "exactly-once en el conteo" y "sin duplicados en el broker" (son garantías distintas, se confunden fácil).
-- **Setup real de Pub/Sub Lite:** crear el topic y la suscripción es, en sí mismo, parte del aprendizaje — no es un paso trivial la primera vez.
-
-**Sesión 10 (`07_streaming_scoring.py`):**
-- **Scoring en el stream (no vía endpoint externo):** el `PipelineModel` se carga una vez y se aplica directo sobre el DataFrame en streaming — el patrón contrario a la Sesión 11, donde el modelo se sirve como endpoint HTTP. Buen punto de comparación explícito en clase.
-- **Feature freshness:** `hora_del_dia` se deriva del mismo `timestamp` del evento, no de la hora de procesamiento — si el stream se atrasa, la feature sigue siendo correcta (a diferencia de usar `current_timestamp()`).
-
-## Correr
+Desde la raíz, Python 3.11 y dependencias de `environment/requirements-lab.txt`:
 
 ```bash
-# Una sola vez
-gcloud pubsub lite-topics create transacciones-stream --location=us-central1-a --partitions=1 --per-partition-bytes=30GiB
-gcloud pubsub lite-subscriptions create transacciones-stream-sub --location=us-central1-a --topic=transacciones-stream
-
-# Terminal 1 (productor, ambas sesiones)
-python producer_transacciones_stream.py --project <PROJECT_ID> --tasa 20
-
-# Terminal 2 / cluster — Sesión 9
-spark-submit --master yarn 07a_streaming_conteo.py --project <PROJECT_ID> --subscription transacciones-stream-sub
-
-# Terminal 2 / cluster — Sesión 10
-spark-submit --master yarn 07_streaming_scoring.py \
-    --project <PROJECT_ID> --subscription transacciones-stream-sub \
-    --modelo gs://<TU-BUCKET>/modelos/fraude_bank_transactions_pipeline \
-    --salida gs://<TU-BUCKET>/streaming/scores
+gcloud auth application-default login
+gcloud pubsub topics create transacciones-stream
+gcloud pubsub subscriptions create transacciones-stream-sub --topic=transacciones-stream --ack-deadline=120
+export PROJECT_ID=<PROJECT_ID>
+export BUCKET_NAME=<BUCKET_UNICO>
+export STREAM_RUN=s9-demo-01
 ```
 
-## Ver también
+Iniciar primero el puente y Spark, luego el productor, en terminales distintas. Topic/suscripción requieren permisos de Pub/Sub; puente requiere escritura de objetos en el bucket. El prefijo debe ser exclusivo de la ejecución.
 
-- [`recursos/spark/04_pipeline_ml.ipynb`](../spark/04_pipeline_ml.ipynb) — de donde sale el `PipelineModel` que la Sesión 10 carga.
-- [`recursos/etl-cripto/`](../etl-cripto/) — mantiene su rol de puente conceptual (batch con dos rondas de Extract) antes de pasar a estos labs.
+```bash
+# Puente (180 segundos; lee hasta 100 mensajes por petición)
+python recursos/streaming/pubsub_to_gcs.py --project "$PROJECT_ID" \
+  --bucket "$BUCKET_NAME" --prefix "streaming/$STREAM_RUN/entrada" --seconds 180
+# Productor: CSV local, lectura secuencial, máximo 1200 eventos (~60 s a 20/s)
+python recursos/streaming/producer_transacciones_stream.py --project "$PROJECT_ID" \
+  --csv bank_transactions.csv --tasa 20 --max-events 1200
+```
+
+El prefijo GCS debe existir antes del job: iniciar el puente, publicar un evento de prueba y verificar que aparece un JSON. Después iniciar Spark y continuar el replay; así no se depende de que un directorio vacío exista en object storage.
+
+## S9: conteo con ventanas
+
+Subir scripts según `recursos/managed-spark-cluster/README.md`:
+
+```bash
+gcloud dataproc jobs submit pyspark gs://$BUCKET_NAME/scripts/07a_streaming_conteo.py \
+  --cluster=curso-cluster --region=us-central1 \
+  --py-files=gs://$BUCKET_NAME/scripts/stream_common.py -- \
+  --input gs://$BUCKET_NAME/streaming/$STREAM_RUN/entrada \
+  --checkpoint gs://$BUCKET_NAME/streaming/$STREAM_RUN/checkpoints/conteo --seconds 180
+```
+
+Comparar tiempo de evento/procesamiento, ventana de 1 minuto y tolerancia de 2 minutos. Probar un evento repetido y otro fuera del horizonte, explicando el resultado con Spark UI. Guardar captura y condiciones, no solo «corrió».
+
+## S10: scoring con el candidato de S6
+
+```bash
+export MODEL_RUN=<RUN_ID_ENTRENAMIENTO>
+gcloud dataproc jobs submit pyspark gs://$BUCKET_NAME/scripts/07_streaming_scoring.py \
+  --cluster=curso-cluster --region=us-central1 \
+  --py-files=gs://$BUCKET_NAME/scripts/stream_common.py -- \
+  --input gs://$BUCKET_NAME/streaming/$STREAM_RUN/entrada \
+  --modelo gs://$BUCKET_NAME/modelos/runs/$MODEL_RUN/pipeline \
+  --salida gs://$BUCKET_NAME/streaming/$STREAM_RUN/scores --seconds 180
+```
+
+El modelo contiene la derivación de hora, transformaciones ajustadas sobre train y clasificador. No se vuelve a ajustar en streaming. Salida: `scores/datos` Parquet con probabilidad escalar, decisión y URI del modelo; checkpoints separados para scores y ventanas. Elegir otro `STREAM_RUN` o realizar un replay explícito para S10.
+
+## Costos y cierre
+
+Limitar eventos, tiempo y objetos. El puente produce archivos pequeños útiles para clase; en producción conviene controlar tamaño/compacción. Detener productor/puente, dejar finalizar Spark, guardar evidencia, borrar cluster y topic/suscripción cuando ya no se usen. Borrar entrada/checkpoints solo después de terminar el consumidor; su eliminación impide continuar ese estado.
+
+Fuentes: [Pub/Sub: reentregas](https://docs.cloud.google.com/pubsub/docs/subscribe-best-practices), [Spark Structured Streaming](https://spark.apache.org/docs/3.5.3/structured-streaming-programming-guide.html).
+
+Las consultas de ventanas usan `append`: emiten resultados cuando avanza el watermark y se finalizan ventanas. Una entrada con timestamps inmóviles puede no emitir ventanas finalizadas; explicar esa diferencia frente a `update`. El scoring por fila también usa append con su propio checkpoint.

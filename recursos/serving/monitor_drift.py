@@ -1,65 +1,65 @@
-"""
-monitor_drift.py
-Monitoreo de drift de datos: compara la distribución de `amount` entre el set de
-entrenamiento (referencia) y un lote reciente de transacciones scoreadas por
-07_streaming_scoring.py -- si el lote reciente se separó demasiado de la
-referencia, el modelo puede estar viendo un tipo de transacción distinto al que
-aprendió (ej. cambio de comportamiento por temporada, o un ataque nuevo).
-
-Usa el Population Stability Index (PSI), el estándar de la industria para esto
-(no requiere asumir una distribución particular, y da un número interpretable):
-  PSI < 0.1  -> sin drift relevante
-  0.1 - 0.25 -> drift moderado, vigilar
-  > 0.25     -> drift significativo, considerar reentrenar
-
-pip install pandas numpy
-
-Correr:
-  python monitor_drift.py \
-      --referencia gs://<TU-BUCKET>/raw/bank_transactions/bank_transactions.csv \
-      --lote_reciente gs://<TU-BUCKET>/streaming/scores \
-      --columna amount
-"""
+"""PSI sobre muestras acotadas; produce un reporte para el DAG, no una orden automática."""
 import argparse
-
+import json
+from pathlib import Path
 import numpy as np
 import pandas as pd
 
 
-def calcular_psi(referencia: pd.Series, actual: pd.Series, n_buckets: int = 10) -> float:
-    limites = np.quantile(referencia, np.linspace(0, 1, n_buckets + 1))
-    limites[0], limites[-1] = -np.inf, np.inf
-
-    dist_referencia = pd.cut(referencia, limites).value_counts(normalize=True, sort=False)
-    dist_actual = pd.cut(actual, limites).value_counts(normalize=True, sort=False)
-
-    # Evita log(0) / división por 0 en buckets vacíos -- un bucket sin datos no
-    # debería romper el cálculo, solo aportar 0 a ese bucket.
-    epsilon = 1e-6
-    dist_referencia = dist_referencia.clip(lower=epsilon)
-    dist_actual = dist_actual.clip(lower=epsilon)
-
-    psi_por_bucket = (dist_actual - dist_referencia) * np.log(dist_actual / dist_referencia)
-    return float(psi_por_bucket.sum())
-
-
-def interpretar(psi: float) -> str:
-    if psi < 0.1:
-        return "sin drift relevante"
-    if psi < 0.25:
-        return "drift moderado -- vigilar"
-    return "drift significativo -- considerar reentrenar (dispara mlops_pipeline_dag.py manualmente)"
+def calcular_psi(referencia, actual, n_buckets=10):
+    if n_buckets < 2:
+        raise ValueError("Se necesitan al menos dos buckets")
+    reference = pd.to_numeric(pd.Series(referencia), errors="coerce").replace([np.inf, -np.inf], np.nan).dropna()
+    recent = pd.to_numeric(pd.Series(actual), errors="coerce").replace([np.inf, -np.inf], np.nan).dropna()
+    if reference.empty or recent.empty:
+        raise ValueError("PSI necesita dos muestras no vacías con valores finitos")
+    # Repeated quantiles are common with discrete/constant amounts.
+    limits = np.unique(np.quantile(reference, np.linspace(0, 1, n_buckets + 1)))
+    if len(limits) == 1:
+        value = limits[0]; width = max(abs(value) * 0.01, 1.0)
+        limits = np.array([-np.inf, value - width, value + width, np.inf])
+    else:
+        limits[0], limits[-1] = -np.inf, np.inf
+    ref_counts = np.histogram(reference, bins=limits)[0].astype(float) + 1e-6
+    actual_counts = np.histogram(recent, bins=limits)[0].astype(float) + 1e-6
+    expected, observed = ref_counts / ref_counts.sum(), actual_counts / actual_counts.sum()
+    return float(np.sum((observed - expected) * np.log(observed / expected)))
 
 
-if __name__ == "__main__":
+def interpretar(psi):
+    if psi < 0.1: return "sin cambio relevante bajo esta regla docente"
+    if psi < 0.25: return "vigilar e investigar"
+    return "investigar drift; evaluar candidato antes de desplegar"
+
+
+def read_sample(uri, column, max_rows):
+    # Monitoring gets bounded Parquet samples, never the multi-GB raw CSV.
+    if uri.lower().endswith('.csv'):
+        return pd.read_csv(uri, usecols=[column], nrows=max_rows)[column]
+    frame = pd.read_parquet(uri, columns=[column])
+    if len(frame) > max_rows:
+        raise ValueError("El Parquet de monitoreo debe ser una muestra acotada, no el stream completo")
+    return frame[column]
+
+
+def report(reference_uri, recent_uri, column="amount", max_rows=100_000, threshold=0.25):
+    reference, recent = read_sample(reference_uri, column, max_rows), read_sample(recent_uri, column, max_rows)
+    psi = calcular_psi(reference, recent)
+    return {"psi": psi, "threshold": threshold, "investigate": psi >= threshold, "interpretation": interpretar(psi),
+            "column": column, "reference": reference_uri, "recent": recent_uri,
+            "reference_rows": len(reference), "recent_rows": len(recent), "max_rows": max_rows}
+
+
+def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--referencia", required=True, help="CSV/Parquet usado para entrenar (Sesión 5/6)")
-    parser.add_argument("--lote_reciente", required=True, help="Parquet de scores recientes (salida de 07_streaming_scoring.py)")
+    parser.add_argument("--referencia", required=True)
+    parser.add_argument("--lote-reciente", "--lote_reciente", dest="recent", required=True)
     parser.add_argument("--columna", default="amount")
+    parser.add_argument("--salida", required=True, help="Archivo JSON local para revisar o pasar al DAG")
     args = parser.parse_args()
+    result = report(args.referencia, args.recent, args.columna)
+    Path(args.salida).write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(json.dumps(result, indent=2))
 
-    referencia = pd.read_csv(args.referencia, usecols=[args.columna])[args.columna]
-    lote_reciente = pd.read_parquet(args.lote_reciente, columns=[args.columna])[args.columna]
 
-    psi = calcular_psi(referencia, lote_reciente)
-    print(f"=== PSI para '{args.columna}': {psi:.4f} -- {interpretar(psi)} ===")
+if __name__ == "__main__": main()

@@ -197,7 +197,7 @@ scaler = StandardScaler(inputCol="features_raw", outputCol="features")
 
 # 6. Armar el Pipeline completo — AHORA sí, todo junto
 pipeline = Pipeline(stages=[imputer, indexer, encoder, assembler, scaler])
-modelo_features = pipeline.fit(df)
+modelo_features = pipeline.fit(train_df)
 df_features = modelo_features.transform(df)
 df_features.select("features").show(5, truncate=False)
 ```
@@ -210,7 +210,7 @@ como "ya lo van a entender".
 ### Paso 3 — Guardar el pipeline (10 min)
 
 ```python
-modelo_features.write().overwrite().save("gs://<TU-BUCKET>/modelos/features_bank_transactions")
+modelo_features.write().overwrite().save("gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features")
 ```
 
 **Talking point de cierre técnico:**
@@ -227,7 +227,7 @@ Ejercicio guiado adicional, no está en el notebook base — agrégalo tú en vi
 ```python
 # Cargar el pipeline guardado y aplicarlo a una muestra nueva
 from pyspark.ml import PipelineModel
-modelo_cargado = PipelineModel.load("gs://<TU-BUCKET>/modelos/features_bank_transactions")
+modelo_cargado = PipelineModel.load("gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features")
 muestra_nueva = df.sample(0.001, seed=99)
 resultado = modelo_cargado.transform(muestra_nueva)
 resultado.select("features").show(3, truncate=False)
@@ -258,7 +258,7 @@ gcloud dataproc clusters delete curso-cluster --region=us-central1
 ```
 
 **Entregable de hoy:** pipeline de features serializado y reproducible — ya lo
-tienen en `gs://<TU-BUCKET>/modelos/features_bank_transactions`. No hay entrega
+tienen en `gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features`. No hay entrega
 adicional de código, el archivo guardado *es* el entregable.
 
 **Pregunta de cierre para abrir la Sesión 6:**
@@ -279,3 +279,7 @@ adicional de código, el archivo guardado *es* el entregable.
 - Si el grupo es grande y cada quien crea su propio cluster en vez de compartir uno,
   el costo se multiplica — considera clusters compartidos por equipo de 3-4 personas
   para esta sesión en particular.
+
+## Contrato de práctica actualizado
+
+Usar `recursos/spark/04_pipeline_ml.ipynb` y `ml_common.py`. Fijar CUTOFF tras revisar fechas; separar train/test antes de ajustar. El pipeline de features guardado en S5 se ajusta solo con train. S6 aplica ese objeto para el baseline, y CV reajusta el pipeline completo por fold. Guardar el candidato elegido, su referencia y métricas en el mismo RUN_ID. La hora se deriva desde timestamp con UTC.

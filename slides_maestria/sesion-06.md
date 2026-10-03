@@ -87,15 +87,17 @@ segundo algoritmo
 
 ```python
 from pyspark.ml import PipelineModel
-pipeline_features = PipelineModel.load("gs://<TU-BUCKET>/modelos/features_bank_transactions")
+pipeline_features = PipelineModel.load("gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/features")
 
 lr = LogisticRegression(featuresCol="features", labelCol="is_suspicious")
-modelo_base = lr.fit(train_df)
-auc_base = evaluador.evaluate(modelo_base.transform(test_df))
+train_features = pipeline_features.transform(train_df)
+test_features = pipeline_features.transform(test_df)
+modelo_base = lr.fit(train_features)
+auc_base = evaluador.evaluate(modelo_base.transform(test_features))
 ```
 
 <div class="mt-4 text-sm opacity-70">
-No se recalcula ni una sola feature — se carga el objeto guardado la sesión pasada
+Se transforma con el objeto ajustado solo en train; no se vuelve a ajustar sobre test. En CV, las transformaciones se ajustan dentro de cada fold.
 </div>
 
 ---
@@ -107,13 +109,16 @@ grid = (ParamGridBuilder()
     .addGrid(lr.regParam, [0.01, 0.1, 1.0])
     .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
     .build())
-cv = CrossValidator(estimator=lr, estimatorParamMaps=grid,
+from pyspark.ml import Pipeline
+from ml_common import feature_stages
+pipeline = Pipeline(stages=feature_stages() + [lr])
+cv = CrossValidator(estimator=pipeline, estimatorParamMaps=grid,
                      evaluator=evaluador, numFolds=3)
 modelo_cv = cv.fit(train_df)
 ```
 
 <div class="mt-4 text-sm opacity-70">
-27 pipelines completos — no se colgó, solo tarda
+Rejilla 2×2 recomendada para clase: 12 ajustes + refit. La rejilla 3×3 implica 27 ajustes + refit; estimar antes de ejecutar.
 </div>
 
 ---
@@ -122,8 +127,8 @@ modelo_cv = cv.fit(train_df)
 
 ```python
 gbt = GBTClassifier(featuresCol="features", labelCol="is_suspicious")
-modelo_gbt = gbt.fit(train_df)
-auc_gbt = evaluador.evaluate(modelo_gbt.transform(test_df))
+modelo_gbt = gbt.fit(train_features)
+auc_gbt = evaluador.evaluate(modelo_gbt.transform(test_features))
 ```
 
 ```python

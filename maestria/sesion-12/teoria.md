@@ -40,9 +40,9 @@ y evidencia de que el mundo cambió) que pueden justificar la misma acción.
 
 ## Dónde correr esto
 
-- **Airflow standalone en la VM `e2-micro`** (Always Free) — la opción por
+- **Airflow standalone en la VM temporal de 4+ GB (recomendado: `e2-standard-2`)** (consume crédito de prueba) — la opción por
   default, ver `environment/gcp-setup.md`.
-- **Cloud Composer** — funciona igual (mismo DAG, sin cambios), pero es el
+- **Cloud Composer** — funciona igual (requiere adaptar conexiones y dependencias), pero es el
   servicio más caro del curso; solo si el crédito de $300 alcanza y el grupo
   quiere ver el entorno gestionado real.
 
@@ -62,3 +62,7 @@ qué ese umbral y no otro?
 - [Apache Airflow — Concepts: DAGs, Operators, Tasks](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html)
 - [Google Cloud — Cloud Composer overview](https://cloud.google.com/composer/docs/concepts/overview)
 - [Google Cloud — MLOps: Continuous delivery and automation pipelines in machine learning](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+
+## Contrato operativo de esta ruta
+
+Seguir `recursos/airflow/README.md`: entorno Python 3.11 separado, bucket sin gs:// en variables, candidato y metrics.json por run, URI/token en recarga y rechazo HTTP propagado. Trigger por drift requiere reporte revisado y pasa de nuevo por la puerta ROC/PR-AUC. El DAG requiere cluster temporal existente y no lo crea/borra; pausar DAG y apagar VM al terminar.

@@ -10,3 +10,12 @@
 - **Whole-stage code generation:** combinar operadores compatibles en código generado.
 
 **Compruébalo:** compara `df.explain("formatted")` antes y después de seleccionar columnas y filtrar. La mejora se demuestra con el plan y una medición.
+
+
+---
+
+# Repartir por clave puede concentrar el trabajo
+
+<figure data-infographic="shuffle"></figure>
+
+Ejemplo ilustrativo, no medición real. Contrasta la duración por task y los bytes de shuffle antes de optimizar.

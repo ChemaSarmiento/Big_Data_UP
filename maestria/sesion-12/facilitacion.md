@@ -7,8 +7,8 @@
 
 ## Antes de empezar (facilitador)
 
-Instala Airflow con anticipación en la VM `e2-micro` (o localmente para la
-demo) — `airflow db init` la primera vez puede tardar y generar salida
+Instala Airflow con anticipación en la VM temporal de 4+ GB (recomendado: `e2-standard-2`) (o localmente para la
+demo) — `airflow db migrate` la primera vez puede tardar y generar salida
 confusa si se hace en vivo por primera vez frente al grupo.
 
 ---
@@ -74,24 +74,9 @@ el DAG cada hora, para no depender de nadie que revise el PSI manualmente?"**
 
 ### Paso 1 — Setup de Airflow (25 min)
 
-```bash
-pip install apache-airflow apache-airflow-providers-google
-airflow db init
-airflow variables set gcp_project_id <PROJECT_ID>
-airflow variables set gcp_bucket gs://<TU-BUCKET>
-airflow variables set serving_host <host-del-endpoint>:8080
-cp dags/mlops_pipeline_dag.py $AIRFLOW_HOME/dags/
-airflow standalone
-```
+Seguir el setup completo de [recursos/airflow/README.md](../../recursos/airflow/README.md): Python 3.11, constraints oficiales, ADC, variables y secreto de recarga. El bucket se configura sin `gs://`; copiar el DAG desde `recursos/airflow/dags/`. La UI usa `localhost:8081` y el API `localhost:8080`.
 
-**Deberías ver:** Airflow standalone arranca y muestra una URL local (típicamente
-`localhost:8080` — si choca con el puerto del endpoint de la Sesión 11, cambia
-uno de los dos puertos antes de seguir).
-
-**Si el DAG no aparece en la UI:** confirmar que `mlops_pipeline_dag.py` se
-copió al directorio correcto (`$AIRFLOW_HOME/dags/`) y que no tiene errores de
-sintaxis (`python dags/mlops_pipeline_dag.py` debe correr sin error como
-chequeo rápido).
+Antes del trigger, verificar el cluster temporal existente, los dos archivos Python subidos, el corte temporal y la conectividad del worker con el API. Confirmar en la UI que el DAG carga sin errores.
 
 ### Paso 2 — Disparar el DAG manualmente (40 min)
 
@@ -105,9 +90,7 @@ secuencial no les da."
 tardar varios minutos — real, no simulado), después `evaluar_metricas` lee el
 `metrics.json`, y finalmente `puerta_calidad` decide la rama.
 
-**Si `evaluar_metricas` falla:** confirmar que el notebook de la Sesión 6
-efectivamente escribió `metrics.json` en la ruta esperada — es la causa #1 de
-falla en esta tarea.
+**Si `evaluar_metricas` falla:** confirmar que el job de entrenamiento escribió `metrics.json` en la ruta exclusiva del run y que `model_uri` coincide con el candidato.
 
 ### Paso 3 — Confirmar el despliegue condicional (25 min)
 
@@ -115,8 +98,7 @@ Si el AUC pasa el umbral, `desplegar_modelo` debe llamar `POST /reload` al
 endpoint de la Sesión 11 — confirmar en los logs de `uvicorn` que la petición
 llegó.
 
-**Ejercicio de discusión:** bajar `AUC_MINIMO` a un valor que sepan que va a
-fallar, volver a correr, y ver la rama `no_desplegar` activarse — buena forma
+**Ejercicio de discusión:** subir `auc_min` o `pr_auc_min` por encima de la métrica observada, volver a correr, y ver la rama `no_desplegar` activarse — buena forma
 de confirmar que la lógica condicional realmente funciona en ambos sentidos.
 
 ---
@@ -139,3 +121,7 @@ en verde), conectado al endpoint de la Sesión 11.
 - El DAG dispara un job real de Dataproc cada vez que corre — si el grupo
   experimenta con varios triggers manuales durante la clase, recuérdales que
   cada uno consume tiempo de cluster real, no es gratis "porque es un DAG".
+
+## Contrato operativo de esta ruta
+
+Seguir `recursos/airflow/README.md`: entorno Python 3.11 separado, bucket sin gs:// en variables, candidato y metrics.json por run, URI/token en recarga y rechazo HTTP propagado. Trigger por drift requiere reporte revisado y pasa de nuevo por la puerta ROC/PR-AUC. El DAG requiere cluster temporal existente y no lo crea/borra; pausar DAG y apagar VM al terminar.

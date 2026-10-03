@@ -1,57 +1,21 @@
-# Teoría — Sesión 10: Streaming II — inferencia en tiempo real
+# Teoría — Streaming: tiempo, estado y garantías
 
-> Segunda de dos sesiones de streaming. La Sesión 9 dejó windowing/watermarks
-> funcionando sobre un conteo simple; hoy se agrega el modelo entrenado en la
-> Sesión 6, sin reentrenar nada — el mismo `PipelineModel`, aplicado a datos que
-> llegan continuamente.
+Un stream de archivos procesa objetos nuevos mientras llegan; que cada entrada sea un archivo no lo convierte en un único batch estático. El lab usa Pub/Sub estándar, un puente de persistencia y Spark Structured Streaming. La latencia incluye publicación, escritura del lote, descubrimiento del archivo y trigger de Spark.
 
-## 1. Dos patrones de scoring en tiempo real
+## Tiempo de evento y watermark
 
-| Patrón | Cómo funciona | Trade-off |
-|---|---|---|
-| **Modelo cargado en el stream** | El `PipelineModel` se carga una vez, en memoria del job de streaming, y se aplica directo sobre cada microlote (`recursos/streaming/07_streaming_scoring.py`) | Baja latencia (no hay llamada de red por evento), pero el modelo solo se actualiza si se reinicia el job |
-| **Llamada a un endpoint externo** | El job de streaming hace una petición HTTP a un servicio de serving (Sesión 11) por cada evento o microlote | El modelo se puede actualizar sin tocar el job de streaming (solo el endpoint), a cambio de latencia de red y un punto de falla adicional |
+Las ventanas agrupan timestamp del evento, no hora de recepción. El watermark se deriva del máximo tiempo de evento observado menos la tolerancia; el operador aplica su watermark durante el procesamiento del lote y elimina estado cuando corresponde. No es «esperar dos minutos de reloj». En general `update` puede emitir una ventana varias veces. Este lab encadena deduplicación y agregación, y usa `append`: imprime ventanas finalizadas cuando avanza el watermark.
 
-Este curso usa el primer patrón en streaming (hoy) y el segundo en serving batch
-(Sesión 11) — la comparación directa entre ambos, con el mismo modelo, es justo el
-ejercicio que conecta las dos sesiones.
+## Recuperación y duplicados
 
-**Por qué `PipelineModel.transform()` funciona igual en streaming que en batch:**
-todas las etapas del pipeline (`Imputer`, `StringIndexer`, `OneHotEncoder`,
-`VectorAssembler`, `StandardScaler`, `LogisticRegression` ya *fit*) son row-wise —
-ninguna mantiene estado nuevo entre filas. Por eso el mismo objeto guardado en la
-Sesión 6 se aplica sin modificar una sola línea sobre un DataFrame en streaming.
+Pub/Sub estándar entrega al menos una vez por defecto. El puente hace ACK tras escribir un objeto inmutable. Si falla entre escritura y ACK, puede reentregar. Deduplicar por transaction_id dentro del horizonte limita el estado; no sustituye un registro histórico de unicidad. Cada consulta conserva su checkpoint y debe recuperar desde él para mantener continuidad. Watermark no garantiza exactly-once; fuente, sink y protocolo de commit importan.
 
-## 2. Feature freshness
+## Features y scoring
 
-Una feature "fresca" es una que refleja el estado real del mundo en el momento de la
-predicción, no un valor calculado hace horas. En streaming esto tiene un matiz sutil:
+El PipelineModel de S6 incluye derivación de hora, transformaciones ajustadas con train y clasificador. Streaming y API no vuelven a hacer fit. La hora usa UTC y timestamp del evento; el replay omite el label porque en operación se conoce después. Registrar URI de modelo en cada score permite auditar resultados.
 
-```python
-# BIEN: derivado del timestamp del EVENTO
-.withColumn("hora_del_dia", F.hour("timestamp"))
+## Evidencia y límites
 
-# MAL: derivado del momento de PROCESAMIENTO
-.withColumn("hora_del_dia", F.hour(F.current_timestamp()))
-```
+Comparar ID repetido, evento tardío y reinicio con checkpoint. Usar prefijo nuevo si se cambia el contrato o el experimento. La consola es un sink docente no transaccional. Producir máximo 1200 eventos y jobs de 180 segundos mantiene la práctica acotada; el cluster se borra tras guardar evidencia.
 
-Si el stream se atrasa por cualquier razón (una ráfaga de eventos, un reinicio del
-job), la versión "MAL" queda sistemáticamente equivocada, mientras que la versión
-"BIEN" sigue siendo correcta sin importar cuándo se procesó realmente el evento.
-
-## 3. Lo que cambia hoy respecto al lab de la Sesión 9
-
-`07_streaming_scoring.py` retoma exactamente el mismo esqueleto de
-`07a_streaming_conteo.py` (lectura de Pub/Sub Lite, parseo del JSON, windowing con
-watermark) y agrega dos cosas: la carga del `PipelineModel` de la Sesión 6, y un
-segundo sink que escribe cada transacción scoreada a Parquet — para auditoría o
-reentrenamiento futuro, el mismo principio de versionado de datos de la Sesión 8
-aplicado a datos que llegan en tiempo real.
-
----
-
-## Referencias
-
-- [Apache Spark — Structured Streaming Programming Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html)
-- [Apache Spark MLlib — ML Pipelines (docs oficiales)](https://spark.apache.org/docs/latest/ml-pipeline.html)
-- [Google Cloud — Pub/Sub Lite overview](https://cloud.google.com/pubsub/lite/docs/overview)
+Referencias: [Spark 3.5](https://spark.apache.org/docs/3.5.3/structured-streaming-programming-guide.html), [Pub/Sub: duplicados](https://docs.cloud.google.com/pubsub/docs/subscribe-best-practices), [retiro de Lite](https://docs.cloud.google.com/pubsub/lite/docs/release-notes).

@@ -1,56 +1,46 @@
-"""
-producer_transacciones_stream.py
-Simula la llegada en tiempo real de bank_transactions.csv: lee el CSV real (el
-mismo de las Sesiones 4 y 5 de Maestría) fila por fila y publica cada una como un
-mensaje JSON en Pub/Sub Lite, a una tasa controlada -- para poder probar
-07_streaming_scoring.py sin depender de que ocurra un evento real.
-
-pip install google-cloud-pubsublite pandas
-
-Antes de correr, crear el topic y la suscripción (una sola vez):
-  gcloud pubsub lite-topics create transacciones-stream \
-      --location=us-central1-a --partitions=1 --per-partition-bytes=30GiB
-  gcloud pubsub lite-subscriptions create transacciones-stream-sub \
-      --location=us-central1-a --topic=transacciones-stream
-
-Correr (desde tu máquina, Cloud Shell, o una VM -- no necesita el cluster de Spark):
-  python producer_transacciones_stream.py --project <PROJECT_ID> \
-      --csv bank_transactions.csv --tasa 20
-"""
+"""Reproduce una muestra del CSV en Pub/Sub estándar, sin cargarlo en RAM."""
 import argparse
+import csv
 import json
+import math
 import time
+from datetime import datetime
 
-import pandas as pd
-from google.cloud.pubsublite.cloudpubsub import PublisherClient
-from google.cloud.pubsublite.types import CloudRegion, CloudZone, TopicPath
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--project", required=True)
-parser.add_argument("--topic", default="transacciones-stream")
-parser.add_argument("--location", default="us-central1-a", help="zona de Pub/Sub Lite")
-parser.add_argument("--csv", default="bank_transactions.csv", help="descargado localmente del Drive del curso")
-parser.add_argument("--tasa", type=int, default=20, help="mensajes por segundo")
-args = parser.parse_args()
+def event_from_row(row):
+    event = {key: row[key] for key in ("transaction_id", "timestamp", "amount", "currency")}
+    event["amount"] = float(event["amount"])
+    if not event["transaction_id"] or not event["currency"] or not math.isfinite(event["amount"]):
+        raise ValueError("Evento inválido: identificador, moneda o monto")
+    datetime.fromisoformat(event["timestamp"].replace("Z", "+00:00"))
+    return event
 
-zona = CloudZone(CloudRegion(args.location[:-2]), args.location[-1])
-topic_path = TopicPath(args.project, zona, args.topic)
 
-# Solo las columnas que 07_streaming_scoring.py necesita -- el resto del esquema
-# real de bank_transactions.csv (from_*, to_*, is_suspicious, suspicious_pattern)
-# no viaja en el mensaje: en producción, el label (`is_suspicious`) nunca llega
-# junto con el evento en tiempo real, se conoce después.
-df = pd.read_csv(args.csv, usecols=["transaction_id", "timestamp", "amount", "currency"])
+def main():
+    from google.cloud import pubsub_v1
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--project", required=True)
+    parser.add_argument("--topic", default="transacciones-stream")
+    parser.add_argument("--csv", required=True)
+    parser.add_argument("--tasa", type=float, default=20)
+    parser.add_argument("--max-events", type=int, default=1200)
+    args = parser.parse_args()
+    if args.tasa <= 0 or args.max_events <= 0:
+        parser.error("tasa y max-events deben ser positivos")
+    publisher = pubsub_v1.PublisherClient()
+    topic = publisher.topic_path(args.project, args.topic)
+    try:
+        with open(args.csv, newline="", encoding="utf-8") as handle:
+            for i, row in enumerate(csv.DictReader(handle)):
+                if i >= args.max_events:
+                    break
+                event = event_from_row(row)
+                publisher.publish(topic, json.dumps(event).encode("utf-8")).result(timeout=30)
+                time.sleep(1 / args.tasa)
+        print(f"Publicación completada: hasta {args.max_events} eventos; timestamps originales, sin labels")
+    finally:
+        publisher.stop()
 
-print(f"=== Publicando {len(df)} transacciones a ~{args.tasa} msg/s en {topic_path} ===")
 
-with PublisherClient() as publisher:
-    for _, fila in df.iterrows():
-        mensaje = json.dumps({
-            "transaction_id": str(fila["transaction_id"]),
-            "timestamp": str(fila["timestamp"]),
-            "amount": float(fila["amount"]),
-            "currency": str(fila["currency"]),
-        }).encode("utf-8")
-        publisher.publish(topic_path, mensaje).result()
-        time.sleep(1 / args.tasa)
+if __name__ == "__main__":
+    main()

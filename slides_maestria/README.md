@@ -34,13 +34,13 @@ npx slidev export sesion-00.md --format png   # una imagen por slide
 ## Convención de cada deck
 
 - **Título = la conclusión, no la categoría** ("Spark corrió 8x más rápido...", no "Comparación de rendimiento")
-- **Un acento de color** (`text-blue-500`/`border-blue-500`) sobre fondo neutro — nunca una paleta de 6 colores compitiendo por atención
+- **Un acento de color** (`text-blue-500`/`border-blue-500`) sobre fondo neutro — el color destaca una conclusión; no seis colores compitiendo por atención
 - **Diagramas Mermaid** para el mecanismo central de cada sesión (arquitectura, DAG, pipeline) — no texto describiendo lo que un diagrama muestra mejor
 - **Código real**, tomado de `recursos/` — nunca pseudocódigo inventado para la slide
 - Cierra siempre con un puente explícito a la siguiente sesión
 
 Principios de diseño (Cole Nussbaumer Knaflic, *Storytelling with Data*): un color
-de acento y el resto en gris, nunca pie charts ni 3D, etiqueta directa en vez de
+de acento y el resto en gris, evitar pie charts cuando dificulten la comparación ni 3D, etiqueta directa en vez de
 leyenda aparte, y un arco narrativo por sesión (contexto → tensión → resolución).
 
 ## Por qué cada sesión es un archivo independiente, no un solo deck de 100+ slides

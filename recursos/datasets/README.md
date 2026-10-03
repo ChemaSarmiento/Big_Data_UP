@@ -107,7 +107,7 @@ datasets de práctica pequeños:
 - **NOAA weather data** (BigQuery público, 9,000 estaciones) — series de tiempo masivas,
   buena alternativa si se quiere variar el caso de negocio lejos de retail/finanzas.
 - **Credit Card Fraud Detection** (Kaggle, `mlg-ulb/creditcardfraud`) — alternativa
-  pequeña (285K filas) a `bank_transactions.csv` si el free tier no alcanza para 7.5 GB.
+  pequeña (285K filas) a `bank_transactions.csv` si el ruta con crédito de prueba no alcanza para 7.5 GB.
 - **Carpetas de investigación FGJ CDMX** (oficial, actualizado mensualmente) —
   https://datos.cdmx.gob.mx/dataset/carpetas-de-investigacion-fgj-de-la-ciudad-de-mexico
   — misma data que `carpetas_investigacion.csv` del Drive, por si ese archivo queda
@@ -143,3 +143,9 @@ df.to_csv("bank_transactions_sintetico.csv", index=False)
 
 Mismo esquema mínimo que `bank_transactions.csv`, para que cualquier notebook de
 `recursos/spark/` corra igual sin depender del Drive.
+
+## 9. Escala del capstone y procedencia
+
+`bank_transactions.csv` (~7.5 GB) sirve al hilo docente de ML, pero **por sí solo no cumple ≥15 GB**. Para el proyecto institucional usar una fuente real suficiente (p. ej. `all_data.csv`, ~19.7 GB) o fuentes adicionales pertinentes a la misma pregunta. No duplicar filas para aparentar volumen, ni sumar copias bronze/silver/gold del mismo dato. Registrar tamaño original, bytes efectivamente procesados, compresión, procedencia, permisos/licencia, fecha y limitaciones. Verificar los tamaños reales antes de elegir.
+
+Trabajar primero con una muestra para depurar y después ejecutar el pipeline sobre el volumen exigido con crédito. El dataset disponible en Drive no constituye por sí mismo evidencia de su origen/etiquetado: adjuntar el manifiesto y documentar la semántica de `is_suspicious`; no presentarlo como fraude confirmado sin validación de etiquetas. Si el dataset grande elegido no tiene label, el equipo debe justificar otra tarea/modelo o un objetivo proxy explícito, no inventar etiquetas.

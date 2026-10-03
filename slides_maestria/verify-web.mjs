@@ -20,12 +20,17 @@ await page.waitForSelector('dialog[open]');
 await page.locator('#close-overview').click();
 const decks = JSON.parse(await fs.readFile('../presentaciones/dist/decks.json','utf8'));
 let diagrams = 0, overflow = [], images = [];
+const visualNames = new Set();
+let visualErrors = [];
 for (const d of decks) {
  for (let i=0; i<d.slides.length; i++) {
   await page.goto(`http://localhost:4173/#${d.id}/${i+1}`);
   await page.waitForFunction(n => document.querySelector('#counter')?.textContent.startsWith(String(n).padStart(2,'0') + ' /'), i+1);
   if (d.slides[i].includes('class="mermaid"')) { await page.waitForSelector('#slide .mermaid svg'); diagrams++; }
   await page.waitForFunction(() => [...document.querySelectorAll('#slide img')].every(i => i.complete));
+  await page.waitForFunction(id => document.querySelector('#session-label')?.textContent.includes(id), d.title);
+  const graphics = await page.evaluate(() => [...document.querySelectorAll('figure[data-infographic]')].map(f => ({name:f.dataset.infographic, bad:[...f.querySelectorAll('text')].filter(t => { const b=t.getBBox(); const vb=f.querySelector('svg').viewBox.baseVal; return b.x<0 || b.y<0 || b.x+b.width>vb.width+1 || b.y+b.height>vb.height+1; }).map(t => t.textContent)})));
+  for(const g of graphics) { visualNames.add(g.name); if(g.bad.length) visualErrors.push(g); }
   const info = await page.evaluate(() => ({horizontal: document.documentElement.scrollWidth > innerWidth, vertical: document.querySelector('#stage').scrollHeight > document.querySelector('#stage').clientHeight + 3, images:[...document.querySelectorAll('#slide img')].filter(i=>!i.complete || !i.naturalWidth).map(i=>i.src)}));
   if (info.horizontal || info.vertical) overflow.push(`${d.id}/${i+1}:${info.horizontal?'horizontal':'vertical'}`);
   images.push(...info.images);
@@ -45,6 +50,6 @@ await page.waitForTimeout(1200);
 await page.screenshot({path:'/tmp/big-data-mobile.png'});
 await page.emulateMedia({reducedMotion:'reduce'});
 if (await page.locator('.enter').first().evaluate(e=>getComputedStyle(e).animationName) !== 'none') throw new Error('Reduced motion failed');
-console.log(JSON.stringify({decks:decks.length,slides:decks.reduce((n,d)=>n+d.slides.length,0),diagrams,errors,overflow,images},null,2));
+console.log(JSON.stringify({decks:decks.length,slides:decks.reduce((n,d)=>n+d.slides.length,0),diagrams,infographics:[...visualNames],visualErrors,errors,overflow,images},null,2));
 await browser.close();
-if (errors.length || images.length) process.exitCode=1;
+if (errors.length || images.length || visualErrors.length || visualNames.size !== 8) process.exitCode=1;

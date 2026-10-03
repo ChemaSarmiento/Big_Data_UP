@@ -1,5 +1,5 @@
 # Programa: Big Data — Track Especialidad
-### 9 sesiones · 3 horas/semana · 27 horas totales · Entorno: GCP (free tier)
+### 9 sesiones · 3 horas/semana · 27 horas totales · Entorno: GCP (prueba US$300 / 90 días)
 > Desglose de temas y subtemas: [`TEMARIO.md`](TEMARIO.md) · Ejemplo completo de proyecto final: [`recursos/proyecto-ejemplo/`](../recursos/proyecto-ejemplo/)
 
 **Perfil de entrada:** perfiles diversos (negocio, producto, riesgo, actuaría, ingeniería no-software, etc.) que buscan especializarse. El interés es principalmente **ejecutivo/estratégico**: entender qué es posible, cuándo tiene sentido invertir en Big Data, cómo se ve un proyecto de datos por dentro y cómo evaluarlo — no formar ingenieros de datos.
@@ -115,3 +115,23 @@ Aquí sí es puramente introductorio y no se evalúa — el objetivo es que nadi
 - Los labs guiados funcionan mejor con apoyo técnico circulando en la sala (o breakout rooms con soporte), porque el grupo es heterogéneo y algunos se bloquean más rápido que otros.
 - Priorizar ejemplos y casos del sector de los participantes (si el grupo es mayormente de banca/finanzas, usar esos casos) — aquí el enganche es la relevancia al negocio, no la elegancia técnica.
 - El proyecto final exige ETL + visualización reales (mismo estándar institucional que Maestría, ver Sección 5), pero la forma de llegar ahí sigue siendo low-code/guiada (Looker Studio, notebooks para completar, apoyo del equipo técnico) — nunca "escribe tu propio pipeline". Si un equipo se atora en la parte técnica, dirigirlo a los ejemplos ya armados de `recursos/` en vez de dejarlo intentar escribir código desde cero.
+
+## 7. Perfil de salida, hitos y visualización
+
+El participante actúa como interlocutor y evaluador de un equipo de datos: interpreta evidencia, modifica prácticas guiadas y recomienda una decisión. No se evalúa escribir infraestructura desde cero. Los casos se adaptan al sector del grupo; el mismo rigor de datos/documento tiene apoyo técnico distinto.
+
+| Sesión | Hito del proyecto | Criterio observable |
+|---|---|---|
+| 1 | Pregunta y consumidor de negocio | Decisión específica y alternativa simple |
+| 3 | Fuente y primera consulta | Origen, esquema, volumen real y respuesta interpretada |
+| 4–5 | ETL guiado con controles | Resultado reproducible y conteos antes/después |
+| 6 | Calidad y responsabilidades | Limitaciones, permisos y responsable del dato |
+| 7 | Elegir batch o microlotes | Latencia justificada por una acción de negocio |
+| 8 | Ensayo de conclusión visual | Gráfico anotado + recomendación + costo/riesgo |
+| 9 | Presentación | Evidencia y decisión en ≤15 minutos |
+
+Integrar práctica de visualización dentro del lab de S5 y el taller de S8: elegir gráfico según pregunta, usar escalas/unidades claras, etiquetar directamente y poner la conclusión en el título. No añadir una sesión fuera de las 27 horas. El cuaderno guiado listo para S4 está en `recursos/especialidad/04_spark_guiado.ipynb`.
+
+## Ruta de infraestructura
+
+Se usa la prueba de GCP con US$300 / 90 días, con presupuesto y cierre por sesión; ver [`environment/gcp-setup.md`](../environment/gcp-setup.md). No se promete una ruta completa Always Free. Activar la prueba al empezar los labs y revisar saldo/cuotas antes de cada práctica.

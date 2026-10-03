@@ -90,5 +90,5 @@ equipos, es donde más valor se genera en esta sesión.
 ## Notas de costo GCP
 
 - No aplica de forma directa — buen momento para mencionar que streaming real
-  (lo que Maestría hace con Pub/Sub Lite) tiene un modelo de costo distinto al
+  (lo que Maestría hace con Pub/Sub estándar con persistencia a GCS) tiene un modelo de costo distinto al
   resto del curso, por si alguien pregunta.

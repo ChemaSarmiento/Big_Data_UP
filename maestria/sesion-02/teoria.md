@@ -54,7 +54,7 @@ BigQuery tiene dos modelos de precio, y confundirlos lleva a sorpresas de factur
 | **On-demand** (bytes escaneados) | Por TB de datos que la consulta realmente lee (columnar + partition pruning reducen esto) | Uso esporádico, cargas de trabajo impredecibles |
 | **Capacity-based** (slots reservados) | Por unidades de cómputo (slots) reservadas por adelantado, sin importar cuántos bytes se escaneen | Uso constante y predecible — puede ser más barato a volumen alto |
 
-Para este curso (free tier, 1TB de consultas/mes), estás en el modelo on-demand — cada
+Para este curso (ruta con crédito de prueba, 1TB de consultas/mes), estás en el modelo on-demand — cada
 byte escaneado de más (por un `SELECT *` innecesario, o una tabla sin particionar)
 consume directamente ese presupuesto mensual. `EXPLAIN` o el estimador de bytes de la
 consola (antes de correr la consulta) te dice el costo *antes* de ejecutar — hábito

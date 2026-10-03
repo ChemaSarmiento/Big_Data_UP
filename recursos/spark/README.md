@@ -57,3 +57,7 @@ información (el modelo vería la respuesta disfrazada de pregunta).
 
 Sube el dataset correspondiente a Cloud Storage y reemplaza `gs://<TU-BUCKET>/...` por
 tu ruta real — ver `recursos/datasets/README.md` Sección 5.
+
+## Pipeline bancario reproducible y versionado
+
+La ruta actual S5–S6 usa `ml_common.py`, `04_pipeline_ml.py` y el notebook homónimo: contrato único, corte temporal y artefactos por run. Ver [comandos y evidencia](ML_REPRODUCIBLE.md). Estos artefactos alimentan streaming, API, monitoreo y Airflow.

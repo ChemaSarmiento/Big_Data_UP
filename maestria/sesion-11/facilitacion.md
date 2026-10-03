@@ -76,9 +76,9 @@ sepan que es una convención, no una ley).
 ### Paso 1 — Desplegar el endpoint (35 min)
 
 ```bash
-pip install fastapi uvicorn pyspark
-MODELO=gs://<TU-BUCKET>/modelos/fraude_bank_transactions_pipeline \
-  uvicorn serve_fraude:app --host 0.0.0.0 --port 8080
+pip install -r environment/requirements-lab.txt
+MODELO=gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/pipeline \
+  uvicorn serve_fraude:app --app-dir recursos/serving --host 127.0.0.1 --port 8080
 ```
 
 ```bash
@@ -109,9 +109,10 @@ qué hace antes de automatizarlo."
 ### Paso 3 — Correr `monitor_drift.py` (40 min)
 
 ```bash
-python monitor_drift.py \
-    --referencia gs://<TU-BUCKET>/raw/bank_transactions/bank_transactions.csv \
-    --lote_reciente gs://<TU-BUCKET>/streaming/scores \
+python recursos/serving/monitor_drift.py \
+    --referencia gs://<TU-BUCKET>/modelos/runs/<RUN_ID>/referencia.parquet \
+    --lote-reciente gs://<TU-BUCKET>/monitoreo/reciente.parquet \
+    --salida drift.json \
     --columna amount
 ```
 
@@ -146,3 +147,7 @@ más drift que otra? Buena discusión de cierre.
 - Esta sesión es barata en cómputo de GCP (sin cluster de Dataproc) — buen
   momento para que el grupo revise cuánto crédito lleva consumido del total de
   $300, ya que faltan pocas sesiones para el capstone.
+
+## Preparación de contrato
+
+Seguir `recursos/serving/README.md`: MODELO_ROOT/token, muestra reciente acotada con Spark y referencia del train. Usar `trigger_drift.py` solo tras revisar el reporte. Medir latencia fría/caliente; no confundir prototipo con SLA productivo.

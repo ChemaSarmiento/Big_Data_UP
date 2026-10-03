@@ -5,17 +5,18 @@
 > Guion de 3 horas (talking points + lab paso a paso): [`facilitacion.md`](facilitacion.md)
 
 ## Índice
-1. Patrones de scoring en tiempo real (modelo en el stream vs. llamada a un endpoint externo)
-2. Feature freshness
+1. Modelo completo en streaming vs endpoint
+2. Hora del evento y consistencia de features
+3. Evidencia versionada de scores y alertas
 
 ## Lab
-Extender el consumidor de la Sesión 9: `07_streaming_scoring.py` carga el `PipelineModel` entrenado en la Sesión 6, lo aplica sobre el mismo stream de `producer_transacciones_stream.py`, y genera un score por transacción además del conteo por ventana — ahora filtrado a solo las transacciones marcadas como sospechosas.
+Retomar la ruta de S9 con un STREAM_RUN nuevo y el pipeline completo de S6. `07_streaming_scoring.py` guarda probabilidad escalar, decisión y modelo_uri; no ajusta transformaciones sobre el stream.
 
 ## Entregable
-Pipeline de streaming con inferencia funcionando end-to-end: captura de la consola con las ventanas de alertas actualizándose en vivo, y muestra del Parquet de scores generado.
+Scores Parquet + ventanas + comparación de inputs batch/stream + latencia observada. Asociar candidato y métricas al mismo RUN_ID.
 
 ## Ejemplo / material de apoyo
-`recursos/streaming/07_streaming_scoring.py` — mismo esqueleto de la Sesión 9, con el `PipelineModel` de la Sesión 6 aplicado directo sobre el DataFrame en streaming.
+`recursos/streaming/README.md` contiene todos los comandos del puente, productor y job; checkpoints separados para cada consulta.
 
 ## Recursos vinculados
 - [`recursos/streaming/`](../../recursos/streaming/) — productor + consumidor con scoring

@@ -6,7 +6,7 @@
 
 ## Índice
 1. IAM a nivel dataset/tabla
-2. Data Catalog, linaje de datos y de modelos
+2. Knowledge Catalog, linaje de datos y de modelos
 3. Cumplimiento en contextos regulados (banca/finanzas)
 4. FinOps de un pipeline de ML a escala
 5. Presentación del capstone técnico (máx. 15 min c/u)

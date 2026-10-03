@@ -7,7 +7,7 @@ mdc: true
 title: "Sesión 13 — Gobernanza, seguridad y capstone"
 info: |
   Maestría en Ciencia de Datos — Big Data
-  Sesión 13: IAM, Data Catalog, cumplimiento, FinOps, capstone técnico
+  Sesión 13: IAM, Knowledge Catalog, cumplimiento, FinOps, capstone técnico
 ---
 
 # Sesión 13
@@ -35,7 +35,7 @@ Cómo un pipeline de curso se vuelve algo que un equipo de banca podría operar 
 
 ---
 
-# Data Catalog + linaje
+# Knowledge Catalog + linaje
 
 ```mermaid {scale: 0.6}
 flowchart LR

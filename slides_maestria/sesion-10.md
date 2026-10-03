@@ -24,7 +24,7 @@ El modelo de la Sesión 6 se reutiliza sin cambios — mismo pipeline de la Sesi
 
 | Patrón | Cómo | Trade-off |
 |---|---|---|
-| **Modelo en el stream** | `PipelineModel` cargado una vez, aplicado directo | Baja latencia, se actualiza solo al reiniciar el job |
+| **Modelo en el stream** | `PipelineModel` cargado una vez, aplicado directo | Latencia de microlotes medida; actualizar requiere reiniciar el job |
 | Endpoint externo | `POST` HTTP por evento/microlote | Se actualiza sin tocar el streaming, a cambio de latencia de red |
 
 <div v-click class="mt-6 text-sm opacity-70">
@@ -33,7 +33,7 @@ Este curso usa el primero hoy y el segundo en serving (Sesión 11) — mismo mod
 
 <div v-click class="mt-4 text-sm opacity-70">
 ¿Por qué PipelineModel.transform() funciona igual en streaming? Ninguna etapa
-(Imputer, Indexer, Encoder, Assembler, Scaler, LogisticRegression, ya fit)
+(SQLTransformer de hora, Imputer, Indexer, Encoder, Assembler, Scaler, LogisticRegression, ya fit)
 mantiene estado nuevo entre filas — todas son row-wise.
 </div>
 
@@ -59,31 +59,38 @@ Si el stream se atrasa, la versión "MAL" queda sistemáticamente equivocada
 
 ```mermaid {scale: 0.55}
 flowchart LR
-    P[producer_transacciones_stream.py] -->|Pub/Sub Lite| S[07_streaming_scoring.py]
+    P[Replay CSV] --> Q[Pub/Sub estándar]
+    Q --> B[Puente Python]
+    B --> G[JSON en GCS]
+    G --> S[07_streaming_scoring.py]
     S -->|PipelineModel S5/6| Score[Score por transacción]
     S --> W[Alertas por ventana 1min]
 ```
 
-Mismo esqueleto de la Sesión 9 (`07a_streaming_conteo.py`) + el modelo cargado
+Iniciar también `pubsub_to_gcs.py`; modelo bajo `modelos/runs/<RUN_ID>/pipeline`. Mismo esqueleto de la Sesión 9 (`07a_streaming_conteo.py`) + el modelo cargado
 
 ---
 
 # Correr el pipeline completo
 
 ```bash
-python producer_transacciones_stream.py --project <PROJECT_ID> --tasa 20
+python recursos/streaming/producer_transacciones_stream.py \
+  --project "$PROJECT_ID" --csv bank_transactions.csv --tasa 20 --max-events 1200
 ```
 
 ```bash
-spark-submit --master yarn 07_streaming_scoring.py \
-    --project <PROJECT_ID> --subscription transacciones-stream-sub \
-    --modelo gs://<TU-BUCKET>/modelos/fraude_bank_transactions_pipeline \
-    --salida gs://<TU-BUCKET>/streaming/scores
+gcloud dataproc jobs submit pyspark \
+  gs://$BUCKET_NAME/scripts/07_streaming_scoring.py \
+  --cluster=curso-cluster --region=us-central1 \
+  --py-files=gs://$BUCKET_NAME/scripts/stream_common.py -- \
+  --input gs://$BUCKET_NAME/streaming/$STREAM_RUN/entrada \
+  --modelo gs://$BUCKET_NAME/modelos/runs/$MODEL_RUN/pipeline \
+  --salida gs://$BUCKET_NAME/streaming/$STREAM_RUN/scores --seconds 180
 ```
 
 <div class="mt-4 p-3 border-l-4 border-blue-500 text-sm text-left">
 <b>Deberías ver:</b> el Parquet de scores escribiéndose (<code>gsutil ls</code>
-en otra terminal) + ventanas de alertas en consola cada 30s
+en otra terminal) + ventanas de alertas en consola cada 10s
 </div>
 
 <div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">

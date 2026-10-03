@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import MarkdownIt from 'markdown-it';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'presentaciones/dist');
+const visuals = new Map(await Promise.all((await fs.readdir(path.join(root, 'presentaciones/infograficos'))).filter(n => n.endsWith('.svg')).map(async n => [n.slice(0, -4), await fs.readFile(path.join(root, 'presentaciones/infograficos', n), 'utf8')])));
 const md = new MarkdownIt({ html: true, linkify: true });
 md.renderer.rules.html_block = (tokens, i) => tokens[i].content.split('\n').map(line => {
   if (!line.trim().startsWith('<') && /[`*]/.test(line)) return md.renderInline(line);
@@ -31,7 +32,10 @@ function split(source) {
 function render(source) {
   source = source.replace(/^::right::\s*$/gm, '');
   if (!/^# /m.test(source)) source = source.replace(/^## /m, '# ');
-  return md.render(source.replace(/<\/?v-clicks[^>]*>/g, '').replace(/\s+v-click(?:="[^"]*")?/g, '').replace(/<span v-mark[^>]*>/g, '<span>'));
+  return md.render(source.replace(/<\/?v-clicks[^>]*>/g, '').replace(/\s+v-click(?:="[^"]*")?/g, '').replace(/<span v-mark[^>]*>/g, '<span>')).replace(/<figure data-infographic="([a-z0-9-]+)"><\/figure>/g, (_, name) => {
+    if (!visuals.has(name)) throw new Error(`Missing infographic: ${name}`);
+    return `<figure class="infographic" data-infographic="${name}">${visuals.get(name)}</figure>`;
+  });
 }
 function section(source, heading) {
   return source.match(new RegExp(`^## ${heading}[^\\n]*\\n([\\s\\S]*?)(?=^## |$(?![\\s\\S]))`, 'm'))?.[1]?.trim() || '';
@@ -51,7 +55,7 @@ for (const track of ['especialidad', 'maestria']) {
     const objectives = topics.split('\n').filter(l => /^\d+\./.test(l)).map(l => l.replace(/^\d+\.\s*/, ''));
     const slides = split(raw);
     slides.splice(1, 0, `# La ruta de hoy\n\n${objectives.map(t => `- ${t}`).join('\n')}\n\n> Del concepto a la práctica: explica la decisión, compruébala con evidencia y documenta el resultado.`);
-    const lab = section(notes, 'Lab') || section(notes, 'Actividad');
+    const lab = section(notes, 'Lab') || section(notes, 'Actividad') || section(notes, 'Taller');
     if (lab) slides.splice(2, 0, `# Lo que podrás demostrar\n\n${lab}`);
     const supplement = `presentaciones/complementos/${track}-${number}.md`;
     try {
@@ -67,6 +71,7 @@ for (const track of ['especialidad', 'maestria']) {
 await fs.mkdir(output, { recursive: true });
 for (const name of ['index.html', 'styles.css', 'app.js']) await fs.copyFile(path.join(root, 'presentaciones', name), path.join(output, name));
 await fs.writeFile(path.join(output, 'decks.json'), JSON.stringify(decks));
+await fs.cp(path.join(root, 'presentaciones/infograficos'), path.join(output, 'infograficos'), { recursive: true });
 await fs.cp(path.join(root, 'intro-big-data/public/infograficos'), path.join(output, 'infograficos'), { recursive: true });
 await fs.cp(path.join(root, 'slides_maestria/node_modules/mermaid/dist'), path.join(output, 'vendor/mermaid'), { recursive: true });
 console.log(`Built ${decks.length} decks / ${decks.reduce((n, d) => n + d.slides.length, 0)} slides in ${output}`);

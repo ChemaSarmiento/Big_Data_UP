@@ -4,123 +4,124 @@ class: text-center
 highlighter: shiki
 transition: slide-left
 mdc: true
-title: "Sesión 09 — Streaming I: fundamentos y setup"
-info: |
-  Maestría en Ciencia de Datos — Big Data
-  Sesión 09: windowing, watermarks, exactly-once, setup de Pub/Sub Lite
+title: "Sesión 09 — Streaming I: Pub/Sub estándar y microlotes"
 ---
 
 # Sesión 09
 ## Streaming I
-### Fundamentos y setup
-
-<div class="pt-6 text-sm opacity-60">
-Datos que nunca terminan de llegar — hoy el mecanismo, sin modelo todavía. La Sesión 10 agrega el scoring.
-</div>
+### Pub/Sub estándar, microlotes y tiempo de evento
 
 ---
 
-# Windowing + watermark
+# Un archivo nuevo puede formar parte de un stream
 
-```mermaid {scale: 0.6}
+```mermaid
 flowchart LR
-    subgraph "Ventana 12:00-12:01"
-    E1[evento 12:00:05]
-    E2[evento 12:00:40]
-    E3["evento 12:00:55<br/>(llega tarde, watermark 2min)"]
-    end
-    E1 --> R[Resultado ventana]
-    E2 --> R
-    E3 -.tolerado.-> R
+ P[Replay CSV acotado] --> Q[Pub/Sub estándar]
+ Q --> B[Puente Python: persistir antes de ACK]
+ B --> G[JSON inmutable en GCS]
+ G --> S[Spark file stream]
+ S --> W[Ventanas y conteos]
 ```
+
+Medir latencia por microlotes; no prometer respuesta de milisegundos.
+
+---
+
+# El watermark avanza con los eventos observados
+
+- Tiempo del evento: cuándo ocurrió la transacción.
+- Tiempo de procesamiento: cuándo llega al motor.
+- Tolerancia de 2 minutos respecto al máximo observado: acota estado.
+- Un replay histórico conserva sus fechas; el reloj de pared no lo vuelve inválido por sí solo.
 
 ```python
-transacciones
-    .withWatermark("timestamp", "2 minutes")
-    .groupBy(F.window("timestamp", "1 minute"), "currency")
-    .count()
+conteo = transacciones.groupBy(
+    F.window("timestamp", "1 minute"), "currency"
+).count()
 ```
 
 ---
 
-# Exactly-once ≠ sin duplicados en el broker
+# Watermark, checkpoint y deduplicación resuelven problemas distintos
 
-<v-clicks>
+| Mecanismo | Resuelve | Límite |
+|---|---|---|
+| Watermark | Estado y eventos tardíos | No da unicidad por sí solo |
+| Checkpoint | Continuidad y recuperación | Es propio de cada consulta |
+| Deduplicación por ID | Reentregas dentro del horizonte | No es historial ilimitado |
 
-- El checkpoint + watermark dan exactly-once en el **cálculo de la ventana**
-- Esa es una garantía distinta de "el mensaje nunca llegó dos veces"
-- Esa segunda garantía la da **Pub/Sub Lite**, del lado del envío
-
-</v-clicks>
-
-<div v-click class="mt-8 p-4 border-l-4 border-blue-500">
-Confundir ambas garantías lleva a asumir más seguridad de la que realmente se tiene
-</div>
+La consola permite ver actualizaciones; no es una prueba de exactly-once end-to-end.
 
 ---
 
-# Por qué Pub/Sub Lite
+# Pub/Sub estándar reemplaza una dependencia retirada
 
-<v-clicks>
-
-- Spark no tiene conector nativo para Pub/Sub estándar
-- **Pub/Sub Lite sí** — el único conector oficial de Google para Structured Streaming
-- Se cobra por capacidad reservada, no por mensaje (no es Always Free)
-
-</v-clicks>
+Pub/Sub Lite cerró el 18 de marzo de 2026. El lab usa Pub/Sub estándar con un puente explícito a GCS.
 
 ```bash
-gcloud pubsub lite-topics create transacciones-stream --location=us-central1-a --partitions=1 --per-partition-bytes=30GiB
-gcloud pubsub lite-subscriptions create transacciones-stream-sub --location=us-central1-a --topic=transacciones-stream
+gcloud pubsub topics create transacciones-stream
+gcloud pubsub subscriptions create transacciones-stream-sub \
+  --topic=transacciones-stream --ack-deadline=120
 ```
+
+Ver permisos y presupuesto antes del lab en `recursos/streaming/README.md`.
 
 ---
 
-# Lab de hoy
+# Lab: persistir antes de confirmar
 
-```mermaid {scale: 0.55}
-flowchart LR
-    P[producer_transacciones_stream.py] -->|Pub/Sub Lite| S[07a_streaming_conteo.py]
-    S --> W[Conteo por ventana 1min]
-```
-
-Deliberadamente **sin modelo** — para ver windowing/watermarks funcionar solos.
-
----
-
-# Paso 1 — Correr el productor
+Iniciar el puente primero; su ejecución está acotada a 180 segundos.
 
 ```bash
-pip install google-cloud-pubsublite pandas
-python producer_transacciones_stream.py --project <PROJECT_ID> --tasa 20
+python recursos/streaming/pubsub_to_gcs.py \
+  --project "$PROJECT_ID" --bucket "$BUCKET_NAME" \
+  --prefix "streaming/$STREAM_RUN/entrada" --seconds 180
 ```
 
-<div class="mt-4 text-sm opacity-70">
-Deberías ver: "Publicando N transacciones..." — déjalo corriendo en una terminal visible
-</div>
+Un fallo de escritura deja el mensaje sin ACK; reintentar no equivale a asegurar que nunca hay duplicados.
 
 ---
 
-# Paso 2 — Correr el consumidor de conteo
+# Publicar una muestra conserva memoria y crédito
 
 ```bash
-spark-submit --master yarn 07a_streaming_conteo.py \
-    --project <PROJECT_ID> --subscription transacciones-stream-sub
+python recursos/streaming/producer_transacciones_stream.py \
+  --project "$PROJECT_ID" --csv bank_transactions.csv \
+  --tasa 20 --max-events 1200
 ```
 
-<div class="mt-4 text-sm opacity-70">
-Deberías ver: cada 30 segundos, una tabla en consola con window, currency, count
-</div>
-
-<div class="mt-4 p-4 border-l-4 border-blue-500 font-bold">
-Entregable: captura de las ventanas de conteo actualizándose en consola
-</div>
+El productor lee secuencialmente y omite labels. Crear primero el prefijo con un evento de prueba; iniciar Spark y continuar el replay para observar nuevas entradas.
 
 ---
-layout: center
-class: text-center
+
+# El consumidor usa una entrada y un checkpoint exclusivos
+
+```bash
+gcloud dataproc jobs submit pyspark \
+  gs://$BUCKET_NAME/scripts/07a_streaming_conteo.py \
+  --cluster=curso-cluster --region=us-central1 \
+  --py-files=gs://$BUCKET_NAME/scripts/stream_common.py -- \
+  --input gs://$BUCKET_NAME/streaming/$STREAM_RUN/entrada \
+  --checkpoint gs://$BUCKET_NAME/streaming/$STREAM_RUN/checkpoints/conteo \
+  --seconds 180
+```
+
+`STREAM_RUN` identifica la ejecución. Usar otro prefijo al cambiar el experimento.
+
+---
+
+# La evidencia incluye una repetición y un evento tardío
+
+- Capturar una ventana finalizada (`append`) y explicar qué tiempo agrupa.
+- Repetir un ID y observar deduplicación dentro del horizonte.
+- Agregar un evento fuera del horizonte y explicar el resultado.
+- Registrar latencia, estado y condiciones de recuperación.
+
+Detener productor/puente y borrar el cluster tras guardar la evidencia.
+
 ---
 
 # → Sesión 10
 
-Streaming II — inferencia en tiempo real con el modelo de la Sesión 6
+Mismo contrato y stream, ahora con el pipeline de ML completo de S6.

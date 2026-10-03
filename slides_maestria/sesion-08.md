@@ -135,4 +135,4 @@ class: text-center
 
 # → Sesión 09
 
-Streaming I — windowing, watermarks, setup de Pub/Sub Lite
+Streaming I — windowing, watermarks, Pub/Sub estándar y puente a GCS

@@ -1,10 +1,10 @@
 # Programa: Big Data — Track Maestría en Ciencia de Datos
-### 13 sesiones · 3 horas/semana · 39 horas totales · Entorno: GCP (free tier)
+### 13 sesiones · 3 horas/semana · 39 horas totales · Entorno: GCP (prueba US$300 / 90 días)
 > Desglose de temas y subtemas: [`TEMARIO.md`](TEMARIO.md) · Ejemplo completo de proyecto final: [`recursos/proyecto-ejemplo/`](../recursos/proyecto-ejemplo/)
 
 **Perfil de entrada:** estudiantes de maestría en ciencia de datos. Se asume dominio funcional de Python, SQL y estadística/ML "single-node" (pandas, scikit-learn). Linux/GCP básico se nivela como **prerequisito obligatorio** (Módulo 0), no dentro de las 39 horas de clase — aquí el tiempo se invierte en profundidad técnica, no en alfabetización.
 
-**Diferencia clave vs. el track de Especialidad:** este programa no se detiene en "entender la arquitectura" — llega hasta **entrenar, servir y monitorear modelos sobre datos a escala**. Cada sesión tiene lab con código propio (no guiado/completado), y el capstone es un pipeline productivo con un modelo funcionando, no solo una propuesta.
+**Diferencia clave vs. el track de Especialidad:** este programa no se detiene en "entender la arquitectura" — llega hasta **entrenar, servir y monitorear modelos sobre datos a escala**. Cada sesión tiene lab con código propio (no guiado/completado), y el capstone es un prototipo reproducible con evidencia operativa con un modelo funcionando, no solo una propuesta.
 
 **Sobre las 13 sesiones (antes 9):** cuatro temas —Spark Core avanzado, Data Lakes/Lakehouse, Streaming, y Model serving/MLOps— se dividieron cada uno en dos sesiones completas de 3 horas en vez de comprimirse en una sola. Cada tema se cubre completo, sin recortes: la primera sesión de cada par deja el fundamento/setup, la segunda resuelve el caso real con lab completo.
 
@@ -17,7 +17,7 @@ Al terminar, el estudiante podrá:
 - Escribir y **optimizar** pipelines en Spark (tuning de shuffle, particionamiento, skew).
 - Hacer **feature engineering e ingeniería de datos para ML a escala** (Spark MLlib / pipelines distribuidos).
 - **Entrenar modelos sobre datasets que no caben en memoria** de una sola máquina.
-- **Servir y monitorear modelos en producción** consumiendo datos de un pipeline de Big Data (drift, latencia, feature freshness).
+- **Servir y monitorear modelos en un prototipo reproducible**, identificando lo que falta para producción, consumiendo datos de un pipeline de Big Data (drift, latencia, feature freshness).
 - Orquestar el ciclo completo (ingesta → features → entrenamiento → serving) como un pipeline de MLOps.
 
 ---
@@ -51,11 +51,11 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 | 6 | Entrenamiento de modelos distribuido + tuning de hiperparámetros a escala | Managed Service for Apache Spark + Vertex AI (intro) |
 | 7 | Lakehouse I: Parquet/ORC/Avro, medallion, intro a Iceberg | Cloud Storage |
 | 8 | Lakehouse II: MERGE INTO, time travel, evolución de esquema, versionado | Apache Iceberg |
-| 9 | Streaming I: windowing, watermarks, setup de Pub/Sub Lite | Pub/Sub Lite + Managed Service for Apache Spark |
-| 10 | Streaming II: scoring en tiempo real, feature freshness | Pub/Sub Lite + Managed Service for Apache Spark |
+| 9 | Streaming I: windowing, watermarks, Pub/Sub estándar y puente a GCS | Pub/Sub estándar + Cloud Storage + Spark |
+| 10 | Streaming II: scoring en tiempo real, feature freshness | Pub/Sub estándar + Cloud Storage + Spark |
 | 11 | Model serving y monitoreo: patrones de serving, drift (PSI) | Endpoint propio (FastAPI) |
 | 12 | MLOps con Airflow: orquestación, reentrenamiento por drift | Airflow (standalone o Cloud Composer) |
-| 13 | Gobernanza, seguridad, costos + capstone técnico | IAM, Data Catalog |
+| 13 | Gobernanza, seguridad, costos + capstone técnico | IAM, Knowledge Catalog |
 
 ---
 
@@ -102,8 +102,8 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 - **Entregable:** diagrama de arquitectura + pipeline versionado + evidencia de las tres operaciones transaccionales.
 
 ### Sesión 9 — Streaming I: fundamentos y setup
-- **Teoría:** windowing, watermarks, exactly-once vs at-least-once, setup de Pub/Sub Lite (el único conector de Structured Streaming que Google mantiene oficialmente).
-- **Lab:** crear topic/suscripción de Pub/Sub Lite, correr `producer_transacciones_stream.py` y `07a_streaming_conteo.py` — conteo de transacciones por ventana de 1 minuto, sin scoring todavía.
+- **Teoría:** windowing, watermarks, exactly-once vs at-least-once, Pub/Sub estándar, persistencia de microlotes JSON en GCS y deduplicación por ID.
+- **Lab:** crear topic/suscripción de Pub/Sub estándar, iniciar `pubsub_to_gcs.py` y correr `producer_transacciones_stream.py` y `07a_streaming_conteo.py` — conteo de transacciones por ventana de 1 minuto, sin scoring todavía.
 - **Entregable:** captura de las ventanas de conteo actualizándose en consola.
 
 ### Sesión 10 — Streaming II: inferencia en tiempo real
@@ -122,7 +122,7 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 - **Entregable:** DAG de MLOps funcional corriendo, conectado al endpoint.
 
 ### Sesión 13 — Gobernanza, seguridad y capstone
-- **Teoría:** IAM a nivel dataset/tabla, Data Catalog, linaje de datos y de modelos, cumplimiento en contextos regulados (relevante para banca/finanzas), FinOps de un pipeline de ML a escala.
+- **Teoría:** IAM a nivel dataset/tabla, Knowledge Catalog, linaje de datos y de modelos, cumplimiento en contextos regulados (relevante para banca/finanzas), FinOps de un pipeline de ML a escala.
 - **Actividad principal:** presentación del **capstone técnico** (máx. 15 min c/u — mismo límite institucional que Especialidad): pipeline completo ingesta → features → entrenamiento → serving, con al menos un componente de streaming u orquestación, visualizaciones sobre los resultados y evidencia de pruebas.
 - **Cierre:** temas de profundización sugeridos (Delta Lake/Iceberg avanzado, entrenamiento distribuido con GPUs, feature stores productivos, BigQuery ML).
 
@@ -146,3 +146,23 @@ A diferencia del track de Especialidad, aquí el Módulo 0 **se evalúa** con un
 - Los pares 3-4, 7-8, 9-10 y 11-12 eran, hasta hace poco, una sola sesión cada uno — se dividieron precisamente porque no cabían completos en 3 horas. No los vuelvas a comprimir: cada mitad tiene su propio ritmo (teoría → break → lab) y su propio entregable.
 - Al crear un cluster nuevo cada sesión (S1, S3, S4, S5, S6, S7, S8), revisa `gcloud dataproc clusters list` **antes** de empezar — es común que alguien deje uno prendido de la sesión anterior.
 - Fomentar code review entre pares en cada lab (10 min al final) — a este nivel, leer código de otros acelera más el aprendizaje que más ejercicios individuales.
+
+## 7. Perfil de salida, evidencia y alcance operativo
+
+El estudiante diseña y depura un prototipo reproducible de ingeniería/ML distribuido. «Funciona en clase» no implica SLA, alta disponibilidad ni cumplimiento productivo. Debe explicar qué falta para operarlo: control de acceso, carga, rollback, observabilidad y recuperación.
+
+| Sesiones | Hito del capstone | Evidencia |
+|---|---|---|
+| 1–2 | Fuente, arquitectura y presupuesto | Manifiesto de datos, plan de acceso y estimación |
+| 3–4 | Pipeline medido | Plan físico y comparación con condiciones iguales |
+| 5–6 | Features/modelo sin fuga | Corte temporal, baseline, ROC/PR-AUC y artefactos versionados |
+| 7–8 | Tabla transaccional | Snapshots y prueba de recuperación/versionado |
+| 9–10 | Stream medido | Eventos repetidos/tardíos, checkpoint y latencia observada |
+| 11–12 | Operación docente | API medida, reporte de drift, candidato aceptado/rechazado |
+| 13 | Defensa y limpieza | Conclusión visual, costos finales y recursos retirados |
+
+La validación debe separar entrenamiento, selección de hiperparámetros y test futuro. Ajustar transformaciones dentro de cada fold cuando se use CV; CV aleatoria dentro de train no sustituye una validación temporal si la pregunta es pronóstico. La métrica PR-AUC se interpreta junto a prevalencia/precisión/recall y costo de errores, no solo ROC-AUC. La visualización se practica en S2, S6 y S11: título con conclusión, baseline visible, unidades y condiciones de comparación.
+
+## Ruta de infraestructura
+
+Se usa la prueba de GCP con US$300 / 90 días, con presupuesto y cierre por sesión; ver [`environment/gcp-setup.md`](../environment/gcp-setup.md). No se promete una ruta completa Always Free. Activar la prueba al empezar los labs y revisar saldo/cuotas antes de cada práctica.

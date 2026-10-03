@@ -9,7 +9,7 @@
 2. Reentrenamiento programado y triggers por drift
 
 ## Lab
-Desplegar `mlops_pipeline_dag.py` en Airflow (standalone en la VM `e2-micro` o Cloud Composer) y correrlo end-to-end: ingesta → features → entrenamiento → evaluación → despliegue condicional, que recarga el endpoint de la Sesión 11 vía `POST /reload` si el AUC pasa el umbral.
+Desplegar `mlops_pipeline_dag.py` en Airflow (standalone en la VM temporal de 4+ GB (recomendado: `e2-standard-2`) o Cloud Composer) y correrlo end-to-end: ingesta → features → entrenamiento → evaluación → despliegue condicional, que recarga el endpoint de la Sesión 11 vía `POST /reload` si el AUC pasa el umbral.
 
 ## Entregable
 DAG de MLOps corriendo en Airflow (captura del grafo con las tareas en verde), conectado al endpoint de la Sesión 11.
@@ -36,3 +36,7 @@ Abre un servidor local en modo presentación. Flechas/espacio para avanzar (incl
 - [ ] Contenido revisado
 - [ ] Actividad completada
 - [ ] Entregable subido (si aplica)
+
+## Contrato operativo de esta ruta
+
+Seguir `recursos/airflow/README.md`: entorno Python 3.11 separado, bucket sin gs:// en variables, candidato y metrics.json por run, URI/token en recarga y rechazo HTTP propagado. Trigger por drift requiere reporte revisado y pasa de nuevo por la puerta ROC/PR-AUC. El DAG requiere cluster temporal existente y no lo crea/borra; pausar DAG y apagar VM al terminar.

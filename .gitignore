@@ -4,3 +4,10 @@ node_modules/
 __pycache__/
 
 presentaciones/dist/
+
+.venv/
+.venv-airflow/
+.pytest_cache/
+spark-warehouse/
+
+.airflow-lab/

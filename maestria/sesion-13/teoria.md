@@ -24,9 +24,9 @@ el acceso que necesita para su función, ni más — la alternativa ("todos con 
 Owner porque es más simple") es exactamente el tipo de decisión que un auditor de
 cumplimiento rechaza de entrada.
 
-## 2. Data Catalog y linaje
+## 2. Knowledge Catalog y linaje
 
-**Data Catalog** es un catálogo centralizado y buscable de todos los datasets de una
+**Knowledge Catalog** es un catálogo centralizado y buscable de todos los datasets de una
 organización — qué tablas existen, qué columnas tienen, quién es dueño de cada una, y
 con qué nivel de sensibilidad están etiquetadas (PII, financiero, público). Resuelve
 un problema que crece exactamente con el éxito del programa de datos: cuando hay 5
@@ -37,7 +37,7 @@ nadie sabe qué existe ni para qué sirve.
 transformaciones sufrió* hasta llegar a su forma actual — responde "¿por qué este
 número en el dashboard es el que es?" rastreando hacia atrás hasta el dato crudo. El
 pipeline de este curso (bronze → silver → gold, más el `PipelineModel` versionado)
-tiene linaje *implícito* en su estructura de carpetas/tablas; un Data Catalog lo hace
+tiene linaje *implícito* en su estructura de carpetas/tablas; un Knowledge Catalog lo hace
 *explícito* y buscable a escala de organización, no solo de un pipeline individual.
 
 ## 3. Cumplimiento en contextos regulados
@@ -88,7 +88,10 @@ que las Sesiones 1-8 se conectan en un solo sistema — no ocho ejercicios suelt
 
 ## Referencias
 
-- [Google Cloud — Dataplex / Data Catalog overview](https://cloud.google.com/dataplex/docs/catalog-overview)
+- [Google Cloud — Dataplex / Knowledge Catalog overview](https://docs.cloud.google.com/knowledge-catalog/docs/overview)
 - [Google Cloud — BigQuery column-level and row-level security](https://cloud.google.com/bigquery/docs/column-level-security-intro)
 - [Google Cloud — Responsible AI practices (explicabilidad)](https://ai.google/responsibility/responsible-ai-practices/)
 - [FinOps Foundation — What is FinOps?](https://www.finops.org/introduction/what-is-finops/)
+
+
+Nombre/verificación de servicio: Data Catalog cerró el 1 de junio de 2026. Usar Knowledge Catalog para el panorama actual; no convertir su despliegue en requisito adicional del lab. [Deprecaciones oficiales](https://docs.cloud.google.com/knowledge-catalog/docs/deprecations).

@@ -60,7 +60,7 @@ A escala de miles de discos, las fallas son casi diarias, estadísticamente.
 
 ---
 
-# CAP: solo puedes elegir 2 de 3, y P no es opcional
+# Durante una partición, consistencia y disponibilidad pueden entrar en conflicto
 
 <div class="grid grid-cols-3 gap-4 mt-8 text-center">
 <div class="p-4 border rounded">
@@ -82,7 +82,7 @@ La red <b>siempre</b> se va a particionar eventualmente (un cable se corta, un s
 </div>
 
 <div v-click class="mt-4 text-sm opacity-70">
-BigQuery elige CP (esperar a estar completo y correcto) · Sistemas de caché eligen AP (responder rápido, aunque desactualizado)
+Discutir una operación concreta: esperar una réplica coherente o aceptar una respuesta posiblemente desactualizada. CAP no clasifica todos los comportamientos de un producto con una sola etiqueta.
 </div>
 
 ---
@@ -142,7 +142,7 @@ Primer cluster del curso — dedica tiempo a crearlo bien, no lo hagas tú por e
 ```bash
 export BUCKET_NAME=<tu-bucket>
 gcloud dataproc clusters create curso-cluster \
-    --region=us-central1 --num-workers=3 \
+    --region=us-central1 --num-workers=2 \
     --optional-components=JUPYTER,ZEPPELIN --enable-component-gateway \
     --max-idle=1h --max-age=3h
 ```

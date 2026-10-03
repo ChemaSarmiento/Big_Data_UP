@@ -51,3 +51,11 @@ node verify-web.mjs
 ```
 
 El recorrido comprueba los 25 decks, cada diapositiva, diagramas Mermaid, filtros, navegación por clic y teclado, el índice, las imágenes, el catálogo móvil y reducción de movimiento. Reporta los slides con desplazamiento para facilitar su revisión editorial.
+
+## Infográficos y narrativa de clase
+
+Ocho SVG editables en `infograficos/`, embebidos por el generador en los complementos de las sesiones: mapa de rutas, decisión de arquitectura, presupuesto US$300, controles ETL, shuffle/skew, separación sin fuga, watermark y ciclo MLOps. Sus grupos entran en secuencia y respetan reducción de movimiento. En móvil los diagramas se desplazan horizontalmente para conservar legibilidad. Los cuatro PNG originales permanecen como referencia.
+
+Los títulos explican la conclusión; color y etiquetas enfocan lo relevante. Los números esquemáticos están identificados como ejemplos y la asignación presupuestaria no se presenta como tarifa. Se añaden ejercicios de visualización dentro de S5/S8 de Especialidad y S2/S6/S11 de Maestría, sin incrementar horas del programa.
+
+Referencias: [Cole Nussbaumer Knaflic: comunicar el hallazgo](https://www.storytellingwithdata.com/blog/2017/3/22/so-what), [evidencia y anotaciones](https://www.storytellingwithdata.com/blog/2021/1/14/data-doesnt-speak-for-itself).

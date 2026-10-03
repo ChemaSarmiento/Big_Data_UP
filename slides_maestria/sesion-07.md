@@ -70,7 +70,10 @@ Eso es lo que resuelve un lakehouse transaccional (Iceberg/Delta) — la Sesión
 
 ```bash
 gcloud dataproc clusters create curso-cluster \
-    --region=us-central1 --num-workers=3 \
+    --region=us-central1 --image-version=2.2-debian12 --num-workers=2 \
+    --master-machine-type=e2-standard-2 --worker-machine-type=e2-standard-2 \
+    --master-boot-disk-size=50GB --worker-boot-disk-size=50GB \
+    --max-idle=20m --max-age=3h \
     --properties="^#^spark:spark.jars.packages=org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1#spark:spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions#spark:spark.sql.catalog.local=org.apache.iceberg.spark.SparkCatalog#spark:spark.sql.catalog.local.type=hadoop#spark:spark.sql.catalog.local.warehouse=gs://$BUCKET_NAME/curso-bigdata/lakehouse"
 ```
 
