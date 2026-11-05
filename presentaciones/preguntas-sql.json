@@ -62,7 +62,7 @@
  {
   "id": 13,
   "tema": "Plantilla",
-  "pregunta": "¿Cómo se reparten los puestos actuales entre las personas con más de diez años de antigüedad al corte de agosto de 2002?"
+  "pregunta": "¿Cómo se reparten los puestos actuales entre las personas con más de diez años de antigüedad hoy, 1 de diciembre de 2002?"
  },
  {
   "id": 14,
@@ -162,7 +162,7 @@
  {
   "id": 33,
   "tema": "Compensación",
-  "pregunta": "¿Cuál es el salario promedio actual según la antigüedad: menos de 5 años, de 5 a 9, de 10 a 14 y 15 o más, al corte de agosto de 2002?"
+  "pregunta": "¿Cuál es el salario promedio actual según la antigüedad: menos de 5 años, de 5 a 9, de 10 a 14 y 15 o más, hoy, 1 de diciembre de 2002?"
  },
  {
   "id": 34,
@@ -277,7 +277,7 @@
  {
   "id": 56,
   "tema": "Contratación",
-  "pregunta": "¿Cuál es la antigüedad promedio, en años, de la plantilla activa de cada departamento al corte de agosto de 2002?"
+  "pregunta": "¿Cuál es la antigüedad promedio, en años, de la plantilla activa de cada departamento hoy, 1 de diciembre de 2002?"
  },
  {
   "id": 57,
@@ -327,12 +327,12 @@
  {
   "id": 66,
   "tema": "Demografía",
-  "pregunta": "¿Cuál es la edad promedio de la plantilla activa de cada departamento al corte de agosto de 2002?"
+  "pregunta": "¿Cuál es la edad promedio de la plantilla activa de cada departamento hoy, 1 de diciembre de 2002?"
  },
  {
   "id": 67,
   "tema": "Demografía",
-  "pregunta": "¿Cuántas personas activas tenían más de 45 años al corte de agosto de 2002, por departamento?"
+  "pregunta": "¿Cuántas personas activas tienen más de 45 años hoy, 1 de diciembre de 2002, por departamento?"
  },
  {
   "id": 68,
@@ -367,7 +367,7 @@
  {
   "id": 74,
   "tema": "Liderazgo",
-  "pregunta": "¿Quién ha estado más tiempo como gerente de un departamento? Para los cargos vigentes, cuenta hasta agosto de 2002."
+  "pregunta": "¿Quién ha estado más tiempo como gerente de un departamento? Para los cargos vigentes, cuenta hasta hoy, 1 de diciembre de 2002."
  },
  {
   "id": 75,
@@ -412,7 +412,7 @@
  {
   "id": 83,
   "tema": "Trayectoria",
-  "pregunta": "¿Cuántas personas activas llevan más de 15 años en el mismo puesto al corte de agosto de 2002?"
+  "pregunta": "¿Cuántas personas activas llevan más de 15 años en el mismo puesto hoy, 1 de diciembre de 2002?"
  },
  {
   "id": 84,
