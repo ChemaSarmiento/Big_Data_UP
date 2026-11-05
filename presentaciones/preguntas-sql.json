@@ -1,0 +1,502 @@
+[
+ {
+  "id": 1,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuántas personas trabajan hoy en cada departamento? Ordénalos del más grande al más pequeño."
+ },
+ {
+  "id": 2,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuántas personas ocupan hoy cada puesto y cuál es su salario promedio?"
+ },
+ {
+  "id": 3,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuál es el puesto más común en cada departamento hoy?"
+ },
+ {
+  "id": 4,
+  "tema": "Plantilla",
+  "pregunta": "¿Qué departamentos tienen hoy más Senior Engineers que Engineers?"
+ },
+ {
+  "id": 5,
+  "tema": "Plantilla",
+  "pregunta": "¿Qué porcentaje de la plantilla de cada departamento son Technique Leaders hoy?"
+ },
+ {
+  "id": 6,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuáles son los cinco años de nacimiento con más personas activas hoy?"
+ },
+ {
+  "id": 7,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuáles son los diez apellidos más frecuentes en toda la empresa?"
+ },
+ {
+  "id": 8,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuál es el nombre de pila más común entre las mujeres y cuál entre los hombres?"
+ },
+ {
+  "id": 9,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuántas personas activas comparten exactamente nombre y apellido con al menos otra persona activa?"
+ },
+ {
+  "id": 10,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuántas personas había en Sales el 1 de enero de 1995?"
+ },
+ {
+  "id": 11,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuántas personas había en Development el 1 de enero de 1990, de 1995 y de 2000?"
+ },
+ {
+  "id": 12,
+  "tema": "Plantilla",
+  "pregunta": "¿Cuántas personas se incorporaron al departamento de Research cada año?"
+ },
+ {
+  "id": 13,
+  "tema": "Plantilla",
+  "pregunta": "¿Cómo se reparten los puestos actuales entre las personas con más de diez años de antigüedad al corte de agosto de 2002?"
+ },
+ {
+  "id": 14,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es el salario promedio actual por departamento? ¿Cuál paga mejor?"
+ },
+ {
+  "id": 15,
+  "tema": "Compensación",
+  "pregunta": "¿Quiénes son las diez personas activas con el salario actual más alto, y en qué departamento trabajan?"
+ },
+ {
+  "id": 16,
+  "tema": "Compensación",
+  "pregunta": "¿Qué porcentaje de la nómina actual total se lleva cada departamento?"
+ },
+ {
+  "id": 17,
+  "tema": "Compensación",
+  "pregunta": "¿Cuántas personas ganan hoy más de 100,000?"
+ },
+ {
+  "id": 18,
+  "tema": "Compensación",
+  "pregunta": "¿Cómo se distribuyen las personas activas en rangos salariales: menos de 50,000; 50,000 a 69,999; 70,000 a 89,999; 90,000 a 109,999; y 110,000 o más?"
+ },
+ {
+  "id": 19,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es el salario actual más alto y el más bajo de cada puesto?"
+ },
+ {
+  "id": 20,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es la diferencia entre el salario actual más alto y el más bajo dentro de cada departamento?"
+ },
+ {
+  "id": 21,
+  "tema": "Compensación",
+  "pregunta": "¿Qué puesto tiene salarios actuales más dispersos? Usa la desviación estándar."
+ },
+ {
+  "id": 22,
+  "tema": "Compensación",
+  "pregunta": "Para cada departamento, ¿cuánto se aleja su salario promedio actual del promedio de la empresa?"
+ },
+ {
+  "id": 23,
+  "tema": "Compensación",
+  "pregunta": "Ordena los departamentos por salario promedio actual y asígnales su lugar en el ranking."
+ },
+ {
+  "id": 24,
+  "tema": "Compensación",
+  "pregunta": "¿Quién es la persona mejor pagada hoy en cada departamento?"
+ },
+ {
+  "id": 25,
+  "tema": "Compensación",
+  "pregunta": "¿Cuáles son los tres salarios actuales más altos de cada puesto y a quién pertenecen?"
+ },
+ {
+  "id": 26,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es la mediana del salario actual en cada departamento?"
+ },
+ {
+  "id": 27,
+  "tema": "Compensación",
+  "pregunta": "¿Cuántas personas activas en Customer Service ganan hoy entre 60,000 y 80,000?"
+ },
+ {
+  "id": 28,
+  "tema": "Compensación",
+  "pregunta": "¿Qué porcentaje de las personas de cada puesto gana hoy menos de 50,000?"
+ },
+ {
+  "id": 29,
+  "tema": "Compensación",
+  "pregunta": "¿Cuántas personas de Marketing ganan hoy más que el salario promedio de Sales?"
+ },
+ {
+  "id": 30,
+  "tema": "Compensación",
+  "pregunta": "¿Cuántas personas activas por departamento están en el 10% mejor pagado de toda la empresa?"
+ },
+ {
+  "id": 31,
+  "tema": "Compensación",
+  "pregunta": "¿Qué porcentaje de cada departamento está en el cuartil salarial más alto de la empresa?"
+ },
+ {
+  "id": 32,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es el salario promedio actual por departamento considerando solo a quienes fueron contratados antes de 1990?"
+ },
+ {
+  "id": 33,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es el salario promedio actual según la antigüedad: menos de 5 años, de 5 a 9, de 10 a 14 y 15 o más, al corte de agosto de 2002?"
+ },
+ {
+  "id": 34,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál es el salario promedio actual de los Senior Engineers según su año de contratación?"
+ },
+ {
+  "id": 35,
+  "tema": "Compensación",
+  "pregunta": "¿En qué departamentos se paga mejor hoy a los Senior Engineers? Muestra los cinco primeros."
+ },
+ {
+  "id": 36,
+  "tema": "Compensación",
+  "pregunta": "En Development, ¿cuánto ganan hoy en promedio los Technique Leaders comparados con los Senior Engineers?"
+ },
+ {
+  "id": 37,
+  "tema": "Compensación",
+  "pregunta": "¿Cuántas personas activas con apellido que empieza con 'S' trabajan en Finance, y cuánto ganan en promedio?"
+ },
+ {
+  "id": 38,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál era el salario promedio de la plantilla de cada departamento el 1 de enero de 2000?"
+ },
+ {
+  "id": 39,
+  "tema": "Compensación",
+  "pregunta": "¿Cuál fue el salario promedio de los sueldos que empezaron a pagarse en cada año?"
+ },
+ {
+  "id": 40,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuál fue el salario inicial promedio según el año de contratación?"
+ },
+ {
+  "id": 41,
+  "tema": "Crecimiento salarial",
+  "pregunta": "Para las personas activas, ¿cuánto creció en promedio su salario, en porcentaje, desde su primer sueldo hasta el actual? Desglosa por departamento."
+ },
+ {
+  "id": 42,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuántos aumentos ha recibido en promedio cada persona activa, por departamento?"
+ },
+ {
+  "id": 43,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuántos cambios de salario fueron aumentos de más de 10% respecto al sueldo anterior?"
+ },
+ {
+  "id": 44,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuál fue el aumento porcentual más grande que alguien recibió en un solo cambio de salario, y quién lo recibió?"
+ },
+ {
+  "id": 45,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuántas personas tuvieron alguna vez una reducción de salario?"
+ },
+ {
+  "id": 46,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuántos días pasan en promedio entre un cambio de salario y el siguiente, por departamento actual?"
+ },
+ {
+  "id": 47,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuántos cambios de salario ocurrieron cada año, sin contar el sueldo de entrada?"
+ },
+ {
+  "id": 48,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuánto tiempo pasa en promedio entre la contratación y el primer cambio de salario?"
+ },
+ {
+  "id": 49,
+  "tema": "Crecimiento salarial",
+  "pregunta": "¿Cuál es el salario promedio actual de quienes alguna vez fueron gerentes de departamento, comparado con el resto de las personas activas?"
+ },
+ {
+  "id": 50,
+  "tema": "Contratación",
+  "pregunta": "¿Cuántas contrataciones hubo cada año?"
+ },
+ {
+  "id": 51,
+  "tema": "Contratación",
+  "pregunta": "¿De qué año de contratación viene la mayor parte de la plantilla activa hoy?"
+ },
+ {
+  "id": 52,
+  "tema": "Contratación",
+  "pregunta": "¿En qué mes del año se concentran las contrataciones?"
+ },
+ {
+  "id": 53,
+  "tema": "Contratación",
+  "pregunta": "¿Qué día de la semana se ha contratado a más personas?"
+ },
+ {
+  "id": 54,
+  "tema": "Contratación",
+  "pregunta": "¿Cuáles son las cinco fechas en las que se contrató a más personas?"
+ },
+ {
+  "id": 55,
+  "tema": "Contratación",
+  "pregunta": "¿Quién es la persona activa con más antigüedad y quién la más reciente?"
+ },
+ {
+  "id": 56,
+  "tema": "Contratación",
+  "pregunta": "¿Cuál es la antigüedad promedio, en años, de la plantilla activa de cada departamento al corte de agosto de 2002?"
+ },
+ {
+  "id": 57,
+  "tema": "Contratación",
+  "pregunta": "¿Qué parte de la plantilla activa entró entre 1985 y 1989, cuál entre 1990 y 1994, y cuál de 1995 en adelante? Exprésalo en porcentaje."
+ },
+ {
+  "id": 58,
+  "tema": "Contratación",
+  "pregunta": "¿Cuántas personas activas fueron contratadas en 1999 o 2000 y ganan hoy más que el promedio de su departamento?"
+ },
+ {
+  "id": 59,
+  "tema": "Contratación",
+  "pregunta": "¿Cuántas personas activas cumplen años en el mismo mes en que fueron contratadas?"
+ },
+ {
+  "id": 60,
+  "tema": "Contratación",
+  "pregunta": "¿Cuál era la edad promedio al momento de la contratación, según el año en que se contrató?"
+ },
+ {
+  "id": 61,
+  "tema": "Contratación",
+  "pregunta": "¿Cuántas personas fueron contratadas con 30 años o más, por departamento de ingreso?"
+ },
+ {
+  "id": 62,
+  "tema": "Demografía",
+  "pregunta": "¿Qué porcentaje de mujeres hay hoy en cada departamento?"
+ },
+ {
+  "id": 63,
+  "tema": "Demografía",
+  "pregunta": "¿Cuál es el salario promedio actual de mujeres y hombres en cada departamento?"
+ },
+ {
+  "id": 64,
+  "tema": "Demografía",
+  "pregunta": "En cada puesto, ¿cuál es la diferencia entre el salario promedio actual de hombres y el de mujeres?"
+ },
+ {
+  "id": 65,
+  "tema": "Demografía",
+  "pregunta": "¿En qué puestos actuales hay mayor proporción de mujeres?"
+ },
+ {
+  "id": 66,
+  "tema": "Demografía",
+  "pregunta": "¿Cuál es la edad promedio de la plantilla activa de cada departamento al corte de agosto de 2002?"
+ },
+ {
+  "id": 67,
+  "tema": "Demografía",
+  "pregunta": "¿Cuántas personas activas tenían más de 45 años al corte de agosto de 2002, por departamento?"
+ },
+ {
+  "id": 68,
+  "tema": "Demografía",
+  "pregunta": "¿Cuántas personas de cada década de nacimiento ocupan hoy cada puesto?"
+ },
+ {
+  "id": 69,
+  "tema": "Demografía",
+  "pregunta": "¿Cuántas personas activas nacieron en los años cincuenta, y cuánto ganan en promedio mujeres y hombres de ese grupo?"
+ },
+ {
+  "id": 70,
+  "tema": "Demografía",
+  "pregunta": "¿Cuántas mujeres han sido gerentes de cada departamento a lo largo de la historia?"
+ },
+ {
+  "id": 71,
+  "tema": "Liderazgo",
+  "pregunta": "¿Quién dirige hoy cada departamento y desde cuándo?"
+ },
+ {
+  "id": 72,
+  "tema": "Liderazgo",
+  "pregunta": "¿Cuánto gana hoy cada gerente comparado con el salario promedio de su departamento?"
+ },
+ {
+  "id": 73,
+  "tema": "Liderazgo",
+  "pregunta": "¿Cuántas personas han dirigido cada departamento en toda su historia?"
+ },
+ {
+  "id": 74,
+  "tema": "Liderazgo",
+  "pregunta": "¿Quién ha estado más tiempo como gerente de un departamento? Para los cargos vigentes, cuenta hasta agosto de 2002."
+ },
+ {
+  "id": 75,
+  "tema": "Liderazgo",
+  "pregunta": "¿Cuántas de las personas que alguna vez fueron gerentes siguen hoy en la empresa?"
+ },
+ {
+  "id": 76,
+  "tema": "Liderazgo",
+  "pregunta": "¿Cuántas personas activas ganan hoy más que el gerente de su departamento?"
+ },
+ {
+  "id": 77,
+  "tema": "Liderazgo",
+  "pregunta": "¿Qué edad tenía en promedio cada gerente al asumir el cargo, por departamento?"
+ },
+ {
+  "id": 78,
+  "tema": "Liderazgo",
+  "pregunta": "¿Cuántos años llevaba en la empresa cada gerente cuando asumió el cargo?"
+ },
+ {
+  "id": 79,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuántas personas pasaron de Engineer a Senior Engineer?"
+ },
+ {
+  "id": 80,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuántos años tarda en promedio una persona en pasar de Engineer a Senior Engineer?"
+ },
+ {
+  "id": 81,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuántas personas han tenido tres o más puestos distintos en la empresa?"
+ },
+ {
+  "id": 82,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuánto ganan hoy en promedio quienes pasaron de Staff a Senior Staff, frente a quienes siguen como Staff?"
+ },
+ {
+  "id": 83,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuántas personas activas llevan más de 15 años en el mismo puesto al corte de agosto de 2002?"
+ },
+ {
+  "id": 84,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuántas personas activas tienen el mismo puesto desde que entraron?"
+ },
+ {
+  "id": 85,
+  "tema": "Trayectoria",
+  "pregunta": "En promedio, ¿cuántos puestos distintos han tenido las personas de cada departamento actual?"
+ },
+ {
+  "id": 86,
+  "tema": "Trayectoria",
+  "pregunta": "¿Cuántas promociones a Senior Engineer hubo cada año?"
+ },
+ {
+  "id": 87,
+  "tema": "Movilidad",
+  "pregunta": "¿Cuántas personas activas han cambiado de departamento al menos una vez?"
+ },
+ {
+  "id": 88,
+  "tema": "Movilidad",
+  "pregunta": "¿Cuántos cambios de departamento ocurrieron cada año?"
+ },
+ {
+  "id": 89,
+  "tema": "Movilidad",
+  "pregunta": "¿De qué departamento salen más personas hacia otro departamento?"
+ },
+ {
+  "id": 90,
+  "tema": "Movilidad",
+  "pregunta": "¿Cuáles son las rutas más comunes de cambio de departamento, de origen a destino?"
+ },
+ {
+  "id": 91,
+  "tema": "Movilidad",
+  "pregunta": "¿Ganan hoy más, en promedio, las personas activas que cambiaron de departamento que las que nunca lo hicieron?"
+ },
+ {
+  "id": 92,
+  "tema": "Rotación",
+  "pregunta": "¿Cuántas personas han dejado la empresa?"
+ },
+ {
+  "id": 93,
+  "tema": "Rotación",
+  "pregunta": "¿En qué año salieron más personas de la empresa?"
+ },
+ {
+  "id": 94,
+  "tema": "Rotación",
+  "pregunta": "De las personas que dejaron la empresa, ¿cuántas eran Senior Engineer en su último puesto?"
+ },
+ {
+  "id": 95,
+  "tema": "Rotación",
+  "pregunta": "¿Cuál era el último salario promedio de quienes dejaron la empresa, por departamento?"
+ },
+ {
+  "id": 96,
+  "tema": "Rotación",
+  "pregunta": "¿Cuántos años llevaban en la empresa, en promedio, quienes salieron cada año?"
+ },
+ {
+  "id": 97,
+  "tema": "Rotación",
+  "pregunta": "¿Qué departamento perdió más personas en proporción a su tamaño histórico?"
+ },
+ {
+  "id": 98,
+  "tema": "Rotación",
+  "pregunta": "¿Qué porcentaje de las personas contratadas cada año sigue hoy en la empresa?"
+ },
+ {
+  "id": 99,
+  "tema": "Rotación",
+  "pregunta": "¿Ganaban más o menos que el promedio de su departamento quienes dejaron la empresa en 2001?"
+ },
+ {
+  "id": 100,
+  "tema": "Rotación",
+  "pregunta": "¿Cuántos de quienes dejaron la empresa nunca tuvieron un aumento de salario?"
+ }
+]

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reto SQL · Big Data</title><script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
+<meta name="description" content="Una pregunta de negocio sobre la base employees, asignada a tu matrícula.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='96' height='96' rx='20' fill='%231b3a6b'/%3E%3Cg stroke='%23f6f4ef' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Cpath d='M22 66 L38 36 L58 58 L74 30'/%3E%3Cpath d='M58 58 L70 74'/%3E%3C/g%3E%3Cg fill='%23f6f4ef'%3E%3Ccircle cx='22' cy='66' r='5'/%3E%3Ccircle cx='38' cy='36' r='5'/%3E%3Ccircle cx='74' cy='30' r='5'/%3E%3Ccircle cx='70' cy='74' r='5'/%3E%3C/g%3E%3Ccircle cx='58' cy='58' r='9' fill='%23f2475a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><a class="brand" href="./"><svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" rx="20" fill="#1b3a6b"/><g stroke="#f6f4ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M22 66 L38 36 L58 58 L74 30"/><path d="M58 58 L70 74"/></g><g fill="#f6f4ef"><circle cx="22" cy="66" r="5"/><circle cx="38" cy="36" r="5"/><circle cx="74" cy="30" r="5"/><circle cx="70" cy="74" r="5"/></g><circle cx="58" cy="58" r="9" fill="#f2475a"/></svg>Big Data<span>AULA</span></a><span class="header-note">RETO SQL · BASE EMPLOYEES</span><a class="nav-link" href="./">Presentaciones</a><button id="theme" type="button">Tema oscuro</button></header>
+<main class="reto">
+  <p class="eyebrow">Reto SQL · base employees</p>
+  <h1>Una pregunta de negocio. Una consulta tuya.</h1>
+  <p class="lede">Escribe tu matrícula y te toca una pregunta al azar. La pregunta queda ligada a tu matrícula: si vuelves, verás la misma. Respóndela con una sola consulta de lectura y entrégala una vez.</p>
+
+  <form id="form-matricula" class="reto-card" autocomplete="off">
+    <label for="matricula" class="eyebrow">Matrícula</label>
+    <div class="reto-row">
+      <input id="matricula" name="matricula" inputmode="text" maxlength="12" required placeholder="Ej. 0245781" aria-describedby="ayuda-matricula">
+      <button type="submit" class="primary" id="btn-matricula">Ver mi pregunta</button>
+    </div>
+    <p id="ayuda-matricula" class="reto-help">Letras y números, de 4 a 12 caracteres.</p>
+  </form>
+
+  <section id="panel-pregunta" class="reto-card" hidden>
+    <p class="eyebrow" id="pregunta-meta"></p>
+    <h2 id="pregunta-texto"></h2>
+    <div class="box"><p>En esta base, <strong>hoy</strong> es el registro vigente: <code>to_date = '9999-01-01'</code>. Los datos llegan al 1 de agosto de 2002; úsalo como fecha de corte para edades y antigüedades.</p></div>
+
+    <div id="bloque-respuesta">
+      <label for="sql" class="eyebrow">Tu consulta</label>
+      <textarea id="sql" rows="12" spellcheck="false" placeholder="SELECT ..."></textarea>
+      <p class="reto-help">Solo consultas: <code>SELECT</code> o <code>WITH ... SELECT</code>. Pruébala primero en tu MariaDB; aquí no se ejecuta.</p>
+      <button type="button" class="primary" id="btn-entregar">Entregar respuesta</button>
+    </div>
+    <div id="bloque-entregada" hidden>
+      <p class="reto-done" id="texto-entregada"></p>
+    </div>
+  </section>
+
+  <p id="estado" class="reto-status" role="status" aria-live="polite"></p>
+</main>
+<script type="module" src="reto-sql.js"></script>
+</body></html>

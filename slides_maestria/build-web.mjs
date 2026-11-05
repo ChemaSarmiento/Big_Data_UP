@@ -99,7 +99,7 @@ for (const track of ['especialidad', 'maestria']) {
 }
 for (const d of decks) { d.scope = scopes[d.id]; d.areas = ['Big Data', ...(d.scope.cloud ? ['Cloud computing'] : [])]; }
 await fs.mkdir(output, { recursive: true });
-for (const name of ['index.html', 'styles.css', 'app.js']) await fs.copyFile(path.join(root, 'presentaciones', name), path.join(output, name));
+for (const name of ['index.html', 'styles.css', 'app.js', 'reto-sql.html', 'reto-sql.js', 'firebase-config.js', 'preguntas-sql.json']) await fs.copyFile(path.join(root, 'presentaciones', name), path.join(output, name));
 await fs.writeFile(path.join(output, 'decks.json'), JSON.stringify(decks));
 await fs.cp(path.join(root, 'presentaciones/infograficos'), path.join(output, 'infograficos'), { recursive: true });
 await fs.cp(path.join(root, 'intro-big-data/public/infograficos'), path.join(output, 'infograficos'), { recursive: true });

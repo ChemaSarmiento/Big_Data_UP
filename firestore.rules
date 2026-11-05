@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// Reto SQL: una pregunta por matrícula, una entrega por matrícula.
+// Nadie puede leer respuestas desde el sitio; el profesor las consulta con el script de exportación o en la consola.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function matValida(m) {
+      return m.matches('^[A-Z0-9]{4,12}$');
+    }
+
+    match /asignaciones/{mat} {
+      allow get: if matValida(mat);
+      allow list: if false;
+
+      allow create: if matValida(mat)
+        && request.resource.data.keys().hasOnly(['matricula', 'preguntaId', 'asignadaEn'])
+        && request.resource.data.matricula == mat
+        && request.resource.data.preguntaId is int
+        && request.resource.data.preguntaId >= 1
+        && request.resource.data.preguntaId <= 100
+        && request.resource.data.asignadaEn == request.time;
+
+      // Solo se marca como respondida, una vez, y en el mismo lote que crea la respuesta.
+      allow update: if matValida(mat)
+        && !('respondidaEn' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['respondidaEn'])
+        && request.resource.data.respondidaEn == request.time
+        && existsAfter(/databases/$(database)/documents/respuestas/$(mat));
+
+      allow delete: if false;
+    }
+
+    match /respuestas/{mat} {
+      allow read: if false;
+
+      allow create: if matValida(mat)
+        && request.resource.data.keys().hasOnly(['matricula', 'preguntaId', 'sql', 'respondidaEn'])
+        && request.resource.data.matricula == mat
+        && request.resource.data.sql is string
+        && request.resource.data.sql.size() >= 10
+        && request.resource.data.sql.size() <= 5000
+        && !request.resource.data.sql.lower().matches('(?s).*\\b(insert|update|delete|drop|alter|create|truncate|grant|revoke)\\b.*')
+        && request.resource.data.respondidaEn == request.time
+        && exists(/databases/$(database)/documents/asignaciones/$(mat))
+        && request.resource.data.preguntaId == get(/databases/$(database)/documents/asignaciones/$(mat)).data.preguntaId;
+
+      allow update, delete: if false;
+    }
+  }
+}
