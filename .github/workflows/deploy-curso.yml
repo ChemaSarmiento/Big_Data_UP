@@ -1,0 +1,31 @@
+name: Deploy curso a Firebase
+
+on:
+  push:
+    branches: [plan2]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: slides_maestria/package-lock.json
+
+      - name: Build del sitio de presentaciones
+        working-directory: slides_maestria
+        run: |
+          npm ci --ignore-scripts
+          npm run build:web
+
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ARTIFICIALARTIFICER }}
+          channelId: live
+          projectId: artificialartificer

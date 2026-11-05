@@ -102,18 +102,17 @@ línea base contra la que todo lo demás se compara.
 
 ```python
 grid = (ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+    .addGrid(lr.regParam, [0.01, 0.1])
     .build())
 cv = CrossValidator(estimator=Pipeline(stages=feature_stages() + [lr]), estimatorParamMaps=grid,
-                     evaluator=evaluador, numFolds=3)
+                     evaluator=evaluador, numFolds=2)
 modelo_cv = cv.fit(train_df)
 ```
 
 **Advertencia explícita antes de correr:** "Esto va a tardar varios minutos —
-son 27 pipelines. No es que se haya colgado."
+son cuatro ajustes más un refit. No es que se haya colgado."
 
-**Si tarda demasiado para el tiempo de clase:** reducir la rejilla a 2×2 en vivo
+**Si tarda demasiado para el tiempo de clase:** reducir la muestra antes de ejecutar
 y explicar por qué (menos combinaciones = menos tiempo, mismo concepto).
 
 ### Paso 4 — Comparar contra GBTClassifier (25 min)

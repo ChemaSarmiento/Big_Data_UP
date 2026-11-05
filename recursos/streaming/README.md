@@ -66,6 +66,6 @@ El modelo contiene la derivación de hora, transformaciones ajustadas sobre trai
 
 Limitar eventos, tiempo y objetos. El puente produce archivos pequeños útiles para clase; en producción conviene controlar tamaño/compacción. Detener productor/puente, dejar finalizar Spark, guardar evidencia, borrar cluster y topic/suscripción cuando ya no se usen. Borrar entrada/checkpoints solo después de terminar el consumidor; su eliminación impide continuar ese estado.
 
-Fuentes: [Pub/Sub: reentregas](https://docs.cloud.google.com/pubsub/docs/subscribe-best-practices), [Spark Structured Streaming](https://spark.apache.org/docs/3.5.3/structured-streaming-programming-guide.html).
+Fuentes: [Pub/Sub: reentregas](https://docs.cloud.google.com/pubsub/docs/subscribe-best-practices), [Spark Structured Streaming](https://archive.apache.org/dist/spark/docs/3.5.3/structured-streaming-programming-guide.html).
 
 Las consultas de ventanas usan `append`: emiten resultados cuando avanza el watermark y se finalizan ventanas. Una entrada con timestamps inmóviles puede no emitir ventanas finalizadas; explicar esa diferencia frente a `update`. El scoring por fila también usa append con su propio checkpoint.

@@ -1,0 +1,21 @@
+{
+  "hosting": {
+    "site": "bigdata-up",
+    "public": "presentaciones/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|png|jpg|svg|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
+        ]
+      }
+    ]
+  }
+}

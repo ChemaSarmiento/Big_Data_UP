@@ -9,13 +9,13 @@
 2. Reentrenamiento programado y triggers por drift
 
 ## Lab
-Desplegar `mlops_pipeline_dag.py` en Airflow (standalone en la VM temporal de 4+ GB (recomendado: `e2-standard-2`) o Cloud Composer) y correrlo end-to-end: ingesta → features → entrenamiento → evaluación → despliegue condicional, que recarga el endpoint de la Sesión 11 vía `POST /reload` si el AUC pasa el umbral.
+Con Airflow instalado, acceso validado y API preparada antes de clase: seguir un run de muestra, comprobar métricas/URI del candidato, observar aceptación/rechazo ROC/PR-AUC y probar una falla de recarga. El DAG lee una entrada ya preparada y requiere cluster temporal existente. Construir toda la infraestructura desde cero necesita una clínica separada; Cloud Composer es referencia conceptual, no requisito del lab.
 
 ## Entregable
 DAG de MLOps corriendo en Airflow (captura del grafo con las tareas en verde), conectado al endpoint de la Sesión 11.
 
 ## Ejemplo / material de apoyo
-`recursos/airflow/dags/mlops_pipeline_dag.py` — DAG real con `DataprocSubmitJobOperator` + una puerta de calidad (`BranchPythonOperator`) que decide desplegar o no según el AUC leído de `metrics.json` (escrito por `recursos/spark/04_pipeline_ml.ipynb`).
+`recursos/airflow/dags/mlops_pipeline_dag.py` — DAG real con `DataprocSubmitJobOperator` + una puerta de calidad (`BranchPythonOperator`) que decide desplegar o no según el AUC leído de `metrics.json` (escrito por `recursos/spark/04_pipeline_ml.py` en el mismo run).
 
 ## Recursos vinculados
 - [`recursos/airflow/`](../../recursos/airflow/) — DAG de MLOps completo

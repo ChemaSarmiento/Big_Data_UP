@@ -10,7 +10,7 @@
 3. Cuándo Spark MLlib no alcanza (deep learning) y alternativas: Vertex AI Training, Horovod (panorama)
 
 ## Lab
-Entrenar y comparar 2-3 modelos con Spark MLlib sobre el pipeline de features de la Sesión 5, con tuning vía `CrossValidator`.
+En clase: baseline logístico y búsqueda acotada (dos valores, dos folds) sobre una muestra, con pipeline completo reajustado dentro de cada fold. Comparación GBT/otras rejillas y ejecución completa a escala: extensión de 2–3 horas. Reservar test temporal para la evaluación final.
 
 ## Entregable
 Modelo entrenado + comparación de métricas + justificación del modelo elegido, con **una gráfica comparativa** (barras de AUC/F1 por modelo, o curva ROC superpuesta de ambos) — es la misma evidencia que después se reusa en el capstone (Sesión 13), donde el documento final exige visualizaciones sobre las conclusiones.

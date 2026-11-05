@@ -30,7 +30,7 @@ Referencias: [el “so what”](https://www.storytellingwithdata.com/blog/2017/3
 - [Budgets](https://docs.cloud.google.com/billing/docs/how-to/budgets): las alertas no detienen automáticamente el gasto.
 - [Retiro de Pub/Sub Lite](https://docs.cloud.google.com/pubsub/lite/docs/release-notes).
 - [Retiro de Data Catalog](https://docs.cloud.google.com/knowledge-catalog/docs/deprecations).
-- [Structured Streaming 3.5](https://spark.apache.org/docs/3.5.3/structured-streaming-programming-guide.html).
+- [Structured Streaming 3.5](https://archive.apache.org/dist/spark/docs/3.5.3/structured-streaming-programming-guide.html).
 - [Airflow: recursos recomendados](https://airflow.apache.org/docs/apache-airflow/2.11.0/installation/prerequisites.html).
 
 ## Validación y límites

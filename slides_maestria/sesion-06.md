@@ -40,15 +40,14 @@ Por diseño, GBT es más lento de entrenar que Random Forest a la misma profundi
 
 ```python {1-6|8-13}
 grid = (ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+    .addGrid(lr.regParam, [0.01, 0.1])
     .build())
 # 3 x 3 = 9 combinaciones
 
 cv = CrossValidator(
     estimator=pipeline,
     estimatorParamMaps=grid,
-    numFolds=3,
+    numFolds=2,
 )
 modelo_cv = cv.fit(train_df)
 # 9 combinaciones x 3 folds = 27 pipelines completos entrenados
@@ -106,19 +105,18 @@ Se transforma con el objeto ajustado solo en train; no se vuelve a ajustar sobre
 
 ```python
 grid = (ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+    .addGrid(lr.regParam, [0.01, 0.1])
     .build())
 from pyspark.ml import Pipeline
 from ml_common import feature_stages
 pipeline = Pipeline(stages=feature_stages() + [lr])
 cv = CrossValidator(estimator=pipeline, estimatorParamMaps=grid,
-                     evaluator=evaluador, numFolds=3)
+                     evaluator=evaluador, numFolds=2)
 modelo_cv = cv.fit(train_df)
 ```
 
 <div class="mt-4 text-sm opacity-70">
-Rejilla 2×2 recomendada para clase: 12 ajustes + refit. La rejilla 3×3 implica 27 ajustes + refit; estimar antes de ejecutar.
+Núcleo de clase: dos valores × dos folds = cuatro ajustes + refit. Estimar con una muestra antes de ejecutar; rejillas amplias y GBT van en la extensión.
 </div>
 
 ---

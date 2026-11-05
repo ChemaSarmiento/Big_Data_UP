@@ -11,3 +11,4 @@ presentaciones/dist/
 spark-warehouse/
 
 .airflow-lab/
+.firebase/

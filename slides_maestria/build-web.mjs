@@ -56,7 +56,11 @@ function scopeSlide(id) {
 }
 const decks = [];
 const intro = await read('intro-big-data/slides.md');
-decks.push({ id: 'introduccion', track: 'base', number: 'BASE', title: 'Introducción a Big Data', source: 'intro-big-data/slides.md', slides: [...split(intro).slice(0,1), scopeSlide('introduccion'), ...split(intro).slice(1)].map(render) });
+const introDevelopment = split(await read('presentaciones/desarrollo/introduccion.md'));
+const introSlides = split(intro);
+introSlides.splice(2, 0, ...introDevelopment.slice(0,3));
+introSlides.splice(introSlides.length - 1, 0, ...introDevelopment.slice(3));
+decks.push({ id: 'introduccion', track: 'base', number: 'BASE', title: 'Introducción a Big Data', source: 'intro-big-data/slides.md', slides: [...introSlides.slice(0,1), scopeSlide('introduccion'), ...introSlides.slice(1)].map(render) });
 for (const track of ['especialidad', 'maestria']) {
   const syllabus = await read(`${track}/TEMARIO.md`);
   for (let n = 0; n <= (track === 'maestria' ? 13 : 9); n++) {
@@ -76,6 +80,13 @@ for (const track of ['especialidad', 'maestria']) {
       const extra = split(await read(supplement));
       const practice = slides.findIndex((s, i) => i > 2 && /^#.*(?:Lab de hoy|Actividad|Taller|Paso 1)/m.test(s));
       slides.splice(practice < 0 ? slides.length - 1 : practice, 0, ...extra);
+    } catch (error) { if (error.code !== 'ENOENT') throw error; }
+    try {
+      const developed = split(await read(`presentaciones/desarrollo/${track}-${number}.md`));
+      const oldPractice = slides.findIndex((s, i) => i > 3 && /^# (?:Lab de hoy|Paso 1|Demo guiada|Demo en vivo)/m.test(s));
+      if (oldPractice >= 0 && oldPractice < slides.length - 1) slides.splice(oldPractice, slides.length - oldPractice - 1);
+      slides.splice(3, 0, ...developed.slice(0, 3));
+      slides.splice(slides.length - 1, 0, ...developed.slice(3));
     } catch (error) { if (error.code !== 'ENOENT') throw error; }
     const deliverable = section(notes, 'Entregable');
     slides.splice(Math.max(1, slides.length - 1), 0, `# Cierra el ciclo\n\n- ¿Qué problema resuelve lo que aprendiste hoy?\n- ¿Qué alternativa elegirías y bajo qué condiciones?\n- ¿Qué evidencia mostrarías para justificar tu decisión?${deliverable ? `\n\n## Evidencia de aprendizaje\n\n${deliverable}` : ''}`);
