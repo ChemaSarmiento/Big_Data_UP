@@ -7,21 +7,20 @@
 ## Índice
 1. BigQuery desde la consola web
 2. Cómo leer una consulta
-3. Qué es "particionar" una tabla (analogía de archivero)
+3. Clustering y partitioning en BigQuery (particionar = analogía de archivero)
 4. Cómo se ve el costo de una consulta
 
 ## Lab guiado
-Completar y ejecutar 4-5 consultas sobre un dataset ya preparado (no se escribe SQL desde cero, se modifica).
+Comparar dos tablas con el mismo dato (`lab.sin_particion` vs. `lab.por_fecha`, cargadas de `bank_transactions.csv`) para comprobar en vivo que particionar reduce bytes leídos sin cambiar el resultado. Cierra con una exploración visual en Looker Studio.
 
 ## Entregable
-Las consultas completadas + interpretación en una frase de qué responde cada una + **una visualización** de al menos una consulta, hecha con el botón "Explorar con Looker Studio" directo desde los resultados de BigQuery (sin escribir código — es el nivel correcto para este track, y es exactamente la ruta que un perfil de negocio usaría en el trabajo real).
+Las consultas de comparación corridas en ambas tablas + confirmación de que el resultado es idéntico + una comparación visual de bytes facturados (dos barras) + el gráfico de Looker Studio de transacciones sospechosas por día.
 
 ## Ejemplo / material de apoyo
-`recursos/sql-practica/employee_db_queries.sql` (secciones 1-3, para calentar) seguido de una consulta guiada sobre `bigquery-public-data.new_york_taxi_trips` (ver `recursos/datasets/README.md`) — mismo tipo de pregunta, ahora sobre un dataset de cientos de millones de filas. Para la visualización: correr la consulta, abrir "Explorar con Looker Studio" desde la consola de BigQuery, y armar un gráfico de barras/mapa sobre el resultado — sin instalar nada ni escribir Python.
+`bank_transactions.csv` (ver `recursos/datasets/README.md`, Sección 2 y 4 — es el dataset transversal del curso, también usado en el proyecto final si el equipo trabaja el caso banca/riesgo). **Prerequisito antes de clase:** el equipo técnico debe tener ya cargadas en BigQuery `lab.sin_particion` (la tabla completa, tal cual) y `lab.por_fecha` (los mismos datos, con `PARTITION BY DATE(timestamp)`) — el lab no funciona si estas dos tablas no existen de antemano. Para la visualización final: "Explorar con Looker Studio" desde los resultados de BigQuery, sin instalar nada ni escribir Python.
 
 ## Recursos vinculados
-- [`recursos/sql-practica/`](../../recursos/sql-practica/)
-- [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — dataset de NYC Taxi en BigQuery
+- [`recursos/datasets/README.md`](../../recursos/datasets/README.md) — `bank_transactions.csv`, esquema y por qué es el dataset transversal del curso
 
 ## Slides
 - **Deck nuevo:** [`slides.md`](slides.md) (Marp)

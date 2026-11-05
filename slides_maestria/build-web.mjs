@@ -72,25 +72,28 @@ for (const track of ['especialidad', 'maestria']) {
     const topics = syllabus.match(new RegExp(`^## (?:Módulo 0 — )?Sesión ${number}:[^\\n]*\\n([\\s\\S]*?)(?=^## |^---|$(?![\\s\\S]))`, 'm'))?.[1] || '';
     const objectives = topics.split('\n').filter(l => /^\d+\./.test(l)).map(l => l.replace(/^\d+\.\s*/, ''));
     const slides = split(raw);
-    slides.splice(1, 0, `# La ruta de hoy\n\n${objectives.map(t => `- ${t}`).join('\n')}\n\n> Del concepto a la práctica: explica la decisión, compruébala con evidencia y documenta el resultado.`);
     const lab = section(notes, 'Lab') || section(notes, 'Actividad') || section(notes, 'Taller');
-    if (lab) slides.splice(2, 0, `# Lo que podrás demostrar\n\n${lab}`);
+    slides.splice(1, 0, `# La ruta de hoy\n\n${objectives.map(t => `- ${t}`).join('\n')}\n\n> Del concepto a la práctica: explica la decisión, compruébala con evidencia y documenta el resultado.${lab ? `\n\n## Lo que podrás demostrar\n\n${lab}` : ''}`);
     const supplement = `presentaciones/complementos/${track}-${number}.md`;
     try {
       const extra = split(await read(supplement));
-      const practice = slides.findIndex((s, i) => i > 2 && /^#.*(?:Lab de hoy|Actividad|Taller|Paso 1)/m.test(s));
+      const practice = slides.findIndex((s, i) => i > 1 && /^#.*(?:Lab de hoy|Actividad|Taller|Paso 1)/m.test(s));
       slides.splice(practice < 0 ? slides.length - 1 : practice, 0, ...extra);
     } catch (error) { if (error.code !== 'ENOENT') throw error; }
     try {
       const developed = split(await read(`presentaciones/desarrollo/${track}-${number}.md`));
-      const oldPractice = slides.findIndex((s, i) => i > 3 && /^# (?:Lab de hoy|Paso 1|Demo guiada|Demo en vivo)/m.test(s));
+      // Dónde empieza el laboratorio DENTRO del propio archivo developed — no un conteo fijo,
+      // porque algunas sesiones (01, 05) tienen un chunk "temprano" extra antes del lab.
+      const developedLabAt = developed.findIndex(s => /^# Laboratorio\b/m.test(s));
+      const earlyCount = developedLabAt < 0 ? developed.length : developedLabAt;
+      const oldPractice = slides.findIndex((s, i) => i > 2 && /^# (?:Lab(?: de hoy| guiado)?|Paso 1|Demo (?:guiada|en vivo)|Actividad(?: principal)?|Taller|Pr[áa]ctica guiada)\b/m.test(s));
       if (oldPractice >= 0 && oldPractice < slides.length - 1) slides.splice(oldPractice, slides.length - oldPractice - 1);
-      slides.splice(3, 0, ...developed.slice(0, 3));
-      slides.splice(slides.length - 1, 0, ...developed.slice(3));
+      slides.splice(2, 0, ...developed.slice(0, earlyCount));
+      slides.splice(slides.length - 1, 0, ...developed.slice(earlyCount));
     } catch (error) { if (error.code !== 'ENOENT') throw error; }
     const deliverable = section(notes, 'Entregable');
     slides.splice(Math.max(1, slides.length - 1), 0, `# Cierra el ciclo\n\n- ¿Qué problema resuelve lo que aprendiste hoy?\n- ¿Qué alternativa elegirías y bajo qué condiciones?\n- ¿Qué evidencia mostrarías para justificar tu decisión?${deliverable ? `\n\n## Evidencia de aprendizaje\n\n${deliverable}` : ''}`);
-    slides.splice(3, 0, scopeSlide(`${track}-${number}`));
+    slides.splice(2, 0, scopeSlide(`${track}-${number}`));
     decks.push({ id: `${track}-${number}`, track, number, title, source, slides: slides.map(render) });
   }
 }

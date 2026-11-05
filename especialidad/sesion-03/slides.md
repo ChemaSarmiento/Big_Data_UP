@@ -30,6 +30,10 @@ dato que estás consultando.
 
 ## BigQuery desde el navegador — tres zonas
 
+<div class="box">
+<strong>[CAPTURA PENDIENTE]</strong> consola de BigQuery con las tres zonas marcadas — chema agrega el screenshot real aquí.
+</div>
+
 1. **El editor de consultas** — donde escribes/completas SQL
 2. **El explorador de esquema** (panel izquierdo) — columnas y tipos de cada
    tabla, revísalo *antes* de escribir la consulta
@@ -59,18 +63,24 @@ fácil que leer de arriba hacia abajo.
 
 ---
 
-## Particionar: el archivero con un cajón por mes
+## Lo mismo, pero aplicado — tabla chiquita de 4 filas
 
-Un archivero con miles de expedientes sueltos, sin orden → para encontrar los
-de enero, revisas **todo** el archivero.
+| from_account | amount | is_suspicious |
+|---|---|---|
+| ACC-001 | 500 | false |
+| ACC-002 | 12000 | true |
+| ACC-001 | 300 | false |
+| ACC-003 | 8000 | true |
 
-El mismo archivero, con **un cajón por mes** → buscar enero es abrir un solo
-cajón.
+Consulta: `SELECT from_account, SUM(amount) FROM t WHERE is_suspicious = true GROUP BY from_account`
+
+1. **FROM** t → partimos de las 4 filas.
+2. **WHERE** is_suspicious = true → quedan 2 filas (ACC-002, ACC-003).
+3. **GROUP BY** from_account → cada cuenta ya es su propio grupo.
+4. **SELECT** → `ACC-002: 12000`, `ACC-003: 8000`.
 
 <div class="box">
-Eso es particionar una tabla: se organiza físicamente en pedazos (típicamente
-por fecha). Una consulta que filtra por esa columna solo toca el pedazo
-relevante — misma pregunta, misma respuesta, una fracción del costo.
+Mismo orden que el slide anterior — aquí lo ves aplicado, no solo descrito.
 </div>
 
 ---
@@ -85,96 +95,6 @@ devueltas. Dos trampas comunes:
   lee las que pides)
 - <span class="accent">`LIMIT 10` NO reduce el costo</span> — sigue escaneando
   las columnas pedidas de **toda** la tabla antes de recortar el resultado
-
----
-
-# Lab guiado
-## El dataset de hoy: NYC Taxi, 146 millones de viajes reales
-
-`bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2015` — público,
-gratis, consultable ahora mismo. Mismo tipo de dato que alimenta decisiones
-reales de movilidad urbana (Uber, ciudades inteligentes).
-
-<div class="box">
-Antes de cada consulta de hoy: mira el estimador de bytes en la esquina
-superior derecha, no el botón de correr.
-</div>
-
----
-
-## Paso 1 — Calentamiento con SQL ya conocido
-
-`recursos/sql-practica/employee_db_queries.sql`, secciones 1-2 — mismo tipo de
-pregunta que ya viste en el Módulo 0, sobre una base pequeña, antes de saltar a
-millones de filas.
-
----
-
-## Paso 2 — Completa la consulta: ¿cuántos viajes hubo en enero?
-
-```sql
-SELECT COUNT(*) AS total_viajes
-FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2015`
-WHERE EXTRACT(MONTH FROM ___) = ___;
-```
-
-<div class="box">
-Completa los espacios con tu pareja antes de correrla — no hace falta escribir
-SQL nuevo desde cero, solo decidir qué va en cada espacio.
-</div>
-
----
-
-## Paso 3 — Tarifa promedio por número de pasajeros
-
-```sql
-SELECT passenger_count, ROUND(AVG(___), 2) AS tarifa_promedio
-FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2015`
-WHERE trip_distance > 0 AND fare_amount > 0
-GROUP BY ___
-ORDER BY ___;
-```
-
-**Deberías ver:** una fila por cada valor de `passenger_count` (0-9). Si sale
-una fila con `passenger_count = 0`, es un dato real "sucio" — la veracidad de
-la Sesión 1, en vivo.
-
----
-
-## Paso 4 — ¿A qué hora se paga más propina?
-
-```sql
-SELECT EXTRACT(HOUR FROM pickup_datetime) AS hora_del_dia,
-       ROUND(AVG(tip_amount), 2) AS propina_promedio
-FROM `bigquery-public-data.new_york_taxi_trips.tlc_yellow_trips_2015`
-WHERE tip_amount > 0
-GROUP BY hora_del_dia
-ORDER BY hora_del_dia;
-```
-
-**Deberías ver:** 24 filas — identifica la hora pico leyendo la tabla, antes de
-pasar a la gráfica.
-
----
-
-## Paso 5 — Visualización, sin escribir código
-
-1. Corre la consulta del Paso 4
-2. Clic en **"Explorar con Looker Studio"** desde los resultados de BigQuery
-3. Gráfico de barras — eje X: `hora_del_dia`, eje Y: `propina_promedio`
-
-<div class="box">
-Sin instalar nada, sin Python — es la ruta que un perfil de negocio usaría en
-el trabajo real.
-</div>
-
----
-
-## Entregable de hoy
-
-- Las 4 consultas completadas
-- Una interpretación de una frase por consulta ("¿qué responde esto?")
-- La visualización de Looker Studio
 
 ---
 

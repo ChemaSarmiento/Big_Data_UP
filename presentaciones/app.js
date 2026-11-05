@@ -15,9 +15,10 @@ async function route() {
   $('session-label').textContent = `${current.track === 'base' ? 'BASE COMPARTIDA' : current.track.toUpperCase() + ' / ' + current.number} — ${current.title}`;
   $('subject').textContent = current.areas.join(' · ');
   $('subject').title = `Big Data: ${current.scope.bigData}${current.scope.cloud ? '; Cloud computing: ' + current.scope.cloud : ''}`;
-  $('phase').textContent = index === 0 ? 'APERTURA' : index < 3 ? 'RUTA DE APRENDIZAJE' : /lab|paso|actividad|práctica/i.test(titles(current.slides[index])) ? 'PRÁCTICA' : /cierra|fin del|→|checkpoint/i.test(titles(current.slides[index])) ? 'CIERRE' : 'CONCEPTOS';
+  const fase = index === 0 ? 'apertura' : index < 3 ? 'ruta' : /lab|paso|actividad|práctica/i.test(titles(current.slides[index])) ? 'practica' : /cierra|fin del|→|checkpoint/i.test(titles(current.slides[index])) ? 'cierre' : 'conceptos';
+  $('phase').textContent = { apertura: 'APERTURA', ruta: 'RUTA DE APRENDIZAJE', practica: 'PRÁCTICA', cierre: 'CIERRE', conceptos: 'CONCEPTOS' }[fase];
   const slide = $('slide'); slide.replaceChildren(); slide.innerHTML = current.slides[index];
-  slide.className = index === 0 ? 'cover' : '';
+  slide.className = index === 0 ? 'cover' : fase === 'practica' ? 'practica' : '';
   slide.querySelectorAll('img').forEach(img => { img.src = './infograficos/' + img.getAttribute('src').split('/').pop(); if (!img.alt) img.alt = img.src.split('/').pop().replace(/[_\.]/g, ' '); });
   slide.querySelectorAll('a').forEach(a => { const href = a.getAttribute('href'); if (href && !/^(https?:|#)/.test(href)) a.href = `https://github.com/ChemaSarmiento/Big_Data_UP/blob/plan2/${new URL(href, `https://source.invalid/${current.source}`).pathname.slice(1)}`; a.target = '_blank'; a.rel = 'noopener noreferrer'; });
   const groups = [...slide.children].filter(e => !e.matches('h1,h2,h3'));

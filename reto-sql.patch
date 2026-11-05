@@ -1,0 +1,819 @@
+From afcf1c07a6a6baecdf66531d1eed5e6eec243d5b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 5 Nov 2026 05:07:51 +0000
+Subject: [PATCH] =?UTF-8?q?Reto=20SQL:=20pregunta=20aleatoria=20por=20matr?=
+ =?UTF-8?q?=C3=ADcula=20y=20entrega=20de=20consulta=20en=20Firestore?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ firestore.rules                   |  51 +++
+ presentaciones/firebase-config.js |  14 +
+ presentaciones/index.html         |   2 +-
+ presentaciones/preguntas-sql.json | 502 ++++++++++++++++++++++++++++++
+ presentaciones/reto-sql.html      |  45 +++
+ presentaciones/reto-sql.js        |  89 ++++++
+ presentaciones/styles.css         |  25 ++
+ slides_maestria/build-web.mjs     |   2 +-
+ 8 files changed, 728 insertions(+), 2 deletions(-)
+ create mode 100644 firestore.rules
+ create mode 100644 presentaciones/firebase-config.js
+ create mode 100644 presentaciones/preguntas-sql.json
+ create mode 100644 presentaciones/reto-sql.html
+ create mode 100644 presentaciones/reto-sql.js
+
+diff --git a/firestore.rules b/firestore.rules
+new file mode 100644
+index 0000000..9d26ca3
+--- /dev/null
++++ b/firestore.rules
+@@ -0,0 +1,51 @@
++rules_version = '2';
++
++// Reto SQL: una pregunta por matrícula, una entrega por matrícula.
++// Nadie puede leer respuestas desde el sitio; el profesor las consulta con el script de exportación o en la consola.
++service cloud.firestore {
++  match /databases/{database}/documents {
++
++    function matValida(m) {
++      return m.matches('^[A-Z0-9]{4,12}$');
++    }
++
++    match /asignaciones/{mat} {
++      allow get: if matValida(mat);
++      allow list: if false;
++
++      allow create: if matValida(mat)
++        && request.resource.data.keys().hasOnly(['matricula', 'preguntaId', 'asignadaEn'])
++        && request.resource.data.matricula == mat
++        && request.resource.data.preguntaId is int
++        && request.resource.data.preguntaId >= 1
++        && request.resource.data.preguntaId <= 100
++        && request.resource.data.asignadaEn == request.time;
++
++      // Solo se marca como respondida, una vez, y en el mismo lote que crea la respuesta.
++      allow update: if matValida(mat)
++        && !('respondidaEn' in resource.data)
++        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['respondidaEn'])
++        && request.resource.data.respondidaEn == request.time
++        && existsAfter(/databases/$(database)/documents/respuestas/$(mat));
++
++      allow delete: if false;
++    }
++
++    match /respuestas/{mat} {
++      allow read: if false;
++
++      allow create: if matValida(mat)
++        && request.resource.data.keys().hasOnly(['matricula', 'preguntaId', 'sql', 'respondidaEn'])
++        && request.resource.data.matricula == mat
++        && request.resource.data.sql is string
++        && request.resource.data.sql.size() >= 10
++        && request.resource.data.sql.size() <= 5000
++        && !request.resource.data.sql.lower().matches('(?s).*\\b(insert|update|delete|drop|alter|create|truncate|grant|revoke)\\b.*')
++        && request.resource.data.respondidaEn == request.time
++        && exists(/databases/$(database)/documents/asignaciones/$(mat))
++        && request.resource.data.preguntaId == get(/databases/$(database)/documents/asignaciones/$(mat)).data.preguntaId;
++
++      allow update, delete: if false;
++    }
++  }
++}
+diff --git a/presentaciones/firebase-config.js b/presentaciones/firebase-config.js
+new file mode 100644
+index 0000000..4fbdbd3
+--- /dev/null
++++ b/presentaciones/firebase-config.js
+@@ -0,0 +1,14 @@
++// Configuración web de Firebase para el proyecto artificialartificer.
++// Estos valores identifican al proyecto; no son secretos. La protección está en firestore.rules.
++// Obténlos con: firebase apps:sdkconfig WEB <APP_ID> --project artificialartificer
++export const firebaseConfig = {
++  apiKey: "REEMPLAZAR",
++  authDomain: "artificialartificer.firebaseapp.com",
++  projectId: "artificialartificer",
++  storageBucket: "artificialartificer.firebasestorage.app",
++  messagingSenderId: "REEMPLAZAR",
++  appId: "REEMPLAZAR"
++};
++
++// Formato de matrícula aceptado (se convierte a mayúsculas). Debe coincidir con firestore.rules.
++export const MATRICULA = /^[A-Z0-9]{4,12}$/;
+diff --git a/presentaciones/index.html b/presentaciones/index.html
+index d146ac4..d2d799e 100644
+--- a/presentaciones/index.html
++++ b/presentaciones/index.html
+@@ -7,7 +7,7 @@
+ <link rel="stylesheet" href="styles.css">
+ </head>
+ <body>
+-<header><a class="brand" href="#"><svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" rx="20" fill="#1b3a6b"/><g stroke="#f6f4ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M22 66 L38 36 L58 58 L74 30"/><path d="M58 58 L70 74"/></g><g fill="#f6f4ef"><circle cx="22" cy="66" r="5"/><circle cx="38" cy="36" r="5"/><circle cx="74" cy="30" r="5"/><circle cx="70" cy="74" r="5"/></g><circle cx="58" cy="58" r="9" fill="#f2475a"/></svg>Big Data<span>AULA</span></a><span class="header-note">CHEMA SARMIENTO · UNIVERSIDAD PANAMERICANA</span><button id="theme" type="button">Tema oscuro</button><button id="catalog" hidden>Todos los temas ↗</button></header>
++<header><a class="brand" href="#"><svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" rx="20" fill="#1b3a6b"/><g stroke="#f6f4ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M22 66 L38 36 L58 58 L74 30"/><path d="M58 58 L70 74"/></g><g fill="#f6f4ef"><circle cx="22" cy="66" r="5"/><circle cx="38" cy="36" r="5"/><circle cx="74" cy="30" r="5"/><circle cx="70" cy="74" r="5"/></g><circle cx="58" cy="58" r="9" fill="#f2475a"/></svg>Big Data<span>AULA</span></a><span class="header-note">CHEMA SARMIENTO · UNIVERSIDAD PANAMERICANA</span><a class="nav-link" href="reto-sql.html">Reto SQL</a><button id="theme" type="button">Tema oscuro</button><button id="catalog" hidden>Todos los temas ↗</button></header>
+ <main id="home"><div class="intro"><p class="eyebrow">Big Data · Introducción, Especialidad y Maestría</p><h1>Cuando los datos ya no caben en tu computadora,<br><em>empieza este curso.</em></h1><p class="lede">Aquí están las presentaciones de cada sesión. Elige tu track y abre la que toca; cada diapositiva tiene su propio enlace para volver a ella o compartirla.</p></div><nav class="filters" aria-label="Filtrar presentaciones"><button data-track="all" aria-pressed="true">Todo el curso</button><button data-track="base" aria-pressed="false">Introducción</button><button data-track="especialidad" aria-pressed="false">Especialidad</button><button data-track="maestria" aria-pressed="false">Maestría</button></nav><div id="decks" class="deck-grid"></div><p id="load-status" role="status">Cargando presentaciones…</p></main>
+ <main id="player" hidden><div class="session-bar"><span id="session-label"></span><div class="session-tags"><span id="subject"></span><span id="phase"></span></div></div><div id="stage" tabindex="0" aria-label="Diapositiva. Haz clic para avanzar."><article id="slide"></article></div><footer><span id="counter" aria-live="polite"></span><span class="hint">Clic o → para avanzar · O índice · F pantalla completa · T tema</span><div class="controls"><button id="overview-button" aria-label="Índice de diapositivas">Índice</button><button id="fullscreen" aria-label="Pantalla completa">⛶</button><button id="previous" aria-label="Diapositiva anterior">←</button><button id="next" aria-label="Diapositiva siguiente">→</button></div></footer><div class="progress"><div id="progress"></div></div></main>
+ <dialog id="overview"><div class="dialog-header"><h2>Mapa de la sesión</h2><button id="close-overview" aria-label="Cerrar índice">Cerrar ×</button></div><div id="slide-list"></div></dialog>
+diff --git a/presentaciones/preguntas-sql.json b/presentaciones/preguntas-sql.json
+new file mode 100644
+index 0000000..9469379
+--- /dev/null
++++ b/presentaciones/preguntas-sql.json
+@@ -0,0 +1,502 @@
++[
++ {
++  "id": 1,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuántas personas trabajan hoy en cada departamento? Ordénalos del más grande al más pequeño."
++ },
++ {
++  "id": 2,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuántas personas ocupan hoy cada puesto y cuál es su salario promedio?"
++ },
++ {
++  "id": 3,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuál es el puesto más común en cada departamento hoy?"
++ },
++ {
++  "id": 4,
++  "tema": "Plantilla",
++  "pregunta": "¿Qué departamentos tienen hoy más Senior Engineers que Engineers?"
++ },
++ {
++  "id": 5,
++  "tema": "Plantilla",
++  "pregunta": "¿Qué porcentaje de la plantilla de cada departamento son Technique Leaders hoy?"
++ },
++ {
++  "id": 6,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuáles son los cinco años de nacimiento con más personas activas hoy?"
++ },
++ {
++  "id": 7,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuáles son los diez apellidos más frecuentes en toda la empresa?"
++ },
++ {
++  "id": 8,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuál es el nombre de pila más común entre las mujeres y cuál entre los hombres?"
++ },
++ {
++  "id": 9,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuántas personas activas comparten exactamente nombre y apellido con al menos otra persona activa?"
++ },
++ {
++  "id": 10,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuántas personas había en Sales el 1 de enero de 1995?"
++ },
++ {
++  "id": 11,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuántas personas había en Development el 1 de enero de 1990, de 1995 y de 2000?"
++ },
++ {
++  "id": 12,
++  "tema": "Plantilla",
++  "pregunta": "¿Cuántas personas se incorporaron al departamento de Research cada año?"
++ },
++ {
++  "id": 13,
++  "tema": "Plantilla",
++  "pregunta": "¿Cómo se reparten los puestos actuales entre las personas con más de diez años de antigüedad al corte de agosto de 2002?"
++ },
++ {
++  "id": 14,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es el salario promedio actual por departamento? ¿Cuál paga mejor?"
++ },
++ {
++  "id": 15,
++  "tema": "Compensación",
++  "pregunta": "¿Quiénes son las diez personas activas con el salario actual más alto, y en qué departamento trabajan?"
++ },
++ {
++  "id": 16,
++  "tema": "Compensación",
++  "pregunta": "¿Qué porcentaje de la nómina actual total se lleva cada departamento?"
++ },
++ {
++  "id": 17,
++  "tema": "Compensación",
++  "pregunta": "¿Cuántas personas ganan hoy más de 100,000?"
++ },
++ {
++  "id": 18,
++  "tema": "Compensación",
++  "pregunta": "¿Cómo se distribuyen las personas activas en rangos salariales: menos de 50,000; 50,000 a 69,999; 70,000 a 89,999; 90,000 a 109,999; y 110,000 o más?"
++ },
++ {
++  "id": 19,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es el salario actual más alto y el más bajo de cada puesto?"
++ },
++ {
++  "id": 20,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es la diferencia entre el salario actual más alto y el más bajo dentro de cada departamento?"
++ },
++ {
++  "id": 21,
++  "tema": "Compensación",
++  "pregunta": "¿Qué puesto tiene salarios actuales más dispersos? Usa la desviación estándar."
++ },
++ {
++  "id": 22,
++  "tema": "Compensación",
++  "pregunta": "Para cada departamento, ¿cuánto se aleja su salario promedio actual del promedio de la empresa?"
++ },
++ {
++  "id": 23,
++  "tema": "Compensación",
++  "pregunta": "Ordena los departamentos por salario promedio actual y asígnales su lugar en el ranking."
++ },
++ {
++  "id": 24,
++  "tema": "Compensación",
++  "pregunta": "¿Quién es la persona mejor pagada hoy en cada departamento?"
++ },
++ {
++  "id": 25,
++  "tema": "Compensación",
++  "pregunta": "¿Cuáles son los tres salarios actuales más altos de cada puesto y a quién pertenecen?"
++ },
++ {
++  "id": 26,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es la mediana del salario actual en cada departamento?"
++ },
++ {
++  "id": 27,
++  "tema": "Compensación",
++  "pregunta": "¿Cuántas personas activas en Customer Service ganan hoy entre 60,000 y 80,000?"
++ },
++ {
++  "id": 28,
++  "tema": "Compensación",
++  "pregunta": "¿Qué porcentaje de las personas de cada puesto gana hoy menos de 50,000?"
++ },
++ {
++  "id": 29,
++  "tema": "Compensación",
++  "pregunta": "¿Cuántas personas de Marketing ganan hoy más que el salario promedio de Sales?"
++ },
++ {
++  "id": 30,
++  "tema": "Compensación",
++  "pregunta": "¿Cuántas personas activas por departamento están en el 10% mejor pagado de toda la empresa?"
++ },
++ {
++  "id": 31,
++  "tema": "Compensación",
++  "pregunta": "¿Qué porcentaje de cada departamento está en el cuartil salarial más alto de la empresa?"
++ },
++ {
++  "id": 32,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es el salario promedio actual por departamento considerando solo a quienes fueron contratados antes de 1990?"
++ },
++ {
++  "id": 33,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es el salario promedio actual según la antigüedad: menos de 5 años, de 5 a 9, de 10 a 14 y 15 o más, al corte de agosto de 2002?"
++ },
++ {
++  "id": 34,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál es el salario promedio actual de los Senior Engineers según su año de contratación?"
++ },
++ {
++  "id": 35,
++  "tema": "Compensación",
++  "pregunta": "¿En qué departamentos se paga mejor hoy a los Senior Engineers? Muestra los cinco primeros."
++ },
++ {
++  "id": 36,
++  "tema": "Compensación",
++  "pregunta": "En Development, ¿cuánto ganan hoy en promedio los Technique Leaders comparados con los Senior Engineers?"
++ },
++ {
++  "id": 37,
++  "tema": "Compensación",
++  "pregunta": "¿Cuántas personas activas con apellido que empieza con 'S' trabajan en Finance, y cuánto ganan en promedio?"
++ },
++ {
++  "id": 38,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál era el salario promedio de la plantilla de cada departamento el 1 de enero de 2000?"
++ },
++ {
++  "id": 39,
++  "tema": "Compensación",
++  "pregunta": "¿Cuál fue el salario promedio de los sueldos que empezaron a pagarse en cada año?"
++ },
++ {
++  "id": 40,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuál fue el salario inicial promedio según el año de contratación?"
++ },
++ {
++  "id": 41,
++  "tema": "Crecimiento salarial",
++  "pregunta": "Para las personas activas, ¿cuánto creció en promedio su salario, en porcentaje, desde su primer sueldo hasta el actual? Desglosa por departamento."
++ },
++ {
++  "id": 42,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuántos aumentos ha recibido en promedio cada persona activa, por departamento?"
++ },
++ {
++  "id": 43,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuántos cambios de salario fueron aumentos de más de 10% respecto al sueldo anterior?"
++ },
++ {
++  "id": 44,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuál fue el aumento porcentual más grande que alguien recibió en un solo cambio de salario, y quién lo recibió?"
++ },
++ {
++  "id": 45,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuántas personas tuvieron alguna vez una reducción de salario?"
++ },
++ {
++  "id": 46,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuántos días pasan en promedio entre un cambio de salario y el siguiente, por departamento actual?"
++ },
++ {
++  "id": 47,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuántos cambios de salario ocurrieron cada año, sin contar el sueldo de entrada?"
++ },
++ {
++  "id": 48,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuánto tiempo pasa en promedio entre la contratación y el primer cambio de salario?"
++ },
++ {
++  "id": 49,
++  "tema": "Crecimiento salarial",
++  "pregunta": "¿Cuál es el salario promedio actual de quienes alguna vez fueron gerentes de departamento, comparado con el resto de las personas activas?"
++ },
++ {
++  "id": 50,
++  "tema": "Contratación",
++  "pregunta": "¿Cuántas contrataciones hubo cada año?"
++ },
++ {
++  "id": 51,
++  "tema": "Contratación",
++  "pregunta": "¿De qué año de contratación viene la mayor parte de la plantilla activa hoy?"
++ },
++ {
++  "id": 52,
++  "tema": "Contratación",
++  "pregunta": "¿En qué mes del año se concentran las contrataciones?"
++ },
++ {
++  "id": 53,
++  "tema": "Contratación",
++  "pregunta": "¿Qué día de la semana se ha contratado a más personas?"
++ },
++ {
++  "id": 54,
++  "tema": "Contratación",
++  "pregunta": "¿Cuáles son las cinco fechas en las que se contrató a más personas?"
++ },
++ {
++  "id": 55,
++  "tema": "Contratación",
++  "pregunta": "¿Quién es la persona activa con más antigüedad y quién la más reciente?"
++ },
++ {
++  "id": 56,
++  "tema": "Contratación",
++  "pregunta": "¿Cuál es la antigüedad promedio, en años, de la plantilla activa de cada departamento al corte de agosto de 2002?"
++ },
++ {
++  "id": 57,
++  "tema": "Contratación",
++  "pregunta": "¿Qué parte de la plantilla activa entró entre 1985 y 1989, cuál entre 1990 y 1994, y cuál de 1995 en adelante? Exprésalo en porcentaje."
++ },
++ {
++  "id": 58,
++  "tema": "Contratación",
++  "pregunta": "¿Cuántas personas activas fueron contratadas en 1999 o 2000 y ganan hoy más que el promedio de su departamento?"
++ },
++ {
++  "id": 59,
++  "tema": "Contratación",
++  "pregunta": "¿Cuántas personas activas cumplen años en el mismo mes en que fueron contratadas?"
++ },
++ {
++  "id": 60,
++  "tema": "Contratación",
++  "pregunta": "¿Cuál era la edad promedio al momento de la contratación, según el año en que se contrató?"
++ },
++ {
++  "id": 61,
++  "tema": "Contratación",
++  "pregunta": "¿Cuántas personas fueron contratadas con 30 años o más, por departamento de ingreso?"
++ },
++ {
++  "id": 62,
++  "tema": "Demografía",
++  "pregunta": "¿Qué porcentaje de mujeres hay hoy en cada departamento?"
++ },
++ {
++  "id": 63,
++  "tema": "Demografía",
++  "pregunta": "¿Cuál es el salario promedio actual de mujeres y hombres en cada departamento?"
++ },
++ {
++  "id": 64,
++  "tema": "Demografía",
++  "pregunta": "En cada puesto, ¿cuál es la diferencia entre el salario promedio actual de hombres y el de mujeres?"
++ },
++ {
++  "id": 65,
++  "tema": "Demografía",
++  "pregunta": "¿En qué puestos actuales hay mayor proporción de mujeres?"
++ },
++ {
++  "id": 66,
++  "tema": "Demografía",
++  "pregunta": "¿Cuál es la edad promedio de la plantilla activa de cada departamento al corte de agosto de 2002?"
++ },
++ {
++  "id": 67,
++  "tema": "Demografía",
++  "pregunta": "¿Cuántas personas activas tenían más de 45 años al corte de agosto de 2002, por departamento?"
++ },
++ {
++  "id": 68,
++  "tema": "Demografía",
++  "pregunta": "¿Cuántas personas de cada década de nacimiento ocupan hoy cada puesto?"
++ },
++ {
++  "id": 69,
++  "tema": "Demografía",
++  "pregunta": "¿Cuántas personas activas nacieron en los años cincuenta, y cuánto ganan en promedio mujeres y hombres de ese grupo?"
++ },
++ {
++  "id": 70,
++  "tema": "Demografía",
++  "pregunta": "¿Cuántas mujeres han sido gerentes de cada departamento a lo largo de la historia?"
++ },
++ {
++  "id": 71,
++  "tema": "Liderazgo",
++  "pregunta": "¿Quién dirige hoy cada departamento y desde cuándo?"
++ },
++ {
++  "id": 72,
++  "tema": "Liderazgo",
++  "pregunta": "¿Cuánto gana hoy cada gerente comparado con el salario promedio de su departamento?"
++ },
++ {
++  "id": 73,
++  "tema": "Liderazgo",
++  "pregunta": "¿Cuántas personas han dirigido cada departamento en toda su historia?"
++ },
++ {
++  "id": 74,
++  "tema": "Liderazgo",
++  "pregunta": "¿Quién ha estado más tiempo como gerente de un departamento? Para los cargos vigentes, cuenta hasta agosto de 2002."
++ },
++ {
++  "id": 75,
++  "tema": "Liderazgo",
++  "pregunta": "¿Cuántas de las personas que alguna vez fueron gerentes siguen hoy en la empresa?"
++ },
++ {
++  "id": 76,
++  "tema": "Liderazgo",
++  "pregunta": "¿Cuántas personas activas ganan hoy más que el gerente de su departamento?"
++ },
++ {
++  "id": 77,
++  "tema": "Liderazgo",
++  "pregunta": "¿Qué edad tenía en promedio cada gerente al asumir el cargo, por departamento?"
++ },
++ {
++  "id": 78,
++  "tema": "Liderazgo",
++  "pregunta": "¿Cuántos años llevaba en la empresa cada gerente cuando asumió el cargo?"
++ },
++ {
++  "id": 79,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuántas personas pasaron de Engineer a Senior Engineer?"
++ },
++ {
++  "id": 80,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuántos años tarda en promedio una persona en pasar de Engineer a Senior Engineer?"
++ },
++ {
++  "id": 81,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuántas personas han tenido tres o más puestos distintos en la empresa?"
++ },
++ {
++  "id": 82,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuánto ganan hoy en promedio quienes pasaron de Staff a Senior Staff, frente a quienes siguen como Staff?"
++ },
++ {
++  "id": 83,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuántas personas activas llevan más de 15 años en el mismo puesto al corte de agosto de 2002?"
++ },
++ {
++  "id": 84,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuántas personas activas tienen el mismo puesto desde que entraron?"
++ },
++ {
++  "id": 85,
++  "tema": "Trayectoria",
++  "pregunta": "En promedio, ¿cuántos puestos distintos han tenido las personas de cada departamento actual?"
++ },
++ {
++  "id": 86,
++  "tema": "Trayectoria",
++  "pregunta": "¿Cuántas promociones a Senior Engineer hubo cada año?"
++ },
++ {
++  "id": 87,
++  "tema": "Movilidad",
++  "pregunta": "¿Cuántas personas activas han cambiado de departamento al menos una vez?"
++ },
++ {
++  "id": 88,
++  "tema": "Movilidad",
++  "pregunta": "¿Cuántos cambios de departamento ocurrieron cada año?"
++ },
++ {
++  "id": 89,
++  "tema": "Movilidad",
++  "pregunta": "¿De qué departamento salen más personas hacia otro departamento?"
++ },
++ {
++  "id": 90,
++  "tema": "Movilidad",
++  "pregunta": "¿Cuáles son las rutas más comunes de cambio de departamento, de origen a destino?"
++ },
++ {
++  "id": 91,
++  "tema": "Movilidad",
++  "pregunta": "¿Ganan hoy más, en promedio, las personas activas que cambiaron de departamento que las que nunca lo hicieron?"
++ },
++ {
++  "id": 92,
++  "tema": "Rotación",
++  "pregunta": "¿Cuántas personas han dejado la empresa?"
++ },
++ {
++  "id": 93,
++  "tema": "Rotación",
++  "pregunta": "¿En qué año salieron más personas de la empresa?"
++ },
++ {
++  "id": 94,
++  "tema": "Rotación",
++  "pregunta": "De las personas que dejaron la empresa, ¿cuántas eran Senior Engineer en su último puesto?"
++ },
++ {
++  "id": 95,
++  "tema": "Rotación",
++  "pregunta": "¿Cuál era el último salario promedio de quienes dejaron la empresa, por departamento?"
++ },
++ {
++  "id": 96,
++  "tema": "Rotación",
++  "pregunta": "¿Cuántos años llevaban en la empresa, en promedio, quienes salieron cada año?"
++ },
++ {
++  "id": 97,
++  "tema": "Rotación",
++  "pregunta": "¿Qué departamento perdió más personas en proporción a su tamaño histórico?"
++ },
++ {
++  "id": 98,
++  "tema": "Rotación",
++  "pregunta": "¿Qué porcentaje de las personas contratadas cada año sigue hoy en la empresa?"
++ },
++ {
++  "id": 99,
++  "tema": "Rotación",
++  "pregunta": "¿Ganaban más o menos que el promedio de su departamento quienes dejaron la empresa en 2001?"
++ },
++ {
++  "id": 100,
++  "tema": "Rotación",
++  "pregunta": "¿Cuántos de quienes dejaron la empresa nunca tuvieron un aumento de salario?"
++ }
++]
+\ No newline at end of file
+diff --git a/presentaciones/reto-sql.html b/presentaciones/reto-sql.html
+new file mode 100644
+index 0000000..89f6354
+--- /dev/null
++++ b/presentaciones/reto-sql.html
+@@ -0,0 +1,45 @@
++<!doctype html>
++<html lang="es">
++<head>
++<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
++<title>Reto SQL · Big Data</title><script>try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch{}</script>
++<meta name="description" content="Una pregunta de negocio sobre la base employees, asignada a tu matrícula.">
++<link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='96' height='96' rx='20' fill='%231b3a6b'/%3E%3Cg stroke='%23f6f4ef' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Cpath d='M22 66 L38 36 L58 58 L74 30'/%3E%3Cpath d='M58 58 L70 74'/%3E%3C/g%3E%3Cg fill='%23f6f4ef'%3E%3Ccircle cx='22' cy='66' r='5'/%3E%3Ccircle cx='38' cy='36' r='5'/%3E%3Ccircle cx='74' cy='30' r='5'/%3E%3Ccircle cx='70' cy='74' r='5'/%3E%3C/g%3E%3Ccircle cx='58' cy='58' r='9' fill='%23f2475a'/%3E%3C/svg%3E">
++<link rel="stylesheet" href="styles.css">
++</head>
++<body>
++<header><a class="brand" href="./"><svg viewBox="0 0 96 96" aria-hidden="true"><rect width="96" height="96" rx="20" fill="#1b3a6b"/><g stroke="#f6f4ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M22 66 L38 36 L58 58 L74 30"/><path d="M58 58 L70 74"/></g><g fill="#f6f4ef"><circle cx="22" cy="66" r="5"/><circle cx="38" cy="36" r="5"/><circle cx="74" cy="30" r="5"/><circle cx="70" cy="74" r="5"/></g><circle cx="58" cy="58" r="9" fill="#f2475a"/></svg>Big Data<span>AULA</span></a><span class="header-note">RETO SQL · BASE EMPLOYEES</span><a class="nav-link" href="./">Presentaciones</a><button id="theme" type="button">Tema oscuro</button></header>
++<main class="reto">
++  <p class="eyebrow">Reto SQL · base employees</p>
++  <h1>Una pregunta de negocio. Una consulta tuya.</h1>
++  <p class="lede">Escribe tu matrícula y te toca una pregunta al azar. La pregunta queda ligada a tu matrícula: si vuelves, verás la misma. Respóndela con una sola consulta de lectura y entrégala una vez.</p>
++
++  <form id="form-matricula" class="reto-card" autocomplete="off">
++    <label for="matricula" class="eyebrow">Matrícula</label>
++    <div class="reto-row">
++      <input id="matricula" name="matricula" inputmode="text" maxlength="12" required placeholder="Ej. 0245781" aria-describedby="ayuda-matricula">
++      <button type="submit" class="primary" id="btn-matricula">Ver mi pregunta</button>
++    </div>
++    <p id="ayuda-matricula" class="reto-help">Letras y números, de 4 a 12 caracteres.</p>
++  </form>
++
++  <section id="panel-pregunta" class="reto-card" hidden>
++    <p class="eyebrow" id="pregunta-meta"></p>
++    <h2 id="pregunta-texto"></h2>
++    <div class="box"><p>En esta base, <strong>hoy</strong> es el registro vigente: <code>to_date = '9999-01-01'</code>. Los datos llegan al 1 de agosto de 2002; úsalo como fecha de corte para edades y antigüedades.</p></div>
++
++    <div id="bloque-respuesta">
++      <label for="sql" class="eyebrow">Tu consulta</label>
++      <textarea id="sql" rows="12" spellcheck="false" placeholder="SELECT ..."></textarea>
++      <p class="reto-help">Solo consultas: <code>SELECT</code> o <code>WITH ... SELECT</code>. Pruébala primero en tu MariaDB; aquí no se ejecuta.</p>
++      <button type="button" class="primary" id="btn-entregar">Entregar respuesta</button>
++    </div>
++    <div id="bloque-entregada" hidden>
++      <p class="reto-done" id="texto-entregada"></p>
++    </div>
++  </section>
++
++  <p id="estado" class="reto-status" role="status" aria-live="polite"></p>
++</main>
++<script type="module" src="reto-sql.js"></script>
++</body></html>
+diff --git a/presentaciones/reto-sql.js b/presentaciones/reto-sql.js
+new file mode 100644
+index 0000000..0cd4386
+--- /dev/null
++++ b/presentaciones/reto-sql.js
+@@ -0,0 +1,89 @@
++import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
++import { getFirestore, doc, runTransaction, writeBatch, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
++import { firebaseConfig, MATRICULA } from './firebase-config.js';
++
++const $ = id => document.getElementById(id);
++const db = getFirestore(initializeApp(firebaseConfig));
++const TOTAL = 100;
++let preguntas = [], matricula = null, asignacion = null;
++
++// ---------- Tema (mismo comportamiento que las presentaciones) ----------
++const systemDark = matchMedia('(prefers-color-scheme: dark)');
++const activeTheme = () => document.documentElement.dataset.theme || (systemDark.matches ? 'dark' : 'light');
++const labelTheme = () => { $('theme').textContent = activeTheme() === 'dark' ? 'Tema claro' : 'Tema oscuro'; };
++$('theme').onclick = () => { const next = activeTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next; try { localStorage.setItem('theme', next); } catch {} labelTheme(); };
++systemDark.addEventListener('change', labelTheme); labelTheme();
++
++const estado = (texto, tipo = '') => { $('estado').textContent = texto; $('estado').dataset.tipo = tipo; };
++const fecha = ts => ts?.toDate ? ts.toDate().toLocaleString('es-MX', { dateStyle: 'long', timeStyle: 'short' }) : 'hace un momento';
++
++// Solo lectura: debe empezar con SELECT o WITH y no contener instrucciones que modifiquen datos o estructura.
++function validarSQL(sql) {
++  const sinComentarios = sql.replace(/--[^\n]*/g, ' ').replace(/\/\*[\s\S]*?\*\//g, ' ').trim();
++  if (sinComentarios.length < 10) return 'La consulta está vacía o es demasiado corta.';
++  if (!/^(select|with)\b/i.test(sinComentarios)) return 'La consulta debe empezar con SELECT o WITH.';
++  // Se revisa el texto completo, comentarios incluidos, igual que en firestore.rules.
++  if (/\b(insert|update|delete|drop|alter|create|truncate|grant|revoke)\b/i.test(sql)) return 'Solo se aceptan consultas de lectura. Quita INSERT, UPDATE, DELETE o cualquier cambio de estructura, también de los comentarios.';
++  if (sinComentarios.replace(/;\s*$/, '').includes(';')) return 'Entrega una sola consulta, sin varias sentencias separadas por punto y coma.';
++  if (sql.length > 5000) return 'La consulta pasa de 5,000 caracteres. Recórtala.';
++  return null;
++}
++
++function mostrar() {
++  const p = preguntas.find(q => q.id === asignacion.preguntaId);
++  $('pregunta-meta').textContent = `Pregunta ${String(p.id).padStart(3, '0')} · ${p.tema} · Matrícula ${matricula}`;
++  $('pregunta-texto').textContent = p.pregunta;
++  const entregada = !!asignacion.respondidaEn;
++  $('bloque-respuesta').hidden = entregada;
++  $('bloque-entregada').hidden = !entregada;
++  if (entregada) $('texto-entregada').textContent = `Entregaste tu respuesta el ${fecha(asignacion.respondidaEn)}. Ya no se puede cambiar.`;
++  $('panel-pregunta').hidden = false;
++}
++
++$('form-matricula').onsubmit = async e => {
++  e.preventDefault();
++  const m = $('matricula').value.trim().toUpperCase();
++  if (!MATRICULA.test(m)) { estado('Esa matrícula no tiene el formato esperado: letras y números, de 4 a 12 caracteres.', 'error'); return; }
++  $('btn-matricula').disabled = true; estado('Buscando tu pregunta…');
++  try {
++    if (!preguntas.length) preguntas = await (await fetch('./preguntas-sql.json')).json();
++    const ref = doc(db, 'asignaciones', m);
++    asignacion = await runTransaction(db, async tx => {
++      const snap = await tx.get(ref);
++      if (snap.exists()) return snap.data();
++      const nueva = { matricula: m, preguntaId: 1 + Math.floor(Math.random() * TOTAL), asignadaEn: serverTimestamp() };
++      tx.set(ref, nueva);
++      return nueva;
++    });
++    matricula = m;
++    $('matricula').readOnly = true;
++    mostrar();
++    estado('');
++  } catch (err) {
++    console.error(err);
++    estado('Esto no salió. Revisa tu conexión e inténtalo otra vez; si vuelve a fallar, avísale a tu profesor qué viste.', 'error');
++    $('btn-matricula').disabled = false;
++  }
++};
++
++$('btn-entregar').onclick = async () => {
++  const sql = $('sql').value.trim();
++  const problema = validarSQL(sql);
++  if (problema) { estado(problema, 'error'); return; }
++  if (!confirm('Solo puedes entregar una vez. ¿Entregar esta consulta?')) return;
++  $('btn-entregar').disabled = true; estado('Guardando tu respuesta…');
++  try {
++    const batch = writeBatch(db);
++    batch.set(doc(db, 'respuestas', matricula), { matricula, preguntaId: asignacion.preguntaId, sql, respondidaEn: serverTimestamp() });
++    batch.update(doc(db, 'asignaciones', matricula), { respondidaEn: serverTimestamp() });
++    await batch.commit();
++    asignacion = { ...asignacion, respondidaEn: { toDate: () => new Date() } };
++    mostrar();
++    estado('Respuesta guardada.', 'ok');
++  } catch (err) {
++    console.error(err);
++    const yaEntregada = err?.code === 'permission-denied';
++    estado(yaEntregada ? 'No se pudo guardar. Lo más probable es que esta matrícula ya tenga una respuesta entregada.' : 'Esto no salió. Tu consulta sigue en el cuadro; revisa tu conexión e inténtalo otra vez.', 'error');
++    $('btn-entregar').disabled = false;
++  }
++};
+diff --git a/presentaciones/styles.css b/presentaciones/styles.css
+index a82281b..f0e9e39 100644
+--- a/presentaciones/styles.css
++++ b/presentaciones/styles.css
+@@ -64,3 +64,28 @@ button,dialog,.deck{border-radius:8px}
+ @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) #slide img{background:#f6f4ef;border-radius:8px;padding:8px}}
+ #catalog{margin-left:0}
+ @media(max-width:800px){#theme{margin-left:auto}.brand span{display:none}}
++
++/* ---------- Reto SQL ---------- */
++.nav-link{font:600 14px/1 var(--font-sans);color:var(--ink);text-decoration:none;padding:8px 4px}
++.nav-link:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
++.reto{max-width:820px;margin:auto;padding:56px 5vw 80px}
++.reto h1{font:600 clamp(34px,5vw,56px)/1.08 var(--font-display);letter-spacing:-.02em;margin:16px 0 20px}
++.reto-card{background:var(--surface-200);border:1px solid var(--line);border-radius:8px;padding:24px;margin:32px 0 0}
++.reto-card h2{font:600 clamp(22px,2.6vw,30px)/1.3 var(--font-display);margin:8px 0 20px}
++.reto-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
++.reto input,.reto textarea{font:400 16px/1.5 var(--font-sans);color:var(--ink);background:var(--surface-100);border:1px solid var(--line);border-radius:8px;padding:10px 14px}
++.reto input{flex:1;min-width:180px;font-family:var(--font-mono);letter-spacing:.04em}
++.reto textarea{display:block;width:100%;margin-top:8px;font:400 14px/1.6 var(--font-mono);resize:vertical;tab-size:2}
++.reto input:focus,.reto textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
++.reto button.primary{background:var(--brand);color:var(--on-brand);border-color:var(--brand);font-weight:600}
++.reto button.primary:hover{opacity:.9;background:var(--brand)}
++.reto-help{font-size:13px;color:var(--muted);margin:8px 0 16px}
++.reto .box{margin:0 0 24px;border-left:3px solid var(--accent);padding:12px 20px;background:var(--surface-100);border-radius:0 8px 8px 0;font-size:15px}
++.reto .box p{margin:0}
++.reto code{font:400 .9em var(--font-mono);background:var(--surface-100);padding:1px 5px;border-radius:4px}
++.reto-done{font-weight:600;margin:0}
++.reto-status{min-height:24px;margin-top:16px;font-size:15px}
++.reto-status[data-tipo=error]{color:var(--signal-ink)}
++.reto-status[data-tipo=ok]{color:var(--teal)}
++@media(max-width:800px){.reto header .nav-link{display:none}}
++.reto textarea{white-space:pre;overflow-wrap:normal;overflow-x:auto}
+diff --git a/slides_maestria/build-web.mjs b/slides_maestria/build-web.mjs
+index e489cf1..345417c 100644
+--- a/slides_maestria/build-web.mjs
++++ b/slides_maestria/build-web.mjs
+@@ -85,7 +85,7 @@ for (const track of ['especialidad', 'maestria']) {
+ }
+ for (const d of decks) { d.scope = scopes[d.id]; d.areas = ['Big Data', ...(d.scope.cloud ? ['Cloud computing'] : [])]; }
+ await fs.mkdir(output, { recursive: true });
+-for (const name of ['index.html', 'styles.css', 'app.js']) await fs.copyFile(path.join(root, 'presentaciones', name), path.join(output, name));
++for (const name of ['index.html', 'styles.css', 'app.js', 'reto-sql.html', 'reto-sql.js', 'firebase-config.js', 'preguntas-sql.json']) await fs.copyFile(path.join(root, 'presentaciones', name), path.join(output, name));
+ await fs.writeFile(path.join(output, 'decks.json'), JSON.stringify(decks));
+ await fs.cp(path.join(root, 'presentaciones/infograficos'), path.join(output, 'infograficos'), { recursive: true });
+ await fs.cp(path.join(root, 'intro-big-data/public/infograficos'), path.join(output, 'infograficos'), { recursive: true });
+-- 
+2.43.0
+

@@ -1,100 +1,160 @@
 # Caso de apertura — una decisión con consecuencias
 
-Caso hipotético: un tablero pregunta por viajes de un mes, pero consulta todo el histórico cada vez. El resultado tiene pocas filas y aun así cuesta más de lo esperado. ¿Por qué `LIMIT 10` no garantiza una lectura barata?
+Caso real de este curso: alguien revisa las transacciones bancarias sospechosas de un solo día, pero la consulta recorre el histórico completo cada vez que se ejecuta. El resultado tiene menos de 50 filas y aun así factura como si hubiera leído millones. ¿Por qué `LIMIT 10` no garantiza una lectura barata?
 
-**Antes de continuar:** escribe una hipótesis y qué evidencia podría hacerte cambiar de opinión.
+**Antes de seguir:** pregúntale al grupo qué creen que está pasando — en voz alta, sin escribir nada.
 
 ---
 
 # El mecanismo que necesitas entender
 
-La cantidad de filas devueltas y el trabajo de lectura son cosas distintas. Elegir columnas y filtrar la partición permite reducir datos leídos. El filtro debe corresponder a la columna de particionado; no basta que el SQL parezca selectivo.
+La respuesta al caso de apertura: `LIMIT 10` decide cuántas filas **se muestran al final**, no cuántas **se leen** para llegar ahí. BigQuery cobra por lo segundo, no por lo primero.
 
-En el laboratorio se mantienen las mismas filas y el mismo agregado: cambia la organización física, no la pregunta.
+Mira estas dos tablas — mismos datos, mismo resultado, distinto trabajo:
+
+| | `lab.sin_particion` (toda la tabla) | `lab.por_fecha` (particionada por día) |
+|---|---|---|
+| Filas en el resultado | 3 | 3 |
+| Filas que tuvo que **leer** | 2,000,000 (todo el histórico) | 18,000 (solo el día pedido) |
+| Bytes facturados (ejemplo) | ~140 MB | ~1.3 MB |
+
+La pregunta nunca cambió. Lo que cambió es **cuánto tuvo que recorrer** para contestarla — eso es lo que ves en el estimador de bytes, no en las filas del resultado.
 
 ---
 
-# Elegir bien exige reconocer el límite
+# Clustering en BigQuery
 
-Particionar ayuda cuando las consultas recortan por esa clave. Muchas particiones diminutas o filtros sobre otra columna pueden aportar poco. Clustering organiza bloques dentro de la tabla: complementa, pero no sustituye, una elección adecuada de partición.
+Clustering ordena físicamente las filas de una tabla según una o varias columnas que tú elijas (hasta 4), sin crear tablas separadas. Filas con valores parecidos en esa columna terminan en los mismos bloques de almacenamiento.
 
-La latencia depende también de caché y recursos: registra bytes y tiempo por separado.
+<div class="grid grid-cols-3 mt-4">
+<div class="border rounded p-3"><div class="font-bold">bloque 1</div><div class="text-sm mt-1">from_account: ACC-001, ACC-002</div></div>
+<div class="border rounded p-3" style="border-color:var(--accent);background:var(--wash)"><div class="font-bold">bloque 2</div><div class="text-sm mt-1">from_account: ACC-003, ACC-004</div></div>
+<div class="border rounded p-3"><div class="font-bold">bloque 3</div><div class="text-sm mt-1">from_account: ACC-005, ACC-006</div></div>
+</div>
+<p class="text-sm mt-2"><code>WHERE from_account = 'ACC-003'</code> solo abre el bloque resaltado — no toca los demás.</p>
+*(diagrama de ejemplo — se puede reemplazar por uno real de la consola)*
+
+Útil cuando filtras seguido por una columna que **no** es la fecha — por ejemplo, investigar todo el historial de una cuenta marcada como sospechosa.
+
+---
+
+# Partitioning en BigQuery: el archivero con un cajón por día
+
+Un archivero con miles de expedientes sueltos, sin orden → para encontrar los de un día, revisas **todo** el archivero. El mismo archivero, con **un cajón por día** → buscar ese día es abrir un solo cajón.
+
+Eso es particionar: la tabla se organiza físicamente en pedazos — en `lab.por_fecha`, un pedazo por cada día de `timestamp`.
+
+<div class="grid grid-cols-4 mt-4">
+<div class="border rounded p-3 text-center">2025-01-01</div>
+<div class="border rounded p-3 text-center" style="border-color:var(--accent);background:var(--wash)">2025-01-02</div>
+<div class="border rounded p-3 text-center">2025-01-03</div>
+<div class="border rounded p-3 text-center">...</div>
+</div>
+<p class="text-sm mt-2"><code>WHERE DATE(timestamp) = '2025-01-02'</code> solo abre el cajón resaltado.</p>
+*(diagrama de ejemplo — se puede reemplazar por uno real de la consola)*
+
+**El límite real:** particionar ayuda solo si filtras por la columna de partición. Filtrar por otra columna (`from_account`, por ejemplo) no usa el cajón — ahí entra el clustering del slide anterior. La combinación típica para este dataset: partición por fecha + clustering por cuenta.
 
 ---
 
 # Laboratorio guiado — preparación y objetivo
 
-Preparar en BigQuery dos tablas de la misma muestra: `lab.sin_particion` y `lab.por_fecha`, con columnas `fecha DATE`, `zona STRING`, `importe FLOAT64`; la segunda particionada por `fecha`. Revisar esquema y fechas disponibles. Usar límite de bytes facturados antes de ejecutar; el bloque guiado dura 90 minutos.
+Hoy trabajas sobre un dato real del curso: `bank_transactions.csv` (transacciones bancarias, ~7.5 GB), ya subido a Cloud Storage. Si tu proyecto final es del caso banca/riesgo, hoy es tu primer contacto real con ese mismo dataset.
 
-**Organización:** concepto y práctica en la misma sesión. La instalación y descarga de datos se verifican antes; el ejercicio central ocupa 90 minutos. Las extensiones se realizan después. En las sesiones de casos, el bloque se trabaja como taller.
+**Lo que ya existe** (el equipo técnico lo preparó antes de clase, cargando el mismo CSV dos veces):
+- `lab.sin_particion` — la tabla completa, sin ninguna organización especial.
+- `lab.por_fecha` — exactamente los mismos datos, organizados en particiones por día (`PARTITION BY DATE(timestamp)`).
 
----
+Mismas filas, misma información — solo cambia cómo están organizadas físicamente. Eso es lo que vas a comprobar.
 
-# Laboratorio · paso 1 — formular una consulta justa
-
-Elige un mes realmente presente. Predice si cambiará el conteo, los bytes o ambos. Haz dry run o revisa la estimación en el editor para las dos versiones. No ejecutes si rebasa el límite acordado.
-
----
-
-# Laboratorio · paso 2 — comparar sin cambiar la pregunta
-
-Ejecuta el SQL mostrado en ambas tablas cambiando solo el nombre. Guarda bytes procesados, bytes facturados y duración en detalles del job. Desactiva caché de resultados en la comparación de ejecución y anota esa condición.
+**Antes de empezar:** en BigQuery, abre el explorador (panel izquierdo) → tu proyecto → el dataset `lab` → confirma que ves las dos tablas (`sin_particion`, `por_fecha`). Si no aparecen, avisa antes de seguir.
 
 ---
 
-# Laboratorio — ejecuta y comprueba
+# Laboratorio · paso 1 — elige un día y mira el costo antes de correr
 
-Reemplaza `MI_PROYECTO` y las fechas según tu muestra:
+1. En el editor de BigQuery, pega esta consulta (cambia `MI_PROYECTO` por el tuyo):
 ```sql
-SELECT zona, COUNT(*) AS viajes, SUM(importe) AS total
-FROM `MI_PROYECTO.lab.por_fecha`
-WHERE fecha >= DATE '2025-01-01'
-  AND fecha < DATE '2025-02-01'
-GROUP BY zona;
+SELECT COUNT(*) AS transacciones, SUM(amount) AS monto_total
+FROM `MI_PROYECTO.lab.sin_particion`
+WHERE DATE(timestamp) = '2025-01-15';
 ```
-Repite sobre `lab.sin_particion`; guarda la evidencia del job.
+2. **Antes de dar clic en "Ejecutar"**, mira el número del estimador de bytes (esquina superior derecha) y anótalo.
+3. Abre una pestaña nueva, pega la misma consulta pero cambia `sin_particion` por `por_fecha`. Mira el estimador otra vez, antes de ejecutar.
+
+**Lo que deberías notar:** el número de la tabla particionada es mucho más chico, aunque la pregunta es idéntica.
 
 ---
 
-# Laboratorio · paso 3 — leer e interpretar
+# Laboratorio · paso 2 — ejecuta las dos y guarda la evidencia
 
-Comprueba que cada zona tiene el mismo conteo y suma en ambas tablas. Cambia el mes y explica con una frase qué representa cada fila. No mezcles zonas con distinta cobertura temporal.
+1. Ejecuta las dos consultas del paso anterior (botón "Ejecutar" en cada pestaña).
+2. Debajo de la tabla de resultados, busca la pestaña **"Detalles del job"**.
+3. Anota, de cada una: bytes procesados, bytes facturados y duración.
+4. Confirma que `transacciones` y `monto_total` son **idénticos** en ambas — si no coinciden, algo está mal con las tablas; avisa antes de seguir.
 
 ---
 
-# Laboratorio · paso 4 — comunicar la evidencia
+# Laboratorio · paso 3 — interpreta lo que acabas de ver
 
-Construye dos barras de bytes procesados con cero y unidades visibles. Titula con la conclusión observada. Si no hay ahorro, documenta el resultado y revisa la partición; no dibujes la mejora esperada como si hubiera ocurrido.
+Con tus números del paso 2, completa en voz alta: "Para la misma pregunta, `lab.por_fecha` leyó ___ veces menos datos que `lab.sin_particion`."
+
+Cambia la fecha del `WHERE` a otro día y repite el paso 1 — confirma que el patrón se mantiene, no fue casualidad de ese día.
+
+---
+
+# Laboratorio · paso 4 — construye tu evidencia visual
+
+1. En una hoja de cálculo (o a mano), dibuja dos barras: bytes procesados de `sin_particion` y de `por_fecha`.
+2. Título de la gráfica: tu conclusión en una frase.
+
+**Lo que deberías ver** (si tu resultado se comporta como el mecanismo de hace unos slides):
+
+<p class="text-sm font-bold mt-4">Bytes procesados</p>
+<div class="space-y-4 mt-2">
+<div><div class="text-sm">sin_particion</div><div class="rounded" style="background:var(--accent);width:100%;height:28px"></div><div class="text-xs mt-1">140 MB</div></div>
+<div><div class="text-sm">por_fecha</div><div class="rounded" style="background:var(--accent);width:1%;min-width:6px;height:28px"></div><div class="text-xs mt-1">1.3 MB</div></div>
+</div>
+
+Si tus barras salen parecidas entre sí, algo no está funcionando — revisa el slide "Cuando el resultado no es el esperado" antes de entregar.
+
+---
+
+# Laboratorio · paso 5 — exploración visual, sin escribir código
+
+1. Corre esta consulta sobre `lab.por_fecha`:
+```sql
+SELECT DATE(timestamp) AS dia, COUNT(*) AS transacciones_sospechosas
+FROM `MI_PROYECTO.lab.por_fecha`
+WHERE is_suspicious = true
+GROUP BY dia
+ORDER BY dia;
+```
+2. Clic en **"Explorar con Looker Studio"** desde los resultados de BigQuery.
+3. Gráfico de líneas — eje X: `dia`, eje Y: `transacciones_sospechosas`.
+
+Sin instalar nada, sin escribir Python — la misma ruta que usarías en el trabajo real para una primera mirada rápida a un dato nuevo.
 
 ---
 
 # Laboratorio — ¿qué demuestra el resultado?
 
-Entregar SQL, igualdad de resultados y una comparación visual con configuración y fechas. La evidencia principal es el trabajo evitado para la misma pregunta, no una cifra de precio sin contexto.
+Entregar: las consultas usadas, la confirmación de que el resultado es igual en ambas tablas, tu comparación visual de bytes, y el gráfico de Looker Studio. La evidencia principal es el trabajo evitado para la misma pregunta, no una cifra de costo sin contexto.
 
-**Discusión:** compara la evidencia con tu hipótesis inicial. Distingue lo observado de lo que todavía no puedes concluir.
+**Discusión:** compara la evidencia con lo que el grupo dijo en el caso de apertura. Distingue lo observado de lo que todavía no puedes concluir.
 
 ---
 
 # Cuando el resultado no es el esperado
 
-No hay filas: consulta MIN/MAX de fecha sobre la muestra preparada. Los bytes no bajan: revisa el particionado y el filtro. Tiempo demasiado pequeño: comprueba si el job utilizó caché. No interpretes una tabla de resultados corta como prueba de lectura pequeña.
+No hay filas: revisa qué fechas existen realmente en la tabla (`SELECT MIN(timestamp), MAX(timestamp) FROM ...`). Los bytes no bajan: revisa que el `WHERE` filtre por `timestamp`/`DATE(timestamp)` — exactamente la columna de partición, no otra. Tiempo muy pequeño: puede que el job haya usado caché de resultados; vuelve a correr con un cambio en la consulta para comprobar.
 
-**Regla de trabajo:** conserva la entrada, el cambio aplicado y la evidencia del fallo. Cambia una condición a la vez.
+**Regla de trabajo:** conserva la consulta, el cambio que hiciste y la evidencia del resultado inesperado. Cambia una sola cosa a la vez.
 
 ---
 
 # Para profundizar después de clase
 
-Extensión de 30–45 minutos: conectar el agregado ya validado a un gráfico. No instalar otra herramienta ni construir un dashboard completo dentro del núcleo SQL.
+Extensión de 30–45 minutos: agrega clustering por `from_account` a `lab.por_fecha` y repite el paso 1 filtrando por una cuenta en vez de por fecha — compara el estimador de bytes de las tres combinaciones.
 
-El ejercicio de clase usa una muestra acotada; no sustituye la evidencia de volumen real exigida por el proyecto final. Detén procesos y recursos temporales al terminar.
-
----
-
-# Referencias — qué buscar en cada fuente
-
-- [Estimar y controlar consultas](https://docs.cloud.google.com/bigquery/docs/best-practices-costs).
-- [Optimizar cómputo en BigQuery](https://docs.cloud.google.com/bigquery/docs/best-practices-performance-compute).
-
-Contrasta la explicación con el comportamiento de tu ejecución. Las fuentes documentan el mecanismo; las cifras de rendimiento se obtienen del laboratorio, no se inventan.
+El ejercicio de clase usa una muestra acotada del dataset; no sustituye la evidencia de volumen real que exige el proyecto final. Detén procesos y recursos temporales al terminar.

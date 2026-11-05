@@ -42,8 +42,9 @@
    - El editor, el explorador de esquema, el estimador de bytes
 2. Cómo leer una consulta
    - Orden lógico real: `FROM → WHERE → GROUP BY → SELECT → ORDER BY`
-3. Qué es "particionar" una tabla
-   - Analogía del archivero con un cajón por mes
+3. Clustering y partitioning en BigQuery
+   - Partitioning: analogía del archivero con un cajón por día
+   - Clustering: bloques ordenados por una columna que no es la fecha
 4. Cómo se ve el costo de una consulta
    - Por qué `SELECT *` cuesta de más
    - Por qué `LIMIT` no reduce el costo
