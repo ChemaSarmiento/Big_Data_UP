@@ -1,5 +1,6 @@
 import mermaid from './vendor/mermaid/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables: { primaryColor: '#edf0ff', primaryTextColor: '#172139', primaryBorderColor: '#2345cc', lineColor: '#738096', fontFamily: 'Arial' } });
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const themeMermaid = () => mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables: { background: css('--surface-100'), primaryColor: css('--surface-200'), primaryTextColor: css('--ink'), primaryBorderColor: css('--brand'), secondaryColor: css('--surface-200'), tertiaryColor: css('--surface-100'), lineColor: css('--ink-muted'), textColor: css('--ink'), clusterBkg: css('--surface-200'), clusterBorder: css('--line'), edgeLabelBackground: css('--surface-100'), fontFamily: '"IBM Plex Sans", system-ui, sans-serif' } });
 const $ = id => document.getElementById(id);
 let decks = [], current, index = 0, renderVersion = 0;
 const titles = html => { const el = document.createElement('div'); el.innerHTML = html; return el.querySelector('h1,h2')?.textContent || 'Diagrama y contexto'; };
@@ -14,21 +15,11 @@ async function route() {
   $('session-label').textContent = `${current.track === 'base' ? 'BASE COMPARTIDA' : current.track.toUpperCase() + ' / ' + current.number} — ${current.title}`;
   $('subject').textContent = current.areas.join(' · ');
   $('subject').title = `Big Data: ${current.scope.bigData}${current.scope.cloud ? '; Cloud computing: ' + current.scope.cloud : ''}`;
-  $('phase').textContent = index === 0 ? 'APERTURA' : index < 3 ? 'RUTA DE APRENDIZAJE' : /lab|paso|actividad|práctica|predice/i.test(titles(current.slides[index])) ? 'PRÁCTICA' : /cierra|fin del|→|checkpoint/i.test(titles(current.slides[index])) ? 'CIERRE' : 'CONCEPTOS';
+  $('phase').textContent = index === 0 ? 'APERTURA' : index < 3 ? 'RUTA DE APRENDIZAJE' : /lab|paso|actividad|práctica/i.test(titles(current.slides[index])) ? 'PRÁCTICA' : /cierra|fin del|→|checkpoint/i.test(titles(current.slides[index])) ? 'CIERRE' : 'CONCEPTOS';
   const slide = $('slide'); slide.replaceChildren(); slide.innerHTML = current.slides[index];
   slide.className = index === 0 ? 'cover' : '';
   slide.querySelectorAll('img').forEach(img => { img.src = './infograficos/' + img.getAttribute('src').split('/').pop(); if (!img.alt) img.alt = img.src.split('/').pop().replace(/[_\.]/g, ' '); });
   slide.querySelectorAll('a').forEach(a => { const href = a.getAttribute('href'); if (href && !/^(https?:|#)/.test(href)) a.href = `https://github.com/ChemaSarmiento/Big_Data_UP/blob/plan2/${new URL(href, `https://source.invalid/${current.source}`).pathname.slice(1)}`; a.target = '_blank'; a.rel = 'noopener noreferrer'; });
-  slide.querySelectorAll('.knowledge-check button').forEach(button => {
-    button.onclick = () => {
-      const group = button.closest('.knowledge-check');
-      const feedback = group.querySelector('.check-feedback');
-      group.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
-      feedback.hidden = false;
-      feedback.textContent = (button.dataset.correct === 'true' ? 'Correcto. ' : 'Revisa tu hipótesis. ') + feedback.dataset.explanation;
-      if (innerWidth > 800) slide.classList.add('compact');
-    };
-  });
   const groups = [...slide.children].filter(e => !e.matches('h1,h2,h3'));
   groups.forEach((e, i) => { e.classList.add('enter'); e.style.setProperty('--delay', `${Math.min(i, 6) * 120 + 100}ms`); });
   slide.querySelectorAll('.grid > div').forEach((e, i) => { e.classList.add('enter'); e.style.setProperty('--delay', `${Math.min(i, 6) * 120 + 180}ms`); });
@@ -38,6 +29,7 @@ async function route() {
   $('previous').disabled = index === 0; $('next').disabled = index === current.slides.length - 1;
   $('stage').scrollTop = 0;
   const version = ++renderVersion;
+  themeMermaid();
   try { await mermaid.run({ nodes: slide.querySelectorAll('.mermaid') }); } catch { if (version === renderVersion) slide.querySelectorAll('.mermaid').forEach(e => e.classList.add('diagram-fallback')); }
   if (version === renderVersion && innerWidth > 800 && $('stage').scrollHeight > $('stage').clientHeight + 3) slide.classList.add('compact');
 }
@@ -52,13 +44,19 @@ $('previous').onclick = () => navigate(index - 1); $('next').onclick = () => nav
 $('stage').onclick = e => { if (!e.target.closest('a,button,input,pre')) navigate(index + 1); };
 $('overview-button').onclick = overview; $('close-overview').onclick = () => $('overview').close(); $('fullscreen').onclick = fullscreen;
 window.addEventListener('hashchange', route);
+const systemDark = matchMedia('(prefers-color-scheme: dark)');
+const activeTheme = () => document.documentElement.dataset.theme || (systemDark.matches ? 'dark' : 'light');
+const labelTheme = () => { $('theme').textContent = activeTheme() === 'dark' ? 'Tema claro' : 'Tema oscuro'; };
+function toggleTheme() { const next = activeTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next; try { localStorage.setItem('theme', next); } catch {} labelTheme(); if (current) route(); }
+$('theme').onclick = toggleTheme; labelTheme();
+systemDark.addEventListener('change', () => { labelTheme(); if (!document.documentElement.dataset.theme && current) route(); });
 window.addEventListener('keydown', e => {
   if (!current || $('overview').open || e.target.closest('button,a,input,textarea,select')) return;
   if (['ArrowRight',' ','PageDown','ArrowLeft','PageUp','Home','End'].includes(e.key)) e.preventDefault();
   if (['ArrowRight',' ','PageDown'].includes(e.key)) navigate(index + 1);
   if (['ArrowLeft','PageUp'].includes(e.key)) navigate(index - 1);
   if (e.key === 'Home') navigate(0); if (e.key === 'End') navigate(current.slides.length - 1);
-  if (e.key.toLowerCase() === 'o') overview(); if (e.key.toLowerCase() === 'f') fullscreen();
+  if (e.key.toLowerCase() === 'o') overview(); if (e.key.toLowerCase() === 'f') fullscreen(); if (e.key.toLowerCase() === 't') toggleTheme();
 });
 try {
   const response = await fetch('./decks.json'); if (!response.ok) throw new Error('No se pudo cargar el curso'); decks = await response.json();
