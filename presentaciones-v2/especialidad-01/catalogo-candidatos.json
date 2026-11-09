@@ -1,0 +1,111 @@
+{
+  "consulta": "2026-11-05",
+  "estado": "Inventario, no perfilado ni asignación de datasets",
+  "fuente": "https://drive.google.com/drive/folders/1oKaHqT3DhwyLlE3wYbbQ5nJBQb_uckZj",
+  "activos": [
+    {
+      "id": "1B-vpXbCqAki4ildIF2NdKMWjtYGCEJ-T",
+      "nombre_activo": "bank_transactions.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "7511.06",
+      "archivos_internos": 1,
+      "fecha_creacion": "2025-04-05T04:08:28.288Z",
+      "ultima_modificacion": "2025-04-05T04:02:39.000Z",
+      "url_acceso": "https://drive.google.com/file/d/1B-vpXbCqAki4ildIF2NdKMWjtYGCEJ-T/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "10o2eES23zssNcJ2bhVssOc1BQL3UD22P",
+      "nombre_activo": "Checkouts_by_Title_20250207.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "10151.95",
+      "archivos_internos": 1,
+      "fecha_creacion": "2025-02-07T19:40:01.077Z",
+      "ultima_modificacion": "2025-02-07T19:35:34.000Z",
+      "url_acceso": "https://drive.google.com/file/d/10o2eES23zssNcJ2bhVssOc1BQL3UD22P/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "1dLxKFxawXTTaqCDr9Y9YpYdWTpOhol42",
+      "nombre_activo": "all_data.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "19706.44",
+      "archivos_internos": 1,
+      "fecha_creacion": "2022-03-04T23:14:37.443Z",
+      "ultima_modificacion": "2023-05-27T02:39:16.918Z",
+      "url_acceso": "https://drive.google.com/file/d/1dLxKFxawXTTaqCDr9Y9YpYdWTpOhol42/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "1I8c-wzakDDoGXysIMQ-7DF-p7LGNbjyF",
+      "nombre_activo": "carpetas_investigacion.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "226.96",
+      "archivos_internos": 1,
+      "fecha_creacion": "2022-05-16T20:24:25.855Z",
+      "ultima_modificacion": "2023-05-16T03:13:46.019Z",
+      "url_acceso": "https://drive.google.com/file/d/1I8c-wzakDDoGXysIMQ-7DF-p7LGNbjyF/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "1n2rAbccc7EMwWuGOTJxa5rgi-edq3dTf",
+      "nombre_activo": "reviews.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "654.14",
+      "archivos_internos": 1,
+      "fecha_creacion": "2023-05-03T18:40:06.314Z",
+      "ultima_modificacion": "2023-05-16T02:49:07.244Z",
+      "url_acceso": "https://drive.google.com/file/d/1n2rAbccc7EMwWuGOTJxa5rgi-edq3dTf/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "1r3XQhCKGQoF0m31J1HywSGsS_wccC9Vy",
+      "nombre_activo": "profiles.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "8.26",
+      "archivos_internos": 1,
+      "fecha_creacion": "2023-05-03T18:16:07.700Z",
+      "ultima_modificacion": "2023-05-16T02:49:00.203Z",
+      "url_acceso": "https://drive.google.com/file/d/1r3XQhCKGQoF0m31J1HywSGsS_wccC9Vy/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "1mSLiUxXTDAuda5_mYG6oIiHJBoFQjuGz",
+      "nombre_activo": "animes.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "11.51",
+      "archivos_internos": 1,
+      "fecha_creacion": "2023-05-03T18:16:10.063Z",
+      "ultima_modificacion": "2023-05-16T02:48:52.289Z",
+      "url_acceso": "https://drive.google.com/file/d/1mSLiUxXTDAuda5_mYG6oIiHJBoFQjuGz/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    },
+    {
+      "id": "1FT6OUEcFRRJFw0YiifDSw3pFV2mpxjOn",
+      "nombre_activo": "steam_reviews.csv",
+      "tipo_entidad": "Archivo Único",
+      "formato": "CSV",
+      "tamanio_mb": "7793.22",
+      "archivos_internos": 1,
+      "fecha_creacion": "2023-05-03T18:16:05.372Z",
+      "ultima_modificacion": "2023-05-03T18:02:32.000Z",
+      "url_acceso": "https://drive.google.com/file/d/1FT6OUEcFRRJFw0YiifDSw3pFV2mpxjOn/view?usp=drivesdk",
+      "categoria": "Asignar Categoria",
+      "descripcion": "Escribe la descripción aquí..."
+    }
+  ]
+}

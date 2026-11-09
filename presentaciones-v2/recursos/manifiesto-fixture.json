@@ -1,0 +1,40 @@
+{
+  "estado": "ILUSTRATIVO; no proviene de PROFECO",
+  "archivo": "precios-ilustrativos.csv",
+  "filas": 16,
+  "encoding": "UTF-8",
+  "separador": ",",
+  "encabezado": true,
+  "columnas": [
+    "id",
+    "producto",
+    "marca",
+    "presentacion",
+    "establecimiento",
+    "fecha_texto",
+    "precio_texto",
+    "archivo_origen"
+  ],
+  "sha256": "4ac093f85c8f9ec059a2be1404c6c86a7a45a7ce5b939f567b5aaed0712a0198",
+  "fecha_observacion_valida": "2024-01-15",
+  "reglas": "Eliminar copias exactamente iguales; precio positivo; fecha YYYY-MM-DD; no imputar faltantes",
+  "esperados": {
+    "entrada": 16,
+    "duplicados_exactos": 1,
+    "rechazadas": 2,
+    "silver": 13,
+    "A": {
+      "subtotal_mxn": 150,
+      "cobertura": 1
+    },
+    "B": {
+      "subtotal_mxn": 160,
+      "cobertura": 1
+    },
+    "C": {
+      "subtotal_mxn": 54,
+      "cobertura": 0.6,
+      "costo_completo_mxn": null
+    }
+  }
+}

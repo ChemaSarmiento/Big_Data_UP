@@ -1,0 +1,63 @@
+{
+  "track": "especialidad",
+  "sessions": [
+    {
+      "id": 1,
+      "title": "Una compra merece evidencia",
+      "url": "especialidad-01/",
+      "slides": 27,
+      "minutes": 180
+    },
+    {
+      "id": 2,
+      "title": "Una consulta también puede contar mal",
+      "url": "especialidad-02/",
+      "slides": 28,
+      "minutes": 180
+    },
+    {
+      "id": 3,
+      "title": "El archivo debe sobrevivir a tus conclusiones",
+      "url": "especialidad-03/",
+      "slides": 26,
+      "minutes": 180
+    },
+    {
+      "id": 4,
+      "title": "Un cero puede decidir la compra por ti",
+      "url": "especialidad-04/",
+      "slides": 27,
+      "minutes": 180
+    },
+    {
+      "id": 5,
+      "title": "Una canasta incompleta parece una ganga",
+      "url": "especialidad-05/",
+      "slides": 27,
+      "minutes": 180
+    },
+    {
+      "id": 6,
+      "title": "La gráfica también puede torcer la decisión",
+      "url": "especialidad-06/",
+      "slides": 27,
+      "minutes": 180
+    },
+    {
+      "id": 7,
+      "title": "La frase suena lista. La evidencia todavía no",
+      "url": "especialidad-07/",
+      "slides": 27,
+      "minutes": 180
+    },
+    {
+      "id": 8,
+      "title": "Comité de decisión",
+      "url": "especialidad-08/",
+      "slides": 14,
+      "minutes": 180
+    }
+  ],
+  "slides": 203,
+  "cloudValidated": false
+}

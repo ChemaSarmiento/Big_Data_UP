@@ -1,0 +1,613 @@
+{
+  "session": 5,
+  "title": "Una canasta incompleta parece una ganga",
+  "minutes": 180,
+  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
+  "slides": [
+    {
+      "id": "E05-01",
+      "title": "La canasta incompleta puede parecer la más barata",
+      "kind": "basket",
+      "items": [
+        {
+          "label": "Ranking",
+          "text": "C muestra 54 MXN, pero solo tiene tres de cinco productos."
+        },
+        {
+          "label": "Pregunta",
+          "text": "¿Debe competir contra A y B, que sí tienen canastas completas?"
+        }
+      ],
+      "code": null,
+      "note": "Comparación interactiva del piloto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-02",
+      "title": "Silver valida filas; Gold define la comparación",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Silver",
+          "text": "Valida precio, fecha e identidad."
+        },
+        {
+          "label": "Gold",
+          "text": "Fija cantidades, ventana y criterio de selección para una decisión específica."
+        }
+      ],
+      "code": null,
+      "note": "Misma observación → escenario de compra Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-03",
+      "title": "Hoy convertirás cinco productos en KPIs comprobables",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Resultado",
+          "text": "Una tabla de canastas con costo, cobertura y elegibilidad."
+        },
+        {
+          "label": "Contrato",
+          "text": "Cinco envases definidos, misma tienda y ventana histórica común."
+        }
+      ],
+      "code": null,
+      "note": "Catálogo + precios elegidos → canastas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [],
+      "nodes": [
+        [
+          "Catálogo",
+          "5 productos"
+        ],
+        [
+          "Selección",
+          "Una fila por producto/tienda"
+        ],
+        [
+          "Canastas",
+          "Costo y cobertura"
+        ]
+      ]
+    },
+    {
+      "id": "E05-04",
+      "title": "El grano decide qué puedes sumar",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Tres granos",
+          "text": "Observación original, precio elegido por producto/tienda y canasta por escenario/tienda."
+        },
+        {
+          "label": "Riesgo",
+          "text": "Sumar historia sin cambiar de grano multiplica o mezcla importes."
+        }
+      ],
+      "code": null,
+      "note": "Observación, producto elegido y canasta por tienda/escenario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-05",
+      "title": "Un modelo analítico conecta hechos y dimensiones",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Hecho",
+          "text": "Precio observado para producto, tienda y fecha."
+        },
+        {
+          "label": "Dimensiones",
+          "text": "Describen producto, establecimiento y periodo; el catálogo de canasta expresa cantidades requeridas."
+        }
+      ],
+      "code": null,
+      "note": "Estrella pequeña: precio observado, producto, tienda y fecha Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-06",
+      "title": "Una canasta necesita identidad y cantidades",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Catálogo",
+          "text": "Cinco identidades con marca/presentación exacta y cantidades de envases enteras."
+        },
+        {
+          "label": "Límite",
+          "text": "Comparar precio por kg no significa que puedas comprar una fracción de cualquier envase."
+        }
+      ],
+      "code": null,
+      "note": "Cinco productos con marca/presentación exactas y envases enteros Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-07",
+      "title": "La ventana histórica define qué observaciones compiten",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Ventana",
+          "text": "Todos compiten bajo el mismo intervalo histórico."
+        },
+        {
+          "label": "Transparencia",
+          "text": "Cada precio conserva su fecha; ampliar el intervalo no demuestra que todas las ofertas coexistieran."
+        }
+      ],
+      "code": null,
+      "note": "Línea temporal; misma ventana, fechas visibles por producto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-08",
+      "title": "Selecciona una observación por producto y tienda",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Regla",
+          "text": "Elegir la última observación válida por producto/tienda dentro de la ventana."
+        },
+        {
+          "label": "Desempate",
+          "text": "Usar fecha e identificador estables; no elegir una fila arbitraria para ocultar duplicados."
+        }
+      ],
+      "code": null,
+      "note": "Regla determinista de última válida en ventana; desempate documentado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-09",
+      "title": "Un JOIN puede multiplicar precios antes de sumar",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Fan-out",
+          "text": "Unir catálogo con todo el historial puede repetir el producto antes de sumar."
+        },
+        {
+          "label": "Control",
+          "text": "Comprobar como máximo un precio elegido por producto, presentación y tienda."
+        }
+      ],
+      "code": null,
+      "note": "Tarjetas de historial frente a precio elegido; control de unicidad Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-10",
+      "title": "Costo y cobertura se deben mostrar juntos",
+      "kind": "basket",
+      "items": [
+        {
+          "label": "Costo",
+          "text": "Suma de precio por envase multiplicado por cantidad requerida."
+        },
+        {
+          "label": "Cobertura",
+          "text": "Productos encontrados / productos requeridos. Si falta uno, el importe observado es subtotal."
+        }
+      ],
+      "code": null,
+      "note": "Fórmulas con unidades; ausencia no significa precio cero Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-11",
+      "title": "Solo compara alternativas que cumplan el contrato",
+      "kind": "basket",
+      "items": [
+        {
+          "label": "Elegibilidad",
+          "text": "La canasta completa requiere cobertura 100% y comparación compatible."
+        },
+        {
+          "label": "Ausencia",
+          "text": "Un precio faltante no se rellena con cero ni se oculta con INNER JOIN."
+        }
+      ],
+      "code": null,
+      "note": "Restricciones de fecha, presentación, cobertura y misma tienda Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-12",
+      "title": "Mercado Libre define métricas y relaciones centralmente",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Mercado Libre",
+          "text": "La capa semántica centraliza dimensiones, métricas y relaciones en el caso publicado."
+        },
+        {
+          "label": "Transferencia",
+          "text": "Nuestro diccionario debe fijar qué significa canasta completa para todos los consumidores."
+        }
+      ],
+      "code": null,
+      "note": "Retomar capa semántica del caso; conectar con diccionario KPI Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Mercado Libre · BigQuery y Looker · 2022",
+          "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
+        ]
+      ]
+    },
+    {
+      "id": "E05-13",
+      "title": "Una tabla Gold simplifica el consumo",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Consumo",
+          "text": "Gold resume la pregunta y evita repetir una lectura del crudo en cada interacción."
+        },
+        {
+          "label": "Costo",
+          "text": "Una tabla pequeña también necesita política de refresco y control de acceso."
+        }
+      ],
+      "code": null,
+      "note": "Silver detallada → Gold pequeña → dashboard; costo de refresco Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-14",
+      "title": "Tabla, vista lógica y vista materializada son elecciones distintas",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "CTAS",
+          "text": "Guarda el resultado de una consulta como tabla."
+        },
+        {
+          "label": "Vista lógica",
+          "text": "Conserva SQL, no el resultado físico. La vista materializada incremental tiene restricciones: no copiar ventanas sin revisión."
+        }
+      ],
+      "code": null,
+      "note": "Tres contratos; CTAS/vista lógica como base docente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "BigQuery · vistas materializadas",
+          "https://docs.cloud.google.com/bigquery/docs/materialized-views-create"
+        ]
+      ],
+      "nodes": [
+        [
+          "Catálogo",
+          "5 productos"
+        ],
+        [
+          "Selección",
+          "Una fila por producto/tienda"
+        ],
+        [
+          "Canastas",
+          "Costo y cobertura"
+        ]
+      ]
+    },
+    {
+      "id": "E05-15",
+      "title": "Comprueba un KPI a mano antes de automatizarlo",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Comprobación",
+          "text": "Para A: 10 + 20 + 30 + 40 + 50 = 150 MXN en el fixture."
+        },
+        {
+          "label": "Criterio",
+          "text": "Si una cifra no puede reconciliarse con sus partes, aún no está lista para el dashboard."
+        }
+      ],
+      "code": null,
+      "note": "Cinco filas × cantidades; cálculo manual con ejemplo rotulado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-16",
+      "title": "Pausa · acuerda cómo reconocer una canasta completa",
+      "kind": "pause",
+      "items": [
+        {
+          "label": "Pausa",
+          "text": "Diez minutos; abrir catálogo y escenario del fixture."
+        },
+        {
+          "label": "Proyecto",
+          "text": "La práctica de canasta no obliga al equipo a usar precios como dataset final."
+        }
+      ],
+      "code": null,
+      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-17",
+      "title": "Laboratorio: construir Gold y defender una fórmula",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Ruta",
+          "text": "Ejecutar el script Gold completo suministrado."
+        },
+        {
+          "label": "Rol ejecutivo",
+          "text": "Revisar fórmulas, supuestos y resultados; no escribir funciones de ventana desde cero."
+        }
+      ],
+      "code": null,
+      "note": "Checklist de inputs, catálogo y escenario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-18",
+      "title": "Congela el contrato de la canasta",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Catálogo",
+          "text": "Cinco productos de Marca demo, presentación 1 envase, cantidad uno."
+        },
+        {
+          "label": "Ventana",
+          "text": "15 de enero de 2024; escenario demo_2024-01-15, explícitamente ilustrativo."
+        }
+      ],
+      "code": null,
+      "note": "Paso 1: cinco productos, cantidades y ventana Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-19",
+      "title": "Cruza producto y precio sin inventar equivalencias",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Join",
+          "text": "Unir por producto, marca y presentación aprobados."
+        },
+        {
+          "label": "Control",
+          "text": "Una coincidencia de texto aproximada no es identidad comprobada; revisar mapeos antes de calcular."
+        }
+      ],
+      "code": null,
+      "note": "Paso 2: catálogo aprobado + Silver Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-20",
+      "title": "Reduce el historial a observaciones elegibles",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Selección",
+          "text": "ROW_NUMBER asigna prioridad por fecha e ID; el script elige la primera."
+        },
+        {
+          "label": "Comprobación",
+          "text": "La tabla precios_elegidos tiene una fila por combinación elegible, no todo el historial."
+        }
+      ],
+      "code": null,
+      "note": "Paso 3: consulta de selección ya suministrada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-21",
+      "title": "Agrega costo y cobertura por establecimiento",
+      "kind": "basket",
+      "items": [
+        {
+          "label": "Gold",
+          "text": "Construir tienda × catálogo y conservar faltantes con LEFT JOIN."
+        },
+        {
+          "label": "Esperado",
+          "text": "A=150 y B=160 completas; C subtotal54, cobertura0.6 y costo completo NULL."
+        }
+      ],
+      "code": "SELECT establecimiento, cobertura,\n subtotal_mxn, costo_completo_mxn\nFROM curso_gold.canastas\nORDER BY establecimiento;",
+      "note": "Paso 4: tabla `canastas`, incluido estado de elegibilidad Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-22",
+      "title": "Reconciliación: el total debe explicar sus partes",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Control",
+          "text": "Recalcula una tienda y comprueba cardinalidad antes de sumar."
+        },
+        {
+          "label": "Error",
+          "text": "Si aparece más de una fila por producto/tienda, corregir selección; no ocultarlo con otro promedio."
+        }
+      ],
+      "code": null,
+      "note": "Paso 5: cálculo manual, cardinalidad y ausencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-23",
+      "title": "Guarda el significado junto al número",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Diccionario",
+          "text": "Nombre, fórmula, unidad, grano, periodo, responsable y limitación."
+        },
+        {
+          "label": "Registro",
+          "text": "Guardar SQL y job; diferenciar resultado del fixture de hallazgo sobre datos reales."
+        }
+      ],
+      "code": null,
+      "note": "Paso 6: diccionario KPI, consulta y registro de job Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-24",
+      "title": "Otra persona intenta refutar tu recomendación",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Auditoría",
+          "text": "Otro equipo busca una fecha incompatible o denominador oculto."
+        },
+        {
+          "label": "Proyecto",
+          "text": "Construir KPIs de su propio dominio con la plantilla ya adaptada por el docente."
+        }
+      ],
+      "code": null,
+      "note": "Buscar fecha ausente, tienda incompleta o doble conteo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-25",
+      "title": "El menor costo observado no garantiza disponibilidad",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "No observado",
+          "text": "Precios no prueban inventario, ventas ni costo de traslado."
+        },
+        {
+          "label": "Alcance",
+          "text": "La recomendación histórica necesita comprobaciones adicionales antes de comprar hoy."
+        }
+      ],
+      "code": null,
+      "note": "Alcance retrospectivo, inventario no observado y traslado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-26",
+      "title": "Si no hay una canasta completa, ese también es un resultado",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Sin alternativa",
+          "text": "Si ninguna tienda cumple cobertura, el resultado es ausencia de opción completa."
+        },
+        {
+          "label": "Acción",
+          "text": "Mejorar captura o reformular alcance de forma explícita; no inventar precios."
+        }
+      ],
+      "code": null,
+      "note": "Mostrar ausencia de alternativa; propuesta de mejor captura Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-27",
+      "title": "H5: Gold, fórmulas y evidencia reconciliada",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "H5",
+          "text": "Gold propia con tres a cinco KPIs, fórmulas y control de doble conteo."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Una agregación manual y el grano registrado, aunque el dominio no use canastas."
+        }
+      ],
+      "code": null,
+      "note": "Checklist de grano y escenario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E05-28",
+      "title": "El dashboard debe conservar estas reglas",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Recuperación",
+          "text": "¿Qué diferencia hay entre subtotal y costo completo?"
+        },
+        {
+          "label": "Cierre",
+          "text": "Conservar Gold para BI y revisar expiraciones. El dashboard debe respetar el contrato."
+        }
+      ],
+      "code": null,
+      "note": "Preguntas de recuperación y cierre de costos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    }
+  ],
+  "lab": {
+    "steps": [
+      {
+        "n": 1,
+        "minutes": 5,
+        "action": "Leer parámetros de 06_gold.sql: catálogo de cinco productos, cantidad1, ventana2024-01-15 y escenario demo_2024-01-15. Confirmar Silver13 filas y proyecto/ubicación.",
+        "check": "No ejecutar DECLARE aislado: las variables pertenecen al script. Si falta Silver, recuperar con docente y declarar dependencia. No inventar geografía: el fixture no tiene esa columna."
+      },
+      {
+        "n": 2,
+        "minutes": 8,
+        "action": "Revisar JOIN de identidad y QUALIFY. Predecir qué filas elige por producto/marca/presentación/tienda.",
+        "check": "Esperadas13 observaciones elegidas. Última fecha y desempate por ID no garantizan simultaneidad si amplías ventana; revisar conflictos de IDs antes de seleccionar."
+      },
+      {
+        "n": 3,
+        "minutes": 12,
+        "action": "En BigQuery Studio → editor SQL ejecutar 06_gold.sql completo, en el proyecto de laboratorio.",
+        "check": "Crea/reemplaza catalogo, precios_elegidos, detalle y canastas en curso_gold. No modifica Silver. Conserva solo escenario actual, no histórico. Si falla, registrar error y resolver antes de repetir completo."
+      },
+      {
+        "n": 4,
+        "minutes": 12,
+        "action": "Consultar canastas y detalle, contrastar gold-esperado.csv y verificar ASSERT. Contar detalle y revisar unicidad de escenario/tienda/producto/marca/presentación.",
+        "check": "Detalle15 combinaciones; canastas3 tiendas. A150/B160 completas; C subtotal54,cobertura0.6,costo completo NULL,elegible=false. Una tienda sin filas Silver requeriría padrón para aparecer."
+      },
+      {
+        "n": 5,
+        "minutes": 10,
+        "action": "Ejecutar 07_control_dashboard.sql; recalcular A:10+20+30+40+50. Contrastar detalle de C y registrar job/bytes/caché.",
+        "check": "No sustituir NULL por0 ni sumar tiendas alternativas. Si hay duplicados en el grano, revisar catálogo y selección antes de publicar. El fixture no prueba rendimiento a escala."
+      },
+      {
+        "n": 6,
+        "minutes": 8,
+        "action": "Completar diccionario-kpi.csv con tres indicadores: fórmula,unidad,grano,denominador,periodo,fuente,responsable y límite. Guardar SQL y versión del escenario.",
+        "check": "Conservar Gold para BI; documentar actualización/retención y revisar recursos existentes. Las tablas no se refrescan solas. Transferir al dataset distinto del equipo con esquema preparado por docente."
+      }
+    ],
+    "instructions": "Requiere Silver del fixture en curso_silver.observaciones, proyecto autorizado y ubicación compatible (scripts proponen us-central1). Abrir BigQuery Studio, seleccionar proyecto, revisar parámetros de 06_gold.sql y ejecutar completo como script. Después ejecutar 07_control_dashboard.sql. El script reemplaza solo destinos curso_gold y conserva únicamente el escenario actual; exportar evidencia antes de cambiarlo. Esperado: catálogo5, precios_elegidos13, detalle15,canastas3. A150/B160 completas; Csubtotal54 con costo completo NULL. Las ventanas vienen suministradas: el alumno interpreta y verifica. No aplicar este esquema a otra fuente sin adaptación docente. Si no se puede ejecutar, identificar evidencia docente y pasos pendientes; una simulación HTML no demuestra GCP."
+  },
+  "assets": [
+    "06_gold.sql",
+    "diccionario-kpi.csv",
+    "gold-esperado.csv",
+    "07_control_dashboard.sql"
+  ],
+  "sources": [
+    [
+      "BigQuery · vistas materializadas",
+      "https://docs.cloud.google.com/bigquery/docs/materialized-views-create"
+    ],
+    [
+      "GoogleSQL · scripts",
+      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language"
+    ],
+    [
+      "Mercado Libre · BigQuery y Looker · 2022",
+      "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
+    ]
+  ],
+  "editorialSource": "../editorial/guion.py",
+  "slidesStatus": "Referencia anterior; slides vigentes en SESSIONS[5]."
+}

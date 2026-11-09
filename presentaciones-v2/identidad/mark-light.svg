@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Chema Sarmiento">
+  <rect width="96" height="96" rx="20" fill="#1b3a6b"/>
+  <g stroke="#f6f4ef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M22 66 L38 36 L58 58 L74 30"/>
+    <path d="M58 58 L70 74"/>
+  </g>
+  <g fill="#f6f4ef">
+    <circle cx="22" cy="66" r="5"/>
+    <circle cx="38" cy="36" r="5"/>
+    <circle cx="74" cy="30" r="5"/>
+    <circle cx="70" cy="74" r="5"/>
+  </g>
+  <circle cx="58" cy="58" r="9" fill="#f2475a"/>
+</svg>

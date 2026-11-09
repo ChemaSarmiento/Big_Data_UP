@@ -1,0 +1,121 @@
+import { chromium } from '../../slides_maestria/node_modules/playwright-chromium/index.mjs';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const output = '/tmp/bigdata-plan3-piloto';
+await fs.mkdir(output, {recursive:true});
+const browser = await chromium.launch({headless:true});
+try {
+ const page = await browser.newPage({viewport:{width:1440,height:900},acceptDownloads:true});
+ const errors = [], failures = [], overflow = [];
+ page.on('pageerror', e => errors.push(e.message));
+ page.on('response', r => { if(r.status() >= 400) failures.push(`${r.status()}: ${r.url()}`); });
+ const base = 'http://127.0.0.1:4183';
+ async function settle() {
+  await page.waitForFunction(() => {
+   const [n,s] = location.hash.slice(1).split('/').map(Number);
+   return document.querySelector('#counter').textContent.startsWith(String(n).padStart(2,'0')) && document.querySelector('#step-counter').textContent.startsWith(`Revelado ${s} de`);
+  });
+  await page.waitForTimeout(250);
+ }
+ async function route(n, step=0) {
+  await page.goto(`${base}/#${n}/${step}`);
+  await page.waitForFunction(n => document.querySelector('#counter').textContent.startsWith(String(n).padStart(2,'0')), n);
+  await page.waitForTimeout(250);
+ }
+ await route(1);
+ assert.equal(await page.locator('.slide').count(),10);
+ await page.screenshot({path:`${output}/01-portada.png`});
+ await page.keyboard.press('ArrowRight');
+ await page.waitForURL('**/#1/1');
+ await settle();
+ assert.equal(await page.locator('.slide:visible .unrevealed').count(),0);
+ await page.locator('#next').click();
+ await page.waitForFunction(()=>document.querySelector('#counter').textContent.startsWith('02'));
+ await page.locator('#previous').click();
+ await page.waitForURL('**/#1/1');
+ await route(6,2);
+ assert.equal(await page.locator('.slide:visible .unrevealed').count(),1);
+ await page.reload();
+ await page.waitForFunction(()=>document.querySelector('#step-counter').textContent==='Revelado 2 de 3');
+ await page.locator('#show-all').click();
+ await page.waitForURL('**/#6/3');
+ await page.screenshot({path:`${output}/06-medallion.png`});
+ await page.locator('#show-all').click();
+ await page.waitForURL('**/#6/0');
+ await route(4);
+ await page.locator('#compute-toggle').click();
+ assert.equal(await page.locator('#compute-toggle').getAttribute('aria-pressed'),'false');
+ assert.equal(new URL(page.url()).hash,'#4/0');
+ await route(7);
+ await page.locator('#coverage-toggle').click();
+ assert.match(await page.locator('#coverage-answer').innerText(),/A queda fuera/);
+ assert.equal(new URL(page.url()).hash,'#7/0');
+ await page.screenshot({path:`${output}/07-canasta.png`});
+ await route(9);
+ await page.locator('#project-code').click();
+ assert.equal(new URL(page.url()).hash,'#9/0');
+ await page.evaluate(()=>{ const range=document.createRange();range.selectNodeContents(document.querySelector('#project-code')); const s=window.getSelection();s.removeAllRanges();s.addRange(range); });
+ await page.locator('#stage').click({position:{x:10,y:10}});
+ assert.equal(new URL(page.url()).hash,'#9/0');
+ await page.evaluate(()=>window.getSelection().removeAllRanges());
+ const scriptDownload = page.waitForEvent('download');
+ await page.locator('.code-actions a').click();
+ const script = await scriptDownload;
+ assert.equal(script.suggestedFilename(),'verificar-proyecto.sh');
+ await route(10);
+ await page.locator('#audience').fill('Comité de compras');
+ await page.locator('#scope').fill('Cinco productos comparables, periodo histórico y una misma tienda.');
+ await page.locator('#evidence').fill('Cobertura del 100%.');
+ assert.equal(new URL(page.url()).hash,'#10/0');
+ await page.reload();
+ await page.waitForSelector('#audience');
+ assert.equal(await page.locator('#audience').inputValue(),'Comité de compras');
+ const downloadPromise = page.waitForEvent('download');
+ await page.locator('#decision-form button').click();
+ const download = await downloadPromise;
+ const data = JSON.parse(await fs.readFile(await download.path(),'utf8'));
+ assert.equal(data.audience,'Comité de compras');assert.equal(data.caso,'PROFECO');
+ await page.locator('#index-button').click();
+ assert.equal(await page.locator('#overview[open]').count(),1);
+ await page.locator('#slide-list button').nth(7).click();
+ await page.waitForFunction(()=>document.querySelector('#counter').textContent.startsWith('08'));
+ await page.locator('#lab-button').click();
+ assert.equal(await page.locator('#lab[open]').count(),1);
+ await page.locator('#lab [data-close]').click();
+ await page.locator('#notes-button').click();
+ assert.match(await page.locator('#notes-text').innerText(),/Jorge Vidaurre/);
+ await page.locator('#notes [data-close]').click();
+ for (const viewport of [{width:1440,height:900},{width:1280,height:720},{width:390,height:844}]) {
+  await page.setViewportSize(viewport);
+  for(let n=1;n<=10;n++) {
+   await route(n,99);
+   const result=await page.evaluate(()=>({horizontal:document.documentElement.scrollWidth>innerWidth,slide:document.querySelector('.slide:not([hidden])').scrollWidth>document.querySelector('#stage').clientWidth,vertical:document.querySelector('#stage').scrollHeight>document.querySelector('#stage').clientHeight+2}));
+   assert.ok(!result.horizontal && !result.slide,`Horizontal overflow ${viewport.width} slide ${n}`);
+   if(result.vertical) overflow.push({width:viewport.width,slide:n});
+   if(viewport.width>=1280) assert.ok(!result.vertical,`Vertical overflow on projector ${viewport.width} slide ${n}`);
+  }
+ }
+ await route(6,3);await page.screenshot({path:`${output}/06-mobile.png`,fullPage:true});
+ await page.setViewportSize({width:1440,height:900});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await route(2,1);
+ assert.equal(await page.locator('.slide:visible').evaluate(e=>getComputedStyle(e).animationName),'none');
+ await page.keyboard.press('ArrowRight');await page.waitForURL('**/#2/2');
+ await page.keyboard.press('ArrowLeft');await page.waitForURL('**/#2/1');
+ await page.goBack(); await page.waitForURL('**/#2/2');
+ await route(1);
+ await page.emulateMedia({media:'print'});
+ assert.equal(await page.locator('.slide:visible').count(),10);
+ assert.equal(await page.locator('.slide [data-step]').first().evaluate(e=>getComputedStyle(e).visibility),'visible');
+ await page.pdf({path:`${output}/piloto.pdf`,printBackground:true,preferCSSPageSize:true});
+ await page.emulateMedia({media:'screen'});
+ await page.goto(`${base}/laboratorio.html`);
+ assert.equal(await page.locator('h1').count(),1);
+ assert.ok((await page.locator('body').innerText()).includes('(unset)'));
+ const links = await page.locator('a[href]').evaluateAll(nodes=>nodes.map(a=>a.href).filter(h=>h.startsWith(location.origin)));
+ for(const href of links) assert.equal((await page.request.get(href)).status(),200);
+ assert.deepEqual(errors,[]);assert.deepEqual(failures,[]);
+ const report = {slides:10,errors,failedRequests:failures,verticalScroll:overflow,checks:['revelados y retroceso','enlaces profundos y recarga','interruptores aislados','selección de código','descargas shell/JSON','persistencia local','índice y diálogos','historial','responsive 1440/1280/390','movimiento reducido','impresión con todos los pasos','guía de laboratorio'],artifacts:output};
+ await fs.writeFile(`${output}/report.json`,JSON.stringify(report,null,2));
+ console.log(JSON.stringify(report,null,2));
+} finally {await browser.close();}

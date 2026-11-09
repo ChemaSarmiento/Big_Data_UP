@@ -1,0 +1,37 @@
+{
+  "1": {
+    "title": "Una compra merece evidencia",
+    "slides": 27,
+    "source": "editorial/guion.py"
+  },
+  "2": {
+    "title": "Una consulta también puede contar mal",
+    "slides": 28,
+    "source": "editorial/guion.py"
+  },
+  "3": {
+    "title": "El archivo debe sobrevivir a tus conclusiones",
+    "slides": 26,
+    "source": "editorial/guion.py"
+  },
+  "4": {
+    "title": "Un cero puede decidir la compra por ti",
+    "slides": 27,
+    "source": "editorial/guion.py"
+  },
+  "5": {
+    "title": "Una canasta incompleta parece una ganga",
+    "slides": 27,
+    "source": "editorial/guion.py"
+  },
+  "6": {
+    "title": "La gráfica también puede torcer la decisión",
+    "slides": 27,
+    "source": "editorial/guion.py"
+  },
+  "7": {
+    "title": "La frase suena lista. La evidencia todavía no",
+    "slides": 27,
+    "source": "editorial/guion.py"
+  }
+}

@@ -1,0 +1,4 @@
+escenario,establecimiento,productos_encontrados,productos_requeridos,cobertura,subtotal_mxn,costo_completo_mxn,elegible,fecha_inicio,fecha_fin
+demo_2024-01-15,A,5,5,1.0,150,150,true,2024-01-15,2024-01-15
+demo_2024-01-15,B,5,5,1.0,160,160,true,2024-01-15,2024-01-15
+demo_2024-01-15,C,3,5,0.6,54,,false,2024-01-15,2024-01-15

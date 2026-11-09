@@ -1,0 +1,610 @@
+{
+  "session": 7,
+  "title": "La frase suena lista. La evidencia todavía no",
+  "minutes": 180,
+  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
+  "slides": [
+    {
+      "id": "E07-01",
+      "title": "Una respuesta convincente puede recomendar una compra imposible",
+      "kind": "cover",
+      "items": [
+        {
+          "label": "Memo",
+          "text": "La tienda C ofrece una canasta completa de 54 MXN: una frase convincente y falsa en el fixture."
+        },
+        {
+          "label": "Pregunta",
+          "text": "¿Qué tendrías que verificar antes de reenviarla a dirección?"
+        }
+      ],
+      "code": null,
+      "note": "Memo ilustrativo que omite cobertura; encontrar el error Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-02",
+      "title": "El dashboard aporta evidencia, no una explicación automática",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Fuente",
+          "text": "El dashboard muestra cifras bajo reglas y filtros."
+        },
+        {
+          "label": "Explicación",
+          "text": "Un texto generado no demuestra por qué ocurrió un fenómeno ni valida los números."
+        }
+      ],
+      "code": null,
+      "note": "Recuperar fuentes, escenario, unidades y límites Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-03",
+      "title": "Hoy revisarás el memo como responsable de la decisión",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Resultado",
+          "text": "Un memo breve con afirmaciones auditadas."
+        },
+        {
+          "label": "Responsabilidad",
+          "text": "Tú decides qué se acepta, qué se corrige y cuándo falta evidencia."
+        }
+      ],
+      "code": null,
+      "note": "Criterios de aceptación, rechazo y abstención Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [],
+      "nodes": [
+        [
+          "Afirmación",
+          "Qué sostiene el texto"
+        ],
+        [
+          "Fuente",
+          "Qué evidencia existe"
+        ],
+        [
+          "Veredicto",
+          "Sustentada o por corregir"
+        ]
+      ]
+    },
+    {
+      "id": "E07-04",
+      "title": "Describir, predecir y generar responden preguntas distintas",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Describir",
+          "text": "Qué observamos en los datos."
+        },
+        {
+          "label": "Predecir / generar",
+          "text": "Estimar un resultado futuro no es redactar un texto. Identifica primero el trabajo que pide el negocio."
+        }
+      ],
+      "code": null,
+      "note": "Tres tarjetas de intención, no tres algoritmos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-05",
+      "title": "Para predecir hacen falta ejemplos y una prueba fuera de esos ejemplos",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Fundamento ML",
+          "text": "Aprender un patrón requiere ejemplos y una evaluación sobre datos no usados para aprenderlo."
+        },
+        {
+          "label": "Alcance",
+          "text": "Diez minutos conceptuales de negocio; no entrenamos modelos ni calculamos métricas técnicas."
+        }
+      ],
+      "code": null,
+      "note": "Explicación visual de aprender/evaluar, sin entrenamiento ni fórmulas técnicas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-06",
+      "title": "Una predicción solo ayuda si mejora una acción",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Utilidad",
+          "text": "Una predicción vale si mejora una acción y conocemos el costo de equivocarnos."
+        },
+        {
+          "label": "Cierre conceptual",
+          "text": "Aquí termina ML; el laboratorio será GenAI y evidencia, sin entregable predictivo."
+        }
+      ],
+      "code": null,
+      "note": "Costo de equivocarse y responsable; cerrar aquí los 10 min de ML conceptual Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-07",
+      "title": "Un LLM genera texto; no es la fuente de tus números",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "LLM",
+          "text": "Genera texto condicionado por instrucciones y contexto."
+        },
+        {
+          "label": "Límite",
+          "text": "Fluidez no asegura exactitud ni actualidad; no usarlo como fuente primaria de los números."
+        }
+      ],
+      "code": null,
+      "note": "Texto probable frente a evidencia tabular; vocabulario mínimo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-08",
+      "title": "Un buen prompt define tarea, contexto y límites",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Prompt",
+          "text": "Definir rol, tarea, evidencia, límites, formato y cómo abstenerse."
+        },
+        {
+          "label": "Criterio",
+          "text": "Pedir citas ayuda a auditar; no garantiza que existan ni que respalden la frase."
+        }
+      ],
+      "code": null,
+      "note": "Construir instrucciones por clic; pedir evidencia y abstención Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-09",
+      "title": "Adjuntar un CSV no demuestra RAG",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Contexto aportado",
+          "text": "Pegar un CSV permite pedir un análisis del contexto recibido."
+        },
+        {
+          "label": "RAG",
+          "text": "Se necesita mostrar recuperación de evidencia relevante antes de generar; el nombre no lo demuestra."
+        }
+      ],
+      "code": null,
+      "note": "Separar análisis de datos aportados y recuperación de conocimiento Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-10",
+      "title": "RAG recupera evidencia antes de generar",
+      "kind": "retrieval",
+      "items": [
+        {
+          "label": "Flujo",
+          "text": "Pregunta → búsqueda → fragmentos con IDs → contexto → respuesta."
+        },
+        {
+          "label": "Aula",
+          "text": "La interfaz local recupera fichas; el alumno las revisa y las transfiere manualmente al modelo."
+        }
+      ],
+      "code": null,
+      "note": "Pregunta → búsqueda → fragmentos con IDs → respuesta; diagrama progresivo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-11",
+      "title": "El dato que envías a la IA también requiere gobierno",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Gobierno",
+          "text": "Enviar solo agregados autorizados y contexto necesario."
+        },
+        {
+          "label": "Operación",
+          "text": "Verificar servicio/modelo elegible, presupuesto, límites y responsable; no enviar crudos personales."
+        }
+      ],
+      "code": null,
+      "note": "Agregados, minimización, permisos, costo y revisión humana Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-12",
+      "title": "UPS Capital ilustra analítica y modelos para una decisión",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "UPS Capital",
+          "text": "El caso ilustra analítica y modelos aplicados al riesgo en entregas."
+        },
+        {
+          "label": "Distinción",
+          "text": "No prueba RAG ni exige entrenar un predictor en Especialidad."
+        }
+      ],
+      "code": null,
+      "note": "Caso documentado; no convertirlo en entrenamiento ni prueba de RAG Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "UPS Capital · datos y decisiones · 2024",
+          "https://cloud.google.com/blog/products/data-analytics/ups-leverages-bigquery-and-striim-for-ai-secured-package-delivery"
+        ]
+      ]
+    },
+    {
+      "id": "E07-13",
+      "title": "Carrefour ilustra generación de contenido en negocio",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Carrefour",
+          "text": "El caso de Marketing Studio reporta uso de Vertex AI para crear campañas."
+        },
+        {
+          "label": "Transferencia",
+          "text": "La automatización de redacción requiere revisión; no demuestra la veracidad de nuestro memo."
+        }
+      ],
+      "code": null,
+      "note": "Caso Marketing Studio; beneficio atribuido al publicador Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Google Cloud · casos GenAI (Carrefour)",
+          "https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders"
+        ]
+      ]
+    },
+    {
+      "id": "E07-14",
+      "title": "La recuperación puede traer evidencia irrelevante",
+      "kind": "retrieval",
+      "items": [
+        {
+          "label": "Recuperación",
+          "text": "Una búsqueda puede devolver una ficha vieja o irrelevante."
+        },
+        {
+          "label": "Evaluación",
+          "text": "Abrir fragmento y fecha antes de usar su ID como respaldo."
+        }
+      ],
+      "code": null,
+      "note": "Selector de fragmentos/fecha; cita existente pero insuficiente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "GCP · patrón RAG",
+          "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"
+        ]
+      ]
+    },
+    {
+      "id": "E07-15",
+      "title": "Una cita válida debe respaldar la afirmación concreta",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Cita",
+          "text": "Debe existir y apoyar la afirmación concreta."
+        },
+        {
+          "label": "Auditoría",
+          "text": "Registrar afirmación, evidencia, estado y corrección; una cita decorativa no basta."
+        }
+      ],
+      "code": null,
+      "note": "Matriz afirmación/evidencia/estado; no premiar solo fluidez Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "GCP · patrón RAG",
+          "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"
+        ]
+      ]
+    },
+    {
+      "id": "E07-16",
+      "title": "Pausa · prepara un resumen autorizado de Gold",
+      "kind": "pause",
+      "items": [
+        {
+          "label": "Pausa",
+          "text": "Diez minutos; prepara un agregado pequeño de Gold."
+        },
+        {
+          "label": "Alternativa",
+          "text": "Si falla el modelo, usar la respuesta docente escrita a mano, identificada como ejemplo, no salida real de IA."
+        }
+      ],
+      "code": null,
+      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-17",
+      "title": "Laboratorio: comparar respuestas y verificar cada cifra",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Ruta",
+          "text": "Exportar, comparar, recuperar, generar, comprobar y corregir."
+        },
+        {
+          "label": "Alcance",
+          "text": "El flujo tiene un paso humano; no hay un servicio RAG automático desplegado."
+        }
+      ],
+      "code": null,
+      "note": "Prompt, resumen, corpus acotado y tabla de auditoría Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-18",
+      "title": "Exporta solo la evidencia que necesitas",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Resumen",
+          "text": "Ejecutar 08_resumen_ejecutivo.sql y revisar periodo, cobertura y unidad."
+        },
+        {
+          "label": "Minimización",
+          "text": "Copiar solo el resultado autorizado; no subir toda la fuente por comodidad."
+        }
+      ],
+      "code": "SELECT * FROM curso_gold.canastas\nWHERE escenario='demo_2024-01-15'\nORDER BY establecimiento;",
+      "note": "Paso 1: resumen agregado y límites de contexto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-19",
+      "title": "Observa qué inventa una respuesta sin evidencia suficiente",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Respuesta base",
+          "text": "Pedir una recomendación sin suficiente evidencia y guardar la salida."
+        },
+        {
+          "label": "Observación",
+          "text": "No asumir que siempre alucinará; señalar respaldo o ausencia de él en lo que realmente devuelva."
+        }
+      ],
+      "code": null,
+      "note": "Paso 2: consulta base sin datos sensibles; guardar respuesta Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-20",
+      "title": "Recupera fragmentos y conserva sus identificadores",
+      "kind": "retrieval",
+      "items": [
+        {
+          "label": "Recuperación local",
+          "text": "Buscar canasta, cobertura o inventario; abrir los IDs recuperados."
+        },
+        {
+          "label": "Prueba negativa",
+          "text": "Una pregunta sobre inventario actual no tiene datos suficientes en el corpus."
+        }
+      ],
+      "code": null,
+      "note": "Paso 3: interfaz docente de recuperación, sin código del alumno Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-21",
+      "title": "Pide una recomendación que cite y reconozca límites",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Generación",
+          "text": "Copiar fragmentos revisados y Gold en el prompt proporcionado."
+        },
+        {
+          "label": "Pedido",
+          "text": "Memo de 180 palabras con referencias, límites y abstención cuando no se pueda concluir."
+        }
+      ],
+      "code": null,
+      "note": "Paso 4: aportar evidencia recuperada al prompt y comparar Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-22",
+      "title": "Valida las cifras fuera del texto generado",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Contraste",
+          "text": "Verificar cifras en SQL/BI y cada cita en su ficha."
+        },
+        {
+          "label": "Esperado",
+          "text": "A150/B160 completas; C54 es subtotal con cobertura0.6. Nada prueba inventario actual."
+        }
+      ],
+      "code": null,
+      "note": "Paso 5: contraste con SQL/dashboard y pregunta sin respuesta Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-23",
+      "title": "Conserva el memo junto a su auditoría",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Conservar",
+          "text": "Prompt, modelo/fecha, evidencia, respuesta y versión revisada."
+        },
+        {
+          "label": "Honestidad",
+          "text": "Si se usó ejemplo docente o no se ejecutó el servicio, dejarlo visible en el registro."
+        }
+      ],
+      "code": null,
+      "note": "Paso 6: versión revisada y registro de modelo/fecha Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-24",
+      "title": "Transfiere el método al dataset de tu equipo",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Transferencia",
+          "text": "Usar Gold y metodología del dataset propio."
+        },
+        {
+          "label": "Regla",
+          "text": "Cambiar contexto y criterios; no reutilizar frases sobre canastas si el equipo estudia reseñas o préstamos."
+        }
+      ],
+      "code": null,
+      "note": "Usar su Gold y metodología; nunca reutilizar conclusiones PROFECO como propias Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-25",
+      "title": "Un compañero busca una afirmación no sustentada",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Revisión",
+          "text": "Un compañero busca una afirmación no respaldada y una cifra mal interpretada."
+        },
+        {
+          "label": "Corrección",
+          "text": "El objetivo no es ganar por estilo del texto sino cerrar el rastro de evidencia."
+        }
+      ],
+      "code": null,
+      "note": "Revisión de evidencia, no concurso de mejores prompts Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-26",
+      "title": "Decide qué puede automatizarse y qué debe aprobarse",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Automatizar",
+          "text": "Un borrador puede ahorrar redacción."
+        },
+        {
+          "label": "Aprobar",
+          "text": "Publicación, causalidad y decisiones con consecuencias requieren revisión; abstenerse puede ser la respuesta correcta."
+        }
+      ],
+      "code": null,
+      "note": "Control humano y escenario donde la respuesta correcta es abstenerse Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-27",
+      "title": "H7: recomendación, fuentes y límites verificables",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "H7",
+          "text": "Memo propio con auditoría de al menos cinco afirmaciones."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Datos, citas, hipótesis y errores distinguidos; no hay puntos por entrenamiento ML."
+        }
+      ],
+      "code": null,
+      "note": "Checklist memo/prompts/evidencias/errores corregidos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E07-28",
+      "title": "La defensa evaluará tu criterio, no el del modelo",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Recuperación",
+          "text": "¿Por qué un CSV adjunto no demuestra RAG?"
+        },
+        {
+          "label": "Cierre",
+          "text": "Detener llamadas de prueba y registrar consumo. En S8 defenderás tu criterio y la evidencia."
+        }
+      ],
+      "code": null,
+      "note": "Cierre de llamadas/costo y preparación del comité Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    }
+  ],
+  "lab": {
+    "steps": [
+      {
+        "n": 1,
+        "minutes": 5,
+        "action": "Exportar agregado acotado con consulta `08_resumen_ejecutivo.sql`; revisar unidades/periodo y datos autorizados",
+        "check": "Totales coinciden con Gold; si export contiene identificadores personales, reducir antes de enviarlo"
+      },
+      {
+        "n": 2,
+        "minutes": 8,
+        "action": "En el proyecto aprobado, abrir Studio > New > Chat > New chat (o Crear prompt según interfaz); elegir el modelo autorizado y registrar su nombre. Pegar: «¿Dónde conviene comprar una canasta?». Enviar una vez y guardar salida literal. No activar herramientas externas.",
+        "check": "Señalar afirmaciones sin respaldo sin asumir que siempre habrá alucinación; modelo inaccesible → salida docente identificada"
+      },
+      {
+        "n": 3,
+        "minutes": 12,
+        "action": "Usar interfaz docente para recuperar fichas por pregunta; inspeccionar IDs, fecha y pertinencia",
+        "check": "Evidencia seleccionada realmente responde; incluir pregunta fuera del corpus para ver ausencia de respaldo"
+      },
+      {
+        "n": 4,
+        "minutes": 12,
+        "action": "Abrir un chat nuevo con el mismo modelo. Pegar prompt-ejecutivo.txt completo, reemplazando los marcadores por fichas revisadas con IDs y tabla Gold. Enviar una vez, conservar la salida literal y contrastar con la respuesta base.",
+        "check": "Afirmaciones enlazan a IDs disponibles; no aceptar causalidad o predicción que el dato no permite"
+      },
+      {
+        "n": 5,
+        "minutes": 10,
+        "action": "Verificar al menos cinco afirmaciones: cifras con SQL/BI, citas con fuente, hipótesis como tales",
+        "check": "Registro sustentada/no sustentada/contradicha; citar un documento no prueba que el documento respalde el número"
+      },
+      {
+        "n": 6,
+        "minutes": 8,
+        "action": "Editar y guardar memo final con prompt, modelo/fecha, fuentes y comprobaciones",
+        "check": "Responsable firma revisión y limitaciones; si no hubo ejecución del alumno, dejarlo explícito"
+      }
+    ],
+    "instructions": "Prerrequisitos: Gold de S5 o CSV esperado etiquetado, corpus-evidencia.json y acceso a un proyecto aprobado. En BigQuery abrir una consulta, ejecutar 08_resumen_ejecutivo.sql tras revisar bytes y exportar el resultado autorizado. En Google Cloud abrir Studio del proyecto: el syllabus lo llama Vertex AI Studio; la documentación consultada muestra Agent Studio. Ruta documentada: Studio > New > Chat > New chat; revisar modelo en el panel de ajustes. Si aparece Detect build intent, desactivarlo en Settings para evitar evaluaciones adicionales; no crear agentes ni aplicaciones. Docente verifica permisos, región, modelo elegible, precio y crédito antes de clase. Solo dos solicitudes planificadas: base y con evidencia. Abrir práctica local, buscar términos y revisar IDs/fecha/pertinencia antes de trasladar fichas al prompt. Si no hay acceso, auditar respuesta-ejemplo.txt como texto docente escrito a mano; registrar generación cloud pendiente. Completar al menos cinco filas de auditoria-afirmaciones.csv. Guardar original, corrección y consumo observado; detener pruebas al terminar. El navegador local no llama APIs."
+  },
+  "assets": [
+    "08_resumen_ejecutivo.sql",
+    "prompt-ejecutivo.txt",
+    "respuesta-ejemplo.txt",
+    "auditoria-afirmaciones.csv",
+    "corpus-evidencia.json"
+  ],
+  "sources": [
+    [
+      "Google Cloud · Studio / prompts",
+      "https://docs.cloud.google.com/gemini-enterprise-agent-platform/agent-studio/quickstart"
+    ],
+    [
+      "Google Cloud · patrón RAG",
+      "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview"
+    ],
+    [
+      "Google Cloud · casos GenAI (Carrefour)",
+      "https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders"
+    ]
+  ],
+  "editorialSource": "../editorial/guion.py · SESSIONS[7]",
+  "slidesStatus": "Referencia histórica; el deck vigente se genera desde guion.py."
+}

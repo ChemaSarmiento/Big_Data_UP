@@ -1,0 +1,587 @@
+{
+  "session": 2,
+  "title": "SQL para hacer preguntas precisas",
+  "minutes": 180,
+  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
+  "slides": [
+    {
+      "id": "E02-01",
+      "title": "¿Contamos personas o registros de salario?",
+      "kind": "cover",
+      "items": [
+        {
+          "label": "Persona",
+          "text": "Ana tiene un emp_no y tres salarios históricos."
+        },
+        {
+          "label": "Riesgo",
+          "text": "Contar filas de salarios responde otra pregunta que contar empleados."
+        }
+      ],
+      "code": null,
+      "note": "Una persona con tres filas históricas; votación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-02",
+      "title": "Las llaves permiten hablar de la misma persona",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Identidad",
+          "text": "Dos personas pueden compartir nombre y apellido."
+        },
+        {
+          "label": "Llave",
+          "text": "emp_no identifica a la persona; el nombre sirve para comunicar."
+        }
+      ],
+      "code": null,
+      "note": "`emp_no` frente a nombres repetidos; mini-tabla Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-03",
+      "title": "Hoy convertirás seis preguntas en consultas",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Resultado",
+          "text": "Guardarás seis consultas con pregunta, grano y filtro."
+        },
+        {
+          "label": "Transferencia",
+          "text": "Tu proyecto tendrá otras tablas: conserva el razonamiento, no los nombres de employees."
+        }
+      ],
+      "code": null,
+      "note": "Ruta SELECT → filtro → agregado → join Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [],
+      "nodes": [
+        [
+          "SELECT",
+          "Qué observo"
+        ],
+        [
+          "WHERE",
+          "Quién entra"
+        ],
+        [
+          "GROUP BY",
+          "Qué resumo"
+        ]
+      ]
+    },
+    {
+      "id": "E02-04",
+      "title": "Cada tabla tiene un grano",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Grano",
+          "text": "employees: una persona; salaries: un salario durante un intervalo."
+        },
+        {
+          "label": "Relación",
+          "text": "dept_emp conecta persona y departamento; departments describe el departamento."
+        }
+      ],
+      "code": null,
+      "note": "Revelar una fila de empleados, salarios y asignaciones Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-05",
+      "title": "SELECT expresa qué columnas quieres observar",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Proyección",
+          "text": "SELECT emp_no, hire_date elige columnas; FROM employees fija el origen."
+        },
+        {
+          "label": "Lectura",
+          "text": "Primero pregunta qué representa la tabla y qué necesitas observar."
+        }
+      ],
+      "code": "SELECT emp_no, hire_date\nFROM employees\nORDER BY emp_no LIMIT 10;",
+      "note": "Colorear proyección sobre una tabla pequeña Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-06",
+      "title": "WHERE conserva las filas que cumplen la condición",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Condición",
+          "text": "WHERE hire_date >= '1990-01-01' conserva quienes cumplen el filtro."
+        },
+        {
+          "label": "Combinación",
+          "text": "AND exige ambas condiciones; OR permite alternativas. Los paréntesis fijan la intención."
+        }
+      ],
+      "code": "SELECT emp_no, hire_date FROM employees\nWHERE hire_date >= '1990-01-01'\n  AND hire_date < '1995-01-01';",
+      "note": "AND/OR con paréntesis; filtrar tarjetas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-07",
+      "title": "ORDER BY ordena; LIMIT recorta el resultado",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Orden",
+          "text": "ORDER BY hire_date, emp_no produce un orden con desempate."
+        },
+        {
+          "label": "Recorte",
+          "text": "LIMIT 20 devuelve veinte filas; no garantiza menor escaneo en un motor analítico."
+        }
+      ],
+      "code": null,
+      "note": "Ordenar antes de mostrar top; no atribuir ahorro general Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-08",
+      "title": "COUNT, SUM y AVG contestan preguntas distintas",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Filas",
+          "text": "COUNT(*) cuenta registros; COUNT(salary) omite nulos."
+        },
+        {
+          "label": "Personas",
+          "text": "COUNT(DISTINCT emp_no) cuenta identificadores únicos; AVG resume valores, no personas."
+        }
+      ],
+      "code": "SELECT COUNT(*) AS filas,\n COUNT(DISTINCT emp_no) AS personas\nFROM employees;",
+      "note": "`COUNT(*)`, `COUNT(columna)` y nulos en cuatro filas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-09",
+      "title": "GROUP BY cambia el nivel de detalle",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Cambio de grano",
+          "text": "GROUP BY dept_no devuelve una fila por departamento."
+        },
+        {
+          "label": "Pregunta",
+          "text": "¿Cuántas personas vigentes corresponden a cada grupo? Define primero vigente."
+        }
+      ],
+      "code": null,
+      "note": "Filas → grupos → una fila por grupo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-10",
+      "title": "HAVING filtra el resultado agregado",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Antes de agrupar",
+          "text": "WHERE selecciona filas de origen."
+        },
+        {
+          "label": "Después de agrupar",
+          "text": "HAVING AVG(salary) >= 60000 selecciona grupos por su promedio."
+        }
+      ],
+      "code": "SELECT dept_no, COUNT(*) AS asignaciones\nFROM dept_emp\nGROUP BY dept_no\nHAVING COUNT(*) > 100;",
+      "note": "Comparación WHERE/HAVING con departamentos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-11",
+      "title": "Un JOIN necesita llave y una relación conocida",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Relación",
+          "text": "employees.emp_no = dept_emp.emp_no conecta una persona con sus asignaciones."
+        },
+        {
+          "label": "Cardinalidad",
+          "text": "Un empleado puede tener historia: un JOIN no implica una fila por persona."
+        }
+      ],
+      "code": "SELECT e.emp_no, de.dept_no\nFROM employees e\nJOIN dept_emp de ON e.emp_no=de.emp_no\nLIMIT 10;",
+      "note": "Conexión empleados/dept_emp/departments; no usar diagramas de Venn como única explicación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-12",
+      "title": "INNER y LEFT responden preguntas distintas",
+      "kind": "join-types",
+      "items": [
+        {
+          "label": "INNER",
+          "text": "Conserva solo coincidencias en ambos lados."
+        },
+        {
+          "label": "LEFT",
+          "text": "Conserva todas las filas de la izquierda; una coincidencia ausente produce NULL en la derecha."
+        }
+      ],
+      "code": null,
+      "note": "Mismas tarjetas con una fila sin coincidencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-13",
+      "title": "Un historial sin fecha de corte infla el conteo",
+      "kind": "join",
+      "items": [
+        {
+          "label": "Historia",
+          "text": "Una persona con dos títulos y tres salarios puede producir seis combinaciones."
+        },
+        {
+          "label": "Prevención",
+          "text": "Acota el periodo o selecciona la vigencia antes de agregar; no arregles todo con DISTINCT."
+        }
+      ],
+      "code": null,
+      "note": "Multiplicar títulos y salarios por empleado; revelado de fan-out Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-14",
+      "title": "La vigencia pertenece al dato, no al reloj del aula",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Vigente",
+          "text": "to_date='9999-01-01' representa vigencia en este snapshot histórico."
+        },
+        {
+          "label": "Límite",
+          "text": "MAX(salary) busca el máximo histórico; no asegura el salario vigente ni dice que los empleados trabajen hoy."
+        }
+      ],
+      "code": null,
+      "note": "Intervalos y marcador del snapshot; `MAX(salary)` no es sueldo actual Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-15",
+      "title": "Revisa FROM, condiciones y grano antes del número final",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Lectura lógica",
+          "text": "Identifica FROM/JOIN, WHERE, grupos y agregación antes de interpretar el resultado."
+        },
+        {
+          "label": "Criterio",
+          "text": "La definición de persona vigente pertenece a la pregunta, no al diseño del gráfico."
+        }
+      ],
+      "code": null,
+      "note": "Lectura comentada de una consulta; puentes al significado de métricas de Mercado Libre Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Mercado Libre · BigQuery y Looker · 2022",
+          "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
+        ]
+      ]
+    },
+    {
+      "id": "E02-16",
+      "title": "Pausa · seis preguntas de talento, una base de ejemplo",
+      "kind": "pause",
+      "items": [
+        {
+          "label": "Pausa",
+          "text": "Diez minutos. Conserva la conexión y abre el archivo de consultas."
+        },
+        {
+          "label": "Preparación",
+          "text": "MariaDB y employees deben estar instalados por el docente; hoy no creamos una VM."
+        }
+      ],
+      "code": null,
+      "note": "10 min; MariaDB ya preparada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-17",
+      "title": "Laboratorio: consultar sin instalar infraestructura",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Ruta",
+          "text": "El archivo employees-fast-track.sql contiene Q1–Q6 y controles."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Guarda consulta y explicación; no memorices conteos de una instalación distinta."
+        }
+      ],
+      "code": null,
+      "note": "Conexión, esquema y archivo SQL completo descargable Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-18",
+      "title": "Comprueba conexión y reconoce las tablas",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Conexión",
+          "text": "Ejecuta SELECT 1; después USE employees; y Q1."
+        },
+        {
+          "label": "Comprobación",
+          "text": "Debes ver departamentos con su identificador; si no, revisa conexión y base antes de editar SQL."
+        }
+      ],
+      "code": null,
+      "note": "Paso 1: `SELECT 1`, `USE employees`, esquema y Q1 Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-19",
+      "title": "Filtra con intención y ordena el resultado",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Q2",
+          "text": "Filtra contrataciones entre 1990 y 1994; cambia solo una fecha y vuelve a ejecutar."
+        },
+        {
+          "label": "Comprobación",
+          "text": "Cada fila cumple el rango; el orden se desempata por emp_no."
+        }
+      ],
+      "code": null,
+      "note": "Paso 2: Q2, cambiar un único filtro Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-20",
+      "title": "Agrupa antes de comparar",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Q3 y Q4",
+          "text": "Cuenta personas por departamento y después interpreta el promedio vigente con HAVING."
+        },
+        {
+          "label": "Control",
+          "text": "El promedio no es un total de nómina. No presupongas MXN como unidad salarial del dataset."
+        }
+      ],
+      "code": null,
+      "note": "Paso 3: Q3 y Q4, conteo/promedio y HAVING Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-21",
+      "title": "Une nombres con asignaciones",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Q5",
+          "text": "Une persona, asignación y nombre de departamento mediante llaves explícitas."
+        },
+        {
+          "label": "Comprobación",
+          "text": "Explica el grano final y comprueba si pueden existir varias asignaciones vigentes."
+        }
+      ],
+      "code": null,
+      "note": "Paso 4: Q5, join con condición de vigencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-22",
+      "title": "Encuentra por qué se repiten las personas",
+      "kind": "join",
+      "items": [
+        {
+          "label": "Q6",
+          "text": "Consulta el historial de emp_no=10001 y compáralo con el filtro de vigencia."
+        },
+        {
+          "label": "Control",
+          "text": "Las filas adicionales describen historia, no personas adicionales. Nunca ejecutes un producto cartesiano masivo para demostrarlo."
+        }
+      ],
+      "code": null,
+      "note": "Paso 5: Q6, contraste incorrecto/corregido con mini-ejemplo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-23",
+      "title": "Guarda la consulta junto con su interpretación",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Archivo",
+          "text": "Guarda los seis bloques con sus preguntas y filtros."
+        },
+        {
+          "label": "Revisión",
+          "text": "Para cada uno escribe: qué cuenta una fila, quién entra y qué puede concluirse."
+        }
+      ],
+      "code": null,
+      "note": "Paso 6: colección SQL y registro de grano Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-24",
+      "title": "Otra persona debe poder explicar tu filtro",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Traducción",
+          "text": "Tu compañero debe explicar una consulta en lenguaje de negocio."
+        },
+        {
+          "label": "Corrección",
+          "text": "Si dice empleados cuando son registros salariales, revisa el título y el denominador."
+        }
+      ],
+      "code": null,
+      "note": "Parejas traducen SQL a lenguaje de negocio Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-25",
+      "title": "Cambiar una pregunta puede cambiar el denominador",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Dos poblaciones",
+          "text": "Quienes alguna vez estuvieron en un departamento no son necesariamente quienes siguen asignados."
+        },
+        {
+          "label": "Decisión",
+          "text": "Cambiar el filtro temporal puede cambiar la respuesta sin que exista un error de motor."
+        }
+      ],
+      "code": null,
+      "note": "Variante de empleado histórico vs. vigente; no sumar resultados incompatibles Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-26",
+      "title": "En BigQuery cambiará el motor; conservarás el razonamiento",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Se conserva",
+          "text": "SELECT, filtros, grupos, llaves y control del grano."
+        },
+        {
+          "label": "Se revisa",
+          "text": "Nombres de tablas, funciones de fecha y sintaxis específica de MariaDB o GoogleSQL."
+        }
+      ],
+      "code": null,
+      "note": "Comparación de nombres, fechas y dialectos; evitar código intercambiable sin revisión Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-27",
+      "title": "H2: seis consultas y un conteo que puedas defender",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "H2 propio",
+          "text": "Registra un dataset distinto por equipo y tres preguntas analíticas viables."
+        },
+        {
+          "label": "Evidencia guiada",
+          "text": "Adjunta las seis consultas employees; no las presentes como análisis de los datos propios."
+        }
+      ],
+      "code": null,
+      "note": "Checklist: llave, filtros, grano y vigencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E02-28",
+      "title": "SQL será el lenguaje de las tres capas",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Recuperación",
+          "text": "¿Qué diferencia hay entre WHERE y HAVING? ¿Cuándo multiplica filas un JOIN?"
+        },
+        {
+          "label": "Cierre",
+          "text": "Cierra conexiones; el docente revisa la VM y costos persistentes. Bronze llegará en S3."
+        }
+      ],
+      "code": null,
+      "note": "Tres preguntas de recuperación y cierre de conexiones Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    }
+  ],
+  "lab": {
+    "steps": [
+      {
+        "n": 1,
+        "minutes": 5,
+        "action": "Abrir el cliente MariaDB preparado por el docente. Ejecutar USE employees; y SELECT 1 AS conexion;.",
+        "check": "conexion muestra 1; confirmar base activa. Si employees no existe, pedir al docente importar test_db; instalar el motor no carga la base."
+      },
+      {
+        "n": 2,
+        "minutes": 8,
+        "action": "En employees-fast-track.sql ejecutar Q1 y después Q2, cada bloque completo. Leer columnas, filtro 1990–1994 y desempate por emp_no.",
+        "check": "Q1: códigos y nombres de departamento. Q2: todas las fechas dentro del intervalo, como máximo 20 filas. Revisar comillas y base activa si falla."
+      },
+      {
+        "n": 3,
+        "minutes": 12,
+        "action": "Ejecutar Q3. Explicar el LEFT JOIN, la vigencia en ON y COUNT(DISTINCT de.emp_no).",
+        "check": "Una fila por departamento, incluyendo cero si no hay coincidencias. No mover vigencia a WHERE: eliminaría filas sin asignación."
+      },
+      {
+        "n": 4,
+        "minutes": 12,
+        "action": "Ejecutar Q4 y Q5 completos. Q4 filtra salario medio con HAVING; Q5 relaciona persona y departamento.",
+        "check": "Ambos historiales tienen filtro de vigencia. Revisar cardinalidad y unidad salarial; los resultados reales dependen de la instalación, no de las miniaturas del deck."
+      },
+      {
+        "n": 5,
+        "minutes": 10,
+        "action": "Ejecutar las dos consultas de Q6 para emp_no=10001: historial y salario vigente.",
+        "check": "Comparar filas y personas distintas. No esperar exactamente las tres filas ficticias de la portada. Si el resultado sorprende, inspeccionar fechas."
+      },
+      {
+        "n": 6,
+        "minutes": 8,
+        "action": "Ejecutar el control de salarios vigentes duplicados; guardar Q1–Q6 comentadas y su evidencia.",
+        "check": "Cero filas en el control significa que esta regla no detectó conflicto. Si hay filas, registrar y revisar antes de interpretar promedios. No modificar base compartida."
+      }
+    ],
+    "instructions": "Docente: preparar MariaDB con datacharmer/test_db antes de la clase. En Cloud Shell, los shells de recursos/mariadb instalan el motor pero no importan employees. Para cargar, clonar https://github.com/datacharmer/test_db.git, entrar a test_db y usar el cliente MariaDB autenticado con -p y redirección de employees.sql. Host/usuario dependen del entorno ya autorizado; no escribir contraseñas en el archivo. Verificar SELECT 1 y luego ejecutar employees-fast-track.sql por bloques Q1–Q6. Los conteos reales de departments y los controles de vigencia se registran en esa instalación; no son los resultados del fixture de precios."
+  },
+  "assets": [
+    "employees-fast-track.sql"
+  ],
+  "sources": [
+    [
+      "datacharmer · employees",
+      "https://github.com/datacharmer/test_db"
+    ],
+    [
+      "Mercado Libre · BigQuery y Looker · 2022",
+      "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
+    ]
+  ],
+  "editorialSource": "../editorial/guion.py",
+  "slidesStatus": "Referencia de la versión anterior; las slides vigentes se generan desde editorial/guion.py."
+}

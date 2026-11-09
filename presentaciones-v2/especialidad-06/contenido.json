@@ -1,0 +1,606 @@
+{
+  "session": 6,
+  "title": "La gráfica también puede torcer la decisión",
+  "minutes": 180,
+  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
+  "slides": [
+    {
+      "id": "E06-01",
+      "title": "¿Qué decidirías después de ver este dashboard?",
+      "kind": "dashboard",
+      "items": [
+        {
+          "label": "Problema",
+          "text": "Muchos gráficos pueden ocultar la decisión."
+        },
+        {
+          "label": "Prueba",
+          "text": "Da un minuto a otra persona: ¿qué elegiría y con qué evidencia?"
+        }
+      ],
+      "code": null,
+      "note": "Ejemplo ilustrativo saturado; votación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-02",
+      "title": "Gold conserva las reglas que tu visual debe respetar",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Contrato",
+          "text": "Gold fija escenario, grano y elegibilidad."
+        },
+        {
+          "label": "Continuidad",
+          "text": "El dashboard no debe volver a mezclar escenarios ni sumar costos incompatibles."
+        }
+      ],
+      "code": null,
+      "note": "Recuperar grano, escenario y cobertura Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-03",
+      "title": "Hoy la audiencia entenderá una recomendación",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Resultado",
+          "text": "Tres vistas: resumen, comparación y detalle."
+        },
+        {
+          "label": "Mensaje",
+          "text": "La audiencia debe entender hallazgo, alcance y siguiente acción sin adivinar."
+        }
+      ],
+      "code": null,
+      "note": "Dashboard objetivo como wireframe, sin cifras fingidas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [],
+      "nodes": [
+        [
+          "Audiencia",
+          "Quién decide"
+        ],
+        [
+          "Evidencia",
+          "Qué comparación lo sustenta"
+        ],
+        [
+          "Acción",
+          "Qué propone el informe"
+        ]
+      ]
+    },
+    {
+      "id": "E06-04",
+      "title": "Empieza por audiencia, decisión y mensaje",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Contexto",
+          "text": "Quién decide, qué sabe y qué acción puede realizar."
+        },
+        {
+          "label": "Claridad",
+          "text": "Cole Nussbaumer Knaflic pide explicitar el mensaje; no delegar la interpretación al público."
+        }
+      ],
+      "code": null,
+      "note": "Ficha de contexto Cole Nussbaumer Knaflic Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-05",
+      "title": "El título debe decir qué aprendimos",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Título",
+          "text": "En el fixture, A tiene el menor costo entre canastas completas."
+        },
+        {
+          "label": "Condición",
+          "text": "Ese título solo es válido bajo el escenario y filtro que realmente lo sostienen."
+        }
+      ],
+      "code": null,
+      "note": "Cambiar «Precios por tienda» por mensaje respaldado o «sin alternativa completa» Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-06",
+      "title": "Una comparación necesita unidad y referencia",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Comparación",
+          "text": "Barras desde cero, unidad MXN, misma ventana y etiquetas directas."
+        },
+        {
+          "label": "Contrato",
+          "text": "Un subtotal incompleto no se muestra como si fuera otra canasta completa."
+        }
+      ],
+      "code": null,
+      "note": "Barras desde cero y etiquetas de costo/periodo; no mezclar subtotales Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-07",
+      "title": "Destaca una evidencia y elimina lo que compite",
+      "kind": "dashboard",
+      "items": [
+        {
+          "label": "Jerarquía",
+          "text": "Usar contraste para la evidencia principal."
+        },
+        {
+          "label": "Quitar ruido",
+          "text": "Reducir rejillas, colores y leyendas innecesarias; conservar contexto y valores comparables."
+        }
+      ],
+      "code": null,
+      "note": "Antes/después: leyendas, color, rejillas y etiquetas directas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-08",
+      "title": "El gráfico depende de la pregunta",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Barras",
+          "text": "Comparar alternativas."
+        },
+        {
+          "label": "Línea y tabla",
+          "text": "La línea necesita tiempo comparable; la tabla conserva detalle. Un mapa solo aporta si la geografía está validada."
+        }
+      ],
+      "code": null,
+      "note": "Barras/comparación, línea/historia, tabla/detalle; no mapa por decoración Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-09",
+      "title": "El filtro cambia la población y el significado",
+      "kind": "dashboard",
+      "items": [
+        {
+          "label": "Filtro",
+          "text": "Cambiar escenario o población puede cambiar la conclusión."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Mostrar filtro activo, periodo y denominador cerca de la cifra."
+        }
+      ],
+      "code": null,
+      "note": "Selector de escenario, zona y elegibilidad con denominador visible Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-10",
+      "title": "Un KPI puede estar mal por su agregación",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Error",
+          "text": "Sumar precios de A, B y C no representa una sola compra."
+        },
+        {
+          "label": "Prevención",
+          "text": "Una fila por escenario/tienda y agregación explícita; no promediar promedios sin sus pesos."
+        }
+      ],
+      "code": "-- Una alternativa por tienda y escenario\nSELECT * FROM curso_gold.canastas\nWHERE escenario='demo_2024-01-15';",
+      "note": "Total repetido/promedio de promedios; respetar grano Gold Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-11",
+      "title": "Compartir un dashboard también comparte acceso a datos",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Acceso",
+          "text": "Elegir audiencia y credenciales de conexión con el responsable."
+        },
+        {
+          "label": "Control",
+          "text": "Compartir un enlace no garantiza que el lector tenga autorización para ver los datos."
+        }
+      ],
+      "code": null,
+      "note": "Propietario/lector, credenciales de conexión y audiencia autorizada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-12",
+      "title": "Cole pide un mensaje; Duarte conduce hacia una acción",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Cole",
+          "text": "Cada visual comunica un mensaje sustentado."
+        },
+        {
+          "label": "Duarte",
+          "text": "La secuencia conecta problema actual, posibilidad de mejora, evidencia y acción; no necesita adornos constantes."
+        }
+      ],
+      "code": null,
+      "note": "Arco evidencia → tensión → posibilidad → decisión, adaptación propia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Cole Nussbaumer Knaflic · el mensaje",
+          "https://www.storytellingwithdata.com/blog/2017/3/22/so-what"
+        ],
+        [
+          "Duarte · Resonate",
+          "https://www.duarte.com/resources/books/resonate/"
+        ]
+      ]
+    },
+    {
+      "id": "E06-13",
+      "title": "Mercado Libre conecta reglas de negocio y consumo",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Mercado Libre",
+          "text": "El caso usa BigQuery y Looker para consumo consistente de métricas."
+        },
+        {
+          "label": "Distinción",
+          "text": "Nuestra práctica usa Looker Studio como referencia del syllabus; verificar nombre vigente de la consola."
+        }
+      ],
+      "code": null,
+      "note": "Fuente caso; no confundir Looker con la herramienta de práctica Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Mercado Libre · BigQuery y Looker · 2022",
+          "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
+        ]
+      ]
+    },
+    {
+      "id": "E06-14",
+      "title": "Una recomendación también declara qué no observamos",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Reservas",
+          "text": "Fecha histórica, cobertura e inventario no observado."
+        },
+        {
+          "label": "Diseño",
+          "text": "Anotar el límite en el informe, no ocultarlo en una explicación oral que el lector no escuchará."
+        }
+      ],
+      "code": null,
+      "note": "Fecha histórica, inventario y transporte; anotación visible Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-15",
+      "title": "Tres vistas bastan para una primera decisión",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Resumen",
+          "text": "Qué se comparó y qué alternativas son completas."
+        },
+        {
+          "label": "Detalle",
+          "text": "Barras de costo elegible y tabla de producto/fecha/precio para rastrear la conclusión."
+        }
+      ],
+      "code": null,
+      "note": "Resumen, comparación y detalle de evidencia; boceto conjunto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-16",
+      "title": "Pausa · lleva el diccionario KPI a tu dashboard",
+      "kind": "pause",
+      "items": [
+        {
+          "label": "Pausa",
+          "text": "Diez minutos; abre Gold y el control SQL."
+        },
+        {
+          "label": "Respaldo",
+          "text": "El CSV Gold esperado es ilustrativo y permite seguir el diseño si no hay conexión cloud."
+        }
+      ],
+      "code": null,
+      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-17",
+      "title": "Laboratorio: conectar Gold y comunicar una comparación",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Ruta",
+          "text": "Conectar, configurar, construir, filtrar, comunicar y comprobar acceso."
+        },
+        {
+          "label": "Producto",
+          "text": "Informe interactivo más captura o PDF del escenario mostrado."
+        }
+      ],
+      "code": null,
+      "note": "Checklist de tablas y escenario único Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-18",
+      "title": "Conecta con el dato preparado para consumo",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Conector",
+          "text": "Crear informe y fuente BigQuery sobre curso_gold.canastas."
+        },
+        {
+          "label": "Verificación",
+          "text": "Seleccionar proyecto/dataset correctos; no conectar al CSV crudo para cada refresco."
+        }
+      ],
+      "code": null,
+      "note": "Paso 1: conector BigQuery, tabla Gold y credenciales Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-19",
+      "title": "Configura tipos y agregaciones antes del gráfico",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Tipos",
+          "text": "Moneda/fecha/dimensión coherentes con Gold."
+        },
+        {
+          "label": "Agregación",
+          "text": "Revisar cómo resume cada tarjeta. No mostrar la suma de canastas de tiendas alternativas."
+        }
+      ],
+      "code": null,
+      "note": "Paso 2: fecha, moneda, dimensión y métricas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-20",
+      "title": "Construye KPIs que no oculten cobertura",
+      "kind": "dashboard",
+      "items": [
+        {
+          "label": "KPIs",
+          "text": "Cobertura por tienda, número de alternativas completas y costo por alternativa elegible."
+        },
+        {
+          "label": "Gráfico",
+          "text": "La barra de C queda fuera del ranking; su subtotal puede verse en detalle con advertencia."
+        }
+      ],
+      "code": null,
+      "note": "Paso 3: tarjetas y barras de alternativas elegibles Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-21",
+      "title": "Permite explorar sin romper el contrato",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Control",
+          "text": "Un selector de escenario conserva la comparación dentro del contrato."
+        },
+        {
+          "label": "Detalle",
+          "text": "Mostrar productos y fechas; comparar el resultado con el SQL de control."
+        }
+      ],
+      "code": null,
+      "note": "Paso 4: filtro de escenario/zona y tabla detalle Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-22",
+      "title": "Añade la conclusión y su alcance",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Narrativa",
+          "text": "Redactar un título que el escenario respalde y una recomendación acotada."
+        },
+        {
+          "label": "Cambio",
+          "text": "Si el filtro altera la conclusión, actualizar el título o usar una formulación neutral."
+        }
+      ],
+      "code": null,
+      "note": "Paso 5: título, anotaciones y fuente/periodo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-23",
+      "title": "Comprueba acceso y conserva un respaldo",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Acceso",
+          "text": "Probar con lector autorizado distinto cuando sea posible."
+        },
+        {
+          "label": "Respaldo",
+          "text": "Exportar PDF/captura y registrar si faltó comprobar lectura; no publicar datos para evitar permisos."
+        }
+      ],
+      "code": null,
+      "note": "Paso 6: lector autorizado y exportación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-24",
+      "title": "Da un minuto a otra persona para decidir",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Prueba de comprensión",
+          "text": "Un compañero responde qué decide, con qué evidencia y qué falta."
+        },
+        {
+          "label": "Observación",
+          "text": "No le expliques el gráfico hasta escuchar su interpretación inicial."
+        }
+      ],
+      "code": null,
+      "note": "Prueba de comprensión sin guiar al observador Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-25",
+      "title": "Ajusta el gráfico donde surgió una interpretación incorrecta",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Corrección",
+          "text": "Si comparó el subtotal de C con A, el diseño permitió un error."
+        },
+        {
+          "label": "Mejora",
+          "text": "Separar elegibilidad, reforzar etiqueta o cambiar la vista; volver a probar."
+        }
+      ],
+      "code": null,
+      "note": "Comparar respuestas esperadas/obtenidas y rediseñar Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-26",
+      "title": "La recomendación debe sobrevivir a un filtro distinto",
+      "kind": "dashboard",
+      "items": [
+        {
+          "label": "Resistencia",
+          "text": "Probar un escenario sin alternativas completas o una selección distinta."
+        },
+        {
+          "label": "Proyecto",
+          "text": "Construir el dashboard del dataset propio con sus métricas, no copiar la conclusión de precios."
+        }
+      ],
+      "code": null,
+      "note": "Prueba de escenario sin canasta completa; sin denominador oculto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-27",
+      "title": "H6: visual, mensaje y evidencia accesible",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "H6",
+          "text": "Dashboard propio, respaldo, recomendación y controles de agregación/acceso."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Una cifra se reconcilia con SQL y el periodo está visible."
+        }
+      ],
+      "code": null,
+      "note": "Checklist legibilidad/costo/acceso Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E06-28",
+      "title": "La IA podrá redactar; tú debes verificar",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Recuperación",
+          "text": "¿Qué cambia al mover un filtro? ¿Qué no debería sumarse?"
+        },
+        {
+          "label": "Cierre",
+          "text": "Controlar refrescos y lectores. La IA podrá redactar, pero la evidencia seguirá siendo tuya."
+        }
+      ],
+      "code": null,
+      "note": "Puente a S7 y cierre de refrescos/recursos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    }
+  ],
+  "lab": {
+    "steps": [
+      {
+        "n": 1,
+        "minutes": 5,
+        "action": "Abrir Looker Studio (documentación vigente: Data Studio) → Crear → Informe → Añadir datos → BigQuery. Seleccionar proyecto autorizado, curso_gold y canastas. Revisar credenciales y proyecto de facturación con docente.",
+        "check": "Fuente muestra A,B,C y escenario demo_2024-01-15. Si falta permiso, responsable autorizado; no publicar ni conceder Owner para evitar error."
+      },
+      {
+        "n": 2,
+        "minutes": 8,
+        "action": "Revisar tipos y grano: establecimiento/escenario dimensiones, cobertura numérica con formato%, costo_completo_mxn monetario MXN con NULL. Fijar filtro de escenario demo_2024-01-15.",
+        "check": "Comparar las tres filas con07_control_dashboard.sql. Comprobar unicidad antes de usar MAX como valor por tienda; MAX no corrige duplicados."
+      },
+      {
+        "n": 3,
+        "minutes": 12,
+        "action": "Insertar barras horizontales: dimensión establecimiento, métrica MAX(costo_completo_mxn), filtros escenario y elegible=true. Eje mínimo0, etiquetas y moneda. Añadir tabla de cobertura SIN filtro elegible.",
+        "check": "Barras A150/B160; tabla de cobertura A100%,B100%,C60%. Tarjeta opcional MIN del costo entre completas; evitar SUM de tiendas alternativas. C no desaparece del control de cobertura."
+      },
+      {
+        "n": 4,
+        "minutes": 12,
+        "action": "Añadir fuente curso_gold.detalle y tabla con establecimiento, producto, cantidad_envases, fecha_observada e importe_mxn. Aplicar el mismo escenario explícitamente a esta tabla.",
+        "check": "Controles de tienda separados y rotulados por fuente en la ruta base. No asumir que un control filtra fuentes diferentes. Probar A,B,C y comparar cada visual con SQL; evitar joins entre resumen y detalle que repitan el costo."
+      },
+      {
+        "n": 5,
+        "minutes": 10,
+        "action": "Redactar título compatible con filtros: Costo de canastas completas entre tiendas visibles. Añadir catálogo, unidad, fecha, fuente y limitación; inspeccionar casos de canasta incompleta o sin resultados.",
+        "check": "Solo C: no hay costo completo; no mostrar0 ni54 como canasta completa. Una conclusión fija requiere escenario bloqueado o actualización verificada. Usar practica.html como referencia local, no como informe conectado."
+      },
+      {
+        "n": 6,
+        "minutes": 8,
+        "action": "Compartir con identidad autorizada y probar lectura desde otra cuenta disponible. Exportar PDF con filtros visibles y guardar SQL de control, modo de credenciales y prueba de acceso.",
+        "check": "Si falta segunda identidad, marcar acceso pendiente. Revisar destinatarios, refrescos y costos; no hacer público ni asumir que cerrar navegador detiene servicios. Conservar Gold para S7."
+      }
+    ],
+    "instructions": "Preparar Gold de S5, cuenta BI y permisos acordados. La ruta del syllabus usa Looker Studio; la documentación consultada redirige a Data Studio. Crear informe y conectar BigQuery a curso_gold.canastas. Seguir los seis pasos con escenario fijo; detalle se conecta aparte y se verifica por fuente. Comprobar resultados con07_control_dashboard.sql antes de compartir. No crear serie temporal ni mapa con el fixture: carece de historia y geografía suficientes. Credenciales del propietario y del lector tienen requisitos distintos; registrar modalidad aprobada. Si no hay acceso cloud, abrir practica.html y gold-esperado.csv, declarar que solo se validó diseño local y dejar conexión/acceso pendientes."
+  },
+  "assets": [
+    "07_control_dashboard.sql",
+    "gold-esperado.csv",
+    "wireframe-dashboard.md"
+  ],
+  "sources": [
+    [
+      "BI · conector BigQuery",
+      "https://docs.cloud.google.com/looker/docs/studio/connect-to-google-bigquery"
+    ],
+    [
+      "Cole Nussbaumer Knaflic · el mensaje",
+      "https://www.storytellingwithdata.com/blog/2017/3/22/so-what"
+    ],
+    [
+      "Duarte · Resonate",
+      "https://www.duarte.com/resources/books/resonate/"
+    ],
+    [
+      "Mercado Libre · BigQuery y Looker · 2022",
+      "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
+    ]
+  ],
+  "editorialSource": "../editorial/guion.py",
+  "slidesStatus": "Referencia anterior; slides vigentes en SESSIONS[6]."
+}

@@ -1,0 +1,17 @@
+id,producto,marca,presentacion,establecimiento,fecha_texto,precio_texto,archivo_origen
+A1,p1,Marca demo,1 envase,A,2024-01-15,10,fixture-curso.csv
+A2,p2,Marca demo,1 envase,A,2024-01-15,20,fixture-curso.csv
+A3,p3,Marca demo,1 envase,A,2024-01-15,30,fixture-curso.csv
+A4,p4,Marca demo,1 envase,A,2024-01-15,40,fixture-curso.csv
+A5,p5,Marca demo,1 envase,A,2024-01-15,50,fixture-curso.csv
+B1,p1,Marca demo,1 envase,B,2024-01-15,12,fixture-curso.csv
+B2,p2,Marca demo,1 envase,B,2024-01-15,22,fixture-curso.csv
+B3,p3,Marca demo,1 envase,B,2024-01-15,32,fixture-curso.csv
+B4,p4,Marca demo,1 envase,B,2024-01-15,42,fixture-curso.csv
+B5,p5,Marca demo,1 envase,B,2024-01-15,52,fixture-curso.csv
+C1,p1,Marca demo,1 envase,C,2024-01-15,8,fixture-curso.csv
+C2,p2,Marca demo,1 envase,C,2024-01-15,18,fixture-curso.csv
+C3,p3,Marca demo,1 envase,C,2024-01-15,28,fixture-curso.csv
+C4,p4,Marca demo,1 envase,C,2024-01-15,0,fixture-curso.csv
+C5,p5,Marca demo,1 envase,C,fecha-invalida,48,fixture-curso.csv
+A1,p1,Marca demo,1 envase,A,2024-01-15,10,fixture-curso.csv

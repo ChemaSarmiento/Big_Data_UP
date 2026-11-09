@@ -1,0 +1,288 @@
+{
+  "session": 8,
+  "title": "Comité de decisión: defender el proyecto propio",
+  "minutes": 180,
+  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
+  "slides": [
+    {
+      "id": "E08-01",
+      "title": "Hoy el comité decide si tu propuesta está sustentada",
+      "kind": "cover",
+      "items": [
+        {
+          "label": "Decisión",
+          "text": "El comité evalúa si la recomendación está sustentada, no si el gráfico es vistoso."
+        },
+        {
+          "label": "Responsabilidad",
+          "text": "Cada equipo explica su pregunta, dato y límites."
+        }
+      ],
+      "code": null,
+      "note": "Audiencia protagonista; pregunta de aprobación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-02",
+      "title": "Distintos datos, el mismo estándar de evidencia",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Diversidad",
+          "text": "Cada equipo tiene un dataset diferente y KPIs pertinentes a su dominio."
+        },
+        {
+          "label": "Estándar",
+          "text": "El mismo rigor de fuente, grano, calidad, comunicación y costo."
+        }
+      ],
+      "code": null,
+      "note": "Mosaico de equipos/datasets sin KPIs universales Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-03",
+      "title": "Defiende una decisión en siete minutos",
+      "kind": "timer",
+      "items": [
+        {
+          "label": "Formato",
+          "text": "Siete minutos de defensa y tres de preguntas por equipo."
+        },
+        {
+          "label": "Preparación",
+          "text": "Abrir respaldo local y comprobar enlaces; hasta diez equipos dentro de esta agenda."
+        }
+      ],
+      "code": null,
+      "note": "Reloj por secciones y tres minutos de preguntas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-04",
+      "title": "Audiencia, problema, evidencia y acción deben conectarse",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Arco",
+          "text": "Audiencia y problema → evidencia → recomendación → siguiente comprobación."
+        },
+        {
+          "label": "Claridad",
+          "text": "Una idea por pantalla y conclusión sustentada, adaptando los principios de Cole y Duarte."
+        }
+      ],
+      "code": null,
+      "note": "Arco de la defensa, basado en Duarte y claridad visual Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Cole Nussbaumer Knaflic · el mensaje",
+          "https://www.storytellingwithdata.com/blog/2017/3/22/so-what"
+        ],
+        [
+          "Duarte · Resonate",
+          "https://www.duarte.com/resources/books/resonate/"
+        ]
+      ]
+    },
+    {
+      "id": "E08-05",
+      "title": "La arquitectura debe distinguir objetivo y ejecución",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Ejecución",
+          "text": "Mostrar las capas realmente construidas y sus pruebas."
+        },
+        {
+          "label": "Diseño objetivo",
+          "text": "Marcar lo propuesto, incluidos pasos de evolución a lakehouse que no se desplegaron."
+        }
+      ],
+      "code": null,
+      "note": "Mapa por capas con marcas «implementado»/«propuesto» Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-06",
+      "title": "El KPI debe sobrevivir a una pregunta de grano o denominador",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Pregunta crítica",
+          "text": "¿Qué cuenta una fila y cuál es el denominador?"
+        },
+        {
+          "label": "Control",
+          "text": "Reconstruir una cifra con SQL y explicar una exclusión antes de aceptar el KPI."
+        }
+      ],
+      "code": null,
+      "note": "Tarjeta de preguntas del comité Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-07",
+      "title": "La IA no sustituye tu responsabilidad",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "IA",
+          "text": "Presentar una afirmación corregida y el respaldo de la versión final."
+        },
+        {
+          "label": "Responsabilidad",
+          "text": "No atribuir al modelo la aprobación de la recomendación; no se exige predictor."
+        }
+      ],
+      "code": null,
+      "note": "Citas, errores detectados y decisión revisada; sin modelo predictivo obligatorio Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-08",
+      "title": "Rúbrica común: valor, evidencia, arquitectura y comunicación",
+      "kind": "rubric",
+      "items": [
+        {
+          "label": "Rúbrica propuesta",
+          "text": "Valor20, arquitectura/gobierno20, SQL/calidad/KPIs25."
+        },
+        {
+          "label": "Resto",
+          "text": "Comunicación20, evaluación GenAI10 y reproducibilidad/costo5; no sustituye una ponderación institucional sin confirmar."
+        }
+      ],
+      "code": null,
+      "note": "Mostrar criterios/puntos propuestos y diferencias de dominio Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-09",
+      "title": "Primer bloque de defensas",
+      "kind": "timer",
+      "items": [
+        {
+          "label": "Bloque uno",
+          "text": "Hasta cinco equipos, diez minutos cada uno."
+        },
+        {
+          "label": "Comité",
+          "text": "Registrar una pregunta y una evidencia por equipo; mantener la misma rúbrica aunque cambie el sector."
+        }
+      ],
+      "code": null,
+      "note": "Orden, roles y control de tiempo accesible Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-10",
+      "title": "Pausa y rotación del comité",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Pausa",
+          "text": "Diez minutos y rotación del comité."
+        },
+        {
+          "label": "Comprobación",
+          "text": "Los siguientes equipos tienen informe o respaldo listo; no se instala infraestructura nueva."
+        }
+      ],
+      "code": null,
+      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-11",
+      "title": "Segundo bloque de defensas",
+      "kind": "timer",
+      "items": [
+        {
+          "label": "Bloque dos",
+          "text": "Hasta cinco equipos con el mismo formato de defensa."
+        },
+        {
+          "label": "Gestión",
+          "text": "Si hay más de diez equipos, ajustar convocatoria previamente; no prometer tiempo que no cabe."
+        }
+      ],
+      "code": null,
+      "note": "Igual formato y criterios Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-12",
+      "title": "Rastrea una cifra de otro equipo hasta su fuente",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Auditoría cruzada",
+          "text": "Otro equipo elige una cifra y sigue fuente → regla → Gold → visual/memo."
+        },
+        {
+          "label": "Resultado",
+          "text": "Registrar si la evidencia la sustenta, contradice o no permite decidir; sin exponer crudos sensibles."
+        }
+      ],
+      "code": null,
+      "note": "Auditoría cruzada con formulario, sin acceso innecesario a crudos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-13",
+      "title": "Entrega el paquete y cierra lo que puede seguir costando",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Entrega",
+          "text": "Documento, manifiesto, SQL, calidad, dashboard/respaldo y anexo IA."
+        },
+        {
+          "label": "Cierre",
+          "text": "Conservar evidencia y revisar recursos; detener VM no borra discos. No eliminar proyectos compartidos sin autorización."
+        }
+      ],
+      "code": null,
+      "note": "Checklist reproducibilidad, acceso, conservación y recursos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E08-14",
+      "title": "¿Qué evidencia adicional cambiaría tu decisión?",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Mejora",
+          "text": "¿Qué dato adicional cambiaría tu decisión?"
+        },
+        {
+          "label": "Continuidad",
+          "text": "Proponer una captura, validación o control viable. Un resultado negativo bien defendido también comunica valor."
+        }
+      ],
+      "code": null,
+      "note": "Retroalimentación y siguiente mejora viable Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    }
+  ],
+  "lab": {
+    "steps": [],
+    "instructions": "No se crean recursos ni código nuevo. Preparar documento ejecutivo, manifiesto, consultas, calidad, dashboard/PDF, memo auditado y registro de costo. Usar plantilla-defensa.md. Agenda: 15 min encuadre, 50 primer bloque, 10 pausa, 50 segundo bloque, 30 auditoría cruzada, 15 cierre y 10 retroalimentación. Hasta diez equipos con 7+3 min por defensa. Si el grupo es mayor, ajustar formato antes de convocar. Compartir agregados y enlaces autorizados, no credenciales ni crudos sensibles."
+  },
+  "assets": [
+    "plantilla-defensa.md",
+    "rubrica.csv",
+    "auditoria-proyecto.csv"
+  ],
+  "sources": [
+    [
+      "Cole Nussbaumer Knaflic · el mensaje",
+      "https://www.storytellingwithdata.com/blog/2017/3/22/so-what"
+    ],
+    [
+      "Duarte · Resonate",
+      "https://www.duarte.com/resources/books/resonate/"
+    ]
+  ]
+}

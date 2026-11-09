@@ -1,0 +1,6 @@
+(() => {
+ document.querySelectorAll('[data-gold-basket]').forEach(d=>d.querySelector('button').addEventListener('click',e=>{
+ const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',String(on));e.currentTarget.textContent=on?'Ver todos los subtotales':'Exigir cinco productos';d.querySelector('[data-gold-c]').style.opacity=on?'.45':'1';d.querySelector('[data-gold-answer]').textContent=on?'A150 y B160 cumplen la canasta. C conserva subtotal54 y costo completo NULL.':'C tiene el menor subtotal; todavía no cumple la canasta.';
+ }));
+ document.querySelectorAll('[data-gold-join]').forEach(d=>{const rows=[...d.querySelectorAll('tbody tr')];rows.slice(3).forEach(r=>r.hidden=true);d.querySelector('button').addEventListener('click',e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',String(on));rows.slice(3).forEach(r=>r.hidden=!on);e.currentTarget.textContent=on?'Ver solo coincidencias':'Conservar todo el catálogo';d.querySelector('[data-gold-join-answer]').textContent=on?'LEFT JOIN: cinco necesidades; dos sin precio. Cobertura:3/5.':'Solo coincidencias: tres filas; desaparecen dos necesidades de compra.';});});
+})();

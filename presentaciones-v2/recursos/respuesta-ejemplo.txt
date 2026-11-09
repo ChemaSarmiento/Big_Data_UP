@@ -1,0 +1,9 @@
+RESPUESTA DOCENTE ESCRITA A MANO PARA AUDITAR; no es una ejecución real de un LLM.
+
+«La tienda C es la mejor alternativa porque su canasta cuesta 54 MXN.
+A cuesta 150 y B cuesta 160. Comprar en C garantiza inventario y ahorros actuales.»
+
+Errores controlados: C tiene solo 3/5 productos; 54 es subtotal, no canasta completa.
+No hay evidencia de inventario. El periodo es histórico. No prueba ahorros actuales.
+A y B sí son completas en el fixture; A tiene el menor costo observado entre ellas.
+Una cita inventada o una cita real que no respalde la frase no corrige el error.

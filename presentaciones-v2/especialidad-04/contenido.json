@@ -1,0 +1,653 @@
+{
+  "session": 4,
+  "title": "Un cero puede decidir la compra por ti",
+  "minutes": 180,
+  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
+  "slides": [
+    {
+      "id": "E04-01",
+      "title": "¿Aprobarías la misma compra si el precio fuera un error?",
+      "kind": "cover",
+      "items": [
+        {
+          "label": "Error",
+          "text": "Un precio cero puede parecer una oportunidad y ser un valor inválido."
+        },
+        {
+          "label": "Decisión",
+          "text": "Antes de rankear, pregunta si la observación representa un precio utilizable."
+        }
+      ],
+      "code": null,
+      "note": "Ranking ilustrativo antes/después de corregir formato Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-02",
+      "title": "Bronze conserva; Silver valida",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Bronze",
+          "text": "Conserva el texto original y su procedencia."
+        },
+        {
+          "label": "Silver",
+          "text": "Produce valores tipados y un registro de reglas, aceptaciones y exclusiones."
+        }
+      ],
+      "code": null,
+      "note": "Seguir la misma observación y recuperar su fuente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-03",
+      "title": "Hoy cada regla dejará una prueba",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Resultado",
+          "text": "Cada fila debe tener destino explicable."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Reporte de calidad más una persona responsable de aprobar las reglas."
+        }
+      ],
+      "code": null,
+      "note": "Mapa aceptadas/rechazadas/reporte/dueño Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [],
+      "nodes": [
+        [
+          "Bronze",
+          "16 filas ilustrativas"
+        ],
+        [
+          "Reglas",
+          "1 copia y 2 rechazos"
+        ],
+        [
+          "Silver",
+          "13 observaciones válidas"
+        ]
+      ]
+    },
+    {
+      "id": "E04-04",
+      "title": "Nulo, cero y texto inválido no significan lo mismo",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Nulo",
+          "text": "No se observó o no se informó un valor."
+        },
+        {
+          "label": "Cero",
+          "text": "Sí es un número; no equivale a precio desconocido. Texto inválido tampoco equivale a cero."
+        }
+      ],
+      "code": null,
+      "note": "Mini-tabla con tres casos; decidir tratamiento Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-05",
+      "title": "Convertir tipos exige conservar la explicación",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Conversión",
+          "text": "SAFE_CAST permite detectar una fecha o número no convertible."
+        },
+        {
+          "label": "Responsabilidad",
+          "text": "La conversión fallida se registra; no se sustituye silenciosamente por un precio conveniente."
+        }
+      ],
+      "code": "SELECT id,\n SAFE_CAST(precio_texto AS NUMERIC) AS precio,\n SAFE_CAST(fecha_texto AS DATE) AS fecha\nFROM curso_bronze.observaciones_raw;",
+      "note": "Cadena → fecha/precio o rechazo; `SAFE_CAST` comentado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-06",
+      "title": "Normalizar texto no demuestra equivalencia",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Normalizar",
+          "text": "Recortar espacios y unificar mayúsculas ayuda a comparar identificadores revisados."
+        },
+        {
+          "label": "Equivalencia",
+          "text": "Dos marcas o envases diferentes no se vuelven el mismo producto por normalizar texto."
+        }
+      ],
+      "code": null,
+      "note": "Mayúsculas/espacios vs. marca/presentación distintas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-07",
+      "title": "Un duplicado depende de la clave y del contexto",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Clave",
+          "text": "Una copia exacta de la misma observación puede retirarse del procesamiento."
+        },
+        {
+          "label": "Contexto",
+          "text": "Mismo precio de dos tiendas o fechas diferentes no es duplicación por ese solo hecho."
+        }
+      ],
+      "code": null,
+      "note": "Filas idénticas frente a observaciones de distinta fecha/tienda Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-08",
+      "title": "La calidad se comprueba con reglas y conteos",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Dimensiones",
+          "text": "Validez, completitud, unicidad según clave y cobertura temporal."
+        },
+        {
+          "label": "Denominador",
+          "text": "El porcentaje de errores debe indicar si cuenta filas o motivos; una fila puede tener varios problemas."
+        }
+      ],
+      "code": null,
+      "note": "Completitud, validez, unicidad definida y frescura; métricas por regla Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-09",
+      "title": "Una partición evita leer historia que no necesitas",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Partición",
+          "text": "Separar por fecha facilita acotar lecturas con un filtro adecuado."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Medir bytes en tabla nativa; el fixture pequeño puede no mostrar una ganancia relevante."
+        }
+      ],
+      "code": null,
+      "note": "Cajones por fecha y filtro; no confundir con clustering Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-10",
+      "title": "Gobernar significa asignar decisiones y responsables",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Gobierno",
+          "text": "Definir dueño, reglas, lectores, retención y consumidor."
+        },
+        {
+          "label": "Linaje",
+          "text": "Poder reconstruir cómo una observación terminó en un indicador."
+        }
+      ],
+      "code": null,
+      "note": "Dueño, consumidor, acceso, retención y linaje en una observación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-11",
+      "title": "Un dato público no autoriza cualquier cruce o publicación",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Finalidad",
+          "text": "Que un enlace sea público no demuestra permiso para cualquier cruce o publicación."
+        },
+        {
+          "label": "Minimización",
+          "text": "Comparte lo necesario para la decisión y evita exponer identificadores personales."
+        }
+      ],
+      "code": null,
+      "note": "Contexto/finalidad/minimización; precios frente a datos de personas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [],
+      "nodes": [
+        [
+          "Bronze",
+          "16 filas ilustrativas"
+        ],
+        [
+          "Reglas",
+          "1 copia y 2 rechazos"
+        ],
+        [
+          "Silver",
+          "13 observaciones válidas"
+        ]
+      ]
+    },
+    {
+      "id": "E04-12",
+      "title": "GDPR e HIPAA responden a contextos distintos",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "GDPR",
+          "text": "Sus principios ayudan a discutir finalidad, minimización y responsabilidad en su contexto."
+        },
+        {
+          "label": "HIPAA",
+          "text": "Tiene un ámbito de entidades y datos sanitarios definido; no aplica automáticamente a todos los precios públicos."
+        }
+      ],
+      "code": null,
+      "note": "GDPR: principios de tratamiento personal; HIPAA: entidades/datos sanitarios cubiertos; fuentes oficiales Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Comisión Europea · principios GDPR",
+          "https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en"
+        ],
+        [
+          "HHS · entidades cubiertas HIPAA",
+          "https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html"
+        ]
+      ]
+    },
+    {
+      "id": "E04-13",
+      "title": "Mayo Clinic muestra por qué la procedencia y el acceso importan",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Mayo Clinic",
+          "text": "El caso histórico de datos ómicos describe lago, BigQuery y control de accesos."
+        },
+        {
+          "label": "Transferencia",
+          "text": "Calidad y procedencia deben acompañar la integración; no usamos datos clínicos de personas en clase."
+        }
+      ],
+      "code": null,
+      "note": "Ficha histórica de plataforma ómica, GCS/BigQuery/IAM; sin datos clínicos en clase Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Mayo Clinic · datos ómicos · 2020",
+          "https://cloud.google.com/blog/products/data-analytics/genome-data-analytics-with-google-cloud"
+        ]
+      ]
+    },
+    {
+      "id": "E04-14",
+      "title": "Carrefour comparte datos con reglas de análisis",
+      "kind": "flow",
+      "items": [
+        {
+          "label": "Carrefour",
+          "text": "El testimonio de clean rooms ilustra colaboración con reglas de análisis."
+        },
+        {
+          "label": "Nuestro alcance",
+          "text": "Asignar responsabilidades y controlar accesos; no desplegar una clean room ni afirmar cumplimiento automático."
+        }
+      ],
+      "code": null,
+      "note": "Caso clean rooms; transferir responsabilidad/control, sin desplegar el producto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": [
+        [
+          "Carrefour · colaboración de datos · 2024",
+          "https://cloud.google.com/blog/products/data-analytics/bigquery-data-clean-rooms-now-generally-available"
+        ]
+      ],
+      "nodes": [
+        [
+          "Bronze",
+          "16 filas ilustrativas"
+        ],
+        [
+          "Reglas",
+          "1 copia y 2 rechazos"
+        ],
+        [
+          "Silver",
+          "13 observaciones válidas"
+        ]
+      ]
+    },
+    {
+      "id": "E04-15",
+      "title": "Rechazar datos también cambia la decisión",
+      "kind": "quality",
+      "items": [
+        {
+          "label": "Efecto",
+          "text": "Eliminar observaciones puede reducir cobertura de una zona o periodo."
+        },
+        {
+          "label": "Decisión",
+          "text": "Reporta el impacto; datos con menos errores no garantizan una muestra representativa."
+        }
+      ],
+      "code": null,
+      "note": "Comparación de cobertura antes/después de reglas; conservar exclusiones Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-16",
+      "title": "Pausa · decide una regla y quién la aprueba",
+      "kind": "pause",
+      "items": [
+        {
+          "label": "Pausa",
+          "text": "Diez minutos; prepara Bronze y el contrato del fixture."
+        },
+        {
+          "label": "Recuperación",
+          "text": "Si falta la sesión anterior, el script de fixture reconstruye la entrada ilustrativa sin usar la fuente grande."
+        }
+      ],
+      "code": null,
+      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-17",
+      "title": "Laboratorio: ejecutar reglas que puedas explicar",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Entradas",
+          "text": "16 filas en el fixture."
+        },
+        {
+          "label": "Política",
+          "text": "Una copia exacta se retira, dos filas se rechazan y trece quedan válidas; verificar con el reporte, no por memoria."
+        }
+      ],
+      "code": null,
+      "note": "Contrato y SQL completos; cambios del alumno delimitados Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-18",
+      "title": "Mide antes de transformar",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Perfil",
+          "text": "Cuenta filas y observa precios/fechas originales."
+        },
+        {
+          "label": "Antes de transformar",
+          "text": "Guarda ese conteo para reconciliar, no sobrescribas el archivo crudo."
+        }
+      ],
+      "code": null,
+      "note": "Paso 1: perfil de Bronze y conteo base Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-19",
+      "title": "Convierte y registra el motivo de rechazo",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Tipado",
+          "text": "Convierte fecha y precio; clasifica la causa principal del rechazo."
+        },
+        {
+          "label": "Fixture",
+          "text": "C4 tiene precio cero y C5 fecha inválida; ambos conservan procedencia."
+        }
+      ],
+      "code": null,
+      "note": "Paso 2: precio/fecha/texto y columna de motivo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-20",
+      "title": "Conserva aceptadas y rechazadas por separado",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Destino",
+          "text": "Silver recibe aceptadas y una tabla separada conserva rechazadas."
+        },
+        {
+          "label": "Política",
+          "text": "El original permanece en Bronze; eliminar del análisis no borra la evidencia de recepción."
+        }
+      ],
+      "code": null,
+      "note": "Paso 3: CTAS Silver y tabla de rechazadas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-21",
+      "title": "Comprueba que ninguna fila desapareció sin explicación",
+      "kind": "quality",
+      "items": [
+        {
+          "label": "Reconciliar",
+          "text": "Entrada = copias retiradas + aceptadas + rechazadas."
+        },
+        {
+          "label": "Esperado",
+          "text": "16 = 1 + 13 + 2. El script incluye una aserción que detiene una reconciliación inconsistente."
+        }
+      ],
+      "code": "SELECT entrada, duplicados, aceptadas, rechazadas\nFROM curso_silver.reporte_calidad;\n-- Esperado en fixture: 16 = 1 + 13 + 2",
+      "note": "Paso 4: reconciliación y reporte Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-22",
+      "title": "Consulta solo el periodo necesario",
+      "kind": "code",
+      "items": [
+        {
+          "label": "Consulta",
+          "text": "Filtra fecha_observada de enero de 2024."
+        },
+        {
+          "label": "Registro",
+          "text": "Conserva estadísticas y caché; no publiques un porcentaje de ahorro sin medición comparable."
+        }
+      ],
+      "code": "SELECT COUNT(*) FROM curso_silver.observaciones\nWHERE fecha_observada BETWEEN\n DATE '2024-01-01' AND DATE '2024-01-31';",
+      "note": "Paso 5: filtro de partición y estadísticas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-23",
+      "title": "Asigna permisos y responsables por función",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Matriz",
+          "text": "Capa, responsable, lectores, retención y evidencia de acceso."
+        },
+        {
+          "label": "Permiso",
+          "text": "Comprobar una identidad autorizada; si no hay segunda cuenta, declarar la prueba pendiente."
+        }
+      ],
+      "code": null,
+      "note": "Paso 6: matriz de gobierno y prueba de acceso autorizada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-24",
+      "title": "Otra persona debe poder rastrear una exclusión",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "Auditoría",
+          "text": "Elige una fila rechazada y muestra su archivo, valor original y motivo."
+        },
+        {
+          "label": "Proyecto",
+          "text": "Aplica al menos dos reglas relevantes de tu dominio; no uses precio positivo para todos los datasets."
+        }
+      ],
+      "code": null,
+      "note": "Auditoría por pares de una observación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-25",
+      "title": "¿La regla protege la decisión o borra evidencia útil?",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Sesgo",
+          "text": "Revisar cuánto cambia la población tras cada exclusión."
+        },
+        {
+          "label": "Criterio",
+          "text": "Una regla que elimina casi todo quizá revela mala fuente o mala interpretación, no calidad sobresaliente."
+        }
+      ],
+      "code": null,
+      "note": "Revisar sesgo de cobertura por zona/periodo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-26",
+      "title": "Datos limpios no garantizan una comparación justa",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Comparabilidad",
+          "text": "Fechas válidas pueden pertenecer a periodos incompatibles."
+        },
+        {
+          "label": "Límite",
+          "text": "Silver asegura un contrato técnico; Gold todavía debe definir la comparación de negocio."
+        }
+      ],
+      "code": null,
+      "note": "Ejemplo de fechas/unidades incompatibles que superan validaciones de tipo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-27",
+      "title": "H4: filas, reglas, responsables y límites",
+      "kind": "contrast",
+      "items": [
+        {
+          "label": "H4",
+          "text": "Silver, rechazados, reconciliación y matriz del dataset propio."
+        },
+        {
+          "label": "Evidencia",
+          "text": "Guardar reglas, responsable y limitaciones de cobertura sin publicar datos sensibles."
+        }
+      ],
+      "code": null,
+      "note": "Checklist Silver/reporte/linaje/matriz Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    },
+    {
+      "id": "E04-28",
+      "title": "Gold agregará significado de negocio",
+      "kind": "panels",
+      "items": [
+        {
+          "label": "Recuperación",
+          "text": "¿Qué diferencia hay entre duplicado y repetición legítima?"
+        },
+        {
+          "label": "Cierre",
+          "text": "Conserva linaje y accesos acordados. Gold traducirá las filas en KPIs."
+        }
+      ],
+      "code": null,
+      "note": "Recuperación de conceptos y cierre Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
+      "sources": []
+    }
+  ],
+  "lab": {
+    "steps": [
+      {
+        "n": 1,
+        "minutes": 5,
+        "action": "Abrir BigQuery Studio y verificar proyecto y ubicación del laboratorio. Ejecutar COUNT(*) sobre curso_bronze.observaciones_raw; conservar ID/versión de fuente.",
+        "check": "Fixture:16 filas. Si falta Bronze, recuperar con 01_fixture_bronze.sql y declarar que es una tabla nativa ilustrativa. Si el conteo difiere, localizar la versión correcta antes de transformar."
+      },
+      {
+        "n": 2,
+        "minutes": 8,
+        "action": "Leer 04_silver.sql completo: copias exactas, UPPER/TRIM de tienda, SAFE_CAST de fecha/precio y prioridad del CASE. Predecir destinos C4 y C5 sin ejecutar fragmentos.",
+        "check": "C4 precio_invalido; C5 fecha_invalida. El CASE registra el primer motivo. La regla mínima no certifica comparabilidad de marca, presentación o periodo."
+      },
+      {
+        "n": 3,
+        "minutes": 12,
+        "action": "En una pestaña del editor SQL pegar y ejecutar 04_silver.sql completo. Revisar que el destino es curso_silver del proyecto de laboratorio y la región compatible.",
+        "check": "Tablas persistentes: observaciones, rechazadas, reporte_calidad. Las temporales unicas/tipadas/clasificadas pertenecen al script; no ejecutarlas en bloques aislados. Ante error, guardar mensaje, resolver permiso/ubicación y repetir completo; Bronze permanece intacta."
+      },
+      {
+        "n": 4,
+        "minutes": 12,
+        "action": "Consultar reporte_calidad y rechazadas. Conservar resultado y el ASSERT de reconciliación junto con SQL y versión de entrada.",
+        "check": "entrada16 = duplicados1 + aceptadas13 + rechazadas2; unicas15. C4 precio; C5 fecha. Si no cierra, detener Gold y revisar origen/ejecución; nunca editar el reporte para forzar igualdad."
+      },
+      {
+        "n": 5,
+        "minutes": 10,
+        "action": "Ejecutar 05_control_silver.sql. Abrir detalles/historial del job y registrar ID, bytes, caché y tiempo. Verificar partición fecha_observada en detalles de observaciones.",
+        "check": "Enero: A5,B5,C3; control de id duplicado sin filas en el fixture. El fixture no prueba ahorro: tiene una sola fecha y poco volumen. Comparar con fuente mayor solo bajo preparación y costo autorizados."
+      },
+      {
+        "n": 6,
+        "minutes": 8,
+        "action": "Completar matriz-gobierno.csv: activo, responsable de regla, lectores, retención/revisión y evidencia. Con identidad adicional autorizada disponible, comprobar lectura prevista.",
+        "check": "Si no existe identidad adicional, registrar prueba pendiente. No publicar bucket ni conceder Owner para resolver acceso. Conservar capas requeridas por Gold y revisar recursos/retención con docente."
+      }
+    ],
+    "instructions": "Preparación: Bronze de S3 en curso_bronze.observaciones_raw, proyecto de laboratorio y ubicación compatible (scripts: us-central1); permisos autorizados de lectura y escritura en curso_silver. Ruta: BigQuery Studio → editor SQL → seleccionar proyecto → ejecutar consulta de entrada, leer 04_silver.sql y ejecutarlo completo como script. Revisar resultados y pestaña de detalles del job; ejecutar luego 05_control_silver.sql sobre las tablas persistentes. El script reemplaza destinos curso_silver y no debe apuntarse a producción. Conserva originales, SQL, versión de reglas, reporte y motivos; no hay publicación ni provisión desde esta página. Los campos crudos permanecen en rechazadas, y Bronze conserva la fuente. El alumno modifica reglas solo después de discutir su significado con docente. Para otra fuente, el docente prepara esquema y SQL adaptados antes de la transferencia. Si faltan permisos, usar evidencia docente identificada y registrar ejecución pendiente."
+  },
+  "assets": [
+    "01_fixture_bronze.sql",
+    "03_explorar.sql",
+    "04_silver.sql",
+    "05_control_silver.sql",
+    "matriz-gobierno.csv"
+  ],
+  "sources": [
+    [
+      "GoogleSQL · scripts",
+      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language"
+    ],
+    [
+      "Comisión Europea · principios GDPR",
+      "https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en"
+    ],
+    [
+      "HHS · entidades cubiertas HIPAA",
+      "https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html"
+    ],
+    [
+      "Mayo Clinic · datos ómicos · 2020",
+      "https://cloud.google.com/blog/products/data-analytics/genome-data-analytics-with-google-cloud"
+    ],
+    [
+      "Carrefour · colaboración de datos · 2024",
+      "https://cloud.google.com/blog/products/data-analytics/bigquery-data-clean-rooms-now-generally-available"
+    ],
+    [
+      "GoogleSQL · SAFE_CAST",
+      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions#safe_casting"
+    ],
+    [
+      "BigQuery · particiones",
+      "https://docs.cloud.google.com/bigquery/docs/querying-partitioned-tables"
+    ]
+  ],
+  "editorialSource": "../editorial/guion.py",
+  "slidesStatus": "Referencia anterior; slides vigentes en editorial/guion.py, SESSIONS[4]."
+}

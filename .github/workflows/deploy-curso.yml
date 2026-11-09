@@ -2,11 +2,16 @@ name: Deploy curso a Firebase
 
 on:
   push:
-    branches: [plan2]
+    branches: [plan3]
   workflow_dispatch:
+
+concurrency:
+  group: firebase-bigdata-up-live
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/plan3'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +27,17 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npm run build:web
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build de Especialidad refactorizada
+        run: |
+          python3 presentaciones-v2/scripts/build.py
+          python3 presentaciones-v2/scripts/build-editorial.py
+          python3 presentaciones-v2/scripts/catalogo.py
+          python3 scripts/package-refactor.py
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
