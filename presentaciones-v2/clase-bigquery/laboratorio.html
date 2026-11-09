@@ -1,188 +1,56 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Laboratorio · all_data.csv en BigQuery</title><link rel="stylesheet" href="../compartido/curso.css"><link rel="stylesheet" href="guia.css"></head><body><article class="guide"><a href="index.html">← Presentación</a><h1>Laboratorio · all_data.csv en BigQuery</h1><p class="notice">Clase ejecutiva independiente ·180 minutos. Laboratorio80 minutos. Muestra real derivada del Drive del usuario, no datos ficticios. Los SQL están preparados para GoogleSQL; la ejecución real en BigQuery sigue pendiente de ensayo docente.</p><h2>Antes de clase</h2><p>Proyecto de laboratorio con facturación y permisos aprobados: crear datasets/tablas y ejecutar jobs. No se garantiza elegibilidad de losUS$300 ni acceso por tener cuentaGoogle. Datos y cómputo deben usar ubicación compatible. No hacen faltaVM, Spark, modelos ni despliegue de aplicaciones. Confirmar región, presupuesto, cuotas y expiración. El docente debe ensayar todos los scripts y el archivo completo antes de impartir.</p><p>Elige ruta: muestra de 4500 filas para ejecutar de principio a fin durante clase; archivo completo previamente preparado en GCS para demostración de escala. No descargar20.7 GB en laptops o almacenamiento persistente deCloud Shell durante el taller.</p><h2>Descargas</h2><ul><li><a href="recursos/00_preparar.sql" download>00_preparar.sql ↓</a></li><li><a href="recursos/01_ingestar_bronze.sql" download>01_ingestar_bronze.sql ↓</a></li><li><a href="recursos/02_perfil.sql" download>02_perfil.sql ↓</a></li><li><a href="recursos/03_silver.sql" download>03_silver.sql ↓</a></li><li><a href="recursos/04_gold.sql" download>04_gold.sql ↓</a></li><li><a href="recursos/05_optimizar.sql" download>05_optimizar.sql ↓</a></li><li><a href="recursos/06_validar.sql" download>06_validar.sql ↓</a></li><li><a href="recursos/07_cierre.sql" download>07_cierre.sql ↓</a></li><li><a href="recursos/all_data_muestra.csv" download>all_data_muestra.csv ↓</a></li><li><a href="recursos/cargar-gcs.sh" download>cargar-gcs.sh ↓</a></li><li><a href="recursos/cargar-muestra.sh" download>cargar-muestra.sh ↓</a></li><li><a href="recursos/esquema-bronze.json" download>esquema-bronze.json ↓</a></li><li><a href="recursos/perfil-muestra.json" download>perfil-muestra.json ↓</a></li><li><a href="recursos/registro-optimizacion.csv" download>registro-optimizacion.csv ↓</a></li></ul><section id="paso-1"><h2>Paso 1 · Preparar proyecto y cargar muestra · 15 min</h2><p>En Google Cloud, selecciona el proyecto autorizado del taller y abre BigQuery → Studio → editor SQL (consulta nueva). Ejecuta 00_preparar.sql. Verás emergente_bronze, emergente_silver y emergente_gold. Región propuesta us-central1; si tu organización usa otra, cambia las tres antes de crearlas. El plazo de siete días solo se aplica a tablas nuevas de estos datasets; verifica la expiración si ya existían.</p><p>Descarga all_data_muestra.csv y esquema-bronze.json. En Explorador abre emergente_bronze → Crear tabla. Fuente: Subir archivo; formato CSV; destino: entrada. Desactiva autodetección, usa las 15 columnas STRING del esquema, omite1 fila de cabecera, UTF-8, separador coma y comillas dobles; admite saltos de línea entre comillas. Errores permitidos: 0. En preferencias de escritura selecciona sobrescribir SOLO entrada, que es la zona temporal de carga. Si la UI no permite este flujo sobre la tabla existente, usa cargar-muestra.sh en Cloud Shell con los dos archivos pequeños.</p><p>Ejecuta SELECT COUNT(*) AS filas FROM emergente_bronze.entrada;</p><p><strong>Comprobación:</strong> 4500 filas. Abre Vista previa y verifica producto, precio y fechaRegistro. Esto aún no aplica reglas de Silver.</p><p><strong>Si falla:</strong> Permiso o facturación: pedir al responsable el acceso al proyecto. No otorgar Owner indiscriminadamente. Error CSV: revisar codificación, cabecera, esquema y quote; no aumentar max_bad_records para ocultarlo.</p><p><a href="recursos/00_preparar.sql" download>00_preparar.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>-- GoogleSQL. Proyecto de laboratorio seleccionado en la consola.
--- Nombres exclusivos del taller. No apuntar a datasets del curso o productivos.
--- Región propuesta: us-central1; cambiar coherentemente si la política exige otra.
--- Expiración de tablas nuevas:7 días. Conservar archivos originales fuera de BigQuery.
-CREATE SCHEMA IF NOT EXISTS emergente_bronze
-OPTIONS(location=&#x27;us-central1&#x27;, default_table_expiration_days=7);
-CREATE SCHEMA IF NOT EXISTS emergente_silver
-OPTIONS(location=&#x27;us-central1&#x27;, default_table_expiration_days=7);
-CREATE SCHEMA IF NOT EXISTS emergente_gold
-OPTIONS(location=&#x27;us-central1&#x27;, default_table_expiration_days=7);
-CREATE TABLE IF NOT EXISTS emergente_bronze.entrada (
-  producto STRING,
-  presentacion STRING,
-  marca STRING,
-  categoria STRING,
-  catalogo STRING,
-  precio STRING,
-  fechaRegistro STRING,
-  cadenaComercial STRING,
-  giro STRING,
-  nombreComercial STRING,
-  direccion STRING,
-  estado STRING,
-  municipio STRING,
-  latitud STRING,
-  longitud STRING
-);
-</code></pre></details></section><section id="paso-2"><h2>Paso 2 · Conservar Bronze por lote · 10 min</h2><p>Abre una consulta nueva. Ejecuta el archivo completo con lote all_data_muestra_v1. Conserva el ID de trabajo. Observa los valores originales, lote_id, fuente_uri, ingestado_en y fila_hash. No modifiques el archivo ni elimines espacios aquí. Repite el mismo script para comprobar que ASSERT detiene una segunda ingesta con ese ID.</p><p>El original en GCS o el CSV descargado conserva sus bytes; la tabla representa registros, no el archivo binario. La protección de lotes presupone ejecución serial en un proyecto dedicado.</p><p><strong>Comprobación:</strong> Primer lote:4500 filas y 4500 hashes distintos. Segunda ejecución con el mismo ID: error esperado, total sin cambios.</p><p><strong>Si falla:</strong> Si el lote ya existía por una sesión anterior, inspecciónalo antes de decidir. Usa un ID diferente solo para una entrega distinta, no para esquivar la comprobación.</p><p><a href="recursos/01_ingestar_bronze.sql" download>01_ingestar_bronze.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>-- Ejecutar tras cargar la muestra o el CSV completo en entrada.
--- Bronze conserva valores y duplicados del lote; entrada es el área de carga reemplazable.
--- Ejecución serial en proyecto dedicado: no protege contra dos escritores concurrentes.
-DECLARE lote STRING DEFAULT &#x27;all_data_muestra_v1&#x27;;
-DECLARE fuente STRING DEFAULT &#x27;drive:1dLxKFxawXTTaqCDr9Y9YpYdWTpOhol42; muestra 4500 filas&#x27;;
-CREATE TABLE IF NOT EXISTS emergente_bronze.observaciones AS
-SELECT e.*, CAST(NULL AS STRING) AS lote_id,
- CAST(NULL AS STRING) AS fuente_uri, CURRENT_TIMESTAMP() AS ingestado_en,
- TO_HEX(SHA256(TO_JSON_STRING(e))) AS fila_hash
-FROM emergente_bronze.entrada e WHERE FALSE;
-ASSERT (SELECT COUNT(*) &gt; 0 FROM emergente_bronze.entrada) AS &#x27;entrada está vacía&#x27;;
-ASSERT (SELECT COUNT(*) = 0 FROM emergente_bronze.observaciones WHERE lote_id=lote)
- AS &#x27;Lote ya cargado: no lo repitas. Para otro archivo usa otro ID y su fuente.&#x27;;
-INSERT INTO emergente_bronze.observaciones
-SELECT e.*, lote, fuente, CURRENT_TIMESTAMP(), TO_HEX(SHA256(TO_JSON_STRING(e)))
-FROM emergente_bronze.entrada e;
-SELECT lote_id, COUNT(*) AS filas, COUNT(DISTINCT fila_hash) AS filas_distintas
-FROM emergente_bronze.observaciones GROUP BY lote_id;
-</code></pre></details></section><section id="paso-3"><h2>Paso 3 · Perfilar el contenido recibido · 10 min</h2><p>Ejecuta cada SELECT de 02. Contrasta los resultados con perfil-muestra.json. El segundo SELECT encuentraREFRESCO/SPRITE/BOTELLA2LT.NO RETORNABLE, Tlalpan,2014-03-19. Copia las filas con dirección y establecimiento antes de formular conclusiones.</p><p>La muestra selecciona 1500 filas de cada una de tres ventanas de 2 MiB; no es aleatoria. El rango observado de fechas y las proporciones no representan todo all_data.csv.</p><p><strong>Comprobación:</strong> 4500 filas; 3000 municipios con espacios finales; 0 duplicados exactos en la muestra. Precios del par:15.10 y15.50MXN.</p><p><strong>Si falla:</strong> Un conteo distinto exige revisar archivo y lote. No atribuyas al archivo completo un resultado obtenido de la muestra.</p><p><a href="recursos/02_perfil.sql" download>02_perfil.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>-- Seleccionar el lote que se desea inspeccionar. No extrapolar una muestra al total.
-SELECT COUNT(*) AS filas,
- COUNT(DISTINCT fila_hash) AS distintas,
- MIN(SAFE_CAST(fechaRegistro AS DATETIME)) AS fecha_min,
- MAX(SAFE_CAST(fechaRegistro AS DATETIME)) AS fecha_max,
- COUNTIF(municipio != TRIM(municipio)) AS municipio_con_espacios,
- COUNTIF(SAFE_CAST(precio AS NUMERIC) IS NULL OR SAFE_CAST(precio AS NUMERIC)&lt;=0) AS precio_invalido,
- COUNTIF(SAFE_CAST(fechaRegistro AS DATETIME) IS NULL) AS fecha_invalida
-FROM emergente_bronze.observaciones
-WHERE lote_id=&#x27;all_data_muestra_v1&#x27;;
-SELECT producto, presentacion, marca, precio, fechaRegistro, nombreComercial, municipio
-FROM emergente_bronze.observaciones
-WHERE lote_id=&#x27;all_data_muestra_v1&#x27; AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27;
- AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
- AND DATE(SAFE_CAST(fechaRegistro AS DATETIME))=DATE &#x27;2014-03-19&#x27;
- AND TRIM(municipio)=&#x27;TLALPAN&#x27;;
-</code></pre></details></section><section id="paso-4"><h2>Paso 4 · Construir Silver y reconciliar · 15 min</h2><p>Ejecuta 03 completo. Normaliza espacios y mayúsculas, convierte precio a NUMERIC y fechaRegistro a DATETIME sin zona; deriva DATE. Deduplica filas exactamente iguales según firma de15 campos de entrada, aun si llegaron en lotes distintos. Los rechazos conservan motivo y referencia a Bronze.</p><p>Se crean precios (partición mensual y clustering), rechazadas, control y precios_plana para el benchmark. Toda consulta a precios debe filtrar fecha. Esta versión reconstruye Silver desde todo Bronze: es simple y reproducible; no es incremental.</p><p>Las claves producto_id y tienda_id son derivadas de textos. No sonIDs oficiales y no resuelven por sí solas cambios de dirección, marcas S/M o nombres históricos.</p><p><strong>Comprobación:</strong> Consulta control: entrada = duplicadas_exactas + aceptadas + rechazadas. En esta muestra,4500 aceptadas y0 rechazadas; no fabricar rechazos para llenar una tabla.</p><p><strong>Si falla:</strong> Error por filtro requerido: añadir WHERE fecha BETWEEN ... sobre la columna de partición. No quitar la protección por comodidad. Conversión fallida: revisar rechazadas y el campo original enBronze.</p><p><a href="recursos/03_silver.sql" download>03_silver.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>-- Reconstrucción completa, reproducible: primera ruta docente, no actualización incremental.
--- Con el archivo entero, ensayar costo y duración antes de clase.
-CREATE TEMP FUNCTION limpia(s STRING) AS (NULLIF(REGEXP_REPLACE(UPPER(TRIM(s)), r&#x27;\s+&#x27;, &#x27; &#x27;), &#x27;&#x27;));
-CREATE TEMP TABLE unicas AS
-SELECT * FROM emergente_bronze.observaciones
-QUALIFY ROW_NUMBER() OVER(PARTITION BY fila_hash ORDER BY ingestado_en,lote_id)=1;
-CREATE TEMP TABLE tipadas AS
-SELECT fila_hash,lote_id,fuente_uri, producto AS producto_original,
- limpia(producto) AS producto, limpia(presentacion) AS presentacion,
- limpia(marca) AS marca, limpia(categoria) AS categoria, limpia(catalogo) AS catalogo,
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Laboratorio · all_data.csv en BigQuery</title><link rel="stylesheet" href="../compartido/curso.css"><link rel="stylesheet" href="guia.css"></head><body><article class="guide"><a href="index.html">← Presentación</a><h1>Laboratorio · all_data.csv en BigQuery</h1><p class="notice">Laboratorio ejecutivo · 80 minutos. Tres etapas y tres archivos SQL. En cada paso: abrir, copiar y ejecutar una consulta.</p><h2>Antes de empezar</h2><p>El docente prepara emergent_bronze, emergent_silver y emergent_gold en el proyecto de práctica. Así el grupo empieza mirando Bronze. Para cargar durante clase, sube all_data_muestra.csv como CSV en emergent_bronze.entrada, con las 15 columnas STRING de esquema-bronze.json. La muestra tiene 4500 filas.</p><p>En Google Cloud: BigQuery → SQL workspace → Nueva consulta. Copia el bloque numerado y pulsa Ejecutar. El docente prepara el proyecto, permisos y facturación. No hace falta configurar la cuenta durante el laboratorio.</p><p>El archivo original pesa más de 20 GB. El docente lo prepara previamente en GCS; el grupo usa la muestra.</p><h2>Archivos del laboratorio</h2><ul><li><a href="recursos/10_bronze.sql" download>10_bronze.sql ↓</a> · ver Bronze como llegó.</li><li><a href="recursos/20_silver.sql" download>20_silver.sql ↓</a> · limpiar y tipar.</li><li><a href="recursos/30_gold.sql" download>30_gold.sql ↓</a> · preparar la comparación.</li><li><a href="recursos/all_data_muestra.csv" download>all_data_muestra.csv ↓</a> · muestra de trabajo.</li><li><a href="recursos/perfil-muestra.json" download>perfil-muestra.json ↓</a> · cómo se eligió.</li></ul><section id="paso-1"><h2>Paso 1 · Bronze · ver lo que llegó · 20 min</h2><p>Abre BigQuery Studio → SQL workspace → Nueva consulta. Carga all_data_muestra.csv en emergente_bronze.entrada con el esquema incluido: 15 columnas STRING, formato CSV y una fila de cabecera. Ejecuta estas consultas. Compara el valor original TLALPAN con municipio_limpio. Bronze conserva la entrada; todavía no corrige sus valores.</p><p><strong>Comprueba:</strong> 4500 filas. municipio conserva espacios finales y fechaRegistro mantiene fecha y hora.</p><p><strong>Si no coincide:</strong> Revisa delimitador coma, UTF-8, cabecera y comillas. No uses autodetección: las columnas crudas se guardan como STRING.</p><p><a href="recursos/10_bronze.sql" download>10_bronze.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- Bronze muestra los valores como llegaron desde el CSV.
+-- Carga previa: all_data_muestra.csv en emergente_bronze.entrada.
+SELECT producto, presentacion, marca, precio, fechaRegistro, municipio
+FROM emergente_bronze.entrada
+WHERE producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND municipio LIKE &#x27;TLALPAN%&#x27;
+LIMIT 10;
+
+-- La limpieza se muestra como una consulta; la tabla original no cambia.
+SELECT municipio AS municipio_original, TRIM(municipio) AS municipio_limpio,
+ precio AS precio_original, SAFE_CAST(precio AS NUMERIC) AS precio_numerico
+FROM emergente_bronze.entrada
+WHERE producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND TRIM(municipio)=&#x27;TLALPAN&#x27;
+LIMIT 5;
+
+SELECT COUNT(*) AS filas_bronze FROM emergente_bronze.entrada;
+-- Esperado con la muestra: 4500.
+</code></pre></details></section><section id="paso-2"><h2>Paso 2 · Silver · limpiar y tipar · 30 min</h2><p>Abre otra consulta y ejecuta los bloques numerados en orden. El primero crea una tabla limpia. El segundo guarda aparte los registros que no se pueden usar. El tercero compara conteos. TRIM quita espacios y SAFE_CAST convierte precio y fecha sin modificar Bronze. En la muestra no esperamos rechazos; la regla queda preparada para cuando aparezcan.</p><p><strong>Comprueba:</strong> 4500 filas aceptadas; 0 rechazadas con estas reglas. TLALPAN ya no tiene espacios y precio es NUMERIC.</p><p><strong>Si no coincide:</strong> Si SAFE_CAST devuelve NULL, busca la fila rechazada y lee el motivo. Conserva la regla; revisa el valor original en Bronze.</p><p><a href="recursos/20_silver.sql" download>20_silver.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- 1. Crear Silver con nombres limpios y tipos útiles. Bronze queda intacta.
+CREATE OR REPLACE TABLE emergente_silver.precios_limpios AS
+SELECT TRIM(producto) AS producto, TRIM(presentacion) AS presentacion,
+ TRIM(marca) AS marca, TRIM(categoria) AS categoria,
  SAFE_CAST(precio AS NUMERIC) AS precio_mxn,
- SAFE_CAST(fechaRegistro AS DATETIME) AS fecha_hora_local,
- DATE(SAFE_CAST(fechaRegistro AS DATETIME)) AS fecha,
- limpia(cadenaComercial) AS cadena, limpia(nombreComercial) AS establecimiento,
- limpia(giro) AS giro, limpia(direccion) AS direccion,
- limpia(estado) AS estado, limpia(municipio) AS municipio,
- SAFE_CAST(latitud AS FLOAT64) AS latitud, SAFE_CAST(longitud AS FLOAT64) AS longitud
-FROM unicas;
-CREATE TEMP TABLE clasificadas AS
-SELECT *, CASE
- WHEN fecha IS NULL THEN &#x27;fecha_invalida&#x27;
- WHEN precio_mxn IS NULL OR precio_mxn&lt;=0 THEN &#x27;precio_invalido&#x27;
- WHEN producto IS NULL OR marca IS NULL OR presentacion IS NULL THEN &#x27;producto_incompleto&#x27;
- WHEN establecimiento IS NULL OR direccion IS NULL OR estado IS NULL OR municipio IS NULL THEN &#x27;tienda_incompleta&#x27;
- ELSE NULL END AS motivo
-FROM tipadas;
-CREATE OR REPLACE TABLE emergente_silver.rechazadas AS
-SELECT * FROM clasificadas WHERE motivo IS NOT NULL;
-CREATE OR REPLACE TABLE emergente_silver.precios
-PARTITION BY DATE_TRUNC(fecha, MONTH)
-CLUSTER BY estado,municipio,producto,marca
-OPTIONS(require_partition_filter=true) AS
-SELECT * EXCEPT(motivo),
- TO_HEX(SHA256(TO_JSON_STRING(STRUCT(producto,marca,presentacion)))) AS producto_id,
- TO_HEX(SHA256(TO_JSON_STRING(STRUCT(cadena,establecimiento,direccion,estado,municipio)))) AS tienda_id
-FROM clasificadas WHERE motivo IS NULL;
--- Línea base de rendimiento SOLO para taller: misma Silver, sin partición ni clustering.
--- Duplica almacenamiento temporalmente. Expira en7 días; retirar al terminar comparación.
-CREATE OR REPLACE TABLE emergente_silver.precios_plana AS
-SELECT * EXCEPT(motivo),
- TO_HEX(SHA256(TO_JSON_STRING(STRUCT(producto,marca,presentacion)))) AS producto_id,
- TO_HEX(SHA256(TO_JSON_STRING(STRUCT(cadena,establecimiento,direccion,estado,municipio)))) AS tienda_id
-FROM clasificadas WHERE motivo IS NULL;
-CREATE OR REPLACE TABLE emergente_silver.control AS
-SELECT (SELECT COUNT(*) FROM emergente_bronze.observaciones) AS entrada,
- (SELECT COUNT(*) FROM unicas) AS distintas,
- (SELECT COUNT(*) FROM emergente_bronze.observaciones)-(SELECT COUNT(*) FROM unicas) AS duplicadas_exactas,
- COUNTIF(motivo IS NULL) AS aceptadas,COUNTIF(motivo IS NOT NULL) AS rechazadas
-FROM clasificadas;
-ASSERT (SELECT entrada=duplicadas_exactas+aceptadas+rechazadas FROM emergente_silver.control)
- AS &#x27;La reconciliación no cierra&#x27;;
-SELECT * FROM emergente_silver.control;
--- Los IDs son claves derivadas, no códigos oficiales de producto/tienda.
--- No fusionar automáticamente DISTRITO FEDERAL/CDMX ni presentaciones diferentes.
--- La fecha es local sin zona informada; no asumir UTC.
-</code></pre></details></section><section id="paso-5"><h2>Paso 5 · Preparar Gold para comparar · 10 min</h2><p>Ejecuta 04 con inicio2011-01-01 y fin2015-12-31 para la muestra. Precio_tienda_dia conserva un grano deproducto/marca/presentación/tienda/día. Dos precios distintos en ese grupo dejan precio_comparable_mxn enNULL y un conflicto visible. Comparacion resume por producto/día/estado/municipio; conserva conteos de tiendas comparables y conflictivas.</p><p>Abre el resultado del filtro final y revisa ambas tablas. No tratar S/M como equivalencia comercial demostrada. No usarSUM(precio) como ventas ni inferir inventario.</p><p><strong>Comprobación:</strong> ParSPRITE de la muestra:2 tiendas comparables, menor 15.10, mayor 15.50, diferencia 0.40MXN. Comparación histórica entre tiendas observadas; no recomendación actual.</p><p><strong>Si falla:</strong> Sin filas: comprobar las fechas y etiquetas del filtro. Al usar el archivo completo, determinar su cobertura antes de cambiar inicio/fin; el rango de la muestra no certifica la cobertura global.</p><p><a href="recursos/04_gold.sql" download>04_gold.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>-- Elegir periodo compatible. Estos parámetros cubren la muestra, no certifican el archivo completo.
-DECLARE inicio DATE DEFAULT DATE &#x27;2011-01-01&#x27;;
-DECLARE fin DATE DEFAULT DATE &#x27;2015-12-31&#x27;;
-CREATE OR REPLACE TABLE emergente_gold.precio_tienda_dia AS
-SELECT fecha,estado,municipio,producto_id,producto,marca,presentacion,
- tienda_id,establecimiento,direccion,COUNT(*) AS observaciones,
- COUNT(DISTINCT precio_mxn) AS precios_distintos,
- MIN(precio_mxn) AS precio_min_mxn,MAX(precio_mxn) AS precio_max_mxn,
- IF(COUNT(DISTINCT precio_mxn)=1,MIN(precio_mxn),NULL) AS precio_comparable_mxn
-FROM emergente_silver.precios
-WHERE fecha BETWEEN inicio AND fin
-GROUP BY fecha,estado,municipio,producto_id,producto,marca,presentacion,tienda_id,establecimiento,direccion;
-CREATE OR REPLACE TABLE emergente_gold.comparacion AS
-SELECT fecha,estado,municipio,producto_id,producto,marca,presentacion,
- COUNT(*) AS tiendas_observadas,
- COUNTIF(precio_comparable_mxn IS NOT NULL) AS tiendas_comparables,
- COUNTIF(precio_comparable_mxn IS NULL) AS tiendas_con_conflicto,
- MIN(precio_comparable_mxn) AS menor_precio_mxn,
- MAX(precio_comparable_mxn) AS mayor_precio_mxn,
- MAX(precio_comparable_mxn)-MIN(precio_comparable_mxn) AS diferencia_mxn
-FROM emergente_gold.precio_tienda_dia
-GROUP BY fecha,estado,municipio,producto_id,producto,marca,presentacion;
-SELECT * FROM emergente_gold.comparacion
-WHERE fecha=DATE &#x27;2014-03-19&#x27; AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;
- AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;;
--- Muestra:2 tiendas comparables,15.10 y15.50 MXN; diferencia0.40 MXN.
--- Esto no mide ahorro actual ni disponibilidad. La muestra no cubre todas las tiendas.
--- S/M es marca no especificada: no basta para afirmar equivalencia comercial.
-</code></pre></details></section><section id="paso-6"><h2>Paso 6 · Medir optimización sin cambiar la pregunta · 10 min</h2><p>Abre 05 y ejecuta sus SELECT uno por uno. En ajustes de consulta, desmarca usar resultados almacenados en caché. Para consultas bajo modalidad bajo demanda, configura Maximum bytes billed/Bytes máximos facturados:1073741824(1GiB) como límite inicial de la muestra; si el validador lo supera, detén y revisa en vez de quitarlo. Este límite no cubre almacenamiento y no sustituye las alertas.</p><p>A usaSilver plana; B usaSilver particionada/clusterizada con el mismo filtro y columnas. Compara resultados antes de bytes. C leeGold ya materializada y solo es equivalente a MIN cuando no hay conflictos en esa selección.</p><p>Abre Información del trabajo / Job information: anota job_id, bytes procesados y facturados, cache_hit, duración y estimación previa en registro-optimizacion.csv. El clustering puede podar bloques al ejecutar; la estimación previa puede ser superior. En una muestra pequeña, mínimos de facturación pueden esconder diferencias. Los scripts con DDL y varias sentencias no siempre se estiman completos con dry run; ensayarlos aparte antes de usar20.7 GB.</p><p><strong>Comprobación:</strong> A yB devuelven el mismo par de precios. Registra medidas reales, incluso si el ahorro es0. No convertir bytes del CSV en una factura de consulta.</p><p><strong>Si falla:</strong> Si cache_hit estrue, el tiempo no sirve para atribuir la mejora a particiones. Si A/B difieren, corregir filtros o datos antes de comparar rendimiento. No ampliar el límite de facturación sin revisar el estimado.</p><p><a href="recursos/05_optimizar.sql" download>05_optimizar.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>-- Ejecutar CADA SELECT por separado. Misma pregunta y resultados; distinta organización física.
--- Desactivar caché en configuración de consulta para la comparación.
--- Anotar bytes procesados/facturados, cache_hit, tiempo y job_id reales. No inventar porcentajes.
--- A: tabla plana, columnas necesarias y filtros lógicos.
-SELECT tienda_id, establecimiento, MIN(precio_mxn) AS precio_mxn
-FROM emergente_silver.precios_plana
-WHERE fecha=DATE &#x27;2014-03-19&#x27; AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;
- AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
-GROUP BY tienda_id,establecimiento ORDER BY tienda_id;
--- B: misma consulta en tabla particionada por mes y agrupada por columnas de filtro.
-SELECT tienda_id, establecimiento, MIN(precio_mxn) AS precio_mxn
-FROM emergente_silver.precios
-WHERE fecha=DATE &#x27;2014-03-19&#x27; AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;
- AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
-GROUP BY tienda_id,establecimiento ORDER BY tienda_id;
--- C: consumir Gold pequeña ya calculada (requiere pagar/mantener su construcción).
-SELECT tienda_id,establecimiento,precio_comparable_mxn AS precio_mxn
-FROM emergente_gold.precio_tienda_dia
-WHERE fecha=DATE &#x27;2014-03-19&#x27; AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;
- AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
-ORDER BY tienda_id;
--- A/B usan MIN; compararlos con C solo cuando no hay conflicto de precios para esa selección.
--- LIMIT limita filas devueltas; no es un límite de bytes leídos.
--- Con4500 filas, mínimos de facturación y bloques pequeños pueden ocultar la mejora.
-</code></pre></details></section><section id="paso-7"><h2>Paso 7 · Validar y cerrar · 10 min</h2><p>Ejecuta 06. Guarda los controles y la comparación simétrica de A/B. Descarga el resultado y tu registro. Después de guardar el benchmark,07_cierre.sql elimina exclusivamente precios_plana.</p><p>Revisa expiraciones con el docente. No borres Bronze o el proyecto compartido: se necesitan para la tarea. Cerrar el navegador no elimina tablas ni detiene servicios.</p><p><strong>Comprobación:</strong> La diferencia simétrica A/B devuelve 0 filas. Entrega evidencia del trabajo y explica qué queda pendiente de ejecutar.</p><p><strong>Si falla:</strong> Si no tuviste acceso a GCP, entrega la revisión de consultas y el perfil local etiquetados como tal; no presentes job_ids o métricas inventados.</p><p><a href="recursos/06_validar.sql" download>06_validar.sql ↓</a></p><details><summary>Consulta completa</summary><pre><code>SELECT * FROM emergente_silver.control;
-SELECT COUNT(*) AS conflictos FROM emergente_gold.precio_tienda_dia WHERE precios_distintos&gt;1;
-SELECT COUNT(*) AS grupos_con_menos_de_dos_tiendas FROM emergente_gold.comparacion
-WHERE tiendas_comparables&lt;2;
--- Comprobar igualdad exacta A/B (debe devolver0 filas).
-WITH a AS (
- SELECT tienda_id,establecimiento,MIN(precio_mxn) AS precio_mxn FROM emergente_silver.precios_plana
- WHERE fecha=DATE &#x27;2014-03-19&#x27; AND municipio=&#x27;TLALPAN&#x27; AND estado=&#x27;DISTRITO FEDERAL&#x27;
- AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
- GROUP BY tienda_id,establecimiento
-), b AS (
- SELECT tienda_id,establecimiento,MIN(precio_mxn) AS precio_mxn FROM emergente_silver.precios
- WHERE fecha=DATE &#x27;2014-03-19&#x27; AND municipio=&#x27;TLALPAN&#x27; AND estado=&#x27;DISTRITO FEDERAL&#x27;
- AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27; AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
- GROUP BY tienda_id,establecimiento
-)
-SELECT &#x27;solo_a&#x27; AS diferencia,* FROM (SELECT * FROM a EXCEPT DISTINCT SELECT * FROM b)
-UNION ALL
-SELECT &#x27;solo_b&#x27;,* FROM (SELECT * FROM b EXCEPT DISTINCT SELECT * FROM a);
-</code></pre></details></section><h2>Ruta docente para el archivo completo</h2><p>Conservar el original en un bucket autorizado, con nombre deobjeto, tamaño, generación/checksum y manifiesto. Transferir desde una estación o entorno con espacio suficiente; no usar el disco limitado deCloud Shell. Ejecutar cargar-gcs.sh con una URIgs:// concreta ya preparada. Se escribe solo emergente_bronze.entrada. Antes de01, cambiar lote y fuente a los del archivo completo. Perfilar02 y verificar fechas antes de reconstruir Silver/Gold. Ejecutar una vez, guardar controles y usar tablas preparadas en clase. El diseño no presupone que la muestra valide todas las filas del archivo.</p><p>La duplicación plana solo sirve para el benchmark y puede costar almacenamiento. Para producción decidir retención, actualización por lotes nuevos y recálculo de particiones afectadas; conservar controles de llegadas tardías y conflictos. Una tabla Gold pequeña no sale gratis: hay que construirla y mantenerla.</p><h2>Fuentes</h2><p>Consulta2026-11-09: <a href="https://docs.cloud.google.com/bigquery/docs/running-queries">ejecutar consultas</a>, <a href="https://docs.cloud.google.com/bigquery/docs/best-practices-costs">control de costos</a>, <a href="https://docs.cloud.google.com/bigquery/docs/partitioned-tables">particiones</a> y <a href="https://cloud.google.com/discover/what-is-a-data-lakehouse">lakehouse</a>.</p><p><a href="tarea.html">Tarea de actualización →</a></p></article></body></html>
+ SAFE_CAST(fechaRegistro AS DATE) AS fecha,
+ TRIM(cadenaComercial) AS cadena_comercial,
+ TRIM(nombreComercial) AS establecimiento,
+ TRIM(estado) AS estado, TRIM(municipio) AS municipio,
+ SAFE_CAST(latitud AS FLOAT64) AS latitud,
+ SAFE_CAST(longitud AS FLOAT64) AS longitud
+FROM emergente_bronze.entrada;
+
+-- 2. Separar los registros que requieren revisión.
+CREATE OR REPLACE TABLE emergente_silver.precios_para_revisar AS
+SELECT * FROM emergente_silver.precios_limpios
+WHERE producto IS NULL OR marca IS NULL OR presentacion IS NULL
+ OR precio_mxn IS NULL OR precio_mxn&lt;=0 OR fecha IS NULL;
+
+-- 3. Revisar el conteo. Con la muestra: 4500 Silver y 0 para revisar.
+SELECT (SELECT COUNT(*) FROM emergente_bronze.entrada) AS bronze,
+ (SELECT COUNT(*) FROM emergente_silver.precios_limpios) AS silver,
+ (SELECT COUNT(*) FROM emergente_silver.precios_para_revisar) AS revisar;
+</code></pre></details></section><section id="paso-3"><h2>Paso 3 · Gold · preparar una comparación · 30 min</h2><p>Abre otra consulta y ejecuta los bloques numerados. Gold agrupa el precio por producto, marca, presentación, fecha y tienda. Después muestra el caso Sprite del 19 de marzo de 2014 en Tlalpan. Revisa cuántas tiendas aparecen: la comparación cubre las observaciones de esta muestra.</p><p><strong>Comprueba:</strong> Dos establecimientos observados: 15.10 y 15.50 MXN. Diferencia: 0.40 MXN. Evidencia histórica de la muestra.</p><p><strong>Si no coincide:</strong> Si no aparecen dos filas, revisa fecha, producto, marca, presentación y municipio.</p><p><a href="recursos/30_gold.sql" download>30_gold.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- Gold: precio por tienda para un producto, presentación y fecha.
+CREATE OR REPLACE TABLE emergente_gold.precio_sprite_tlalpan AS
+SELECT fecha, estado, municipio, producto, marca, presentacion,
+ cadena_comercial, establecimiento, MIN(precio_mxn) AS precio_mxn,
+ COUNT(*) AS observaciones
+FROM emergente_silver.precios_limpios
+WHERE fecha=DATE &#x27;2014-03-19&#x27; AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27;
+ AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
+ AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;
+GROUP BY fecha, estado, municipio, producto, marca, presentacion,
+ cadena_comercial, establecimiento;
+
+-- Muestra: dos tiendas observadas; 15.10 y 15.50 MXN.
+SELECT establecimiento, precio_mxn, observaciones
+FROM emergente_gold.precio_sprite_tlalpan ORDER BY precio_mxn;
+-- Evidencia histórica. No prueba existencia ni precio actual.
+</code></pre></details></section><h2>Ruta docente para el archivo completo</h2><p>Conservar el original en un bucket autorizado, con nombre deobjeto, tamaño, generación/checksum y manifiesto. Transferir desde una estación o entorno con espacio suficiente; no usar el disco limitado deCloud Shell. Ejecutar cargar-gcs.sh con una URIgs:// concreta ya preparada. Se escribe solo emergente_bronze.entrada. Antes de01, cambiar lote y fuente a los del archivo completo. Perfilar02 y verificar fechas antes de reconstruir Silver/Gold. Ejecutar una vez, guardar controles y usar tablas preparadas en clase. El diseño no presupone que la muestra valide todas las filas del archivo.</p><p>Para optimizar: selecciona las columnas necesarias, filtra por fecha y revisa el estimado de bytes antes de ejecutar. LIMIT limita las filas de salida; no necesariamente los datos leídos. Con el archivo completo, el docente ensaya y comparte los resultados.</p><h2>Fuentes</h2><p>Consulta2026-11-09: <a href="https://docs.cloud.google.com/bigquery/docs/running-queries">ejecutar consultas</a>, <a href="https://docs.cloud.google.com/bigquery/docs/best-practices-costs">control de costos</a>, <a href="https://docs.cloud.google.com/bigquery/docs/partitioned-tables">particiones</a> y <a href="https://cloud.google.com/discover/what-is-a-data-lakehouse">lakehouse</a>.</p><p><a href="tarea.html">Tarea de actualización →</a></p></article></body></html>

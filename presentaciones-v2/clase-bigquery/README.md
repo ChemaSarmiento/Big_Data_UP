@@ -6,11 +6,15 @@ Secuencia: BigQuery (30 min), propuestas de arquitectura (20), Medallion (20), p
 
 ## Materiales
 
-- `index.html`: presentación interactiva; clic/flechas, índice, notas, laboratorio y PDF desde imprimir.
-- `laboratorio.html`: pasos con ubicación en consola, consultas completas, resultados, recuperación y cierre.
-- `tarea.html`: nuevo corte oficial, contrato de esquema, lotes, repetición, reconciliación y propuesta incremental.
-- `recursos/`: CSV de4500 filas, manifiesto de muestreo, esquema, ocho archivos GoogleSQL, carga con bq y registro de rendimiento.
-- `guion.py`: fuente editorial con tiempos y notas. `scripts/build-clase-bigquery.py` reutiliza el shell de S1 después del build editorial.
+- `index.html`: presentación interactiva.
+- `laboratorio.html`: guía paso a paso con solo tres consultas: `10_bronze.sql`, `20_silver.sql`, `30_gold.sql`.
+- `tarea.html`: actualización de la fuente, revisión de esquema y propuesta incremental.
+- `recursos/`: muestra de4500 filas, esquema y consultas breves.
+- `guion.py`: fuente de las diapositivas y notas docentes.
+
+El laboratorio se inicia con el proyecto preparado por el docente. Carga la muestra en `emergente_bronze.entrada`, de15 columnas STRING. El alumnado ve primero los datos crudos, ejecuta Silver en tres bloques y consulta Gold con una pregunta concreta. No tiene que configurar datasets ni manejar un pipeline complejo durante clase.
+
+**Optimización para ejecutivos:** seleccionar columnas necesarias, filtrar por fecha y revisar el estimado de bytes. `LIMIT` limita filas de salida; no necesariamente los bytes leídos. El docente compara rendimiento con el archivo completo antes de la clase y presenta medidas observadas; los alumnos no duplican tablas para hacer un benchmark.
 
 ## Qué se comprobó
 
@@ -20,7 +24,7 @@ Se observaron4500 filas distintas,3000 municipios con espacios finales,0 rechazo
 
 Controles locales: `python3 presentaciones-v2/scripts/verify-all-data-sample.py`. Sintaxis analizada con sqlglot en dialectoBigQuery; esto no sustituye el motor. Navegador: `node presentaciones-v2/scripts/verify-clase-bigquery.mjs`; proyector/móvil, controles interactivos, enlaces y PDF. Artefactos `/tmp/bigdata-clase-bigquery/`.
 
-**Pendiente:** ejecutar SQL/carga enBigQuery, medir jobs/bytes reales y perfilar el archivo completo. No se crearon recursos cloud ni se publicó esta clase durante su producción. Los scripts03/04 reconstruyen capas; no implementan actualización incremental. La tabla plana es un duplicado temporal exclusivo delbenchmark.
+**Pendiente:** ejecutar SQL/carga enBigQuery, medir jobs/bytes reales y perfilar el archivo completo. No se crearon recursos cloud ni se publicó esta clase durante su producción. Los scripts03/04 reconstruyen capas; no implementan actualización incremental. 
 
 ## Regenerar
 
