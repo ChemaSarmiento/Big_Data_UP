@@ -73,3 +73,10 @@
 - El rediseño se empaqueta en `/refactor_especialidad/` por `scripts/package-refactor.py`, después del build existente. Ver `docs/rediseno-especialidad/publicacion.md`.
 - El workflow de plan3 publica Hosting al hacer push. El workflow antiguo en plan2 aún podría sustituir el sitio si se dispara desde esa rama; usar plan3 para esta publicación.
 - Los cambios locales previos del sitio antiguo quedan fuera del commit de esta sección. No incorporarlos automáticamente al próximo push.
+
+## Clase emergente independiente
+
+- `presentaciones-v2/clase-bigquery/`: ejecutivos,180 min; BigQuery → arquitecturas y Medallion → laboratorio all_data.csv → tarea de actualización. No altera las ocho sesiones.
+- Fuente: `clase-bigquery/guion.py`; generador `scripts/build-clase-bigquery.py` después de build-editorial. Guía y tarea se generan allí; SQL/CSV son recursos fuente separados. Workflow y package-refactor incluyen la carpeta para el siguiente push.
+- Muestra REAL de4500 filas extraída de tres ventanas deall_data, con manifiesto/hash. No mezclarla con el fixture ficticio de16 filas del curso; son paquetes distintos. No extrapolar cobertura ni calidad al archivo entero.
+- BigQuery no ejecutado aún: controles locales de muestra, parserGoogleSQL y navegador no sustituyen ensayo cloud. La carga completa requiereGCS preparado por el docente; no bajar20.7GB aCloud Shell.

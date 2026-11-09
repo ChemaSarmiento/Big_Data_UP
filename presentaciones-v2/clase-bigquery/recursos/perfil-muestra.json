@@ -1,0 +1,57 @@
+{
+  "source_file_id": "1dLxKFxawXTTaqCDr9Y9YpYdWTpOhol42",
+  "source_bytes": 20663702126,
+  "inspected_at": "2026-11-09",
+  "method": "Tres ventanas contiguas de2MiB; primeras1500 filas completas de15 campos por ventana. No aleatoria ni representativa. Se omiten líneas parciales de borde. Valores sin normalizar.",
+  "columns": [
+    "producto",
+    "presentacion",
+    "marca",
+    "categoria",
+    "catalogo",
+    "precio",
+    "fechaRegistro",
+    "cadenaComercial",
+    "giro",
+    "nombreComercial",
+    "direccion",
+    "estado",
+    "municipio",
+    "latitud",
+    "longitud"
+  ],
+  "windows": [
+    {
+      "window": "inicio",
+      "byte_start": 0,
+      "bytes_read": 2097152,
+      "sha256_window": "ae00eba7594925c40f09e43c65bd3669eb1ddb6328abb15b2714d8a830578f76",
+      "complete_15_field_records": 6382,
+      "sample_rows": 1500,
+      "sample_min_date": "2011-01-10 00:00:00.000",
+      "sample_max_date": "2011-05-18 00:00:00.000"
+    },
+    {
+      "window": "medio",
+      "byte_start": 10331851063,
+      "bytes_read": 2097152,
+      "sha256_window": "f47aae83e8508ca2e7c24e468bd9d97f0144b1821d9fac65f5f1ee82e24c0d9b",
+      "complete_15_field_records": 6369,
+      "sample_rows": 1500,
+      "sample_min_date": "2014-03-19 00:00:00.000",
+      "sample_max_date": "2014-03-19 00:00:00.000"
+    },
+    {
+      "window": "final",
+      "byte_start": 20661604974,
+      "bytes_read": 2097152,
+      "sha256_window": "f0a86b4d53a3fd3cb3dc33e4ddb6695f03054b459625854f87468ffbb99412cd",
+      "complete_15_field_records": 6499,
+      "sample_rows": 1500,
+      "sample_min_date": "2015-12-09 09:43:03.000",
+      "sample_max_date": "2015-12-09 16:50:27.000"
+    }
+  ],
+  "sample_rows": 4500,
+  "sample_sha256": "b91f5a0643d4dd5d07f440c2c88863f857bb9be6633da215d6d69d42f7ab287c"
+}

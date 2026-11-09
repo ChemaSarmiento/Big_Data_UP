@@ -141,3 +141,17 @@ Consultados GoogleSQL ROW_NUMBER y BigQuery materialized-views-create (enlaces e
 - [Google Cloud, prompts en Studio](https://docs.cloud.google.com/gemini-enterprise-agent-platform/agent-studio/quickstart): referencia vigente de interfaz, modelo y envío; la guía conserva el nombre Vertex AI Studio del syllabus. No se fija un modelo ni precio sin verificar la cuenta. Ruta documentada Studio > New > Chat > New chat. Revisar Settings / Detect build intent para evitar evaluaciones adicionales de construcción que no requiere el curso.
 - [Google Cloud, RAG](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview): patrón de recuperación y generación. El curso usa búsqueda local por términos y transferencia humana; no despliega RAG Engine ni infraestructura vectorial.
 - [Casos de Google Cloud: Carrefour Marketing Studio](https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders): uso reportado de Vertex AI para campañas. Se omiten cifras promocionales; la revisión del borrador es aplicación pedagógica propia, no un resultado atribuido al caso.
+
+### Fuente para clase independiente Medallion · 2026-11-09
+
+- [Catálogo oficial PROFECO](https://datos.profeco.gob.mx/): catálogo indexado incluye Quién es Quién en los Precios y archivos2026. El lector web no pudo extraer el HTML del catálogo; falta comprobar enlaces de descarga, esquema y periodos reales antes de preparar el laboratorio. La ruta antigua datos_abiertos/index.php respondió404 en esta consulta.
+- [Datos abiertos QQP2025](https://www.datos.gob.mx/es/dataset/programa_quien_es_quien_precios_2025): fuente oficial alternativa para un corte reproducible. No se han descargado sus archivos.
+- Inventario local all_data.csv:19706.44MB; última modificación2023-05-27. Estas propiedades no acreditan procedencia, cobertura temporal ni compatibilidad con los archivos actuales.
+
+### Clase emergente BigQuery / all_data · 2026-11-09
+
+- Archivo público del usuario: DriveID1dLxKFxawXTTaqCDr9Y9YpYdWTpOhol42. Lectura acotada HTTPRange: tamaño20663702126 bytes, tres ventanas de2097152 bytes cada una. Evidencia en `presentaciones-v2/clase-bigquery/recursos/perfil-muestra.json`; CSV de4500 registros con sus valores originales. No se descargó ni perfiló el archivo entero. Fecha deDrive no equivale a fecha deobservaciones.
+- [Ejecutar consultas BigQuery](https://docs.cloud.google.com/bigquery/docs/running-queries): consola, SQL y trabajos. Guía usa esquema explícito y recursos en proyecto autorizado.
+- [Estimar y controlar costos](https://docs.cloud.google.com/bigquery/docs/best-practices-costs): bytes estimados, máximo facturado y límites del enfoque. No se prometen precios, porcentajes deahorro ni costo0. El límite sugerido para la muestra no cubre almacenamiento.
+- [Tablas particionadas](https://docs.cloud.google.com/bigquery/docs/partitioned-tables) y [optimización de cómputo](https://docs.cloud.google.com/bigquery/docs/best-practices-performance-compute): poda porfecha, selección decolumnas y consulta. Benchmark local prepara SQL equivalente, sin métricas cloud inventadas.
+- [Lakehouse](https://cloud.google.com/discover/what-is-a-data-lakehouse): discusión de formatos abiertos, catálogo y capacidades dewarehouse/lake. La clase distingue warehouse, lake+warehouse y lakehouse; Medallion describe responsabilidades de calidad y no compite como arquitectura física.

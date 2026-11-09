@@ -37,6 +37,7 @@ jobs:
           python3 presentaciones-v2/scripts/build.py
           python3 presentaciones-v2/scripts/build-editorial.py
           python3 presentaciones-v2/scripts/catalogo.py
+          python3 presentaciones-v2/scripts/build-clase-bigquery.py
           python3 scripts/package-refactor.py
 
       - uses: FirebaseExtended/action-hosting-deploy@v0

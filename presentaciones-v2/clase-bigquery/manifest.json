@@ -1,0 +1,8 @@
+{
+  "title": "BigQuery, arquitectura y Medallion",
+  "minutes": 180,
+  "slides": 26,
+  "sample_rows": 4500,
+  "source": "guion.py",
+  "cloud_tested": false
+}

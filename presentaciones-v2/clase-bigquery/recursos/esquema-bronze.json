@@ -1,0 +1,77 @@
+[
+  {
+    "name": "producto",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "presentacion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "marca",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "categoria",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "catalogo",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "precio",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "fechaRegistro",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "cadenaComercial",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "giro",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "nombreComercial",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "direccion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "estado",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "municipio",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "latitud",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "longitud",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
