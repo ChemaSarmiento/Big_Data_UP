@@ -9,10 +9,10 @@ Secuencia: BigQuery (30 min), propuestas de arquitectura (20), Medallion (20), p
 - `index.html`: presentación interactiva.
 - `laboratorio.html`: guía paso a paso con solo tres consultas: `10_bronze.sql`, `20_silver.sql`, `30_gold.sql`.
 - `tarea.html`: actualización de la fuente, revisión de esquema y propuesta incremental.
-- `recursos/`: muestra de4500 filas, esquema y consultas breves.
+- `recursos/`: 4500 filas observadas, esquema y consultas breves.
 - `guion.py`: fuente de las diapositivas y notas docentes.
 
-El laboratorio se inicia con el proyecto preparado por el docente. Carga la muestra en `emergente_bronze.entrada`, de15 columnas STRING. El alumnado ve primero los datos crudos, ejecuta Silver en tres bloques y consulta Gold con una pregunta concreta. No tiene que configurar datasets ni manejar un pipeline complejo durante clase.
+El laboratorio se inicia con el proyecto preparado por el docente. Carga la muestra en `emergente_bronze.entrada`, de15 columnas STRING. El alumnado ve primero los datos crudos, ejecuta Silver en cuatro bloques (incluye una revisión de filas idénticas repetidas) y consulta Gold con una pregunta concreta, con una columna que distingue un precio único de uno en conflicto. No tiene que configurar datasets ni manejar un pipeline complejo durante clase.
 
 **Optimización para ejecutivos:** seleccionar columnas necesarias, filtrar por fecha y revisar el estimado de bytes. `LIMIT` limita filas de salida; no necesariamente los bytes leídos. El docente compara rendimiento con el archivo completo antes de la clase y presenta medidas observadas; los alumnos no duplican tablas para hacer un benchmark.
 

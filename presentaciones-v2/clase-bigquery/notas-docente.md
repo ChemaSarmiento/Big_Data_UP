@@ -46,13 +46,13 @@ Fuente: guion.py. Los conteos son de la muestra; ejecución GoogleSQL en GCP pen
 
 55–59 min. Mantener 15 columnas como STRING en entrada evita inferencias incorrectas de tipos. Bronze conserva los valores y duplicados, con un hash técnico de fila y un lote. La copia CSV original conserva bytes y cabecera; la tabla no es una copia binaria del archivo.
 
-## 12. Silver hace explícitas las reglas de confianza.
+## 12. Silver hace explícitas las reglas de confianza — y lo que TRIM no arregla.
 
-59–63 min. La muestra contiene 3000 municipios con espacios finales y cero precios no positivos. No inventar errores para prometer rechazos. SAFE_CAST devuelve NULL ante un dato inválido; definir reglas de negocio después del parseo. Estado histórico se conserva: no convertir Distrito Federal a CDMX sin tabla de equivalencias aprobada.
+59–63 min. En lo observado hay 3000 municipios con espacios finales y cero precios no positivos. No inventar errores para prometer rechazos. SAFE_CAST devuelve NULL ante un dato inválido; definir reglas de negocio después del parseo. Estado histórico se conserva: no convertir Distrito Federal a CDMX sin tabla de equivalencias aprobada. TRIM solo quita espacios al borde: "TLAL PAN" con espacio interno seguiría siendo otro grupo. Cero rechazos en lo observado no es garantía para el archivo completo — puede ser que esta porción simplemente no contuviera el caso que sí falla.
 
-## 13. Gold conserva el grano de la comparación.
+## 13. Gold conserva el grano de la comparación — y lo que MIN() esconde.
 
-63–67 min. No sumar precios como ventas. Gold produce precio por producto/tienda/día y luego comparación por producto/día/municipio. Si hay más de un precio en el grupo, se marca conflicto y se excluye ese valor del ranking. S/M significa marca no especificada: no demuestra equivalencia entre marcas desconocidas.
+63–67 min. No sumar precios como ventas. Gold produce precio por producto/tienda/día y luego comparación por producto/día/municipio. MIN(precio_mxn) por sí solo no excluye nada: solo devuelve el menor valor del grupo. Por eso agregamos estado_precio (conflicto si hay más de un precio distinto) — sin esa columna explícita, un conflicto pasa inadvertido. Dos tiendas con el mismo nombre comercial en el mismo municipio se fusionarían en una sola fila si direccion no fuera parte del grano. S/M significa marca no especificada: no demuestra equivalencia entre marcas desconocidas.
 
 ## 14. Cada capa necesita un dueño y una regla de acceso.
 
@@ -62,46 +62,30 @@ Fuente: guion.py. Los conteos son de la muestra; ejecución GoogleSQL en GCP pen
 
 70–80 min. Confirmar acceso al proyecto docente, facturación y permisos antes de continuar. No crear cuentas o recursos de pago a ciegas durante clase. Si falta acceso, seguir el perfil y consultas como revisión, dejando ejecución pendiente.
 
-## 16. Carga la muestra con un esquema explícito.
+## 16. Bronze · observa lo que llegó, sin corregir nada.
 
-80–95 min. Paso1: abrir BigQuery Studio, ejecutar 00 y cargar CSV local en emergente_bronze.entrada. Cabecera1, comillas dobles, UTF8, sin autodetección. Esquema descargable. Seguir guía si el asistente cambia de nombre.
+80–100 min. Paso1: ejecutar 10_bronze.sql completo. Observa el valor crudo antes de cualquier limpieza — TLALPAN con espacios, precio todavía como texto. Bronze no corrige nada; conserva exactamente lo que llegó, incluidos sus problemas.
 
-## 17. Registra un lote que puedas reconocer mañana.
+## 17. Silver · limpia, tipa y revisa qué se podría perder.
 
-95–105 min. Paso2: ejecutar 01 completo. La protección es serial por ID de lote; no es un sistema transaccional multiusuario. Mantener proyecto aislado por equipo. Para el archivo completo cambiar ID y fuente, no el contrato de campos.
+100–130 min. Paso2: ejecutar 20_silver.sql completo (7 bloques). TRIM solo quita espacios al borde — no corrige espacios internos ni mayúsculas distintas. SAFE_CAST vuelve NULL un valor inválido, no lo corrige. Cero rechazos en lo observado no garantiza el archivo completo. Los últimos tres bloques son la parte nueva: desglosan por qué se rechaza cada fila, confirman el periodo real (2011-2015) y comparan precios por categoría — sin categoría, un límite fijo marcaría televisores reales como sospechosos.
 
-## 18. Perfila antes de aceptar una regla.
+## 18. Gold · agrupa sin perder de vista el conflicto.
 
-105–115 min. Paso3:02_perfil.sql. Revisar mínimo/máximo de la muestra, duplicados exactos y conversiones. La falta de errores en una muestra no garantiza calidad global. Identificar el par deREFRESCO/SPRITE con el mismo periodo y presentación.
+130–160 min. Paso3: ejecutar 30_gold.sql completo (4 bloques). direccion entra al grano para no fusionar tiendas distintas con el mismo nombre comercial. estado_precio marca conflicto solo si hay más de un precio distinto en el mismo grupo — en esta observación no ocurre, pero la columna queda lista para cuando sí ocurra. Los bloques 3 y4 son la parte nueva: escanean conflicto en toda la muestra (no solo el caso armado) y comprueban que Gold no perdió ni duplicó filas de Silver.
 
-## 19. Tipa, clasifica y conserva los rechazos.
-
-115–130 min. Paso4: ejecutar 03 completo. Reconstruye Silver desde Bronze y crea copia plana parabenchmark. Filtra fechas al consultar la particionada. Los hashes derivados no son IDs oficiales ni resuelven cambios de dirección. No confundir limpieza textual con identidad comercial.
-
-## 20. Publica una comparación con sus condiciones.
-
-130–140 min. Paso5:04_gold.sql. Abrir detalle y agregado. Explicar que no existe cobertura de todas las tiendas ni inventario. Se construyeGold pequeña para consultas repetidas, pagando la transformación y el almacenamiento correspondientes.
-
-## 21. Optimiza la misma pregunta, no una respuesta distinta.
-
-140–150 min. Paso6: ejecutar cada SELECT de 05 por separado, caché desactivada. Registrarjob ID, bytes estimados/procesados/facturados y tiempo. A/B comparan organización física. C solo es equivalente si no hay conflictos. La muestra puede quedar bajo mínimos de facturación; no prometer porcentajes.
-
-## 22. Conserva la prueba y retira la copia temporal.
-
-150–160 min. Paso7: entregar controles y registro-optimizacion.csv. Revisar expiraciones. Cerrar pestaña no elimina almacenamiento; no borrar datasets ajenos niBronze por comodidad. El ensayo del archivo completo queda a cargo del docente antes de impartir.
-
-## 23. La tarea comienza cuando llega otro archivo.
+## 19. La tarea comienza cuando llega otro archivo.
 
 160–165 min. Descargar un corte oficial QQP acotado. No reemplazar all_data ni mezclar todo el histórico antes de revisar esquema. Es una tarea posterior, no descarga masiva en la última parte de clase. La página oficial y checklist están en tarea.html.
 
-## 24. Un nombre de columna nuevo exige una decisión explícita.
+## 20. Un nombre de columna nuevo exige una decisión explícita.
 
 165–170 min. Ejemplos de mapeo condicionales, no esquema ya verificado de2026. Abrir cabecera real del nuevo archivo y registrar tipo, unidad, codificación y fecha. No fabricar marca o presentación para que el flujo pase. Si no es compatible, detener ese lote y documentar.
 
-## 25. Reprocesar el mismo lote no debe duplicar Silver.
+## 21. Reprocesar el mismo lote no debe duplicar Silver.
 
 170–175 min. Ruta inicial: reconstrucción completaSilver/Gold; simple y comprobable, pero vuelve a leerBronze. La optimización futura es procesar lotes nuevos y recalcular particiones afectadas, con revisiones y llegadas tardías. Nunca llamar incremental a nuestro03. La tarea exige prueba de repetición y conflictos.
 
-## 26. Entrega una actualización que otra persona pueda auditar.
+## 22. Entrega una actualización que otra persona pueda auditar.
 
 175–180 min. Cada equipo justifica arquitectura, forma de actualización y una decisión que sí permite la fuente. Pedir una limitación por escrito. Entregar original,SQL y evidencia; no solo captura del precio menor.

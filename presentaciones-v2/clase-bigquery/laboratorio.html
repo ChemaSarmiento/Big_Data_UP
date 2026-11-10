@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Laboratorio · all_data.csv en BigQuery</title><link rel="stylesheet" href="../compartido/curso.css"><link rel="stylesheet" href="guia.css"></head><body><article class="guide"><a href="index.html">← Presentación</a><h1>Laboratorio · all_data.csv en BigQuery</h1><p class="notice">Laboratorio ejecutivo · 80 minutos. Tres etapas y tres archivos SQL. En cada paso: abrir, copiar y ejecutar una consulta.</p><h2>Antes de empezar</h2><p>El docente prepara emergent_bronze, emergent_silver y emergent_gold en el proyecto de práctica. Así el grupo empieza mirando Bronze. Para cargar durante clase, sube all_data_muestra.csv como CSV en emergent_bronze.entrada, con las 15 columnas STRING de esquema-bronze.json. La muestra tiene 4500 filas.</p><p>En Google Cloud: BigQuery → SQL workspace → Nueva consulta. Copia el bloque numerado y pulsa Ejecutar. El docente prepara el proyecto, permisos y facturación. No hace falta configurar la cuenta durante el laboratorio.</p><p>El archivo original pesa más de 20 GB. El docente lo prepara previamente en GCS; el grupo usa la muestra.</p><h2>Archivos del laboratorio</h2><ul><li><a href="recursos/10_bronze.sql" download>10_bronze.sql ↓</a> · ver Bronze como llegó.</li><li><a href="recursos/20_silver.sql" download>20_silver.sql ↓</a> · limpiar y tipar.</li><li><a href="recursos/30_gold.sql" download>30_gold.sql ↓</a> · preparar la comparación.</li><li><a href="recursos/all_data_muestra.csv" download>all_data_muestra.csv ↓</a> · muestra de trabajo.</li><li><a href="recursos/perfil-muestra.json" download>perfil-muestra.json ↓</a> · cómo se eligió.</li></ul><section id="paso-1"><h2>Paso 1 · Bronze · ver lo que llegó · 20 min</h2><p>Abre BigQuery Studio → SQL workspace → Nueva consulta. Carga all_data_muestra.csv en emergente_bronze.entrada con el esquema incluido: 15 columnas STRING, formato CSV y una fila de cabecera. Ejecuta estas consultas. Compara el valor original TLALPAN con municipio_limpio. Bronze conserva la entrada; todavía no corrige sus valores.</p><p><strong>Comprueba:</strong> 4500 filas. municipio conserva espacios finales y fechaRegistro mantiene fecha y hora.</p><p><strong>Si no coincide:</strong> Revisa delimitador coma, UTF-8, cabecera y comillas. No uses autodetección: las columnas crudas se guardan como STRING.</p><p><a href="recursos/10_bronze.sql" download>10_bronze.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- Bronze muestra los valores como llegaron desde el CSV.
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Laboratorio · all_data.csv en BigQuery</title><link rel="stylesheet" href="../compartido/curso.css"><link rel="stylesheet" href="guia.css"></head><body><article class="guide"><a href="index.html">← Presentación</a><h1>Laboratorio · all_data.csv en BigQuery</h1><p class="notice">Laboratorio ejecutivo · 80 minutos. Tres etapas y tres archivos SQL. En cada paso: abrir, copiar y ejecutar una consulta.</p><h2>Antes de empezar</h2><p>El docente prepara emergent_bronze, emergent_silver y emergent_gold en el proyecto de práctica. Así el grupo empieza mirando Bronze. Para cargar durante clase, sube all_data_muestra.csv como CSV en emergent_bronze.entrada, con las 15 columnas STRING de esquema-bronze.json. Se observaron 4500 filas en esta muestra de trabajo.</p><p>En Google Cloud: BigQuery → SQL workspace → Nueva consulta. Copia el bloque numerado y pulsa Ejecutar. El docente prepara el proyecto, permisos y facturación. No hace falta configurar la cuenta durante el laboratorio.</p><p>El archivo original pesa más de 20 GB. El docente lo prepara previamente en GCS; el grupo usa esta observación.</p><h2>Archivos del laboratorio</h2><ul><li><a href="recursos/10_bronze.sql" download>10_bronze.sql ↓</a> · ver Bronze como llegó.</li><li><a href="recursos/20_silver.sql" download>20_silver.sql ↓</a> · limpiar, tipar y revisar qué se pierde.</li><li><a href="recursos/30_gold.sql" download>30_gold.sql ↓</a> · preparar la comparación sin perder el conflicto de vista.</li><li><a href="recursos/all_data_muestra.csv" download>all_data_muestra.csv ↓</a> · datos observados para el laboratorio.</li><li><a href="recursos/perfil-muestra.json" download>perfil-muestra.json ↓</a> · cómo se eligió.</li></ul><section id="paso-1"><h2>Paso 1 · Bronze · ver lo que llegó · 20 min</h2><p>Abre BigQuery Studio → SQL workspace → Nueva consulta. Carga all_data_muestra.csv en emergente_bronze.entrada con el esquema incluido: 15 columnas STRING, formato CSV y una fila de cabecera. Ejecuta estas consultas. Compara el valor original TLALPAN con municipio_limpio. Bronze conserva la entrada; todavía no corrige sus valores.</p><p><strong>Comprueba:</strong> 4500 filas observadas. municipio conserva espacios finales y fechaRegistro mantiene fecha y hora.</p><p><strong>Si no coincide:</strong> Revisa delimitador coma, UTF-8, cabecera y comillas. No uses autodetección: las columnas crudas se guardan como STRING.</p><p><a href="recursos/10_bronze.sql" download>10_bronze.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- Bronze muestra los valores como llegaron desde el CSV.
 -- Carga previa: all_data_muestra.csv en emergente_bronze.entrada.
 SELECT producto, presentacion, marca, precio, fechaRegistro, municipio
 FROM emergente_bronze.entrada
@@ -14,7 +14,9 @@ LIMIT 5;
 
 SELECT COUNT(*) AS filas_bronze FROM emergente_bronze.entrada;
 -- Esperado con la muestra: 4500.
-</code></pre></details></section><section id="paso-2"><h2>Paso 2 · Silver · limpiar y tipar · 30 min</h2><p>Abre otra consulta y ejecuta los bloques numerados en orden. El primero crea una tabla limpia. El segundo guarda aparte los registros que no se pueden usar. El tercero compara conteos. TRIM quita espacios y SAFE_CAST convierte precio y fecha sin modificar Bronze. En la muestra no esperamos rechazos; la regla queda preparada para cuando aparezcan.</p><p><strong>Comprueba:</strong> 4500 filas aceptadas; 0 rechazadas con estas reglas. TLALPAN ya no tiene espacios y precio es NUMERIC.</p><p><strong>Si no coincide:</strong> Si SAFE_CAST devuelve NULL, busca la fila rechazada y lee el motivo. Conserva la regla; revisa el valor original en Bronze.</p><p><a href="recursos/20_silver.sql" download>20_silver.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- 1. Crear Silver con nombres limpios y tipos útiles. Bronze queda intacta.
+</code></pre></details></section><section id="paso-2"><h2>Paso 2 · Silver · limpiar, tipar y revisar qué se pierde · 30 min</h2><p>Abre otra consulta y ejecuta los siete bloques numerados en orden. 1: crea una tabla limpia (incluye direccion, no solo el nombre comercial). 2: guarda aparte los registros que no se pueden usar. 3: compara conteos. 4: busca filas que, ya limpias, quedaran idénticas en todos sus campos — TRIM y SAFE_CAST no detectan eso, solo agrupar sí. 5: desglosa POR QUÉ se rechazó cada fila, no solo cuántas. 6: confirma el periodo real de fechas. 7: compara precios por categoría, para no marcar como sospechoso un precio alto que es real en su categoría (televisores, lavadoras).</p><p><strong>Comprueba:</strong> 4500 filas observadas y aceptadas; 0 para revisar; 0 filas idénticas repetidas (bloque 4); periodo observado 2011-01-10 a 2015-12-09 (bloque 6); precios hasta 13497 son electrodomésticos reales, no error (bloque 7).</p><p><strong>Si no coincide:</strong> Si SAFE_CAST devuelve NULL, busca la fila rechazada y lee el motivo en el bloque 5. Conserva la regla; revisa el valor original en Bronze. Si el bloque 4 no queda vacío, antes de seguir decide si esas filas son un error de carga o observaciones legítimas repetidas.</p><p><a href="recursos/20_silver.sql" download>20_silver.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- 1. Crear Silver con nombres limpios y tipos útiles. Bronze queda intacta.
+-- direccion se conserva: sin ella, dos tiendas distintas con el mismo
+-- nombre comercial en el mismo municipio se verían como una sola en Gold.
 CREATE OR REPLACE TABLE emergente_silver.precios_limpios AS
 SELECT TRIM(producto) AS producto, TRIM(presentacion) AS presentacion,
  TRIM(marca) AS marca, TRIM(categoria) AS categoria,
@@ -22,6 +24,7 @@ SELECT TRIM(producto) AS producto, TRIM(presentacion) AS presentacion,
  SAFE_CAST(fechaRegistro AS DATE) AS fecha,
  TRIM(cadenaComercial) AS cadena_comercial,
  TRIM(nombreComercial) AS establecimiento,
+ TRIM(direccion) AS direccion,
  TRIM(estado) AS estado, TRIM(municipio) AS municipio,
  SAFE_CAST(latitud AS FLOAT64) AS latitud,
  SAFE_CAST(longitud AS FLOAT64) AS longitud
@@ -33,24 +36,106 @@ SELECT * FROM emergente_silver.precios_limpios
 WHERE producto IS NULL OR marca IS NULL OR presentacion IS NULL
  OR precio_mxn IS NULL OR precio_mxn&lt;=0 OR fecha IS NULL;
 
--- 3. Revisar el conteo. Con la muestra: 4500 Silver y 0 para revisar.
+-- 3. Revisar el conteo. En lo observado: 4500 en Silver y 0 para revisar.
 SELECT (SELECT COUNT(*) FROM emergente_bronze.entrada) AS bronze,
  (SELECT COUNT(*) FROM emergente_silver.precios_limpios) AS silver,
  (SELECT COUNT(*) FROM emergente_silver.precios_para_revisar) AS revisar;
-</code></pre></details></section><section id="paso-3"><h2>Paso 3 · Gold · preparar una comparación · 30 min</h2><p>Abre otra consulta y ejecuta los bloques numerados. Gold agrupa el precio por producto, marca, presentación, fecha y tienda. Después muestra el caso Sprite del 19 de marzo de 2014 en Tlalpan. Revisa cuántas tiendas aparecen: la comparación cubre las observaciones de esta muestra.</p><p><strong>Comprueba:</strong> Dos establecimientos observados: 15.10 y 15.50 MXN. Diferencia: 0.40 MXN. Evidencia histórica de la muestra.</p><p><strong>Si no coincide:</strong> Si no aparecen dos filas, revisa fecha, producto, marca, presentación y municipio.</p><p><a href="recursos/30_gold.sql" download>30_gold.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- Gold: precio por tienda para un producto, presentación y fecha.
+
+-- 4. Qué podríamos revisar: filas que, ya limpias, quedan idénticas en
+-- todos sus campos. TRIM/SAFE_CAST no las detecta -- solo agrupar sí.
+-- Si aparecieran, un conteo posterior (por ejemplo, Gold) se duplicaría
+-- sin que nada lo avise.
+SELECT producto, marca, presentacion, precio_mxn, fecha, establecimiento,
+ direccion, COUNT(*) AS veces_repetida
+FROM emergente_silver.precios_limpios
+GROUP BY producto, marca, presentacion, precio_mxn, fecha, establecimiento, direccion
+HAVING COUNT(*) &gt; 1;
+-- Vacío en lo observado: no encontramos filas idénticas repetidas aquí.
+
+-- 5. Qué podríamos revisar: POR QUÉ se rechazó cada fila, no solo cuántas.
+-- Un solo conteo (bloque 3) no distingue si el problema es el precio, la
+-- fecha o un campo de texto vacío -- este desglose sí.
+SELECT
+ COUNTIF(producto IS NULL) AS sin_producto,
+ COUNTIF(marca IS NULL) AS sin_marca,
+ COUNTIF(presentacion IS NULL) AS sin_presentacion,
+ COUNTIF(precio_mxn IS NULL) AS precio_no_convertible,
+ COUNTIF(precio_mxn IS NOT NULL AND precio_mxn&lt;=0) AS precio_no_positivo,
+ COUNTIF(fecha IS NULL) AS fecha_no_convertible
+FROM emergente_silver.precios_limpios;
+-- En lo observado: todo en cero. Si algo sube, aquí está el motivo exacto,
+-- no solo el total.
+
+-- 6. Qué podríamos revisar: ¿el periodo que creemos tener es el que
+-- de verdad hay? Bronze no lo dice; aquí sí se puede comprobar.
+SELECT MIN(fecha) AS fecha_minima, MAX(fecha) AS fecha_maxima
+FROM emergente_silver.precios_limpios;
+-- En lo observado: 2011-01-10 a 2015-12-09 -- tres años sin continuidad,
+-- no una serie diaria completa. No asumas cobertura entre esas fechas.
+
+-- 7. Qué podríamos revisar: ¿un precio aceptado es creíble para ESE
+-- producto, no solo distinto de cero? all_data mezcla categorías de
+-- precio muy distinto (refrescos vs. televisores) -- un límite fijo
+-- sin categoría marca como &quot;sospechoso&quot; algo que es real.
+SELECT categoria, MIN(precio_mxn) AS precio_minimo, MAX(precio_mxn) AS precio_maximo,
+ COUNT(*) AS filas
+FROM emergente_silver.precios_limpios
+GROUP BY categoria
+ORDER BY precio_maximo DESC
+LIMIT 5;
+-- En lo observado: los precios más altos (hasta 13497) son televisores,
+-- lavadoras y refrigeradores reales -- no errores de captura. Un filtro
+-- &quot;precio &gt; 10000&quot; sin categoría los marcaría como sospechosos por error.
+</code></pre></details></section><section id="paso-3"><h2>Paso 3 · Gold · preparar una comparación sin perder el conflicto de vista · 30 min</h2><p>Abre otra consulta y ejecuta los cuatro bloques. 1: Gold agrupa el precio por producto, marca, presentación, dirección, fecha y tienda — la dirección entra al grano para no fusionar dos tiendas distintas que comparten el mismo nombre comercial. 2: muestra el caso Sprite del 19 de marzo de 2014 en Tlalpan, con una columna estado_precio: dice &quot;conflicto&quot; solo si había más de un precio distinto en el mismo grupo; MIN() por sí solo no avisa, solo elige el menor en silencio. 3: escanea conflictos en TODA la muestra observada, no solo en el caso armado. 4: comprueba que el agregado no perdió ni duplicó filas de Silver.</p><p><strong>Comprueba:</strong> Dos establecimientos observados (direcciones distintas): 15.10 y 15.50 MXN, ambos marcados único. En toda la muestra (bloque 3): 0 de 4500 grupos en conflicto. Integridad (bloque 4): 2 observaciones en Gold, 2 filas en Silver — coinciden.</p><p><strong>Si no coincide:</strong> Si no aparecen dos filas, revisa fecha, producto, marca, presentación y municipio. Si el bloque 3 muestra grupos en conflicto, antes de usar el precio menor revisa si son en verdad la misma tienda. Si el bloque 4 no coincide, el GROUP BY perdió o duplicó algo — no lo ignores.</p><p><a href="recursos/30_gold.sql" download>30_gold.sql ↓</a></p><details><summary>Ver consultas</summary><pre><code>-- 1. Gold: precio por tienda para un producto, presentación y fecha.
+-- direccion entra al grano: dos tiendas con el mismo nombre comercial en
+-- el mismo municipio no se mezclan en una sola fila.
+-- estado_precio queda lista para cuando SÍ haya más de un precio en el
+-- mismo grupo -- MIN() por sí solo elige el menor en silencio y no avisa.
 CREATE OR REPLACE TABLE emergente_gold.precio_sprite_tlalpan AS
 SELECT fecha, estado, municipio, producto, marca, presentacion,
- cadena_comercial, establecimiento, MIN(precio_mxn) AS precio_mxn,
- COUNT(*) AS observaciones
+ cadena_comercial, establecimiento, direccion, MIN(precio_mxn) AS precio_mxn,
+ COUNT(*) AS observaciones,
+ CASE WHEN COUNT(*) &gt; 1 AND MIN(precio_mxn) &lt;&gt; MAX(precio_mxn)
+      THEN &#x27;conflicto&#x27; ELSE &#x27;único&#x27; END AS estado_precio
 FROM emergente_silver.precios_limpios
 WHERE fecha=DATE &#x27;2014-03-19&#x27; AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27;
  AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
  AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;
 GROUP BY fecha, estado, municipio, producto, marca, presentacion,
- cadena_comercial, establecimiento;
+ cadena_comercial, establecimiento, direccion;
 
--- Muestra: dos tiendas observadas; 15.10 y 15.50 MXN.
-SELECT establecimiento, precio_mxn, observaciones
+-- 2. Observado: dos tiendas (direcciones distintas), cada una con un solo
+-- precio -- ambas &#x27;único&#x27;. 15.10 y 15.50 MXN.
+SELECT establecimiento, direccion, precio_mxn, observaciones, estado_precio
 FROM emergente_gold.precio_sprite_tlalpan ORDER BY precio_mxn;
 -- Evidencia histórica. No prueba existencia ni precio actual.
-</code></pre></details></section><h2>Ruta docente para el archivo completo</h2><p>Conservar el original en un bucket autorizado, con nombre deobjeto, tamaño, generación/checksum y manifiesto. Transferir desde una estación o entorno con espacio suficiente; no usar el disco limitado deCloud Shell. Ejecutar cargar-gcs.sh con una URIgs:// concreta ya preparada. Se escribe solo emergente_bronze.entrada. Antes de01, cambiar lote y fuente a los del archivo completo. Perfilar02 y verificar fechas antes de reconstruir Silver/Gold. Ejecutar una vez, guardar controles y usar tablas preparadas en clase. El diseño no presupone que la muestra valide todas las filas del archivo.</p><p>Para optimizar: selecciona las columnas necesarias, filtra por fecha y revisa el estimado de bytes antes de ejecutar. LIMIT limita las filas de salida; no necesariamente los datos leídos. Con el archivo completo, el docente ensaya y comparte los resultados.</p><h2>Fuentes</h2><p>Consulta2026-11-09: <a href="https://docs.cloud.google.com/bigquery/docs/running-queries">ejecutar consultas</a>, <a href="https://docs.cloud.google.com/bigquery/docs/best-practices-costs">control de costos</a>, <a href="https://docs.cloud.google.com/bigquery/docs/partitioned-tables">particiones</a> y <a href="https://cloud.google.com/discover/what-is-a-data-lakehouse">lakehouse</a>.</p><p><a href="tarea.html">Tarea de actualización →</a></p></article></body></html>
+
+-- 3. Qué podríamos revisar: ¿cuántos conflictos hay en TODA la muestra
+-- observada, no solo en el caso de Sprite/Tlalpan que armamos arriba?
+SELECT
+ COUNTIF(precios_distintos &gt; 1) AS grupos_en_conflicto,
+ COUNT(*) AS grupos_totales
+FROM (
+ SELECT producto, marca, presentacion, fecha, estado, municipio,
+  cadena_comercial, establecimiento, direccion,
+  COUNT(DISTINCT precio_mxn) AS precios_distintos
+ FROM emergente_silver.precios_limpios
+ GROUP BY producto, marca, presentacion, fecha, estado, municipio,
+  cadena_comercial, establecimiento, direccion
+);
+-- En lo observado: 0 de 4500 grupos en conflicto. No asumas que el
+-- archivo completo se comporta igual -- aquí sí vale la pena repetir
+-- esta consulta cuando se cargue.
+
+-- 4. Qué podríamos revisar: ¿el agregado perdió o duplicó filas al
+-- agrupar? El total de observaciones en Gold debe ser igual al número
+-- de filas de Silver que de verdad cumplen el mismo filtro.
+SELECT
+ (SELECT SUM(observaciones) FROM emergente_gold.precio_sprite_tlalpan) AS suma_en_gold,
+ (SELECT COUNT(*) FROM emergente_silver.precios_limpios
+  WHERE fecha=DATE &#x27;2014-03-19&#x27; AND producto=&#x27;REFRESCO&#x27; AND marca=&#x27;SPRITE&#x27;
+   AND presentacion=&#x27;BOTELLA 2 LT. NO RETORNABLE&#x27;
+   AND estado=&#x27;DISTRITO FEDERAL&#x27; AND municipio=&#x27;TLALPAN&#x27;) AS filas_en_silver;
+-- Deben coincidir (2 y 2). Si no coinciden, el GROUP BY perdió o
+-- duplicó algo -- no lo asumas, compáralo cada vez.
+</code></pre></details></section><h2>Ruta docente para el archivo completo</h2><p>Conservar el original en un bucket autorizado, con nombre de objeto, tamaño, generación/checksum y manifiesto. Cargar desde GCS directamente a emergente_bronze.entrada con el mismo esquema de 15 columnas STRING — no transferir 20.7 GB a un disco local ni a Cloud Shell. Antes de correr 20_silver.sql y 30_gold.sql sobre el archivo completo, repetir el bloque 4 de Silver (filas idénticas repetidas) y revisar cuántos grupos de Gold quedan con estado_precio = conflicto: en la muestra observada ninguno lo tuvo, y eso no prueba que el archivo completo se comporte igual. Ejecutar una vez, guardar controles y usar tablas preparadas en clase. El diseño no presupone que lo observado en la muestra valide todas las filas del archivo.</p><p>Para optimizar: selecciona las columnas necesarias, filtra por fecha y revisa el estimado de bytes antes de ejecutar. LIMIT limita las filas de salida; no necesariamente los datos leídos. Con el archivo completo, el docente ensaya y comparte los resultados.</p><h2>Fuentes</h2><p>Consulta2026-11-09: <a href="https://docs.cloud.google.com/bigquery/docs/running-queries">ejecutar consultas</a>, <a href="https://docs.cloud.google.com/bigquery/docs/best-practices-costs">control de costos</a>, <a href="https://docs.cloud.google.com/bigquery/docs/partitioned-tables">particiones</a> y <a href="https://cloud.google.com/discover/what-is-a-data-lakehouse">lakehouse</a>.</p><p><a href="tarea.html">Tarea de actualización →</a></p></article></body></html>
