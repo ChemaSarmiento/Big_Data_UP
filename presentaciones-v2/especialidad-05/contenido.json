@@ -1,613 +1,140 @@
 {
-  "session": 5,
-  "title": "Una canasta incompleta parece una ganga",
-  "minutes": 180,
-  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
-  "slides": [
-    {
-      "id": "E05-01",
-      "title": "La canasta incompleta puede parecer la más barata",
-      "kind": "basket",
-      "items": [
-        {
-          "label": "Ranking",
-          "text": "C muestra 54 MXN, pero solo tiene tres de cinco productos."
-        },
-        {
-          "label": "Pregunta",
-          "text": "¿Debe competir contra A y B, que sí tienen canastas completas?"
-        }
-      ],
-      "code": null,
-      "note": "Comparación interactiva del piloto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-02",
-      "title": "Silver valida filas; Gold define la comparación",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Silver",
-          "text": "Valida precio, fecha e identidad."
-        },
-        {
-          "label": "Gold",
-          "text": "Fija cantidades, ventana y criterio de selección para una decisión específica."
-        }
-      ],
-      "code": null,
-      "note": "Misma observación → escenario de compra Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-03",
-      "title": "Hoy convertirás cinco productos en KPIs comprobables",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Resultado",
-          "text": "Una tabla de canastas con costo, cobertura y elegibilidad."
-        },
-        {
-          "label": "Contrato",
-          "text": "Cinco envases definidos, misma tienda y ventana histórica común."
-        }
-      ],
-      "code": null,
-      "note": "Catálogo + precios elegidos → canastas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "Catálogo",
-          "5 productos"
-        ],
-        [
-          "Selección",
-          "Una fila por producto/tienda"
-        ],
-        [
-          "Canastas",
-          "Costo y cobertura"
-        ]
-      ]
-    },
-    {
-      "id": "E05-04",
-      "title": "El grano decide qué puedes sumar",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Tres granos",
-          "text": "Observación original, precio elegido por producto/tienda y canasta por escenario/tienda."
-        },
-        {
-          "label": "Riesgo",
-          "text": "Sumar historia sin cambiar de grano multiplica o mezcla importes."
-        }
-      ],
-      "code": null,
-      "note": "Observación, producto elegido y canasta por tienda/escenario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-05",
-      "title": "Un modelo analítico conecta hechos y dimensiones",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Hecho",
-          "text": "Precio observado para producto, tienda y fecha."
-        },
-        {
-          "label": "Dimensiones",
-          "text": "Describen producto, establecimiento y periodo; el catálogo de canasta expresa cantidades requeridas."
-        }
-      ],
-      "code": null,
-      "note": "Estrella pequeña: precio observado, producto, tienda y fecha Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-06",
-      "title": "Una canasta necesita identidad y cantidades",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Catálogo",
-          "text": "Cinco identidades con marca/presentación exacta y cantidades de envases enteras."
-        },
-        {
-          "label": "Límite",
-          "text": "Comparar precio por kg no significa que puedas comprar una fracción de cualquier envase."
-        }
-      ],
-      "code": null,
-      "note": "Cinco productos con marca/presentación exactas y envases enteros Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-07",
-      "title": "La ventana histórica define qué observaciones compiten",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Ventana",
-          "text": "Todos compiten bajo el mismo intervalo histórico."
-        },
-        {
-          "label": "Transparencia",
-          "text": "Cada precio conserva su fecha; ampliar el intervalo no demuestra que todas las ofertas coexistieran."
-        }
-      ],
-      "code": null,
-      "note": "Línea temporal; misma ventana, fechas visibles por producto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-08",
-      "title": "Selecciona una observación por producto y tienda",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Regla",
-          "text": "Elegir la última observación válida por producto/tienda dentro de la ventana."
-        },
-        {
-          "label": "Desempate",
-          "text": "Usar fecha e identificador estables; no elegir una fila arbitraria para ocultar duplicados."
-        }
-      ],
-      "code": null,
-      "note": "Regla determinista de última válida en ventana; desempate documentado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-09",
-      "title": "Un JOIN puede multiplicar precios antes de sumar",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Fan-out",
-          "text": "Unir catálogo con todo el historial puede repetir el producto antes de sumar."
-        },
-        {
-          "label": "Control",
-          "text": "Comprobar como máximo un precio elegido por producto, presentación y tienda."
-        }
-      ],
-      "code": null,
-      "note": "Tarjetas de historial frente a precio elegido; control de unicidad Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-10",
-      "title": "Costo y cobertura se deben mostrar juntos",
-      "kind": "basket",
-      "items": [
-        {
-          "label": "Costo",
-          "text": "Suma de precio por envase multiplicado por cantidad requerida."
-        },
-        {
-          "label": "Cobertura",
-          "text": "Productos encontrados / productos requeridos. Si falta uno, el importe observado es subtotal."
-        }
-      ],
-      "code": null,
-      "note": "Fórmulas con unidades; ausencia no significa precio cero Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-11",
-      "title": "Solo compara alternativas que cumplan el contrato",
-      "kind": "basket",
-      "items": [
-        {
-          "label": "Elegibilidad",
-          "text": "La canasta completa requiere cobertura 100% y comparación compatible."
-        },
-        {
-          "label": "Ausencia",
-          "text": "Un precio faltante no se rellena con cero ni se oculta con INNER JOIN."
-        }
-      ],
-      "code": null,
-      "note": "Restricciones de fecha, presentación, cobertura y misma tienda Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-12",
-      "title": "Mercado Libre define métricas y relaciones centralmente",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Mercado Libre",
-          "text": "La capa semántica centraliza dimensiones, métricas y relaciones en el caso publicado."
-        },
-        {
-          "label": "Transferencia",
-          "text": "Nuestro diccionario debe fijar qué significa canasta completa para todos los consumidores."
-        }
-      ],
-      "code": null,
-      "note": "Retomar capa semántica del caso; conectar con diccionario KPI Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "Mercado Libre · BigQuery y Looker · 2022",
-          "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
-        ]
-      ]
-    },
-    {
-      "id": "E05-13",
-      "title": "Una tabla Gold simplifica el consumo",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Consumo",
-          "text": "Gold resume la pregunta y evita repetir una lectura del crudo en cada interacción."
-        },
-        {
-          "label": "Costo",
-          "text": "Una tabla pequeña también necesita política de refresco y control de acceso."
-        }
-      ],
-      "code": null,
-      "note": "Silver detallada → Gold pequeña → dashboard; costo de refresco Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-14",
-      "title": "Tabla, vista lógica y vista materializada son elecciones distintas",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "CTAS",
-          "text": "Guarda el resultado de una consulta como tabla."
-        },
-        {
-          "label": "Vista lógica",
-          "text": "Conserva SQL, no el resultado físico. La vista materializada incremental tiene restricciones: no copiar ventanas sin revisión."
-        }
-      ],
-      "code": null,
-      "note": "Tres contratos; CTAS/vista lógica como base docente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "BigQuery · vistas materializadas",
-          "https://docs.cloud.google.com/bigquery/docs/materialized-views-create"
-        ]
-      ],
-      "nodes": [
-        [
-          "Catálogo",
-          "5 productos"
-        ],
-        [
-          "Selección",
-          "Una fila por producto/tienda"
-        ],
-        [
-          "Canastas",
-          "Costo y cobertura"
-        ]
-      ]
-    },
-    {
-      "id": "E05-15",
-      "title": "Comprueba un KPI a mano antes de automatizarlo",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Comprobación",
-          "text": "Para A: 10 + 20 + 30 + 40 + 50 = 150 MXN en el fixture."
-        },
-        {
-          "label": "Criterio",
-          "text": "Si una cifra no puede reconciliarse con sus partes, aún no está lista para el dashboard."
-        }
-      ],
-      "code": null,
-      "note": "Cinco filas × cantidades; cálculo manual con ejemplo rotulado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-16",
-      "title": "Pausa · acuerda cómo reconocer una canasta completa",
-      "kind": "pause",
-      "items": [
-        {
-          "label": "Pausa",
-          "text": "Diez minutos; abrir catálogo y escenario del fixture."
-        },
-        {
-          "label": "Proyecto",
-          "text": "La práctica de canasta no obliga al equipo a usar precios como dataset final."
-        }
-      ],
-      "code": null,
-      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-17",
-      "title": "Laboratorio: construir Gold y defender una fórmula",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Ruta",
-          "text": "Ejecutar el script Gold completo suministrado."
-        },
-        {
-          "label": "Rol ejecutivo",
-          "text": "Revisar fórmulas, supuestos y resultados; no escribir funciones de ventana desde cero."
-        }
-      ],
-      "code": null,
-      "note": "Checklist de inputs, catálogo y escenario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-18",
-      "title": "Congela el contrato de la canasta",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Catálogo",
-          "text": "Cinco productos de Marca demo, presentación 1 envase, cantidad uno."
-        },
-        {
-          "label": "Ventana",
-          "text": "15 de enero de 2024; escenario demo_2024-01-15, explícitamente ilustrativo."
-        }
-      ],
-      "code": null,
-      "note": "Paso 1: cinco productos, cantidades y ventana Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-19",
-      "title": "Cruza producto y precio sin inventar equivalencias",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Join",
-          "text": "Unir por producto, marca y presentación aprobados."
-        },
-        {
-          "label": "Control",
-          "text": "Una coincidencia de texto aproximada no es identidad comprobada; revisar mapeos antes de calcular."
-        }
-      ],
-      "code": null,
-      "note": "Paso 2: catálogo aprobado + Silver Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-20",
-      "title": "Reduce el historial a observaciones elegibles",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Selección",
-          "text": "ROW_NUMBER asigna prioridad por fecha e ID; el script elige la primera."
-        },
-        {
-          "label": "Comprobación",
-          "text": "La tabla precios_elegidos tiene una fila por combinación elegible, no todo el historial."
-        }
-      ],
-      "code": null,
-      "note": "Paso 3: consulta de selección ya suministrada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-21",
-      "title": "Agrega costo y cobertura por establecimiento",
-      "kind": "basket",
-      "items": [
-        {
-          "label": "Gold",
-          "text": "Construir tienda × catálogo y conservar faltantes con LEFT JOIN."
-        },
-        {
-          "label": "Esperado",
-          "text": "A=150 y B=160 completas; C subtotal54, cobertura0.6 y costo completo NULL."
-        }
-      ],
-      "code": "SELECT establecimiento, cobertura,\n subtotal_mxn, costo_completo_mxn\nFROM curso_gold.canastas\nORDER BY establecimiento;",
-      "note": "Paso 4: tabla `canastas`, incluido estado de elegibilidad Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-22",
-      "title": "Reconciliación: el total debe explicar sus partes",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Control",
-          "text": "Recalcula una tienda y comprueba cardinalidad antes de sumar."
-        },
-        {
-          "label": "Error",
-          "text": "Si aparece más de una fila por producto/tienda, corregir selección; no ocultarlo con otro promedio."
-        }
-      ],
-      "code": null,
-      "note": "Paso 5: cálculo manual, cardinalidad y ausencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-23",
-      "title": "Guarda el significado junto al número",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Diccionario",
-          "text": "Nombre, fórmula, unidad, grano, periodo, responsable y limitación."
-        },
-        {
-          "label": "Registro",
-          "text": "Guardar SQL y job; diferenciar resultado del fixture de hallazgo sobre datos reales."
-        }
-      ],
-      "code": null,
-      "note": "Paso 6: diccionario KPI, consulta y registro de job Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-24",
-      "title": "Otra persona intenta refutar tu recomendación",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Auditoría",
-          "text": "Otro equipo busca una fecha incompatible o denominador oculto."
-        },
-        {
-          "label": "Proyecto",
-          "text": "Construir KPIs de su propio dominio con la plantilla ya adaptada por el docente."
-        }
-      ],
-      "code": null,
-      "note": "Buscar fecha ausente, tienda incompleta o doble conteo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-25",
-      "title": "El menor costo observado no garantiza disponibilidad",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "No observado",
-          "text": "Precios no prueban inventario, ventas ni costo de traslado."
-        },
-        {
-          "label": "Alcance",
-          "text": "La recomendación histórica necesita comprobaciones adicionales antes de comprar hoy."
-        }
-      ],
-      "code": null,
-      "note": "Alcance retrospectivo, inventario no observado y traslado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-26",
-      "title": "Si no hay una canasta completa, ese también es un resultado",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Sin alternativa",
-          "text": "Si ninguna tienda cumple cobertura, el resultado es ausencia de opción completa."
-        },
-        {
-          "label": "Acción",
-          "text": "Mejorar captura o reformular alcance de forma explícita; no inventar precios."
-        }
-      ],
-      "code": null,
-      "note": "Mostrar ausencia de alternativa; propuesta de mejor captura Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-27",
-      "title": "H5: Gold, fórmulas y evidencia reconciliada",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "H5",
-          "text": "Gold propia con tres a cinco KPIs, fórmulas y control de doble conteo."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Una agregación manual y el grano registrado, aunque el dominio no use canastas."
-        }
-      ],
-      "code": null,
-      "note": "Checklist de grano y escenario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E05-28",
-      "title": "El dashboard debe conservar estas reglas",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Recuperación",
-          "text": "¿Qué diferencia hay entre subtotal y costo completo?"
-        },
-        {
-          "label": "Cierre",
-          "text": "Conservar Gold para BI y revisar expiraciones. El dashboard debe respetar el contrato."
-        }
-      ],
-      "code": null,
-      "note": "Preguntas de recuperación y cierre de costos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    }
+ "session": 5,
+ "title": "Un conteo no es un indicador",
+ "minutes": 180,
+ "status": "Guía local. Los SELECT y las estimaciones de bytes (dry-run) se ejecutaron sobre tablas de referencia equivalentes; crear tablas en tu propio proyecto y los nombres exactos de los menús de BigQuery Studio no se ensayaron con una cuenta de alumno.",
+ "slides": [],
+ "lab": {
+  "aviso": "Las cifras de salida son valores de referencia del curso, obtenidos con consultas reales de solo lectura sobre tablas equivalentes. Tus resultados deben coincidir si construiste Silver igual; los menús exactos de BigQuery Studio pueden verse distintos y no se ensayaron con una cuenta de alumno. Los bytes son los del estimador.",
+  "prerequisitos": [
+   "Un proyecto de Google Cloud con facturación activa y BigQuery Studio abierto.",
+   "Las tres tablas Silver de la sesión anterior en tu proyecto: tweets_silver.tweets (6,798,932 filas), tweets_silver.autores y tweets_silver.hashtags.",
+   "Permiso de editor de datos en tu proyecto (puedes crear datasets y tablas).",
+   "Cada paso lee solo unas decenas o cientos de MB de Silver; solo tema_dia llega a ≈ 1.4 GB."
   ],
-  "lab": {
-    "steps": [
-      {
-        "n": 1,
-        "minutes": 5,
-        "action": "Leer parámetros de 06_gold.sql: catálogo de cinco productos, cantidad1, ventana2024-01-15 y escenario demo_2024-01-15. Confirmar Silver13 filas y proyecto/ubicación.",
-        "check": "No ejecutar DECLARE aislado: las variables pertenecen al script. Si falta Silver, recuperar con docente y declarar dependencia. No inventar geografía: el fixture no tiene esa columna."
-      },
-      {
-        "n": 2,
-        "minutes": 8,
-        "action": "Revisar JOIN de identidad y QUALIFY. Predecir qué filas elige por producto/marca/presentación/tienda.",
-        "check": "Esperadas13 observaciones elegidas. Última fecha y desempate por ID no garantizan simultaneidad si amplías ventana; revisar conflictos de IDs antes de seleccionar."
-      },
-      {
-        "n": 3,
-        "minutes": 12,
-        "action": "En BigQuery Studio → editor SQL ejecutar 06_gold.sql completo, en el proyecto de laboratorio.",
-        "check": "Crea/reemplaza catalogo, precios_elegidos, detalle y canastas en curso_gold. No modifica Silver. Conserva solo escenario actual, no histórico. Si falla, registrar error y resolver antes de repetir completo."
-      },
-      {
-        "n": 4,
-        "minutes": 12,
-        "action": "Consultar canastas y detalle, contrastar gold-esperado.csv y verificar ASSERT. Contar detalle y revisar unicidad de escenario/tienda/producto/marca/presentación.",
-        "check": "Detalle15 combinaciones; canastas3 tiendas. A150/B160 completas; C subtotal54,cobertura0.6,costo completo NULL,elegible=false. Una tienda sin filas Silver requeriría padrón para aparecer."
-      },
-      {
-        "n": 5,
-        "minutes": 10,
-        "action": "Ejecutar 07_control_dashboard.sql; recalcular A:10+20+30+40+50. Contrastar detalle de C y registrar job/bytes/caché.",
-        "check": "No sustituir NULL por0 ni sumar tiendas alternativas. Si hay duplicados en el grano, revisar catálogo y selección antes de publicar. El fixture no prueba rendimiento a escala."
-      },
-      {
-        "n": 6,
-        "minutes": 8,
-        "action": "Completar diccionario-kpi.csv con tres indicadores: fórmula,unidad,grano,denominador,periodo,fuente,responsable y límite. Guardar SQL y versión del escenario.",
-        "check": "Conservar Gold para BI; documentar actualización/retención y revisar recursos existentes. Las tablas no se refrescan solas. Transferir al dataset distinto del equipo con esquema preparado por docente."
-      }
-    ],
-    "instructions": "Requiere Silver del fixture en curso_silver.observaciones, proyecto autorizado y ubicación compatible (scripts proponen us-central1). Abrir BigQuery Studio, seleccionar proyecto, revisar parámetros de 06_gold.sql y ejecutar completo como script. Después ejecutar 07_control_dashboard.sql. El script reemplaza solo destinos curso_gold y conserva únicamente el escenario actual; exportar evidencia antes de cambiarlo. Esperado: catálogo5, precios_elegidos13, detalle15,canastas3. A150/B160 completas; Csubtotal54 con costo completo NULL. Las ventanas vienen suministradas: el alumno interpreta y verifica. No aplicar este esquema a otra fuente sin adaptación docente. Si no se puede ejecutar, identificar evidencia docente y pasos pendientes; una simulación HTML no demuestra GCP."
-  },
-  "assets": [
-    "06_gold.sql",
-    "diccionario-kpi.csv",
-    "gold-esperado.csv",
-    "07_control_dashboard.sql"
+  "instructions": "BigQuery Studio → selecciona tu proyecto → Consulta SQL nueva → pega el bloque del paso → mira el estimador de bytes (arriba a la derecha del editor) → Ejecutar → compara el resultado con la salida esperada. Todas las tablas se crean con CREATE OR REPLACE TABLE: puedes repetir un paso sin duplicar filas.",
+  "region": "Crea tweets_gold en la misma ubicación que tweets_silver (por ejemplo US). Una consulta no puede mezclar datasets de ubicaciones distintas.",
+  "steps": [
+   {
+    "n": 1,
+    "minutes": 15,
+    "titulo": "Temas y tabla de hechos del día",
+    "donde": "BigQuery Studio → Consulta SQL nueva. Elige tu proyecto en el selector superior. Abre el estimador de bytes (arriba a la derecha del editor).",
+    "action": "Crea el dataset tweets_gold en la misma ubicación que tweets_silver, ejecuta 30_gold_tweets.sql completo (primero temas_palabras, luego tema_dia) y corre los tres controles. Lee el estimador antes de cada ejecución: tema_dia lee solo la columna texto de Silver. Para practicar: resuelve E1.",
+    "costo": "temas_palabras 0 bytes; tema_dia ≈ 1.42 GB (1,422,081,733 bytes según el estimador); los tres controles suman < 17 KB.",
+    "codigo": "-- 0. Una sola vez: el dataset debe estar en la misma ubicación que tweets_silver (aquí US).\nCREATE SCHEMA IF NOT EXISTS tweets_gold OPTIONS (location = 'US');\n\n-- 1. Tabla pequeña de temas satélite. Es una definición editable, no un hecho del dato.\nCREATE OR REPLACE TABLE tweets_gold.temas_palabras AS\nSELECT * FROM UNNEST([\n  STRUCT('energia' AS tema, 'oil' AS palabra), ('energia','gas'), ('energia','fuel'), ('energia','petrol'),\n  ('energia','energy'), ('energia','petróleo'), ('energia','gasolina'), ('energia','combustible'), ('energia','energía'),\n  ('alimentos','wheat'), ('alimentos','grain'), ('alimentos','food'), ('alimentos','fertilizer'),\n  ('alimentos','trigo'), ('alimentos','cereal'), ('alimentos','alimentos'), ('alimentos','fertilizantes'),\n  ('aviacion','airline'), ('aviacion','airlines'), ('aviacion','flights'), ('aviacion','airspace'),\n  ('aviacion','aviation'), ('aviacion','aerolínea'), ('aviacion','vuelos'), ('aviacion','espacio aéreo'),\n  ('sanciones','sanctions'), ('sanciones','sanction'), ('sanciones','sanciones'), ('sanciones','sanción'),\n  ('cadena_suministro','supply chain'), ('cadena_suministro','shipping'), ('cadena_suministro','logistics'),\n  ('cadena_suministro','cadena de suministro'), ('cadena_suministro','puerto'), ('cadena_suministro','logística'),\n  ('mercados','inflation'), ('mercados','stock market'), ('mercados','markets'), ('mercados','inflación'),\n  ('mercados','precios'), ('mercados','bolsa'), ('mercados','mercados')\n]);\n\n-- 2. Gold: un tweet cuenta una vez por tema, aunque use varias palabras del tema.\n--    Grano: fecha + tema + grupo de idioma. pct_del_dia usa el total de tweets del mismo día e idioma.\nCREATE OR REPLACE TABLE tweets_gold.tema_dia\nPARTITION BY fecha AS\nWITH por_tweet AS (\n  SELECT t.fecha, p.tema,\n         IF(t.idioma IN ('en', 'es'), t.idioma, 'otro') AS grupo_idioma,\n         t.tweet_id, t.likes\n  FROM tweets_silver.tweets AS t\n  CROSS JOIN tweets_gold.temas_palabras AS p\n  WHERE REGEXP_CONTAINS(LOWER(t.texto), CONCAT(r'\\b', p.palabra, r'\\b'))\n  GROUP BY t.fecha, p.tema, grupo_idioma, t.tweet_id, t.likes\n),\ndia AS (\n  SELECT fecha, IF(idioma IN ('en', 'es'), idioma, 'otro') AS grupo_idioma, COUNT(*) AS tweets_dia\n  FROM tweets_silver.tweets\n  GROUP BY fecha, grupo_idioma\n)\nSELECT m.fecha, m.tema, m.grupo_idioma,\n       COUNT(*) AS tweets_tema, SUM(m.likes) AS likes_tema,\n       ANY_VALUE(d.tweets_dia) AS tweets_dia,\n       ROUND(100 * COUNT(*) / ANY_VALUE(d.tweets_dia), 3) AS pct_del_dia\nFROM por_tweet AS m\nJOIN dia AS d USING (fecha, grupo_idioma)\nGROUP BY m.fecha, m.tema, m.grupo_idioma;\n\n-- PASO 1 · Gold de temas. Antes de ejecutar, crea las tablas con 30_gold_tweets.sql (temas_palabras + tema_dia).\n-- Requiere tweets_silver.tweets (sesión anterior). Lee solo la columna `texto` de Silver (≈ 1.2 GB).\n\n-- 1.1 ¿Cuántos pares tweet–tema hay? Un tweet cuenta una vez por tema, pero puede estar en varios temas.\nSELECT SUM(tweets_tema) AS pares_tweet_tema FROM tweets_gold.tema_dia;\n-- Referencia: 342484 pares. Tweets distintos con algún tema: 314527.\n\n-- 1.2 Una fila de Gold explicada: energía en inglés, día por día.\nSELECT fecha, tweets_tema, tweets_dia, pct_del_dia\nFROM tweets_gold.tema_dia\nWHERE tema = 'energia' AND grupo_idioma = 'en'\nORDER BY fecha;\n\n-- 1.3 Control del denominador: tweets_dia, sumado una vez por día e idioma, debe dar el total de Silver.\nSELECT SUM(tweets_dia) AS base_total\nFROM (SELECT fecha, grupo_idioma, ANY_VALUE(tweets_dia) AS tweets_dia\n      FROM tweets_gold.tema_dia GROUP BY fecha, grupo_idioma);\n-- Referencia: 6798932.\n\n-- Ejercicio E1: ¿qué porcentaje de los tweets en español habla de sanciones en todo el periodo?\n-- Pista: SUM(tweets_tema) / SUM(tweets_dia) filtrando tema y grupo_idioma. (Respuesta de referencia: 0.91 %).",
+    "salida": "-- 1.1\npares_tweet_tema\n342484\n\n-- 1.2 (energía, inglés)\nfecha,tweets_tema,tweets_dia,pct_del_dia\n2022-03-16,1666,86271,1.931\n2022-03-17,10167,476188,2.135\n2022-03-18,9772,433524,2.254\n2022-03-19,7247,357489,2.027\n2022-03-20,6980,369390,1.89\n2022-03-21,8920,373906,2.386\n2022-03-22,7384,333329,2.215\n2022-03-23,10530,311363,3.382\n2022-03-24,10400,327399,3.177\n2022-03-25,9342,321183,2.909\n2022-03-26,7339,304339,2.411\n2022-03-27,6666,318791,2.091\n\n-- 1.3\nbase_total\n6798932",
+    "check": "1.1 da 342484 pares (hay 314,527 tweets distintos con algún tema: la diferencia son tweets en más de un tema). 1.2 muestra 3.382 el 23 de marzo. 1.3 da 6798932, el total de Silver. Si el total no coincide, revisa que tweets_silver.tweets tenga 6,798,932 filas.",
+    "error": "«Not found: Table …tweets_silver.tweets was not found in location US» significa que Silver no existe en tu proyecto o está en otra ubicación: crea Silver (sesión anterior) o crea tweets_gold con la misma ubicación que tweets_silver. «Dataset … not found» significa que falta el CREATE SCHEMA del paso 0."
+   },
+   {
+    "n": 2,
+    "minutes": 10,
+    "titulo": "Hashtags por día y el costo del umbral",
+    "donde": "BigQuery Studio → Consulta SQL nueva (el mismo proyecto).",
+    "action": "Ejecuta 31_gold_hashtags_dia.sql y los dos controles. 2.2 compara Gold con Silver para ver qué deja fuera el umbral de 25 tweets por día. Para practicar: resuelve E2.",
+    "costo": "Crear hashtags_dia ≈ 119 MB (118,741,742 bytes); 2.1 ≈ 35 KB; 2.2 ≈ 38 MB (37,844,138 bytes).",
+    "codigo": "-- Gold · hashtags por día. Umbral: solo hashtags con al menos 25 tweets ese día (definición editable).\nCREATE OR REPLACE TABLE tweets_gold.hashtags_dia\nPARTITION BY fecha AS\nWITH por_dia AS (\n  SELECT fecha, COUNT(*) AS tweets_dia FROM tweets_silver.tweets GROUP BY fecha\n)\nSELECT h.fecha, h.hashtag, COUNT(*) AS tweets, d.tweets_dia,\n       ROUND(100 * COUNT(*) / d.tweets_dia, 3) AS pct_del_dia\nFROM tweets_silver.hashtags AS h\nJOIN por_dia AS d USING (fecha)\nGROUP BY h.fecha, h.hashtag, d.tweets_dia\nHAVING COUNT(*) >= 25;\n\n-- PASO 2 · Hashtags por día. Crea la tabla con 31_gold_hashtags_dia.sql (usa tweets_silver.hashtags).\n-- Umbral del script: solo hashtags con al menos 25 tweets ese día.\n\n-- 2.1 Los hashtags más usados el 23 de marzo.\nSELECT hashtag, tweets, pct_del_dia\nFROM tweets_gold.hashtags_dia\nWHERE fecha = '2022-03-23'\nORDER BY tweets DESC\nLIMIT 8;\n\n-- 2.2 ¿Qué se pierde con el umbral? Compara Gold con la tabla Silver completa.\nSELECT\n  (SELECT COUNT(DISTINCT hashtag) FROM tweets_silver.hashtags) AS hashtags_en_silver,\n  (SELECT COUNT(DISTINCT hashtag) FROM tweets_gold.hashtags_dia) AS hashtags_en_gold,\n  (SELECT COUNT(*) FROM tweets_silver.hashtags)                  AS filas_silver,\n  (SELECT SUM(tweets) FROM tweets_gold.hashtags_dia)             AS filas_cubiertas_en_gold;\n-- Referencia: 223523 · 2261 · 3339839 · 2397514 (el umbral conserva 71.8 % de las menciones).\n\n-- Ejercicio E2: hashtags del 27 de marzo que no llegaron al umbral el 17 (pista: NOT IN con subconsulta).",
+    "salida": "-- 2.1\nhashtag,tweets,pct_del_dia\nukraine,49393,8.711\nputin,14294,2.521\nrussia,13333,2.351\nucrania,5384,0.95\nstandwithukraine,4552,0.803\nukrainerussianwar,3698,0.652\nukrainerussiawar,2912,0.514\nrussian,2765,0.488\n\n-- 2.2\nhashtags_en_silver,hashtags_en_gold,filas_silver,filas_cubiertas_en_gold\n223523,2261,3339839,2397514",
+    "check": "2.1 muestra #ukraine con 8.711 % del día. 2.2: 2261 hashtags en Gold de 223523 en Silver, y 2,397,514 de 3,339,839 menciones (71.8 %). Tweets con hashtag: 1,226,642 de 6,798,932 (18 %).",
+    "error": "«Not found: Table …tweets_silver.hashtags» significa que falta la tabla Silver de hashtags (sesión anterior). Si 2.2 da más filas, probaste otro umbral: revisa la línea HAVING COUNT(*) >= 25."
+   },
+   {
+    "n": 3,
+    "minutes": 10,
+    "titulo": "Alcance de los autores",
+    "donde": "BigQuery Studio → Consulta SQL nueva.",
+    "action": "Ejecuta 32_gold_autores_alcance.sql (une tweets con autores) y los dos controles. Compara la columna pct_tweets con pct_likes de cada segmento. Para practicar: resuelve E3.",
+    "costo": "Crear autores_alcance ≈ 184 MB (184,045,373 bytes); 3.1 ≈ 315 bytes; 3.2 ≈ 15 MB (14,976,592 bytes).",
+    "codigo": "-- Gold · concentración por tamaño de audiencia del autor (segmentos por seguidores).\nCREATE OR REPLACE TABLE tweets_gold.autores_alcance AS\nWITH base AS (\n  SELECT t.tweet_id, t.likes, a.usuario,\n         CASE WHEN a.seguidores < 1000      THEN '1 · menos de 1 mil'\n              WHEN a.seguidores < 10000     THEN '2 · 1 mil a 10 mil'\n              WHEN a.seguidores < 100000    THEN '3 · 10 mil a 100 mil'\n              WHEN a.seguidores < 1000000   THEN '4 · 100 mil a 1 millón'\n              ELSE                               '5 · más de 1 millón' END AS segmento\n  FROM tweets_silver.tweets AS t\n  JOIN tweets_silver.autores AS a USING (usuario)\n)\nSELECT segmento,\n       COUNT(DISTINCT usuario) AS autores,\n       COUNT(*)                AS tweets,\n       SUM(likes)              AS likes,\n       ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS pct_tweets,\n       ROUND(100 * SUM(likes) / SUM(SUM(likes)) OVER (), 2) AS pct_likes\nFROM base\nGROUP BY segmento;\n\n-- PASO 3 · Alcance de los autores. Crea la tabla con 32_gold_autores_alcance.sql (une Silver tweets y autores).\n\n-- 3.1 La tabla completa: cada fila es un segmento por seguidores del autor.\nSELECT segmento, autores, tweets, likes, pct_tweets, pct_likes\nFROM tweets_gold.autores_alcance\nORDER BY segmento;\n\n-- 3.2 ¿Quiénes escriben mucho? Distribución de tweets por autor (tabla Silver autores).\nSELECT\n  COUNTIF(tweets_en_archivo = 1)                 AS un_tweet,\n  COUNTIF(tweets_en_archivo BETWEEN 2 AND 5)     AS de_2_a_5,\n  COUNTIF(tweets_en_archivo BETWEEN 6 AND 50)    AS de_6_a_50,\n  COUNTIF(tweets_en_archivo > 50)                AS mas_de_50,\n  COUNT(*)                                       AS autores\nFROM tweets_silver.autores;\n-- Referencia: 1091593 · 554547 · 214017 · 11917 · 1872074.\n\n-- Ejercicio E3: ¿qué segmento aporta más likes por tweet? (pista: likes / tweets en 3.1).",
+    "salida": "-- 3.1\nsegmento,autores,tweets,likes,pct_tweets,pct_likes\n1 · menos de 1 mil,1441113,4556410,9414243,67.02,8.72\n2 · 1 mil a 10 mil,353935,1591541,13623608,23.41,12.62\n3 · 10 mil a 100 mil,65549,447790,27064759,6.59,25.07\n4 · 100 mil a 1 millón,10102,146126,38796065,2.15,35.93\n5 · más de 1 millón,1375,57065,19068196,0.84,17.66\n\n-- 3.2\nun_tweet,de_2_a_5,de_6_a_50,mas_de_50,autores\n1091593,554547,214017,11917,1872074",
+    "check": "Los cinco segmentos suman 6,798,932 tweets. El segmento de más de 1 millón tiene 0.84 % de los tweets y 17.66 % de los likes. 11,917 autores escriben más de 50 tweets.",
+    "error": "«Not found: Table …tweets_silver.autores» significa que falta la tabla Silver de autores. Si un segmento sale vacío, revisa los límites del CASE WHEN (menor que, no menor o igual)."
+   },
+   {
+    "n": 4,
+    "minutes": 12,
+    "titulo": "Aplicaciones y ritmo del día",
+    "donde": "BigQuery Studio → Consulta SQL nueva.",
+    "action": "Ejecuta 33_gold_aplicaciones_dia.sql y 34_gold_actividad_hora.sql y los tres controles. 4.3 muestra por qué el 16 de marzo es un día parcial: solo tiene las horas 20 a 23 UTC. Para practicar: resuelve E4.",
+    "costo": "aplicaciones_dia ≈ 181 MB (180,696,382 bytes); actividad_hora ≈ 136 MB (136,076,239 bytes); los tres controles suman ≈ 22 KB.",
+    "codigo": "-- Gold · desde qué aplicación se publica (top 8 del archivo; el resto se agrupa en «otras»).\nCREATE OR REPLACE TABLE tweets_gold.aplicaciones_dia\nPARTITION BY fecha AS\nWITH top AS (\n  SELECT aplicacion FROM tweets_silver.tweets GROUP BY aplicacion ORDER BY COUNT(*) DESC LIMIT 8\n)\nSELECT t.fecha,\n       IF(t.aplicacion IN (SELECT aplicacion FROM top), t.aplicacion, 'otras') AS aplicacion,\n       COUNT(*) AS tweets\nFROM tweets_silver.tweets AS t\nGROUP BY t.fecha, aplicacion;\n\n-- Gold · ritmo del día: tweets por hora UTC y grupo de idioma.\nCREATE OR REPLACE TABLE tweets_gold.actividad_hora\nPARTITION BY fecha AS\nSELECT fecha,\n       EXTRACT(HOUR FROM fecha_hora) AS hora_utc,\n       IF(idioma IN ('en', 'es'), idioma, 'otro') AS grupo_idioma,\n       COUNT(*) AS tweets\nFROM tweets_silver.tweets\nGROUP BY fecha, hora_utc, grupo_idioma;\n\n-- PASO 4 · Aplicaciones y ritmo del día. Crea las tablas con 33_gold_aplicaciones_dia.sql y 34_gold_actividad_hora.sql.\n\n-- 4.1 Desde qué aplicación se publica (todo el periodo).\nSELECT aplicacion, SUM(tweets) AS tweets,\n       ROUND(100 * SUM(tweets) / SUM(SUM(tweets)) OVER (), 1) AS pct\nFROM tweets_gold.aplicaciones_dia\nGROUP BY aplicacion\nORDER BY tweets DESC;\n\n-- 4.2 Ritmo del día en días completos (17 a 27 de marzo), hora UTC.\nSELECT hora_utc, SUM(tweets) AS tweets\nFROM tweets_gold.actividad_hora\nWHERE fecha BETWEEN '2022-03-17' AND '2022-03-27'\nGROUP BY hora_utc\nORDER BY hora_utc;\n\n-- 4.3 El día parcial se ve aquí: el 16 de marzo solo tiene horas 20 a 23.\nSELECT hora_utc, SUM(tweets) AS tweets\nFROM tweets_gold.actividad_hora\nWHERE fecha = '2022-03-16'\nGROUP BY hora_utc\nORDER BY hora_utc;\n\n-- Ejercicio E4: ¿a qué hora UTC publica más cada grupo de idioma? (pista: GROUP BY grupo_idioma, hora_utc).",
+    "salida": "-- 4.1\naplicacion,tweets,pct\nTwitter Web App,2208662,32.5\nTwitter for Android,2090335,30.7\nTwitter for iPhone,1545888,22.7\notras,378701,5.6\nTwitter for iPad,213732,3.1\nWordPress.com,135051,2.0\nTweetDeck,105316,1.5\ndlvr.it,72468,1.1\nIFTTT,48779,0.7\n\n-- 4.2\nhora_utc,tweets\n0,240135\n1,211465\n2,189902\n3,168449\n4,145033\n5,144018\n6,173123\n7,222931\n8,231936\n9,245825\n10,265097\n11,292693\n12,326497\n13,355955\n14,370985\n15,369562\n16,371978\n17,369166\n18,371294\n19,361318\n20,348580\n21,329542\n22,300872\n23,257705\n\n-- 4.3\nhora_utc,tweets\n20,12684\n21,45347\n22,41166\n23,35674",
+    "check": "4.1 suma 100 % y las cuatro aplicaciones oficiales dan 89.0 %. En 4.2 el valle está en la hora 5 y la meseta entre las horas 13 y 19. 4.3 devuelve solo cuatro filas.",
+    "error": "«Unrecognized name: aplicacion» significa que tu tabla Silver usa otro nombre de columna: abre la pestaña Esquema de tweets_silver.tweets (no cuesta bytes) y ajusta el nombre. Si 4.3 devuelve 24 filas, el filtro de fecha no es el 16 de marzo."
+   },
+   {
+    "n": 5,
+    "minutes": 10,
+    "titulo": "Conversación y cuadre entre tablas",
+    "donde": "BigQuery Studio → Consulta SQL nueva.",
+    "action": "Ejecuta 35_gold_conversacion.sql y los dos controles. 5.2 es el cuadre: cuatro tablas con grano por tweet deben sumar el mismo total que Silver. Para practicar: resuelve E5.",
+    "costo": "Crear conversacion_dia ≈ 122 MB (122,380,776 bytes); 5.1 ≈ 900 bytes; 5.2 ≈ 7.6 KB.",
+    "codigo": "-- Gold · estructura de la conversación: originales, respuestas y citas por día, con likes típicos.\nCREATE OR REPLACE TABLE tweets_gold.conversacion_dia\nPARTITION BY fecha AS\nSELECT fecha,\n       CASE WHEN es_respuesta THEN 'respuesta'\n            WHEN es_cita      THEN 'cita'\n            ELSE                   'original' END AS tipo,\n       COUNT(*) AS tweets,\n       SUM(likes) AS likes,\n       APPROX_QUANTILES(likes, 100)[OFFSET(50)] AS mediana_likes\nFROM tweets_silver.tweets\nGROUP BY fecha, tipo;\n\n-- PASO 5 · Conversación y cuadre entre tablas. Crea la tabla con 35_gold_conversacion.sql.\n\n-- 5.1 Originales, respuestas y citas en todo el periodo.\nSELECT tipo, SUM(tweets) AS tweets, SUM(likes) AS likes,\n       ROUND(SUM(likes) / SUM(tweets), 2) AS likes_por_tweet\nFROM tweets_gold.conversacion_dia\nGROUP BY tipo\nORDER BY tweets DESC;\n\n-- 5.2 Cuadre: las tablas Gold con grano por tweet deben sumar el mismo total que Silver.\nSELECT\n  (SELECT COUNT(*) FROM tweets_silver.tweets)          AS silver,\n  (SELECT SUM(tweets) FROM tweets_gold.conversacion_dia) AS conversacion,\n  (SELECT SUM(tweets) FROM tweets_gold.actividad_hora)   AS actividad,\n  (SELECT SUM(tweets) FROM tweets_gold.aplicaciones_dia) AS aplicaciones;\n-- Referencia: las cuatro columnas dicen 6798932. Si una difiere, el GROUP BY perdió o repitió filas.\n\n-- Ejercicio E5: ¿qué día tuvo el mayor porcentaje de respuestas? (pista: SUM(IF(tipo='respuesta', tweets, 0)) / SUM(tweets)).",
+    "salida": "-- 5.1\ntipo,tweets,likes,likes_por_tweet\nrespuesta,3414201,16395007,4.8\noriginal,2729906,84729320,31.04\ncita,654825,6842544,10.45\n\n-- 5.2\nsilver,conversacion,actividad,aplicaciones\n6798932,6798932,6798932,6798932",
+    "check": "Las cuatro columnas de 5.2 dicen 6798932. Respuestas 50.2 % de los tweets; los originales concentran 78.5 % de los likes.",
+    "error": "Si una columna de 5.2 difiere, el GROUP BY de esa tabla perdió o repitió filas: ejecuta otra vez su CREATE OR REPLACE y vuelve a contar. No sigas hasta que las cuatro coincidan."
+   },
+   {
+    "n": 6,
+    "minutes": 13,
+    "titulo": "Precisión de las palabras clave y ficha de KPI",
+    "donde": "BigQuery Studio → Consulta SQL nueva; la ficha se llena en un editor de texto.",
+    "action": "Ejecuta la consulta de precisión (5 tweets por tema el 23 de marzo, en inglés y español). Clasifica cada fila tú mismo: acierto, dudoso o falso positivo, y cuenta. Después completa s05_06_ficha_kpi.md para un indicador de tema_dia. Tu resultado puede diferir del de referencia: es una lectura personal.",
+    "costo": "La consulta de precisión ≈ 98 MB (97,538,660 bytes): lee solo un día de texto.",
+    "codigo": "-- PASO 6 · ¿Las palabras clave miden el tema? Lee 5 tweets por tema (23 de marzo, inglés y español).\n-- Lee solo un día de texto de Silver (≈ 0.1 GB). Clasifica cada fila tú mismo: acierto, dudoso o falso positivo.\nWITH m AS (\n  SELECT p.tema, p.palabra, t.idioma,\n         REPLACE(SUBSTR(t.texto, 1, 150), '\\n', ' ') AS texto,\n         ROW_NUMBER() OVER (PARTITION BY p.tema ORDER BY FARM_FINGERPRINT(CAST(t.tweet_id AS STRING))) AS fila\n  FROM tweets_silver.tweets AS t\n  CROSS JOIN tweets_gold.temas_palabras AS p\n  WHERE t.fecha = '2022-03-23' AND t.idioma IN ('en', 'es')\n    AND REGEXP_CONTAINS(LOWER(t.texto), CONCAT(r'\\b', p.palabra, r'\\b'))\n)\nSELECT tema, palabra, idioma, texto\nFROM m\nWHERE fila <= 5\nORDER BY tema, fila;\n\n# Ficha de un indicador Gold\n\nCompleta una ficha por cada indicador que vayas a publicar.\n\n| Campo | Ejemplo con tema_dia |\n|---|---|\n| Nombre | Porcentaje diario de tweets en inglés que mencionan energía |\n| Pregunta que responde | ¿Qué parte de la conversación en inglés habló de energía cada día? |\n| Fórmula | 100 × tweets_tema ÷ tweets_dia |\n| Grano | día × tema × grupo de idioma |\n| Población | Tweets de la extracción, sin retweets, 16 a 27 de marzo de 2022 |\n| Denominador | Todos los tweets de ese día y de ese grupo de idioma |\n| Límites conocidos | El 16 de marzo es parcial; palabras clave sin precisión medida; un solo periodo |\n| Qué NO puedes afirmar | Que la gente se preocupó más, ni la causa de un cambio |\n\nTu ficha (una por indicador):\n- Nombre:\n- Pregunta:\n- Fórmula:\n- Grano:\n- Población:\n- Denominador:\n- Límites:\n- Qué NO puedes afirmar:",
+    "salida": "tema,palabra,idioma,texto\nalimentos,food,en,\"According to the Pentagon, the Russian occupation forces in Ukraine lack food, ammunition and warm equipment…\"\nalimentos,trigo,es,\"Fedeagro calcula aumento de 70 % en precio del trigo por conflicto en Ucrania…\"\naviacion,airspace,en,\"The war in Ukraine, embargoes and airspace closures are also affecting global air cargo operations…\"\naviacion,airspace,en,\"Russia has not achieved air superiority over Ukraine a month into the conflict…\"\nenergia,gas,en,\"Putin says Russia will switch gas sales to rubles for 'unfriendly' countries…\"\nmercados,markets,en,\"…most recent, credible studies support Wuhan fish markets… as the likely origin of COVID…\"\n… (30 filas: 5 por tema; el orden lo fija FARM_FINGERPRINT del tweet_id)\n\nLectura de referencia de las 30 filas: 17 aciertos, 6 dudosos, 7 falsos positivos (una persona, un día, inglés y español).",
+    "check": "Tienes 30 filas clasificadas y una ficha de KPI con los ocho campos. Tus conteos pueden variar; lo importante es que sepas explicar por qué dos filas son falsos positivos. Esta muestra NO mide la precisión del indicador.",
+    "error": "Si la consulta devuelve menos de 30 filas, falta temas_palabras (paso 1) o cambiaste la fecha. El orden depende de FARM_FINGERPRINT: no uses RAND(), porque cada ejecución daría otras filas."
+   }
   ],
-  "sources": [
-    [
-      "BigQuery · vistas materializadas",
-      "https://docs.cloud.google.com/bigquery/docs/materialized-views-create"
-    ],
-    [
-      "GoogleSQL · scripts",
-      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language"
-    ],
-    [
-      "Mercado Libre · BigQuery y Looker · 2022",
-      "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
-    ]
+  "cierre": [
+   "Qué conservar: las seis tablas Gold (tema_dia, hashtags_dia, autores_alcance, aplicaciones_dia, actividad_hora, conversacion_dia), la tabla temas_palabras y tu ficha de KPI. La siguiente sesión las usa para construir un tablero.",
+   "Costo: construir todo Gold lee ≈ 2.2 GB de Silver; las tablas ocupan ≈ 0.5 MB. No dejaste máquinas encendidas: cerrar la pestaña basta.",
+   "Autocomprobación: ¿puedes decir el grano de cada tabla, su denominador y una cosa que NO puedes afirmar con ella? Si no, repite el paso 1 y el 6."
+  ]
+ },
+ "assets": [
+  "tweets/30_gold_tweets.sql",
+  "tweets/31_gold_hashtags_dia.sql",
+  "tweets/32_gold_autores_alcance.sql",
+  "tweets/33_gold_aplicaciones_dia.sql",
+  "tweets/34_gold_actividad_hora.sql",
+  "tweets/35_gold_conversacion.sql",
+  "tweets/s05_01_temas_y_dia.sql",
+  "tweets/s05_02_hashtags.sql",
+  "tweets/s05_03_alcance.sql",
+  "tweets/s05_04_apps_y_hora.sql",
+  "tweets/s05_05_conversacion_y_cuadre.sql",
+  "tweets/s05_06_precision.sql",
+  "tweets/s05_06_ficha_kpi.md"
+ ],
+ "sources": [
+  [
+   "BigQuery · vistas",
+   "https://docs.cloud.google.com/bigquery/docs/views-intro"
   ],
-  "editorialSource": "../editorial/guion.py",
-  "slidesStatus": "Referencia anterior; slides vigentes en SESSIONS[5]."
+  [
+   "BigQuery · vistas materializadas",
+   "https://docs.cloud.google.com/bigquery/docs/materialized-views-create"
+  ],
+  [
+   "BigQuery · consultas programadas",
+   "https://docs.cloud.google.com/bigquery/docs/scheduling-queries"
+  ],
+  [
+   "Google Cloud · Dataform",
+   "https://docs.cloud.google.com/dataform/docs/overview"
+  ],
+  [
+   "BigQuery · funciones de agregación",
+   "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions"
+  ],
+  [
+   "BigQuery · funciones de ventana",
+   "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls"
+  ]
+ ],
+ "editorialSource": "../editorial/s05.py",
+ "slidesStatus": "Slides vigentes en editorial/s05.py; este archivo solo alimenta la guía de laboratorio."
 }

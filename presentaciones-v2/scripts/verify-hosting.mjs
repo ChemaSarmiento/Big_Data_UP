@@ -13,8 +13,6 @@ try{
   const links=await p.locator('a[href]').evaluateAll(ns=>ns.map(n=>n.href).filter(h=>h.startsWith(location.origin)));
   for(const url of links)assert.equal((await p.request.get(url)).status(),200,url);
  }
- await p.goto(root+'/refactor_especialidad/especialidad-07/practica.html');await p.locator('[data-search]').fill('inventario');await p.locator('[data-search-button]').click();assert.match(await p.locator('[data-search-results]').innerText(),/F03/);
- await p.goto(root+'/refactor_especialidad/especialidad-06/practica.html');await p.locator('[data-bi-filter]').selectOption('C');assert.match(await p.locator('[data-bi-cost]').innerText(),/Sin costo completo/);
  for(const url of ['/', '/reto-sql.html','/decks.json'])assert.equal((await p.request.get(root+url)).status(),200);
- assert.deepEqual(errors,[]);console.log('OK: 8 decks, guías y recursos bajo prefijo; prácticas S6/S7; raíz y reto SQL conservados.');
+ assert.deepEqual(errors,[]);console.log('OK: 8 decks, guías y recursos (incluye .py/.sh/.sql de tweets) bajo prefijo; raíz y reto SQL conservados.');
 }finally{await browser.close()}

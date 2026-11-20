@@ -102,40 +102,6 @@
     if(!navigator.clipboard)target.textContent='Selecciona y copia el texto manualmente.';
   }
   document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copyText($(b.dataset.copy).textContent,b.parentElement.querySelector('.copy-status'))));
-  document.querySelectorAll('[data-join]').forEach(d=>d.querySelector('button').addEventListener('click',()=>{
-    const on=d.querySelector('button').getAttribute('aria-pressed')!=='true';
-    d.querySelector('button').setAttribute('aria-pressed',String(on));
-    d.querySelectorAll('.join-rows>div').forEach((r,i)=>r.classList.toggle('faded',on&&i<2));
-    d.querySelector('.demo-answer').textContent=on?'Una fila salarial vigente en el snapshot. La identidad sigue siendo una persona.':'Tres filas salariales, una persona. No es un conteo de empleados actuales.';
-  }));
-  document.querySelectorAll('[data-join-types]').forEach(d=>d.querySelector('button').addEventListener('click',()=>{
-    const on=d.querySelector('button').getAttribute('aria-pressed')!=='true';
-    d.querySelector('button').setAttribute('aria-pressed',String(on));
-    d.querySelector('button').textContent=on?'Usar INNER JOIN':'Usar LEFT JOIN';
-    d.querySelector('.unmatched').hidden=!on;
-    d.querySelector('.demo-answer').textContent=on?'LEFT JOIN: Ana coincide y Luis permanece con salario NULL. Son dos filas de resultado.':'INNER JOIN: solo Ana tiene una coincidencia. Luis no aparece en el resultado.';
-  }));
-  document.querySelectorAll('[data-quality]').forEach(d=>d.querySelector('button').addEventListener('click',()=>{
-    const on=d.classList.toggle('rules-applied');d.querySelector('button').setAttribute('aria-pressed',String(on));
-    d.querySelector('.demo-answer').textContent=on?'16 = 1 copia + 2 rechazadas + 13 aceptadas. C4 precio inválido; C5 fecha inválida.':'Antes de transformar: conservar el original y su conteo.';
-  }));
-  document.querySelectorAll('[data-basket]').forEach(d=>d.querySelector('button').addEventListener('click',()=>{
-    const on=d.classList.toggle('eligible-only');d.querySelector('button').setAttribute('aria-pressed',String(on));
-    d.querySelector('.demo-answer').textContent=on?'A tiene el menor costo entre canastas completas del fixture. C queda fuera del ranking.':'54 es un subtotal incompleto; no es costo de una canasta de cinco productos.';
-  }));
-  const corpus=JSON.parse($('corpus-inline')?.textContent||'[]');
-  const normalize=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  document.querySelectorAll('[data-retrieval]').forEach(d=>{
-    const run=()=>{
-      const terms=normalize(d.querySelector('[data-search]').value).match(/[a-z0-9]+/g)?.filter(x=>x.length>3)||[];
-      const ranked=corpus.map(f=>({f,score:terms.reduce((a,t)=>a+(normalize(f.titulo+' '+f.texto).includes(t)?1:0),0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.f.id.localeCompare(b.f.id)).slice(0,3);
-      const area=d.querySelector('[data-search-results]');area.replaceChildren();
-      d.querySelector('.demo-answer').textContent=ranked.length?`${ranked.length} fichas por coincidencia de términos; revisa pertinencia antes de usarlas.`:'No se recuperó respaldo por esos términos. Reformula o abstente; no inventes una ficha.';
-      ranked.forEach(({f})=>{const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent=f.id+' · '+f.titulo;const p=document.createElement('p');p.textContent=f.fecha+' · '+f.texto;details.append(summary,p);area.append(details);});
-    };
-    d.querySelector('[data-search-button]').addEventListener('click',run);
-    d.querySelector('[data-search]').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();run();}});
-  });
   document.querySelectorAll('[data-timer]').forEach(d=>{
     let remaining=420,running=false;const out=d.querySelector('output');
     const draw=()=>{out.textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');};

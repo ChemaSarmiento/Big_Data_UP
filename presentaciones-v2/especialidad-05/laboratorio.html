@@ -1,50 +1,574 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S5 · Una canasta incompleta parece una ganga</title><link rel="stylesheet" href="../compartido/curso.css"><script src="../compartido/journal.js" defer></script></head><body data-session="5"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S5 · 180 MINUTOS</p><h1>Una canasta incompleta parece una ganga</h1><p class="notice">Material local para revisión. Datos y resultados del fixture son ilustrativos: no provienen de filas de PROFECO ni demuestran escala. Los pasos cloud requieren cuenta, permisos, región y ensayo previo del docente. No se han ejecutado en GCP desde este sitio.</p><h2>Preparación, herramientas y ruta exacta</h2><p>Requiere Silver del fixture en curso_silver.observaciones, proyecto autorizado y ubicación compatible (scripts proponen us-central1). Abrir BigQuery Studio, seleccionar proyecto, revisar parámetros de 06_gold.sql y ejecutar completo como script. Después ejecutar 07_control_dashboard.sql. El script reemplaza solo destinos curso_gold y conserva únicamente el escenario actual; exportar evidencia antes de cambiarlo. Esperado: catálogo5, precios_elegidos13, detalle15,canastas3. A150/B160 completas; Csubtotal54 con costo completo NULL. Las ventanas vienen suministradas: el alumno interpreta y verifica. No aplicar este esquema a otra fuente sin adaptación docente. Si no se puede ejecutar, identificar evidencia docente y pasos pendientes; una simulación HTML no demuestra GCP.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/06_gold.sql" download>06_gold.sql ↓</a></li><li><a href="../recursos/diccionario-kpi.csv" download>diccionario-kpi.csv ↓</a></li><li><a href="../recursos/gold-esperado.csv" download>gold-esperado.csv ↓</a></li><li><a href="../recursos/07_control_dashboard.sql" download>07_control_dashboard.sql ↓</a></li></ul><p><strong>Región propuesta:</strong> us-central1; verificar compatibilidad de GCS/BigQuery y política de cuenta. Leer los scripts antes de ejecutarlos en un proyecto de laboratorio: las escrituras reemplazan solo tablas curso_*. No apuntarlas a datos reales por un cambio de nombre improvisado.</p><section id="paso-1"><h2>Paso 1 · 5 min</h2><p><strong>Acción:</strong> Leer parámetros de 06_gold.sql: catálogo de cinco productos, cantidad1, ventana2024-01-15 y escenario demo_2024-01-15. Confirmar Silver13 filas y proyecto/ubicación.</p><p><strong>Comprobación y recuperación:</strong> No ejecutar DECLARE aislado: las variables pertenecen al script. Si falta Silver, recuperar con docente y declarar dependencia. No inventar geografía: el fixture no tiene esa columna.</p></section><section id="paso-2"><h2>Paso 2 · 8 min</h2><p><strong>Acción:</strong> Revisar JOIN de identidad y QUALIFY. Predecir qué filas elige por producto/marca/presentación/tienda.</p><p><strong>Comprobación y recuperación:</strong> Esperadas13 observaciones elegidas. Última fecha y desempate por ID no garantizan simultaneidad si amplías ventana; revisar conflictos de IDs antes de seleccionar.</p></section><section id="paso-3"><h2>Paso 3 · 12 min</h2><p><strong>Acción:</strong> En BigQuery Studio → editor SQL ejecutar 06_gold.sql completo, en el proyecto de laboratorio.</p><p><strong>Comprobación y recuperación:</strong> Crea/reemplaza catalogo, precios_elegidos, detalle y canastas en curso_gold. No modifica Silver. Conserva solo escenario actual, no histórico. Si falla, registrar error y resolver antes de repetir completo.</p></section><section id="paso-4"><h2>Paso 4 · 12 min</h2><p><strong>Acción:</strong> Consultar canastas y detalle, contrastar gold-esperado.csv y verificar ASSERT. Contar detalle y revisar unicidad de escenario/tienda/producto/marca/presentación.</p><p><strong>Comprobación y recuperación:</strong> Detalle15 combinaciones; canastas3 tiendas. A150/B160 completas; C subtotal54,cobertura0.6,costo completo NULL,elegible=false. Una tienda sin filas Silver requeriría padrón para aparecer.</p></section><section id="paso-5"><h2>Paso 5 · 10 min</h2><p><strong>Acción:</strong> Ejecutar 07_control_dashboard.sql; recalcular A:10+20+30+40+50. Contrastar detalle de C y registrar job/bytes/caché.</p><p><strong>Comprobación y recuperación:</strong> No sustituir NULL por0 ni sumar tiendas alternativas. Si hay duplicados en el grano, revisar catálogo y selección antes de publicar. El fixture no prueba rendimiento a escala.</p></section><section id="paso-6"><h2>Paso 6 · 8 min</h2><p><strong>Acción:</strong> Completar diccionario-kpi.csv con tres indicadores: fórmula,unidad,grano,denominador,periodo,fuente,responsable y límite. Guardar SQL y versión del escenario.</p><p><strong>Comprobación y recuperación:</strong> Conservar Gold para BI; documentar actualización/retención y revisar recursos existentes. Las tablas no se refrescan solas. Transferir al dataset distinto del equipo con esquema preparado por docente.</p></section><h2>Código completo y materiales</h2><details><summary>06_gold.sql · ver contenido completo</summary><pre><code>-- GoogleSQL. Ejemplo ILUSTRATIVO de cinco envases, una tienda, misma ventana histórica.
--- Ejecutar después de 04_silver.sql. Reemplaza SOLO tablas curso_gold.
-DECLARE inicio DATE DEFAULT DATE &#x27;2024-01-15&#x27;;
-DECLARE fin DATE DEFAULT DATE &#x27;2024-01-15&#x27;;
-DECLARE escenario_id STRING DEFAULT &#x27;demo_2024-01-15&#x27;;
-CREATE SCHEMA IF NOT EXISTS curso_gold OPTIONS(location=&#x27;us-central1&#x27;);
-CREATE OR REPLACE TABLE curso_gold.catalogo AS
-SELECT p AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, 1 AS cantidad_envases
-FROM UNNEST([&#x27;p1&#x27;,&#x27;p2&#x27;,&#x27;p3&#x27;,&#x27;p4&#x27;,&#x27;p5&#x27;]) p;
-CREATE OR REPLACE TABLE curso_gold.precios_elegidos AS
-SELECT s.* FROM curso_silver.observaciones s
-JOIN curso_gold.catalogo c USING(producto, marca, presentacion)
-WHERE s.fecha_observada BETWEEN inicio AND fin
-QUALIFY ROW_NUMBER() OVER (
- PARTITION BY producto, marca, presentacion, establecimiento
- ORDER BY fecha_observada DESC, id DESC) = 1;
--- LEFT JOIN desde tienda x catálogo: no perder productos sin observación.
-CREATE OR REPLACE TABLE curso_gold.detalle AS
-SELECT escenario_id AS escenario, t.establecimiento, c.*,
- p.id, p.fecha_observada, p.precio_envase_mxn,
- p.precio_envase_mxn*c.cantidad_envases AS importe_mxn
-FROM (SELECT DISTINCT establecimiento FROM curso_silver.observaciones) t
-CROSS JOIN curso_gold.catalogo c
-LEFT JOIN curso_gold.precios_elegidos p
- ON t.establecimiento=p.establecimiento AND c.producto=p.producto
- AND c.marca=p.marca AND c.presentacion=p.presentacion;
-CREATE OR REPLACE TABLE curso_gold.canastas AS
-SELECT escenario, establecimiento, COUNT(precio_envase_mxn) AS productos_encontrados,
- COUNT(*) AS productos_requeridos,
- SAFE_DIVIDE(COUNT(precio_envase_mxn),COUNT(*)) AS cobertura,
- SUM(importe_mxn) AS subtotal_mxn,
- IF(COUNT(precio_envase_mxn)=COUNT(*),SUM(importe_mxn),NULL) AS costo_completo_mxn,
- COUNT(precio_envase_mxn)=COUNT(*) AS elegible, inicio AS fecha_inicio, fin AS fecha_fin
-FROM curso_gold.detalle GROUP BY escenario, establecimiento;
-ASSERT (NOT EXISTS (
- SELECT 1 FROM curso_gold.precios_elegidos
- GROUP BY producto, marca, presentacion, establecimiento HAVING COUNT(*)&gt;1
-)) AS &#x27;Fan-out antes de la agregacion&#x27;;
-SELECT * FROM curso_gold.canastas ORDER BY establecimiento;
--- A: 5/5, 150; B: 5/5, 160; C: 3/5, subtotal54, costo completo NULL.
--- Regla última observación no garantiza simultaneidad si se amplía la ventana.
-</code></pre></details><details><summary>07_control_dashboard.sql · ver contenido completo</summary><pre><code>-- GoogleSQL: comprobar exactamente un escenario antes de interpretar el dashboard.
-SELECT escenario, establecimiento, cobertura, costo_completo_mxn, subtotal_mxn
-FROM curso_gold.canastas WHERE escenario=&#x27;demo_2024-01-15&#x27;
-ORDER BY elegible DESC, costo_completo_mxn, establecimiento;
-SELECT establecimiento, producto, cantidad_envases, fecha_observada, importe_mxn
-FROM curso_gold.detalle WHERE escenario=&#x27;demo_2024-01-15&#x27; ORDER BY establecimiento,producto;
--- No sumar costos de distintas tiendas como si fueran una sola compra.
--- No sumar snapshots ni escenarios en tarjetas de total.
-</code></pre></details><section id="proyecto"><h2>Transferencia al proyecto propio · 30 minutos</h2><p>Usa tu dataset distinto al de otros equipos. Conserva grano, reglas, fuente, KPI y límites de tu dominio. Las canastas y cifras ilustrativas no son un proyecto obligatorio. La preparación de cada paquete real debe validarse con el docente; no aplicar el esquema del fixture a cualquier archivo.</p><form id="journal-form"><label>Dataset y equipo<input name="dataset" maxlength="200" required></label><label>Evidencia del hito H5<textarea name="evidence" rows="3" maxlength="2000" required></textarea></label><label>Qué ejecuté / qué preparó el docente / qué falta<textarea name="limits" rows="3" maxlength="1500"></textarea></label><button type="submit">Descargar registro H5 ↓</button><span id="journal-status" role="status"></span></form><p class="micro">Solo este navegador. La ficha no asigna fuentes ni envía una entrega. No escribir credenciales. Si localStorage falla, descargar el archivo.</p><a href="entregable.md" download>Plantilla del entregable ↓</a></section><section><h2>Entrega, costo y cierre</h2><p>Guardar consulta, versión de fuente, resultados/controles y límites; adjuntar el hito del dataset propio. Registrar bytes/job/caché o uso de modelo cuando corresponda. Cerrar la página no detiene recursos cloud. Conservar las capas necesarias para la siguiente sesión, revisar expiraciones/refrescos y detener cómputo de práctica según acuerdo; no borrar proyectos compartidos.</p><p>Si falta un paso anterior, usar el punto de restauración ilustrativo apropiado y decirlo. Esa recuperación no cuenta como ejecución real de una fuente grande ni del proyecto propio. No se exige entrenar ML.</p></section><h2>Fuentes</h2><p><a href="https://docs.cloud.google.com/bigquery/docs/materialized-views-create" target="_blank" rel="noopener">BigQuery · vistas materializadas ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language" target="_blank" rel="noopener">GoogleSQL · scripts ↗</a> · <a href="https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker" target="_blank" rel="noopener">Mercado Libre · BigQuery y Looker · 2022 ↗</a></p><p>Consulta documental: 2026-11-05. Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas-docente.md">Notas docentes</a> · <a href="../">Índice de sesiones</a></p></article></body></html>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S5 · Un conteo no es un indicador</title><link rel="stylesheet" href="../compartido/curso.css"></head><body data-session="5"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S5 · 180 MINUTOS</p><h1>Un conteo no es un indicador</h1><p class="notice">Las cifras de salida son valores de referencia del curso, obtenidos con consultas reales de solo lectura sobre tablas equivalentes. Tus resultados deben coincidir si construiste Silver igual; los menús exactos de BigQuery Studio pueden verse distintos y no se ensayaron con una cuenta de alumno. Los bytes son los del estimador.</p><h2>Antes de empezar</h2><ul><li>Un proyecto de Google Cloud con facturación activa y BigQuery Studio abierto.</li><li>Las tres tablas Silver de la sesión anterior en tu proyecto: tweets_silver.tweets (6,798,932 filas), tweets_silver.autores y tweets_silver.hashtags.</li><li>Permiso de editor de datos en tu proyecto (puedes crear datasets y tablas).</li><li>Cada paso lee solo unas decenas o cientos de MB de Silver; solo tema_dia llega a ≈ 1.4 GB.</li></ul><h2>Preparación, herramientas y ruta exacta</h2><p>BigQuery Studio → selecciona tu proyecto → Consulta SQL nueva → pega el bloque del paso → mira el estimador de bytes (arriba a la derecha del editor) → Ejecutar → compara el resultado con la salida esperada. Todas las tablas se crean con CREATE OR REPLACE TABLE: puedes repetir un paso sin duplicar filas.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/tweets/30_gold_tweets.sql" download>tweets/30_gold_tweets.sql ↓</a></li><li><a href="../recursos/tweets/31_gold_hashtags_dia.sql" download>tweets/31_gold_hashtags_dia.sql ↓</a></li><li><a href="../recursos/tweets/32_gold_autores_alcance.sql" download>tweets/32_gold_autores_alcance.sql ↓</a></li><li><a href="../recursos/tweets/33_gold_aplicaciones_dia.sql" download>tweets/33_gold_aplicaciones_dia.sql ↓</a></li><li><a href="../recursos/tweets/34_gold_actividad_hora.sql" download>tweets/34_gold_actividad_hora.sql ↓</a></li><li><a href="../recursos/tweets/35_gold_conversacion.sql" download>tweets/35_gold_conversacion.sql ↓</a></li><li><a href="../recursos/tweets/s05_01_temas_y_dia.sql" download>tweets/s05_01_temas_y_dia.sql ↓</a></li><li><a href="../recursos/tweets/s05_02_hashtags.sql" download>tweets/s05_02_hashtags.sql ↓</a></li><li><a href="../recursos/tweets/s05_03_alcance.sql" download>tweets/s05_03_alcance.sql ↓</a></li><li><a href="../recursos/tweets/s05_04_apps_y_hora.sql" download>tweets/s05_04_apps_y_hora.sql ↓</a></li><li><a href="../recursos/tweets/s05_05_conversacion_y_cuadre.sql" download>tweets/s05_05_conversacion_y_cuadre.sql ↓</a></li><li><a href="../recursos/tweets/s05_06_precision.sql" download>tweets/s05_06_precision.sql ↓</a></li><li><a href="../recursos/tweets/s05_06_ficha_kpi.md" download>tweets/s05_06_ficha_kpi.md ↓</a></li></ul><p><strong>Región y permisos:</strong> Crea tweets_gold en la misma ubicación que tweets_silver (por ejemplo US). Una consulta no puede mezclar datasets de ubicaciones distintas.</p><section id="paso-1"><h2>Paso 1 · Temas y tabla de hechos del día · 15 min</h2><p><strong>Dónde:</strong> BigQuery Studio → Consulta SQL nueva. Elige tu proyecto en el selector superior. Abre el estimador de bytes (arriba a la derecha del editor).</p><p><strong>Acción:</strong> Crea el dataset tweets_gold en la misma ubicación que tweets_silver, ejecuta 30_gold_tweets.sql completo (primero temas_palabras, luego tema_dia) y corre los tres controles. Lee el estimador antes de cada ejecución: tema_dia lee solo la columna texto de Silver. Para practicar: resuelve E1.</p><p><strong>Costo estimado:</strong> temas_palabras 0 bytes; tema_dia ≈ 1.42 GB (1,422,081,733 bytes según el estimador); los tres controles suman &lt; 17 KB.</p><pre><code>-- 0. Una sola vez: el dataset debe estar en la misma ubicación que tweets_silver (aquí US).
+CREATE SCHEMA IF NOT EXISTS tweets_gold OPTIONS (location = &#x27;US&#x27;);
+
+-- 1. Tabla pequeña de temas satélite. Es una definición editable, no un hecho del dato.
+CREATE OR REPLACE TABLE tweets_gold.temas_palabras AS
+SELECT * FROM UNNEST([
+  STRUCT(&#x27;energia&#x27; AS tema, &#x27;oil&#x27; AS palabra), (&#x27;energia&#x27;,&#x27;gas&#x27;), (&#x27;energia&#x27;,&#x27;fuel&#x27;), (&#x27;energia&#x27;,&#x27;petrol&#x27;),
+  (&#x27;energia&#x27;,&#x27;energy&#x27;), (&#x27;energia&#x27;,&#x27;petróleo&#x27;), (&#x27;energia&#x27;,&#x27;gasolina&#x27;), (&#x27;energia&#x27;,&#x27;combustible&#x27;), (&#x27;energia&#x27;,&#x27;energía&#x27;),
+  (&#x27;alimentos&#x27;,&#x27;wheat&#x27;), (&#x27;alimentos&#x27;,&#x27;grain&#x27;), (&#x27;alimentos&#x27;,&#x27;food&#x27;), (&#x27;alimentos&#x27;,&#x27;fertilizer&#x27;),
+  (&#x27;alimentos&#x27;,&#x27;trigo&#x27;), (&#x27;alimentos&#x27;,&#x27;cereal&#x27;), (&#x27;alimentos&#x27;,&#x27;alimentos&#x27;), (&#x27;alimentos&#x27;,&#x27;fertilizantes&#x27;),
+  (&#x27;aviacion&#x27;,&#x27;airline&#x27;), (&#x27;aviacion&#x27;,&#x27;airlines&#x27;), (&#x27;aviacion&#x27;,&#x27;flights&#x27;), (&#x27;aviacion&#x27;,&#x27;airspace&#x27;),
+  (&#x27;aviacion&#x27;,&#x27;aviation&#x27;), (&#x27;aviacion&#x27;,&#x27;aerolínea&#x27;), (&#x27;aviacion&#x27;,&#x27;vuelos&#x27;), (&#x27;aviacion&#x27;,&#x27;espacio aéreo&#x27;),
+  (&#x27;sanciones&#x27;,&#x27;sanctions&#x27;), (&#x27;sanciones&#x27;,&#x27;sanction&#x27;), (&#x27;sanciones&#x27;,&#x27;sanciones&#x27;), (&#x27;sanciones&#x27;,&#x27;sanción&#x27;),
+  (&#x27;cadena_suministro&#x27;,&#x27;supply chain&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;shipping&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;logistics&#x27;),
+  (&#x27;cadena_suministro&#x27;,&#x27;cadena de suministro&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;puerto&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;logística&#x27;),
+  (&#x27;mercados&#x27;,&#x27;inflation&#x27;), (&#x27;mercados&#x27;,&#x27;stock market&#x27;), (&#x27;mercados&#x27;,&#x27;markets&#x27;), (&#x27;mercados&#x27;,&#x27;inflación&#x27;),
+  (&#x27;mercados&#x27;,&#x27;precios&#x27;), (&#x27;mercados&#x27;,&#x27;bolsa&#x27;), (&#x27;mercados&#x27;,&#x27;mercados&#x27;)
+]);
+
+-- 2. Gold: un tweet cuenta una vez por tema, aunque use varias palabras del tema.
+--    Grano: fecha + tema + grupo de idioma. pct_del_dia usa el total de tweets del mismo día e idioma.
+CREATE OR REPLACE TABLE tweets_gold.tema_dia
+PARTITION BY fecha AS
+WITH por_tweet AS (
+  SELECT t.fecha, p.tema,
+         IF(t.idioma IN (&#x27;en&#x27;, &#x27;es&#x27;), t.idioma, &#x27;otro&#x27;) AS grupo_idioma,
+         t.tweet_id, t.likes
+  FROM tweets_silver.tweets AS t
+  CROSS JOIN tweets_gold.temas_palabras AS p
+  WHERE REGEXP_CONTAINS(LOWER(t.texto), CONCAT(r&#x27;\b&#x27;, p.palabra, r&#x27;\b&#x27;))
+  GROUP BY t.fecha, p.tema, grupo_idioma, t.tweet_id, t.likes
+),
+dia AS (
+  SELECT fecha, IF(idioma IN (&#x27;en&#x27;, &#x27;es&#x27;), idioma, &#x27;otro&#x27;) AS grupo_idioma, COUNT(*) AS tweets_dia
+  FROM tweets_silver.tweets
+  GROUP BY fecha, grupo_idioma
+)
+SELECT m.fecha, m.tema, m.grupo_idioma,
+       COUNT(*) AS tweets_tema, SUM(m.likes) AS likes_tema,
+       ANY_VALUE(d.tweets_dia) AS tweets_dia,
+       ROUND(100 * COUNT(*) / ANY_VALUE(d.tweets_dia), 3) AS pct_del_dia
+FROM por_tweet AS m
+JOIN dia AS d USING (fecha, grupo_idioma)
+GROUP BY m.fecha, m.tema, m.grupo_idioma;
+
+-- PASO 1 · Gold de temas. Antes de ejecutar, crea las tablas con 30_gold_tweets.sql (temas_palabras + tema_dia).
+-- Requiere tweets_silver.tweets (sesión anterior). Lee solo la columna `texto` de Silver (≈ 1.2 GB).
+
+-- 1.1 ¿Cuántos pares tweet–tema hay? Un tweet cuenta una vez por tema, pero puede estar en varios temas.
+SELECT SUM(tweets_tema) AS pares_tweet_tema FROM tweets_gold.tema_dia;
+-- Referencia: 342484 pares. Tweets distintos con algún tema: 314527.
+
+-- 1.2 Una fila de Gold explicada: energía en inglés, día por día.
+SELECT fecha, tweets_tema, tweets_dia, pct_del_dia
+FROM tweets_gold.tema_dia
+WHERE tema = &#x27;energia&#x27; AND grupo_idioma = &#x27;en&#x27;
+ORDER BY fecha;
+
+-- 1.3 Control del denominador: tweets_dia, sumado una vez por día e idioma, debe dar el total de Silver.
+SELECT SUM(tweets_dia) AS base_total
+FROM (SELECT fecha, grupo_idioma, ANY_VALUE(tweets_dia) AS tweets_dia
+      FROM tweets_gold.tema_dia GROUP BY fecha, grupo_idioma);
+-- Referencia: 6798932.
+
+-- Ejercicio E1: ¿qué porcentaje de los tweets en español habla de sanciones en todo el periodo?
+-- Pista: SUM(tweets_tema) / SUM(tweets_dia) filtrando tema y grupo_idioma. (Respuesta de referencia: 0.91 %).</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 1.1
+pares_tweet_tema
+342484
+
+-- 1.2 (energía, inglés)
+fecha,tweets_tema,tweets_dia,pct_del_dia
+2022-03-16,1666,86271,1.931
+2022-03-17,10167,476188,2.135
+2022-03-18,9772,433524,2.254
+2022-03-19,7247,357489,2.027
+2022-03-20,6980,369390,1.89
+2022-03-21,8920,373906,2.386
+2022-03-22,7384,333329,2.215
+2022-03-23,10530,311363,3.382
+2022-03-24,10400,327399,3.177
+2022-03-25,9342,321183,2.909
+2022-03-26,7339,304339,2.411
+2022-03-27,6666,318791,2.091
+
+-- 1.3
+base_total
+6798932</code></pre><p><strong>Comprueba:</strong> 1.1 da 342484 pares (hay 314,527 tweets distintos con algún tema: la diferencia son tweets en más de un tema). 1.2 muestra 3.382 el 23 de marzo. 1.3 da 6798932, el total de Silver. Si el total no coincide, revisa que tweets_silver.tweets tenga 6,798,932 filas.</p><p><strong>Error frecuente y recuperación:</strong> «Not found: Table …tweets_silver.tweets was not found in location US» significa que Silver no existe en tu proyecto o está en otra ubicación: crea Silver (sesión anterior) o crea tweets_gold con la misma ubicación que tweets_silver. «Dataset … not found» significa que falta el CREATE SCHEMA del paso 0.</p></section><section id="paso-2"><h2>Paso 2 · Hashtags por día y el costo del umbral · 10 min</h2><p><strong>Dónde:</strong> BigQuery Studio → Consulta SQL nueva (el mismo proyecto).</p><p><strong>Acción:</strong> Ejecuta 31_gold_hashtags_dia.sql y los dos controles. 2.2 compara Gold con Silver para ver qué deja fuera el umbral de 25 tweets por día. Para practicar: resuelve E2.</p><p><strong>Costo estimado:</strong> Crear hashtags_dia ≈ 119 MB (118,741,742 bytes); 2.1 ≈ 35 KB; 2.2 ≈ 38 MB (37,844,138 bytes).</p><pre><code>-- Gold · hashtags por día. Umbral: solo hashtags con al menos 25 tweets ese día (definición editable).
+CREATE OR REPLACE TABLE tweets_gold.hashtags_dia
+PARTITION BY fecha AS
+WITH por_dia AS (
+  SELECT fecha, COUNT(*) AS tweets_dia FROM tweets_silver.tweets GROUP BY fecha
+)
+SELECT h.fecha, h.hashtag, COUNT(*) AS tweets, d.tweets_dia,
+       ROUND(100 * COUNT(*) / d.tweets_dia, 3) AS pct_del_dia
+FROM tweets_silver.hashtags AS h
+JOIN por_dia AS d USING (fecha)
+GROUP BY h.fecha, h.hashtag, d.tweets_dia
+HAVING COUNT(*) &gt;= 25;
+
+-- PASO 2 · Hashtags por día. Crea la tabla con 31_gold_hashtags_dia.sql (usa tweets_silver.hashtags).
+-- Umbral del script: solo hashtags con al menos 25 tweets ese día.
+
+-- 2.1 Los hashtags más usados el 23 de marzo.
+SELECT hashtag, tweets, pct_del_dia
+FROM tweets_gold.hashtags_dia
+WHERE fecha = &#x27;2022-03-23&#x27;
+ORDER BY tweets DESC
+LIMIT 8;
+
+-- 2.2 ¿Qué se pierde con el umbral? Compara Gold con la tabla Silver completa.
+SELECT
+  (SELECT COUNT(DISTINCT hashtag) FROM tweets_silver.hashtags) AS hashtags_en_silver,
+  (SELECT COUNT(DISTINCT hashtag) FROM tweets_gold.hashtags_dia) AS hashtags_en_gold,
+  (SELECT COUNT(*) FROM tweets_silver.hashtags)                  AS filas_silver,
+  (SELECT SUM(tweets) FROM tweets_gold.hashtags_dia)             AS filas_cubiertas_en_gold;
+-- Referencia: 223523 · 2261 · 3339839 · 2397514 (el umbral conserva 71.8 % de las menciones).
+
+-- Ejercicio E2: hashtags del 27 de marzo que no llegaron al umbral el 17 (pista: NOT IN con subconsulta).</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 2.1
+hashtag,tweets,pct_del_dia
+ukraine,49393,8.711
+putin,14294,2.521
+russia,13333,2.351
+ucrania,5384,0.95
+standwithukraine,4552,0.803
+ukrainerussianwar,3698,0.652
+ukrainerussiawar,2912,0.514
+russian,2765,0.488
+
+-- 2.2
+hashtags_en_silver,hashtags_en_gold,filas_silver,filas_cubiertas_en_gold
+223523,2261,3339839,2397514</code></pre><p><strong>Comprueba:</strong> 2.1 muestra #ukraine con 8.711 % del día. 2.2: 2261 hashtags en Gold de 223523 en Silver, y 2,397,514 de 3,339,839 menciones (71.8 %). Tweets con hashtag: 1,226,642 de 6,798,932 (18 %).</p><p><strong>Error frecuente y recuperación:</strong> «Not found: Table …tweets_silver.hashtags» significa que falta la tabla Silver de hashtags (sesión anterior). Si 2.2 da más filas, probaste otro umbral: revisa la línea HAVING COUNT(*) &gt;= 25.</p></section><section id="paso-3"><h2>Paso 3 · Alcance de los autores · 10 min</h2><p><strong>Dónde:</strong> BigQuery Studio → Consulta SQL nueva.</p><p><strong>Acción:</strong> Ejecuta 32_gold_autores_alcance.sql (une tweets con autores) y los dos controles. Compara la columna pct_tweets con pct_likes de cada segmento. Para practicar: resuelve E3.</p><p><strong>Costo estimado:</strong> Crear autores_alcance ≈ 184 MB (184,045,373 bytes); 3.1 ≈ 315 bytes; 3.2 ≈ 15 MB (14,976,592 bytes).</p><pre><code>-- Gold · concentración por tamaño de audiencia del autor (segmentos por seguidores).
+CREATE OR REPLACE TABLE tweets_gold.autores_alcance AS
+WITH base AS (
+  SELECT t.tweet_id, t.likes, a.usuario,
+         CASE WHEN a.seguidores &lt; 1000      THEN &#x27;1 · menos de 1 mil&#x27;
+              WHEN a.seguidores &lt; 10000     THEN &#x27;2 · 1 mil a 10 mil&#x27;
+              WHEN a.seguidores &lt; 100000    THEN &#x27;3 · 10 mil a 100 mil&#x27;
+              WHEN a.seguidores &lt; 1000000   THEN &#x27;4 · 100 mil a 1 millón&#x27;
+              ELSE                               &#x27;5 · más de 1 millón&#x27; END AS segmento
+  FROM tweets_silver.tweets AS t
+  JOIN tweets_silver.autores AS a USING (usuario)
+)
+SELECT segmento,
+       COUNT(DISTINCT usuario) AS autores,
+       COUNT(*)                AS tweets,
+       SUM(likes)              AS likes,
+       ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS pct_tweets,
+       ROUND(100 * SUM(likes) / SUM(SUM(likes)) OVER (), 2) AS pct_likes
+FROM base
+GROUP BY segmento;
+
+-- PASO 3 · Alcance de los autores. Crea la tabla con 32_gold_autores_alcance.sql (une Silver tweets y autores).
+
+-- 3.1 La tabla completa: cada fila es un segmento por seguidores del autor.
+SELECT segmento, autores, tweets, likes, pct_tweets, pct_likes
+FROM tweets_gold.autores_alcance
+ORDER BY segmento;
+
+-- 3.2 ¿Quiénes escriben mucho? Distribución de tweets por autor (tabla Silver autores).
+SELECT
+  COUNTIF(tweets_en_archivo = 1)                 AS un_tweet,
+  COUNTIF(tweets_en_archivo BETWEEN 2 AND 5)     AS de_2_a_5,
+  COUNTIF(tweets_en_archivo BETWEEN 6 AND 50)    AS de_6_a_50,
+  COUNTIF(tweets_en_archivo &gt; 50)                AS mas_de_50,
+  COUNT(*)                                       AS autores
+FROM tweets_silver.autores;
+-- Referencia: 1091593 · 554547 · 214017 · 11917 · 1872074.
+
+-- Ejercicio E3: ¿qué segmento aporta más likes por tweet? (pista: likes / tweets en 3.1).</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 3.1
+segmento,autores,tweets,likes,pct_tweets,pct_likes
+1 · menos de 1 mil,1441113,4556410,9414243,67.02,8.72
+2 · 1 mil a 10 mil,353935,1591541,13623608,23.41,12.62
+3 · 10 mil a 100 mil,65549,447790,27064759,6.59,25.07
+4 · 100 mil a 1 millón,10102,146126,38796065,2.15,35.93
+5 · más de 1 millón,1375,57065,19068196,0.84,17.66
+
+-- 3.2
+un_tweet,de_2_a_5,de_6_a_50,mas_de_50,autores
+1091593,554547,214017,11917,1872074</code></pre><p><strong>Comprueba:</strong> Los cinco segmentos suman 6,798,932 tweets. El segmento de más de 1 millón tiene 0.84 % de los tweets y 17.66 % de los likes. 11,917 autores escriben más de 50 tweets.</p><p><strong>Error frecuente y recuperación:</strong> «Not found: Table …tweets_silver.autores» significa que falta la tabla Silver de autores. Si un segmento sale vacío, revisa los límites del CASE WHEN (menor que, no menor o igual).</p></section><section id="paso-4"><h2>Paso 4 · Aplicaciones y ritmo del día · 12 min</h2><p><strong>Dónde:</strong> BigQuery Studio → Consulta SQL nueva.</p><p><strong>Acción:</strong> Ejecuta 33_gold_aplicaciones_dia.sql y 34_gold_actividad_hora.sql y los tres controles. 4.3 muestra por qué el 16 de marzo es un día parcial: solo tiene las horas 20 a 23 UTC. Para practicar: resuelve E4.</p><p><strong>Costo estimado:</strong> aplicaciones_dia ≈ 181 MB (180,696,382 bytes); actividad_hora ≈ 136 MB (136,076,239 bytes); los tres controles suman ≈ 22 KB.</p><pre><code>-- Gold · desde qué aplicación se publica (top 8 del archivo; el resto se agrupa en «otras»).
+CREATE OR REPLACE TABLE tweets_gold.aplicaciones_dia
+PARTITION BY fecha AS
+WITH top AS (
+  SELECT aplicacion FROM tweets_silver.tweets GROUP BY aplicacion ORDER BY COUNT(*) DESC LIMIT 8
+)
+SELECT t.fecha,
+       IF(t.aplicacion IN (SELECT aplicacion FROM top), t.aplicacion, &#x27;otras&#x27;) AS aplicacion,
+       COUNT(*) AS tweets
+FROM tweets_silver.tweets AS t
+GROUP BY t.fecha, aplicacion;
+
+-- Gold · ritmo del día: tweets por hora UTC y grupo de idioma.
+CREATE OR REPLACE TABLE tweets_gold.actividad_hora
+PARTITION BY fecha AS
+SELECT fecha,
+       EXTRACT(HOUR FROM fecha_hora) AS hora_utc,
+       IF(idioma IN (&#x27;en&#x27;, &#x27;es&#x27;), idioma, &#x27;otro&#x27;) AS grupo_idioma,
+       COUNT(*) AS tweets
+FROM tweets_silver.tweets
+GROUP BY fecha, hora_utc, grupo_idioma;
+
+-- PASO 4 · Aplicaciones y ritmo del día. Crea las tablas con 33_gold_aplicaciones_dia.sql y 34_gold_actividad_hora.sql.
+
+-- 4.1 Desde qué aplicación se publica (todo el periodo).
+SELECT aplicacion, SUM(tweets) AS tweets,
+       ROUND(100 * SUM(tweets) / SUM(SUM(tweets)) OVER (), 1) AS pct
+FROM tweets_gold.aplicaciones_dia
+GROUP BY aplicacion
+ORDER BY tweets DESC;
+
+-- 4.2 Ritmo del día en días completos (17 a 27 de marzo), hora UTC.
+SELECT hora_utc, SUM(tweets) AS tweets
+FROM tweets_gold.actividad_hora
+WHERE fecha BETWEEN &#x27;2022-03-17&#x27; AND &#x27;2022-03-27&#x27;
+GROUP BY hora_utc
+ORDER BY hora_utc;
+
+-- 4.3 El día parcial se ve aquí: el 16 de marzo solo tiene horas 20 a 23.
+SELECT hora_utc, SUM(tweets) AS tweets
+FROM tweets_gold.actividad_hora
+WHERE fecha = &#x27;2022-03-16&#x27;
+GROUP BY hora_utc
+ORDER BY hora_utc;
+
+-- Ejercicio E4: ¿a qué hora UTC publica más cada grupo de idioma? (pista: GROUP BY grupo_idioma, hora_utc).</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 4.1
+aplicacion,tweets,pct
+Twitter Web App,2208662,32.5
+Twitter for Android,2090335,30.7
+Twitter for iPhone,1545888,22.7
+otras,378701,5.6
+Twitter for iPad,213732,3.1
+WordPress.com,135051,2.0
+TweetDeck,105316,1.5
+dlvr.it,72468,1.1
+IFTTT,48779,0.7
+
+-- 4.2
+hora_utc,tweets
+0,240135
+1,211465
+2,189902
+3,168449
+4,145033
+5,144018
+6,173123
+7,222931
+8,231936
+9,245825
+10,265097
+11,292693
+12,326497
+13,355955
+14,370985
+15,369562
+16,371978
+17,369166
+18,371294
+19,361318
+20,348580
+21,329542
+22,300872
+23,257705
+
+-- 4.3
+hora_utc,tweets
+20,12684
+21,45347
+22,41166
+23,35674</code></pre><p><strong>Comprueba:</strong> 4.1 suma 100 % y las cuatro aplicaciones oficiales dan 89.0 %. En 4.2 el valle está en la hora 5 y la meseta entre las horas 13 y 19. 4.3 devuelve solo cuatro filas.</p><p><strong>Error frecuente y recuperación:</strong> «Unrecognized name: aplicacion» significa que tu tabla Silver usa otro nombre de columna: abre la pestaña Esquema de tweets_silver.tweets (no cuesta bytes) y ajusta el nombre. Si 4.3 devuelve 24 filas, el filtro de fecha no es el 16 de marzo.</p></section><section id="paso-5"><h2>Paso 5 · Conversación y cuadre entre tablas · 10 min</h2><p><strong>Dónde:</strong> BigQuery Studio → Consulta SQL nueva.</p><p><strong>Acción:</strong> Ejecuta 35_gold_conversacion.sql y los dos controles. 5.2 es el cuadre: cuatro tablas con grano por tweet deben sumar el mismo total que Silver. Para practicar: resuelve E5.</p><p><strong>Costo estimado:</strong> Crear conversacion_dia ≈ 122 MB (122,380,776 bytes); 5.1 ≈ 900 bytes; 5.2 ≈ 7.6 KB.</p><pre><code>-- Gold · estructura de la conversación: originales, respuestas y citas por día, con likes típicos.
+CREATE OR REPLACE TABLE tweets_gold.conversacion_dia
+PARTITION BY fecha AS
+SELECT fecha,
+       CASE WHEN es_respuesta THEN &#x27;respuesta&#x27;
+            WHEN es_cita      THEN &#x27;cita&#x27;
+            ELSE                   &#x27;original&#x27; END AS tipo,
+       COUNT(*) AS tweets,
+       SUM(likes) AS likes,
+       APPROX_QUANTILES(likes, 100)[OFFSET(50)] AS mediana_likes
+FROM tweets_silver.tweets
+GROUP BY fecha, tipo;
+
+-- PASO 5 · Conversación y cuadre entre tablas. Crea la tabla con 35_gold_conversacion.sql.
+
+-- 5.1 Originales, respuestas y citas en todo el periodo.
+SELECT tipo, SUM(tweets) AS tweets, SUM(likes) AS likes,
+       ROUND(SUM(likes) / SUM(tweets), 2) AS likes_por_tweet
+FROM tweets_gold.conversacion_dia
+GROUP BY tipo
+ORDER BY tweets DESC;
+
+-- 5.2 Cuadre: las tablas Gold con grano por tweet deben sumar el mismo total que Silver.
+SELECT
+  (SELECT COUNT(*) FROM tweets_silver.tweets)          AS silver,
+  (SELECT SUM(tweets) FROM tweets_gold.conversacion_dia) AS conversacion,
+  (SELECT SUM(tweets) FROM tweets_gold.actividad_hora)   AS actividad,
+  (SELECT SUM(tweets) FROM tweets_gold.aplicaciones_dia) AS aplicaciones;
+-- Referencia: las cuatro columnas dicen 6798932. Si una difiere, el GROUP BY perdió o repitió filas.
+
+-- Ejercicio E5: ¿qué día tuvo el mayor porcentaje de respuestas? (pista: SUM(IF(tipo=&#x27;respuesta&#x27;, tweets, 0)) / SUM(tweets)).</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 5.1
+tipo,tweets,likes,likes_por_tweet
+respuesta,3414201,16395007,4.8
+original,2729906,84729320,31.04
+cita,654825,6842544,10.45
+
+-- 5.2
+silver,conversacion,actividad,aplicaciones
+6798932,6798932,6798932,6798932</code></pre><p><strong>Comprueba:</strong> Las cuatro columnas de 5.2 dicen 6798932. Respuestas 50.2 % de los tweets; los originales concentran 78.5 % de los likes.</p><p><strong>Error frecuente y recuperación:</strong> Si una columna de 5.2 difiere, el GROUP BY de esa tabla perdió o repitió filas: ejecuta otra vez su CREATE OR REPLACE y vuelve a contar. No sigas hasta que las cuatro coincidan.</p></section><section id="paso-6"><h2>Paso 6 · Precisión de las palabras clave y ficha de KPI · 13 min</h2><p><strong>Dónde:</strong> BigQuery Studio → Consulta SQL nueva; la ficha se llena en un editor de texto.</p><p><strong>Acción:</strong> Ejecuta la consulta de precisión (5 tweets por tema el 23 de marzo, en inglés y español). Clasifica cada fila tú mismo: acierto, dudoso o falso positivo, y cuenta. Después completa s05_06_ficha_kpi.md para un indicador de tema_dia. Tu resultado puede diferir del de referencia: es una lectura personal.</p><p><strong>Costo estimado:</strong> La consulta de precisión ≈ 98 MB (97,538,660 bytes): lee solo un día de texto.</p><pre><code>-- PASO 6 · ¿Las palabras clave miden el tema? Lee 5 tweets por tema (23 de marzo, inglés y español).
+-- Lee solo un día de texto de Silver (≈ 0.1 GB). Clasifica cada fila tú mismo: acierto, dudoso o falso positivo.
+WITH m AS (
+  SELECT p.tema, p.palabra, t.idioma,
+         REPLACE(SUBSTR(t.texto, 1, 150), &#x27;\n&#x27;, &#x27; &#x27;) AS texto,
+         ROW_NUMBER() OVER (PARTITION BY p.tema ORDER BY FARM_FINGERPRINT(CAST(t.tweet_id AS STRING))) AS fila
+  FROM tweets_silver.tweets AS t
+  CROSS JOIN tweets_gold.temas_palabras AS p
+  WHERE t.fecha = &#x27;2022-03-23&#x27; AND t.idioma IN (&#x27;en&#x27;, &#x27;es&#x27;)
+    AND REGEXP_CONTAINS(LOWER(t.texto), CONCAT(r&#x27;\b&#x27;, p.palabra, r&#x27;\b&#x27;))
+)
+SELECT tema, palabra, idioma, texto
+FROM m
+WHERE fila &lt;= 5
+ORDER BY tema, fila;
+
+# Ficha de un indicador Gold
+
+Completa una ficha por cada indicador que vayas a publicar.
+
+| Campo | Ejemplo con tema_dia |
+|---|---|
+| Nombre | Porcentaje diario de tweets en inglés que mencionan energía |
+| Pregunta que responde | ¿Qué parte de la conversación en inglés habló de energía cada día? |
+| Fórmula | 100 × tweets_tema ÷ tweets_dia |
+| Grano | día × tema × grupo de idioma |
+| Población | Tweets de la extracción, sin retweets, 16 a 27 de marzo de 2022 |
+| Denominador | Todos los tweets de ese día y de ese grupo de idioma |
+| Límites conocidos | El 16 de marzo es parcial; palabras clave sin precisión medida; un solo periodo |
+| Qué NO puedes afirmar | Que la gente se preocupó más, ni la causa de un cambio |
+
+Tu ficha (una por indicador):
+- Nombre:
+- Pregunta:
+- Fórmula:
+- Grano:
+- Población:
+- Denominador:
+- Límites:
+- Qué NO puedes afirmar:</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>tema,palabra,idioma,texto
+alimentos,food,en,&quot;According to the Pentagon, the Russian occupation forces in Ukraine lack food, ammunition and warm equipment…&quot;
+alimentos,trigo,es,&quot;Fedeagro calcula aumento de 70 % en precio del trigo por conflicto en Ucrania…&quot;
+aviacion,airspace,en,&quot;The war in Ukraine, embargoes and airspace closures are also affecting global air cargo operations…&quot;
+aviacion,airspace,en,&quot;Russia has not achieved air superiority over Ukraine a month into the conflict…&quot;
+energia,gas,en,&quot;Putin says Russia will switch gas sales to rubles for &#x27;unfriendly&#x27; countries…&quot;
+mercados,markets,en,&quot;…most recent, credible studies support Wuhan fish markets… as the likely origin of COVID…&quot;
+… (30 filas: 5 por tema; el orden lo fija FARM_FINGERPRINT del tweet_id)
+
+Lectura de referencia de las 30 filas: 17 aciertos, 6 dudosos, 7 falsos positivos (una persona, un día, inglés y español).</code></pre><p><strong>Comprueba:</strong> Tienes 30 filas clasificadas y una ficha de KPI con los ocho campos. Tus conteos pueden variar; lo importante es que sepas explicar por qué dos filas son falsos positivos. Esta muestra NO mide la precisión del indicador.</p><p><strong>Error frecuente y recuperación:</strong> Si la consulta devuelve menos de 30 filas, falta temas_palabras (paso 1) o cambiaste la fecha. El orden depende de FARM_FINGERPRINT: no uses RAND(), porque cada ejecución daría otras filas.</p></section><h2>Código completo y materiales</h2><details><summary>tweets/30_gold_tweets.sql · ver contenido completo</summary><pre><code>-- 1. Tabla pequeña de temas satélite. Es una definición editable, no un hecho del dato.
+CREATE OR REPLACE TABLE tweets_gold.temas_palabras AS
+SELECT * FROM UNNEST([
+  STRUCT(&#x27;energia&#x27; AS tema, &#x27;oil&#x27; AS palabra), (&#x27;energia&#x27;,&#x27;gas&#x27;), (&#x27;energia&#x27;,&#x27;fuel&#x27;), (&#x27;energia&#x27;,&#x27;petrol&#x27;),
+  (&#x27;energia&#x27;,&#x27;energy&#x27;), (&#x27;energia&#x27;,&#x27;petróleo&#x27;), (&#x27;energia&#x27;,&#x27;gasolina&#x27;), (&#x27;energia&#x27;,&#x27;combustible&#x27;), (&#x27;energia&#x27;,&#x27;energía&#x27;),
+  (&#x27;alimentos&#x27;,&#x27;wheat&#x27;), (&#x27;alimentos&#x27;,&#x27;grain&#x27;), (&#x27;alimentos&#x27;,&#x27;food&#x27;), (&#x27;alimentos&#x27;,&#x27;fertilizer&#x27;),
+  (&#x27;alimentos&#x27;,&#x27;trigo&#x27;), (&#x27;alimentos&#x27;,&#x27;cereal&#x27;), (&#x27;alimentos&#x27;,&#x27;alimentos&#x27;), (&#x27;alimentos&#x27;,&#x27;fertilizantes&#x27;),
+  (&#x27;aviacion&#x27;,&#x27;airline&#x27;), (&#x27;aviacion&#x27;,&#x27;airlines&#x27;), (&#x27;aviacion&#x27;,&#x27;flights&#x27;), (&#x27;aviacion&#x27;,&#x27;airspace&#x27;),
+  (&#x27;aviacion&#x27;,&#x27;aviation&#x27;), (&#x27;aviacion&#x27;,&#x27;aerolínea&#x27;), (&#x27;aviacion&#x27;,&#x27;vuelos&#x27;), (&#x27;aviacion&#x27;,&#x27;espacio aéreo&#x27;),
+  (&#x27;sanciones&#x27;,&#x27;sanctions&#x27;), (&#x27;sanciones&#x27;,&#x27;sanction&#x27;), (&#x27;sanciones&#x27;,&#x27;sanciones&#x27;), (&#x27;sanciones&#x27;,&#x27;sanción&#x27;),
+  (&#x27;cadena_suministro&#x27;,&#x27;supply chain&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;shipping&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;logistics&#x27;),
+  (&#x27;cadena_suministro&#x27;,&#x27;cadena de suministro&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;puerto&#x27;), (&#x27;cadena_suministro&#x27;,&#x27;logística&#x27;),
+  (&#x27;mercados&#x27;,&#x27;inflation&#x27;), (&#x27;mercados&#x27;,&#x27;stock market&#x27;), (&#x27;mercados&#x27;,&#x27;markets&#x27;), (&#x27;mercados&#x27;,&#x27;inflación&#x27;),
+  (&#x27;mercados&#x27;,&#x27;precios&#x27;), (&#x27;mercados&#x27;,&#x27;bolsa&#x27;), (&#x27;mercados&#x27;,&#x27;mercados&#x27;)
+]);
+
+-- 2. Gold: un tweet cuenta una vez por tema, aunque use varias palabras del tema.
+--    Grano: fecha + tema + grupo de idioma. pct_del_dia usa el total de tweets del mismo día e idioma.
+CREATE OR REPLACE TABLE tweets_gold.tema_dia
+PARTITION BY fecha AS
+WITH por_tweet AS (
+  SELECT t.fecha, p.tema,
+         IF(t.idioma IN (&#x27;en&#x27;, &#x27;es&#x27;), t.idioma, &#x27;otro&#x27;) AS grupo_idioma,
+         t.tweet_id, t.likes
+  FROM tweets_silver.tweets AS t
+  CROSS JOIN tweets_gold.temas_palabras AS p
+  WHERE REGEXP_CONTAINS(LOWER(t.texto), CONCAT(r&#x27;\b&#x27;, p.palabra, r&#x27;\b&#x27;))
+  GROUP BY t.fecha, p.tema, grupo_idioma, t.tweet_id, t.likes
+),
+dia AS (
+  SELECT fecha, IF(idioma IN (&#x27;en&#x27;, &#x27;es&#x27;), idioma, &#x27;otro&#x27;) AS grupo_idioma, COUNT(*) AS tweets_dia
+  FROM tweets_silver.tweets
+  GROUP BY fecha, grupo_idioma
+)
+SELECT m.fecha, m.tema, m.grupo_idioma,
+       COUNT(*) AS tweets_tema, SUM(m.likes) AS likes_tema,
+       ANY_VALUE(d.tweets_dia) AS tweets_dia,
+       ROUND(100 * COUNT(*) / ANY_VALUE(d.tweets_dia), 3) AS pct_del_dia
+FROM por_tweet AS m
+JOIN dia AS d USING (fecha, grupo_idioma)
+GROUP BY m.fecha, m.tema, m.grupo_idioma;
+</code></pre></details><details><summary>tweets/31_gold_hashtags_dia.sql · ver contenido completo</summary><pre><code>-- Gold · hashtags por día. Umbral: solo hashtags con al menos 25 tweets ese día (definición editable).
+CREATE OR REPLACE TABLE tweets_gold.hashtags_dia
+PARTITION BY fecha AS
+WITH por_dia AS (
+  SELECT fecha, COUNT(*) AS tweets_dia FROM tweets_silver.tweets GROUP BY fecha
+)
+SELECT h.fecha, h.hashtag, COUNT(*) AS tweets, d.tweets_dia,
+       ROUND(100 * COUNT(*) / d.tweets_dia, 3) AS pct_del_dia
+FROM tweets_silver.hashtags AS h
+JOIN por_dia AS d USING (fecha)
+GROUP BY h.fecha, h.hashtag, d.tweets_dia
+HAVING COUNT(*) &gt;= 25;
+</code></pre></details><details><summary>tweets/32_gold_autores_alcance.sql · ver contenido completo</summary><pre><code>-- Gold · concentración por tamaño de audiencia del autor (segmentos por seguidores).
+CREATE OR REPLACE TABLE tweets_gold.autores_alcance AS
+WITH base AS (
+  SELECT t.tweet_id, t.likes, a.usuario,
+         CASE WHEN a.seguidores &lt; 1000      THEN &#x27;1 · menos de 1 mil&#x27;
+              WHEN a.seguidores &lt; 10000     THEN &#x27;2 · 1 mil a 10 mil&#x27;
+              WHEN a.seguidores &lt; 100000    THEN &#x27;3 · 10 mil a 100 mil&#x27;
+              WHEN a.seguidores &lt; 1000000   THEN &#x27;4 · 100 mil a 1 millón&#x27;
+              ELSE                               &#x27;5 · más de 1 millón&#x27; END AS segmento
+  FROM tweets_silver.tweets AS t
+  JOIN tweets_silver.autores AS a USING (usuario)
+)
+SELECT segmento,
+       COUNT(DISTINCT usuario) AS autores,
+       COUNT(*)                AS tweets,
+       SUM(likes)              AS likes,
+       ROUND(100 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS pct_tweets,
+       ROUND(100 * SUM(likes) / SUM(SUM(likes)) OVER (), 2) AS pct_likes
+FROM base
+GROUP BY segmento;
+</code></pre></details><details><summary>tweets/33_gold_aplicaciones_dia.sql · ver contenido completo</summary><pre><code>-- Gold · desde qué aplicación se publica (top 8 del archivo; el resto se agrupa en «otras»).
+CREATE OR REPLACE TABLE tweets_gold.aplicaciones_dia
+PARTITION BY fecha AS
+WITH top AS (
+  SELECT aplicacion FROM tweets_silver.tweets GROUP BY aplicacion ORDER BY COUNT(*) DESC LIMIT 8
+)
+SELECT t.fecha,
+       IF(t.aplicacion IN (SELECT aplicacion FROM top), t.aplicacion, &#x27;otras&#x27;) AS aplicacion,
+       COUNT(*) AS tweets
+FROM tweets_silver.tweets AS t
+GROUP BY t.fecha, aplicacion;
+</code></pre></details><details><summary>tweets/34_gold_actividad_hora.sql · ver contenido completo</summary><pre><code>-- Gold · ritmo del día: tweets por hora UTC y grupo de idioma.
+CREATE OR REPLACE TABLE tweets_gold.actividad_hora
+PARTITION BY fecha AS
+SELECT fecha,
+       EXTRACT(HOUR FROM fecha_hora) AS hora_utc,
+       IF(idioma IN (&#x27;en&#x27;, &#x27;es&#x27;), idioma, &#x27;otro&#x27;) AS grupo_idioma,
+       COUNT(*) AS tweets
+FROM tweets_silver.tweets
+GROUP BY fecha, hora_utc, grupo_idioma;
+</code></pre></details><details><summary>tweets/35_gold_conversacion.sql · ver contenido completo</summary><pre><code>-- Gold · estructura de la conversación: originales, respuestas y citas por día, con likes típicos.
+CREATE OR REPLACE TABLE tweets_gold.conversacion_dia
+PARTITION BY fecha AS
+SELECT fecha,
+       CASE WHEN es_respuesta THEN &#x27;respuesta&#x27;
+            WHEN es_cita      THEN &#x27;cita&#x27;
+            ELSE                   &#x27;original&#x27; END AS tipo,
+       COUNT(*) AS tweets,
+       SUM(likes) AS likes,
+       APPROX_QUANTILES(likes, 100)[OFFSET(50)] AS mediana_likes
+FROM tweets_silver.tweets
+GROUP BY fecha, tipo;
+</code></pre></details><details><summary>tweets/s05_01_temas_y_dia.sql · ver contenido completo</summary><pre><code>-- PASO 1 · Gold de temas. Antes de ejecutar, crea las tablas con 30_gold_tweets.sql (temas_palabras + tema_dia).
+-- Requiere tweets_silver.tweets (sesión anterior). Lee solo la columna `texto` de Silver (≈ 1.2 GB).
+
+-- 1.1 ¿Cuántos pares tweet–tema hay? Un tweet cuenta una vez por tema, pero puede estar en varios temas.
+SELECT SUM(tweets_tema) AS pares_tweet_tema FROM tweets_gold.tema_dia;
+-- Referencia: 342484 pares. Tweets distintos con algún tema: 314527.
+
+-- 1.2 Una fila de Gold explicada: energía en inglés, día por día.
+SELECT fecha, tweets_tema, tweets_dia, pct_del_dia
+FROM tweets_gold.tema_dia
+WHERE tema = &#x27;energia&#x27; AND grupo_idioma = &#x27;en&#x27;
+ORDER BY fecha;
+
+-- 1.3 Control del denominador: tweets_dia, sumado una vez por día e idioma, debe dar el total de Silver.
+SELECT SUM(tweets_dia) AS base_total
+FROM (SELECT fecha, grupo_idioma, ANY_VALUE(tweets_dia) AS tweets_dia
+      FROM tweets_gold.tema_dia GROUP BY fecha, grupo_idioma);
+-- Referencia: 6798932.
+
+-- Ejercicio E1: ¿qué porcentaje de los tweets en español habla de sanciones en todo el periodo?
+-- Pista: SUM(tweets_tema) / SUM(tweets_dia) filtrando tema y grupo_idioma. (Respuesta de referencia: 0.91 %).
+</code></pre></details><details><summary>tweets/s05_02_hashtags.sql · ver contenido completo</summary><pre><code>-- PASO 2 · Hashtags por día. Crea la tabla con 31_gold_hashtags_dia.sql (usa tweets_silver.hashtags).
+-- Umbral del script: solo hashtags con al menos 25 tweets ese día.
+
+-- 2.1 Los hashtags más usados el 23 de marzo.
+SELECT hashtag, tweets, pct_del_dia
+FROM tweets_gold.hashtags_dia
+WHERE fecha = &#x27;2022-03-23&#x27;
+ORDER BY tweets DESC
+LIMIT 8;
+
+-- 2.2 ¿Qué se pierde con el umbral? Compara Gold con la tabla Silver completa.
+SELECT
+  (SELECT COUNT(DISTINCT hashtag) FROM tweets_silver.hashtags) AS hashtags_en_silver,
+  (SELECT COUNT(DISTINCT hashtag) FROM tweets_gold.hashtags_dia) AS hashtags_en_gold,
+  (SELECT COUNT(*) FROM tweets_silver.hashtags)                  AS filas_silver,
+  (SELECT SUM(tweets) FROM tweets_gold.hashtags_dia)             AS filas_cubiertas_en_gold;
+-- Referencia: 223523 · 2261 · 3339839 · 2397514 (el umbral conserva 71.8 % de las menciones).
+
+-- Ejercicio E2: hashtags del 27 de marzo que no llegaron al umbral el 17 (pista: NOT IN con subconsulta).
+</code></pre></details><details><summary>tweets/s05_03_alcance.sql · ver contenido completo</summary><pre><code>-- PASO 3 · Alcance de los autores. Crea la tabla con 32_gold_autores_alcance.sql (une Silver tweets y autores).
+
+-- 3.1 La tabla completa: cada fila es un segmento por seguidores del autor.
+SELECT segmento, autores, tweets, likes, pct_tweets, pct_likes
+FROM tweets_gold.autores_alcance
+ORDER BY segmento;
+
+-- 3.2 ¿Quiénes escriben mucho? Distribución de tweets por autor (tabla Silver autores).
+SELECT
+  COUNTIF(tweets_en_archivo = 1)                 AS un_tweet,
+  COUNTIF(tweets_en_archivo BETWEEN 2 AND 5)     AS de_2_a_5,
+  COUNTIF(tweets_en_archivo BETWEEN 6 AND 50)    AS de_6_a_50,
+  COUNTIF(tweets_en_archivo &gt; 50)                AS mas_de_50,
+  COUNT(*)                                       AS autores
+FROM tweets_silver.autores;
+-- Referencia: 1091593 · 554547 · 214017 · 11917 · 1872074.
+
+-- Ejercicio E3: ¿qué segmento aporta más likes por tweet? (pista: likes / tweets en 3.1).
+</code></pre></details><details><summary>tweets/s05_04_apps_y_hora.sql · ver contenido completo</summary><pre><code>-- PASO 4 · Aplicaciones y ritmo del día. Crea las tablas con 33_gold_aplicaciones_dia.sql y 34_gold_actividad_hora.sql.
+
+-- 4.1 Desde qué aplicación se publica (todo el periodo).
+SELECT aplicacion, SUM(tweets) AS tweets,
+       ROUND(100 * SUM(tweets) / SUM(SUM(tweets)) OVER (), 1) AS pct
+FROM tweets_gold.aplicaciones_dia
+GROUP BY aplicacion
+ORDER BY tweets DESC;
+
+-- 4.2 Ritmo del día en días completos (17 a 27 de marzo), hora UTC.
+SELECT hora_utc, SUM(tweets) AS tweets
+FROM tweets_gold.actividad_hora
+WHERE fecha BETWEEN &#x27;2022-03-17&#x27; AND &#x27;2022-03-27&#x27;
+GROUP BY hora_utc
+ORDER BY hora_utc;
+
+-- 4.3 El día parcial se ve aquí: el 16 de marzo solo tiene horas 20 a 23.
+SELECT hora_utc, SUM(tweets) AS tweets
+FROM tweets_gold.actividad_hora
+WHERE fecha = &#x27;2022-03-16&#x27;
+GROUP BY hora_utc
+ORDER BY hora_utc;
+
+-- Ejercicio E4: ¿a qué hora UTC publica más cada grupo de idioma? (pista: GROUP BY grupo_idioma, hora_utc).
+</code></pre></details><details><summary>tweets/s05_05_conversacion_y_cuadre.sql · ver contenido completo</summary><pre><code>-- PASO 5 · Conversación y cuadre entre tablas. Crea la tabla con 35_gold_conversacion.sql.
+
+-- 5.1 Originales, respuestas y citas en todo el periodo.
+SELECT tipo, SUM(tweets) AS tweets, SUM(likes) AS likes,
+       ROUND(SUM(likes) / SUM(tweets), 2) AS likes_por_tweet
+FROM tweets_gold.conversacion_dia
+GROUP BY tipo
+ORDER BY tweets DESC;
+
+-- 5.2 Cuadre: las tablas Gold con grano por tweet deben sumar el mismo total que Silver.
+SELECT
+  (SELECT COUNT(*) FROM tweets_silver.tweets)          AS silver,
+  (SELECT SUM(tweets) FROM tweets_gold.conversacion_dia) AS conversacion,
+  (SELECT SUM(tweets) FROM tweets_gold.actividad_hora)   AS actividad,
+  (SELECT SUM(tweets) FROM tweets_gold.aplicaciones_dia) AS aplicaciones;
+-- Referencia: las cuatro columnas dicen 6798932. Si una difiere, el GROUP BY perdió o repitió filas.
+
+-- Ejercicio E5: ¿qué día tuvo el mayor porcentaje de respuestas? (pista: SUM(IF(tipo=&#x27;respuesta&#x27;, tweets, 0)) / SUM(tweets)).
+</code></pre></details><details><summary>tweets/s05_06_precision.sql · ver contenido completo</summary><pre><code>-- PASO 6 · ¿Las palabras clave miden el tema? Lee 5 tweets por tema (23 de marzo, inglés y español).
+-- Lee solo un día de texto de Silver (≈ 0.1 GB). Clasifica cada fila tú mismo: acierto, dudoso o falso positivo.
+WITH m AS (
+  SELECT p.tema, p.palabra, t.idioma,
+         REPLACE(SUBSTR(t.texto, 1, 150), &#x27;\n&#x27;, &#x27; &#x27;) AS texto,
+         ROW_NUMBER() OVER (PARTITION BY p.tema ORDER BY FARM_FINGERPRINT(CAST(t.tweet_id AS STRING))) AS fila
+  FROM tweets_silver.tweets AS t
+  CROSS JOIN tweets_gold.temas_palabras AS p
+  WHERE t.fecha = &#x27;2022-03-23&#x27; AND t.idioma IN (&#x27;en&#x27;, &#x27;es&#x27;)
+    AND REGEXP_CONTAINS(LOWER(t.texto), CONCAT(r&#x27;\b&#x27;, p.palabra, r&#x27;\b&#x27;))
+)
+SELECT tema, palabra, idioma, texto
+FROM m
+WHERE fila &lt;= 5
+ORDER BY tema, fila;
+</code></pre></details><section><h2>Entrega, costo y cierre</h2><p>Qué conservar: las seis tablas Gold (tema_dia, hashtags_dia, autores_alcance, aplicaciones_dia, actividad_hora, conversacion_dia), la tabla temas_palabras y tu ficha de KPI. La siguiente sesión las usa para construir un tablero.</p><p>Costo: construir todo Gold lee ≈ 2.2 GB de Silver; las tablas ocupan ≈ 0.5 MB. No dejaste máquinas encendidas: cerrar la pestaña basta.</p><p>Autocomprobación: ¿puedes decir el grano de cada tabla, su denominador y una cosa que NO puedes afirmar con ella? Si no, repite el paso 1 y el 6.</p></section><h2>Fuentes</h2><p><a href="https://docs.cloud.google.com/bigquery/docs/views-intro" target="_blank" rel="noopener">BigQuery · vistas ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/materialized-views-create" target="_blank" rel="noopener">BigQuery · vistas materializadas ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/scheduling-queries" target="_blank" rel="noopener">BigQuery · consultas programadas ↗</a> · <a href="https://docs.cloud.google.com/dataform/docs/overview" target="_blank" rel="noopener">Google Cloud · Dataform ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/aggregate_functions" target="_blank" rel="noopener">BigQuery · funciones de agregación ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls" target="_blank" rel="noopener">BigQuery · funciones de ventana ↗</a></p><p>Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas.md">Notas de la sesión</a> · <a href="../">Índice de sesiones</a></p></article></body></html>

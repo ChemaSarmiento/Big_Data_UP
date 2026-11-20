@@ -1,587 +1,130 @@
 {
-  "session": 2,
-  "title": "SQL para hacer preguntas precisas",
-  "minutes": 180,
-  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
-  "slides": [
-    {
-      "id": "E02-01",
-      "title": "¿Contamos personas o registros de salario?",
-      "kind": "cover",
-      "items": [
-        {
-          "label": "Persona",
-          "text": "Ana tiene un emp_no y tres salarios históricos."
-        },
-        {
-          "label": "Riesgo",
-          "text": "Contar filas de salarios responde otra pregunta que contar empleados."
-        }
-      ],
-      "code": null,
-      "note": "Una persona con tres filas históricas; votación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-02",
-      "title": "Las llaves permiten hablar de la misma persona",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Identidad",
-          "text": "Dos personas pueden compartir nombre y apellido."
-        },
-        {
-          "label": "Llave",
-          "text": "emp_no identifica a la persona; el nombre sirve para comunicar."
-        }
-      ],
-      "code": null,
-      "note": "`emp_no` frente a nombres repetidos; mini-tabla Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-03",
-      "title": "Hoy convertirás seis preguntas en consultas",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Resultado",
-          "text": "Guardarás seis consultas con pregunta, grano y filtro."
-        },
-        {
-          "label": "Transferencia",
-          "text": "Tu proyecto tendrá otras tablas: conserva el razonamiento, no los nombres de employees."
-        }
-      ],
-      "code": null,
-      "note": "Ruta SELECT → filtro → agregado → join Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "SELECT",
-          "Qué observo"
-        ],
-        [
-          "WHERE",
-          "Quién entra"
-        ],
-        [
-          "GROUP BY",
-          "Qué resumo"
-        ]
-      ]
-    },
-    {
-      "id": "E02-04",
-      "title": "Cada tabla tiene un grano",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Grano",
-          "text": "employees: una persona; salaries: un salario durante un intervalo."
-        },
-        {
-          "label": "Relación",
-          "text": "dept_emp conecta persona y departamento; departments describe el departamento."
-        }
-      ],
-      "code": null,
-      "note": "Revelar una fila de empleados, salarios y asignaciones Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-05",
-      "title": "SELECT expresa qué columnas quieres observar",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Proyección",
-          "text": "SELECT emp_no, hire_date elige columnas; FROM employees fija el origen."
-        },
-        {
-          "label": "Lectura",
-          "text": "Primero pregunta qué representa la tabla y qué necesitas observar."
-        }
-      ],
-      "code": "SELECT emp_no, hire_date\nFROM employees\nORDER BY emp_no LIMIT 10;",
-      "note": "Colorear proyección sobre una tabla pequeña Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-06",
-      "title": "WHERE conserva las filas que cumplen la condición",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Condición",
-          "text": "WHERE hire_date >= '1990-01-01' conserva quienes cumplen el filtro."
-        },
-        {
-          "label": "Combinación",
-          "text": "AND exige ambas condiciones; OR permite alternativas. Los paréntesis fijan la intención."
-        }
-      ],
-      "code": "SELECT emp_no, hire_date FROM employees\nWHERE hire_date >= '1990-01-01'\n  AND hire_date < '1995-01-01';",
-      "note": "AND/OR con paréntesis; filtrar tarjetas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-07",
-      "title": "ORDER BY ordena; LIMIT recorta el resultado",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Orden",
-          "text": "ORDER BY hire_date, emp_no produce un orden con desempate."
-        },
-        {
-          "label": "Recorte",
-          "text": "LIMIT 20 devuelve veinte filas; no garantiza menor escaneo en un motor analítico."
-        }
-      ],
-      "code": null,
-      "note": "Ordenar antes de mostrar top; no atribuir ahorro general Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-08",
-      "title": "COUNT, SUM y AVG contestan preguntas distintas",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Filas",
-          "text": "COUNT(*) cuenta registros; COUNT(salary) omite nulos."
-        },
-        {
-          "label": "Personas",
-          "text": "COUNT(DISTINCT emp_no) cuenta identificadores únicos; AVG resume valores, no personas."
-        }
-      ],
-      "code": "SELECT COUNT(*) AS filas,\n COUNT(DISTINCT emp_no) AS personas\nFROM employees;",
-      "note": "`COUNT(*)`, `COUNT(columna)` y nulos en cuatro filas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-09",
-      "title": "GROUP BY cambia el nivel de detalle",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Cambio de grano",
-          "text": "GROUP BY dept_no devuelve una fila por departamento."
-        },
-        {
-          "label": "Pregunta",
-          "text": "¿Cuántas personas vigentes corresponden a cada grupo? Define primero vigente."
-        }
-      ],
-      "code": null,
-      "note": "Filas → grupos → una fila por grupo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-10",
-      "title": "HAVING filtra el resultado agregado",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Antes de agrupar",
-          "text": "WHERE selecciona filas de origen."
-        },
-        {
-          "label": "Después de agrupar",
-          "text": "HAVING AVG(salary) >= 60000 selecciona grupos por su promedio."
-        }
-      ],
-      "code": "SELECT dept_no, COUNT(*) AS asignaciones\nFROM dept_emp\nGROUP BY dept_no\nHAVING COUNT(*) > 100;",
-      "note": "Comparación WHERE/HAVING con departamentos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-11",
-      "title": "Un JOIN necesita llave y una relación conocida",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Relación",
-          "text": "employees.emp_no = dept_emp.emp_no conecta una persona con sus asignaciones."
-        },
-        {
-          "label": "Cardinalidad",
-          "text": "Un empleado puede tener historia: un JOIN no implica una fila por persona."
-        }
-      ],
-      "code": "SELECT e.emp_no, de.dept_no\nFROM employees e\nJOIN dept_emp de ON e.emp_no=de.emp_no\nLIMIT 10;",
-      "note": "Conexión empleados/dept_emp/departments; no usar diagramas de Venn como única explicación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-12",
-      "title": "INNER y LEFT responden preguntas distintas",
-      "kind": "join-types",
-      "items": [
-        {
-          "label": "INNER",
-          "text": "Conserva solo coincidencias en ambos lados."
-        },
-        {
-          "label": "LEFT",
-          "text": "Conserva todas las filas de la izquierda; una coincidencia ausente produce NULL en la derecha."
-        }
-      ],
-      "code": null,
-      "note": "Mismas tarjetas con una fila sin coincidencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-13",
-      "title": "Un historial sin fecha de corte infla el conteo",
-      "kind": "join",
-      "items": [
-        {
-          "label": "Historia",
-          "text": "Una persona con dos títulos y tres salarios puede producir seis combinaciones."
-        },
-        {
-          "label": "Prevención",
-          "text": "Acota el periodo o selecciona la vigencia antes de agregar; no arregles todo con DISTINCT."
-        }
-      ],
-      "code": null,
-      "note": "Multiplicar títulos y salarios por empleado; revelado de fan-out Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-14",
-      "title": "La vigencia pertenece al dato, no al reloj del aula",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Vigente",
-          "text": "to_date='9999-01-01' representa vigencia en este snapshot histórico."
-        },
-        {
-          "label": "Límite",
-          "text": "MAX(salary) busca el máximo histórico; no asegura el salario vigente ni dice que los empleados trabajen hoy."
-        }
-      ],
-      "code": null,
-      "note": "Intervalos y marcador del snapshot; `MAX(salary)` no es sueldo actual Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-15",
-      "title": "Revisa FROM, condiciones y grano antes del número final",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Lectura lógica",
-          "text": "Identifica FROM/JOIN, WHERE, grupos y agregación antes de interpretar el resultado."
-        },
-        {
-          "label": "Criterio",
-          "text": "La definición de persona vigente pertenece a la pregunta, no al diseño del gráfico."
-        }
-      ],
-      "code": null,
-      "note": "Lectura comentada de una consulta; puentes al significado de métricas de Mercado Libre Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "Mercado Libre · BigQuery y Looker · 2022",
-          "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
-        ]
-      ]
-    },
-    {
-      "id": "E02-16",
-      "title": "Pausa · seis preguntas de talento, una base de ejemplo",
-      "kind": "pause",
-      "items": [
-        {
-          "label": "Pausa",
-          "text": "Diez minutos. Conserva la conexión y abre el archivo de consultas."
-        },
-        {
-          "label": "Preparación",
-          "text": "MariaDB y employees deben estar instalados por el docente; hoy no creamos una VM."
-        }
-      ],
-      "code": null,
-      "note": "10 min; MariaDB ya preparada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-17",
-      "title": "Laboratorio: consultar sin instalar infraestructura",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Ruta",
-          "text": "El archivo employees-fast-track.sql contiene Q1–Q6 y controles."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Guarda consulta y explicación; no memorices conteos de una instalación distinta."
-        }
-      ],
-      "code": null,
-      "note": "Conexión, esquema y archivo SQL completo descargable Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-18",
-      "title": "Comprueba conexión y reconoce las tablas",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Conexión",
-          "text": "Ejecuta SELECT 1; después USE employees; y Q1."
-        },
-        {
-          "label": "Comprobación",
-          "text": "Debes ver departamentos con su identificador; si no, revisa conexión y base antes de editar SQL."
-        }
-      ],
-      "code": null,
-      "note": "Paso 1: `SELECT 1`, `USE employees`, esquema y Q1 Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-19",
-      "title": "Filtra con intención y ordena el resultado",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Q2",
-          "text": "Filtra contrataciones entre 1990 y 1994; cambia solo una fecha y vuelve a ejecutar."
-        },
-        {
-          "label": "Comprobación",
-          "text": "Cada fila cumple el rango; el orden se desempata por emp_no."
-        }
-      ],
-      "code": null,
-      "note": "Paso 2: Q2, cambiar un único filtro Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-20",
-      "title": "Agrupa antes de comparar",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Q3 y Q4",
-          "text": "Cuenta personas por departamento y después interpreta el promedio vigente con HAVING."
-        },
-        {
-          "label": "Control",
-          "text": "El promedio no es un total de nómina. No presupongas MXN como unidad salarial del dataset."
-        }
-      ],
-      "code": null,
-      "note": "Paso 3: Q3 y Q4, conteo/promedio y HAVING Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-21",
-      "title": "Une nombres con asignaciones",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Q5",
-          "text": "Une persona, asignación y nombre de departamento mediante llaves explícitas."
-        },
-        {
-          "label": "Comprobación",
-          "text": "Explica el grano final y comprueba si pueden existir varias asignaciones vigentes."
-        }
-      ],
-      "code": null,
-      "note": "Paso 4: Q5, join con condición de vigencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-22",
-      "title": "Encuentra por qué se repiten las personas",
-      "kind": "join",
-      "items": [
-        {
-          "label": "Q6",
-          "text": "Consulta el historial de emp_no=10001 y compáralo con el filtro de vigencia."
-        },
-        {
-          "label": "Control",
-          "text": "Las filas adicionales describen historia, no personas adicionales. Nunca ejecutes un producto cartesiano masivo para demostrarlo."
-        }
-      ],
-      "code": null,
-      "note": "Paso 5: Q6, contraste incorrecto/corregido con mini-ejemplo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-23",
-      "title": "Guarda la consulta junto con su interpretación",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Archivo",
-          "text": "Guarda los seis bloques con sus preguntas y filtros."
-        },
-        {
-          "label": "Revisión",
-          "text": "Para cada uno escribe: qué cuenta una fila, quién entra y qué puede concluirse."
-        }
-      ],
-      "code": null,
-      "note": "Paso 6: colección SQL y registro de grano Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-24",
-      "title": "Otra persona debe poder explicar tu filtro",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Traducción",
-          "text": "Tu compañero debe explicar una consulta en lenguaje de negocio."
-        },
-        {
-          "label": "Corrección",
-          "text": "Si dice empleados cuando son registros salariales, revisa el título y el denominador."
-        }
-      ],
-      "code": null,
-      "note": "Parejas traducen SQL a lenguaje de negocio Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-25",
-      "title": "Cambiar una pregunta puede cambiar el denominador",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Dos poblaciones",
-          "text": "Quienes alguna vez estuvieron en un departamento no son necesariamente quienes siguen asignados."
-        },
-        {
-          "label": "Decisión",
-          "text": "Cambiar el filtro temporal puede cambiar la respuesta sin que exista un error de motor."
-        }
-      ],
-      "code": null,
-      "note": "Variante de empleado histórico vs. vigente; no sumar resultados incompatibles Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-26",
-      "title": "En BigQuery cambiará el motor; conservarás el razonamiento",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Se conserva",
-          "text": "SELECT, filtros, grupos, llaves y control del grano."
-        },
-        {
-          "label": "Se revisa",
-          "text": "Nombres de tablas, funciones de fecha y sintaxis específica de MariaDB o GoogleSQL."
-        }
-      ],
-      "code": null,
-      "note": "Comparación de nombres, fechas y dialectos; evitar código intercambiable sin revisión Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-27",
-      "title": "H2: seis consultas y un conteo que puedas defender",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "H2 propio",
-          "text": "Registra un dataset distinto por equipo y tres preguntas analíticas viables."
-        },
-        {
-          "label": "Evidencia guiada",
-          "text": "Adjunta las seis consultas employees; no las presentes como análisis de los datos propios."
-        }
-      ],
-      "code": null,
-      "note": "Checklist: llave, filtros, grano y vigencia Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E02-28",
-      "title": "SQL será el lenguaje de las tres capas",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Recuperación",
-          "text": "¿Qué diferencia hay entre WHERE y HAVING? ¿Cuándo multiplica filas un JOIN?"
-        },
-        {
-          "label": "Cierre",
-          "text": "Cierra conexiones; el docente revisa la VM y costos persistentes. Bronze llegará en S3."
-        }
-      ],
-      "code": null,
-      "note": "Tres preguntas de recuperación y cierre de conexiones Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    }
+ "session": 2,
+ "title": "SQL con MariaDB: de una pregunta de negocio a una consulta",
+ "minutes": 180,
+ "status": "Guía lista para usar en tu propio proyecto. Salidas reales sobre employees en MariaDB 10.6; conexión desde un cliente externo sin ensayar.",
+ "slides": [],
+ "lab": {
+  "aviso": "Guía para trabajar en tu propio proyecto de Google Cloud. Todas las salidas son resultados reales de la base employees en MariaDB 10.6; tus tiempos pueden variar ligeramente. employees es una base de muestra con datos generados (licencia CC BY-SA 3.0), no una empresa real. Entrar a la VM con gcloud compute ssh se ensayó; conectarte desde un cliente externo (por ejemplo un editor de código) no se ensayó.",
+  "prerequisitos": [
+   "Una VM con MariaDB creada en la sesión 1 (nombre mariadb-curso y zona us-central1-a si usaste los valores por defecto) y encendida.",
+   "Cloud Shell abierto en tu proyecto.",
+   "Unos 4 minutos de espera para cargar employees (paso 1) y unos 500 MB libres en el disco de la VM: la base ocupa 367 MB.",
+   "Usuario big_data_user y contraseña Example123: son credenciales didácticas para datos de práctica; no uses este patrón con datos reales."
   ],
-  "lab": {
-    "steps": [
-      {
-        "n": 1,
-        "minutes": 5,
-        "action": "Abrir el cliente MariaDB preparado por el docente. Ejecutar USE employees; y SELECT 1 AS conexion;.",
-        "check": "conexion muestra 1; confirmar base activa. Si employees no existe, pedir al docente importar test_db; instalar el motor no carga la base."
-      },
-      {
-        "n": 2,
-        "minutes": 8,
-        "action": "En employees-fast-track.sql ejecutar Q1 y después Q2, cada bloque completo. Leer columnas, filtro 1990–1994 y desempate por emp_no.",
-        "check": "Q1: códigos y nombres de departamento. Q2: todas las fechas dentro del intervalo, como máximo 20 filas. Revisar comillas y base activa si falla."
-      },
-      {
-        "n": 3,
-        "minutes": 12,
-        "action": "Ejecutar Q3. Explicar el LEFT JOIN, la vigencia en ON y COUNT(DISTINCT de.emp_no).",
-        "check": "Una fila por departamento, incluyendo cero si no hay coincidencias. No mover vigencia a WHERE: eliminaría filas sin asignación."
-      },
-      {
-        "n": 4,
-        "minutes": 12,
-        "action": "Ejecutar Q4 y Q5 completos. Q4 filtra salario medio con HAVING; Q5 relaciona persona y departamento.",
-        "check": "Ambos historiales tienen filtro de vigencia. Revisar cardinalidad y unidad salarial; los resultados reales dependen de la instalación, no de las miniaturas del deck."
-      },
-      {
-        "n": 5,
-        "minutes": 10,
-        "action": "Ejecutar las dos consultas de Q6 para emp_no=10001: historial y salario vigente.",
-        "check": "Comparar filas y personas distintas. No esperar exactamente las tres filas ficticias de la portada. Si el resultado sorprende, inspeccionar fechas."
-      },
-      {
-        "n": 6,
-        "minutes": 8,
-        "action": "Ejecutar el control de salarios vigentes duplicados; guardar Q1–Q6 comentadas y su evidencia.",
-        "check": "Cero filas en el control significa que esta regla no detectó conflicto. Si hay filas, registrar y revisar antes de interpretar promedios. No modificar base compartida."
-      }
-    ],
-    "instructions": "Docente: preparar MariaDB con datacharmer/test_db antes de la clase. En Cloud Shell, los shells de recursos/mariadb instalan el motor pero no importan employees. Para cargar, clonar https://github.com/datacharmer/test_db.git, entrar a test_db y usar el cliente MariaDB autenticado con -p y redirección de employees.sql. Host/usuario dependen del entorno ya autorizado; no escribir contraseñas en el archivo. Verificar SELECT 1 y luego ejecutar employees-fast-track.sql por bloques Q1–Q6. Los conteos reales de departments y los controles de vigencia se registran en esa instalación; no son los resultados del fixture de precios."
-  },
-  "assets": [
-    "employees-fast-track.sql"
+  "instructions": "Ruta: consola de Google Cloud → Cloud Shell → gcloud compute ssh mariadb-curso → terminal de la VM → cliente mysql (mysql -u big_data_user -pExample123 employees). Pega cada bloque de la guía en el cliente interactivo; cada sentencia termina con punto y coma. Si prefieres ejecutar un archivo completo dentro de la VM, usa mysql -u big_data_user -pExample123 employees -t < archivo.sql. Cada paso termina con tres ejercicios y su comprobación numérica. Guarda tus consultas en un archivo propio (por ejemplo mis_consultas.sql).",
+  "region": "Zona us-central1-a, la del script de la sesión 1. La VM, la regla de firewall y el usuario big_data_user vienen del flujo de recursos/mariadb. Para esta sesión basta la conexión por SSH desde Cloud Shell: no necesitas abrir el puerto 3306 a otras computadoras.",
+  "steps": [
+   {
+    "n": 1,
+    "minutes": 12,
+    "titulo": "Conéctate a tu VM y carga employees",
+    "donde": "Consola de Google Cloud → ícono de Cloud Shell (>_) arriba a la derecha. Después, la terminal de tu VM.",
+    "action": "Entra a tu VM con gcloud compute ssh (si cambiaste el nombre o la zona en la sesión 1, usa los tuyos). Dentro de la VM clona el repositorio test_db y carga employees con una sola instrucción. La carga tarda unos 3 a 4 minutos: mientras corre, lee el paso 2. Al terminar, cuenta las filas de cada tabla.",
+    "costo": "Sin cargo adicional: solo el cómputo de tu VM encendida (e2-micro). Apagarla al final de la sesión evita ese cargo.",
+    "codigo": "# Paso 1 · Entra a tu VM y carga la base employees.\n# Parte A: en Cloud Shell. Si cambiaste el nombre o la zona de la VM en la sesión 1, usa los tuyos.\ngcloud compute ssh mariadb-curso --zone=us-central1-a\n\n# Parte B: ya dentro de la VM (el prompt cambia a tu_usuario@mariadb-curso).\ngit clone --depth 1 https://github.com/datacharmer/test_db.git\ncd test_db\ntime mysql -u big_data_user -pExample123 -t < employees.sql\n\n# Comprobación: cuenta las filas de cada tabla.\nmysql -u big_data_user -pExample123 employees -t -e \"\nSELECT (SELECT COUNT(*) FROM employees)    AS empleados,\n       (SELECT COUNT(*) FROM departments)  AS departamentos,\n       (SELECT COUNT(*) FROM dept_emp)     AS dept_emp,\n       (SELECT COUNT(*) FROM dept_manager) AS dept_manager,\n       (SELECT COUNT(*) FROM titles)       AS titles,\n       (SELECT COUNT(*) FROM salaries)     AS salaries;\"\n",
+    "salida": "(al terminar la carga, mysql imprime el tiempo y, después, time)\n+---------------------+\n| data_load_time_diff |\n+---------------------+\n| 00:03:29            |\n+---------------------+\n\nreal    3m29.676s\n\n(comprobación de filas)\n+-----------+---------------+----------+--------------+--------+----------+\n| empleados | departamentos | dept_emp | dept_manager | titles | salaries |\n+-----------+---------------+----------+--------------+--------+----------+\n|    300024 |             9 |   331603 |           24 | 443308 |  2844047 |\n+-----------+---------------+----------+--------------+--------+----------+",
+    "check": "Las seis cifras coinciden con las de la salida. Tiempo de referencia: 3 min 29 s en una e2-micro; el tuyo puede variar ligeramente.",
+    "error": "• «Access denied»: el usuario es big_data_user y la contraseña Example123; revisa que no haya un espacio después de -p. • «Unknown database employees»: la carga no terminó; vuelve a correr la línea mysql … < employees.sql dentro de la carpeta test_db (employees.sql borra y recrea la base: repetirlo es seguro). • Si Cloud Shell se desconecta durante la carga, vuelve a entrar y repite la carga."
+   },
+   {
+    "n": 2,
+    "minutes": 10,
+    "titulo": "Mira la base: tablas, columnas y filas",
+    "donde": "Dentro de la VM, en el cliente mysql: mysql -u big_data_user -pExample123 employees (pega cada bloque; termina cada sentencia con punto y coma).",
+    "action": "Antes de preguntar, mira qué hay: tablas (SHOW TABLES), columnas y tipos (DESCRIBE) y tus primeras consultas con SELECT. Resuelve los tres ejercicios al final del archivo s02_02_mirar_la_base.sql, que trae la comprobación de cada uno.",
+    "costo": "Sin cargo adicional.",
+    "codigo": "-- Paso 2 · Mira la base: tablas, columnas y filas.\n-- Dentro de la VM:  mysql -u big_data_user -pExample123 employees\n-- Pega cada sentencia (termina en punto y coma) o ejecuta el archivo completo con:\n--   mysql -u big_data_user -pExample123 employees -t < s02_02_mirar_la_base.sql\n\n-- 2.1 ¿Qué tablas hay? (dos de ellas, current_dept_emp y dept_emp_latest_date, son vistas)\nSHOW TABLES;\n\n-- 2.2 ¿Qué columnas tiene employees y de qué tipo?\nDESCRIBE employees;\n\n-- 2.3 Las primeras cinco filas. Sin ORDER BY, el orden que ves no está garantizado.\nSELECT * FROM employees LIMIT 5;\n\n-- 2.4 ¿Cuántas filas hay? Comprueba: 300024.\nSELECT COUNT(*) AS empleados FROM employees;\n\n-- 2.5 SELECT con columnas elegidas, un alias y una expresión.\nSELECT emp_no,\n       CONCAT(first_name, ' ', last_name) AS nombre,\n       hire_date AS contratado\nFROM employees\nLIMIT 3;\n",
+    "salida": "+----------------------+\n| Tables_in_employees  |\n+----------------------+\n| current_dept_emp     |\n| departments          |\n| dept_emp             |\n| dept_emp_latest_date |\n| dept_manager         |\n| employees            |\n| salaries             |\n| titles               |\n+----------------------+\n+------------+---------------+------+-----+---------+-------+\n| Field      | Type          | Null | Key | Default | Extra |\n+------------+---------------+------+-----+---------+-------+\n| emp_no     | int(11)       | NO   | PRI | NULL    |       |\n| birth_date | date          | NO   |     | NULL    |       |\n| first_name | varchar(14)   | NO   |     | NULL    |       |\n| last_name  | varchar(16)   | NO   |     | NULL    |       |\n| gender     | enum('M','F') | NO   |     | NULL    |       |\n| hire_date  | date          | NO   |     | NULL    |       |\n+------------+---------------+------+-----+---------+-------+\n+--------+------------+------------+-----------+--------+------------+\n| emp_no | birth_date | first_name | last_name | gender | hire_date  |\n+--------+------------+------------+-----------+--------+------------+\n|  10001 | 1953-09-02 | Georgi     | Facello   | M      | 1986-06-26 |\n|  10002 | 1964-06-02 | Bezalel    | Simmel    | F      | 1985-11-21 |\n|  10003 | 1959-12-03 | Parto      | Bamford   | M      | 1986-08-28 |\n|  10004 | 1954-05-01 | Chirstian  | Koblick   | M      | 1986-12-01 |\n|  10005 | 1955-01-21 | Kyoichi    | Maliniak  | M      | 1989-09-12 |\n+--------+------------+------------+-----------+--------+------------+\n+-----------+\n| empleados |\n+-----------+\n|    300024 |\n+-----------+\n+--------+----------------+------------+\n| emp_no | nombre         | contratado |\n+--------+----------------+------------+\n|  10001 | Georgi Facello | 1986-06-26 |\n|  10002 | Bezalel Simmel | 1985-11-21 |\n|  10003 | Parto Bamford  | 1986-08-28 |\n+--------+----------------+------------+",
+    "check": "SHOW TABLES lista 8 objetos (6 tablas y 2 vistas). employees tiene 300024 filas. En 2.5 el nombre completo aparece en una sola columna llamada nombre.",
+    "error": "• «Table doesn't exist»: estás en otra base; escribe USE employees; o entra con employees al final del comando. • El cliente muestra -> y no responde: falta el punto y coma; escríbelo y pulsa Enter. • Comillas tipográficas (’) pegadas desde un documento: usa comillas simples rectas ('). • Si hay muchas filas, Ctrl+C interrumpe la consulta."
+   },
+   {
+    "n": 3,
+    "minutes": 12,
+    "titulo": "Filtra y ordena",
+    "donde": "Cliente mysql de la VM (el mismo del paso 2).",
+    "action": "Practica WHERE con AND, el efecto de los paréntesis, IN, BETWEEN y LIKE, y luego ORDER BY y LIMIT. Resuelve E1 a E3 del archivo s02_03_filtrar_y_ordenar.sql.",
+    "costo": "Sin cargo adicional.",
+    "codigo": "-- Paso 3 · Filtra y ordena.\n-- Ejecuta el archivo completo con:\n--   mysql -u big_data_user -pExample123 employees -t < s02_03_filtrar_y_ordenar.sql\n\n-- 3.1 WHERE con AND: mujeres contratadas desde 1990. Comprueba: 53839.\nSELECT COUNT(*) AS mujeres_desde_1990\nFROM employees\nWHERE gender = 'F' AND hire_date >= '1990-01-01';\n\n-- 3.2 Los paréntesis cambian la respuesta. Comprueba: 869 y 722.\nSELECT COUNT(*) AS sin_parentesis\nFROM employees\nWHERE gender = 'F' AND hire_date >= '1999-01-01' OR first_name = 'Georgi';\n\nSELECT COUNT(*) AS con_parentesis\nFROM employees\nWHERE gender = 'F' AND (hire_date >= '1999-01-01' OR first_name = 'Georgi');\n\n-- 3.3 IN, BETWEEN y LIKE. Comprueba: 709, 25610 y 186.\nSELECT COUNT(*) AS in_tres_nombres FROM employees WHERE first_name IN ('Georgi', 'Bezalel', 'Parto');\nSELECT COUNT(*) AS contratados_1990 FROM employees WHERE hire_date BETWEEN '1990-01-01' AND '1990-12-31';\nSELECT COUNT(*) AS apellido_fac     FROM employees WHERE last_name LIKE 'Fac%';\n\n-- 3.4 ORDER BY y LIMIT: los cinco salarios vigentes más altos (to_date = '9999-01-01' significa «hoy»).\nSELECT emp_no, salary\nFROM salaries\nWHERE to_date = '9999-01-01'\nORDER BY salary DESC\nLIMIT 5;\n\n-- 3.5 Empates: varias personas entraron el primer día. Una segunda llave fija el orden.\nSELECT emp_no, hire_date\nFROM employees\nORDER BY hire_date, emp_no\nLIMIT 5;\n",
+    "salida": "+--------------------+\n| mujeres_desde_1990 |\n+--------------------+\n|              53839 |\n+--------------------+\n+----------------+\n| sin_parentesis |\n+----------------+\n|            869 |\n+----------------+\n+----------------+\n| con_parentesis |\n+----------------+\n|            722 |\n+----------------+\n+-----------------+\n| in_tres_nombres |\n+-----------------+\n|             709 |\n+-----------------+\n+------------------+\n| contratados_1990 |\n+------------------+\n|            25610 |\n+------------------+\n+--------------+\n| apellido_fac |\n+--------------+\n|          186 |\n+--------------+\n+--------+--------+\n| emp_no | salary |\n+--------+--------+\n|  43624 | 158220 |\n| 254466 | 156286 |\n|  47978 | 155709 |\n| 253939 | 155513 |\n| 109334 | 155190 |\n+--------+--------+\n+--------+------------+\n| emp_no | hire_date  |\n+--------+------------+\n| 110022 | 1985-01-01 |\n| 110085 | 1985-01-01 |\n| 110183 | 1985-01-01 |\n| 110303 | 1985-01-01 |\n| 110511 | 1985-01-01 |\n+--------+------------+",
+    "check": "mujeres_desde_1990 = 53839; sin paréntesis 869 y con paréntesis 722; 709, 25610 y 186; el salario vigente más alto es 158220 (emp_no 43624); en 3.5 el orden con desempate es 110022, 110085, 110183, 110303 y 110511.",
+    "error": "• Fechas sin comillas: error de sintaxis o resultado equivocado; escríbelas como '1990-01-01'. • BETWEEN: el valor menor va primero. • Un LIKE sin % busca el texto exacto. • Si el resultado de 3.5 sale en otro orden, falta la segunda columna en ORDER BY."
+   },
+   {
+    "n": 4,
+    "minutes": 12,
+    "titulo": "Resume y agrupa",
+    "donde": "Cliente mysql de la VM.",
+    "action": "Usa funciones de agregación, GROUP BY, una función de fecha (YEAR), HAVING y CASE. Observa cómo cambian los números cuando filtras lo vigente. Resuelve E1 a E3 del archivo s02_04_resumir_y_agrupar.sql.",
+    "costo": "Sin cargo adicional.",
+    "codigo": "-- Paso 4 · Resume y agrupa.\n-- Ejecuta el archivo completo con:\n--   mysql -u big_data_user -pExample123 employees -t < s02_04_resumir_y_agrupar.sql\n\n-- 4.1 Funciones de agregación sobre los salarios vigentes. Comprueba: 240124 filas, promedio 72012.\nSELECT COUNT(*)       AS vigentes,\n       MIN(salary)    AS minimo,\n       MAX(salary)    AS maximo,\n       ROUND(AVG(salary)) AS promedio,\n       SUM(salary)    AS nomina\nFROM salaries\nWHERE to_date = '9999-01-01';\n\n-- 4.2 El promedio de todo el historial no es el salario de hoy. Comprueba: 63811.\nSELECT ROUND(AVG(salary)) AS promedio_del_historial FROM salaries;\n\n-- 4.3 GROUP BY: cuántas personas hay de cada género. Comprueba: M 179973 y F 120051.\nSELECT gender, COUNT(*) AS empleados\nFROM employees\nGROUP BY gender;\n\n-- 4.4 Una función de fecha para agrupar: contrataciones por año.\nSELECT YEAR(hire_date) AS anio, COUNT(*) AS contratados\nFROM employees\nGROUP BY YEAR(hire_date)\nORDER BY anio;\n\n-- 4.5 HAVING filtra grupos; WHERE filtra filas. Comprueba: d005 61386, d004 53304 y d007 37701.\nSELECT dept_no, COUNT(*) AS vigentes\nFROM dept_emp\nWHERE to_date = '9999-01-01'\nGROUP BY dept_no\nHAVING COUNT(*) > 30000\nORDER BY vigentes DESC;\n\n-- 4.6 CASE: una regla de negocio convertida en columna (bandas de salario vigente).\nSELECT CASE WHEN salary < 50000  THEN '1 · menos de 50 mil'\n            WHEN salary < 70000  THEN '2 · 50 a 70 mil'\n            WHEN salary < 100000 THEN '3 · 70 a 100 mil'\n            ELSE                      '4 · 100 mil o más' END AS banda,\n       COUNT(*) AS empleados\nFROM salaries\nWHERE to_date = '9999-01-01'\nGROUP BY banda\nORDER BY banda;\n",
+    "salida": "+----------+--------+--------+----------+-------------+\n| vigentes | minimo | maximo | promedio | nomina      |\n+----------+--------+--------+----------+-------------+\n|   240124 |  38623 | 158220 |    72012 | 17291866123 |\n+----------+--------+--------+----------+-------------+\n+------------------------+\n| promedio_del_historial |\n+------------------------+\n|                  63811 |\n+------------------------+\n+--------+-----------+\n| gender | empleados |\n+--------+-----------+\n| M      |    179973 |\n| F      |    120051 |\n+--------+-----------+\n+------+-------------+\n| anio | contratados |\n+------+-------------+\n| 1985 |       35316 |\n| 1986 |       36150 |\n| 1987 |       33501 |\n| 1988 |       31436 |\n| 1989 |       28394 |\n| 1990 |       25610 |\n| 1991 |       22568 |\n| 1992 |       20402 |\n| 1993 |       17772 |\n| 1994 |       14835 |\n| 1995 |       12115 |\n| 1996 |        9574 |\n| 1997 |        6669 |\n| 1998 |        4155 |\n| 1999 |        1514 |\n| 2000 |          13 |\n+------+-------------+\n+---------+----------+\n| dept_no | vigentes |\n+---------+----------+\n| d005    |    61386 |\n| d004    |    53304 |\n| d007    |    37701 |\n+---------+----------+\n+----------------------+-----------+\n| banda                | empleados |\n+----------------------+-----------+\n| 1 · menos de 50 mil  |     20305 |\n| 2 · 50 a 70 mil      |    100902 |\n| 3 · 70 a 100 mil     |    101418 |\n| 4 · 100 mil o más    |     17499 |\n+----------------------+-----------+",
+    "check": "Promedio vigente 72012 y promedio del historial 63811; M 179973 y F 120051; tres departamentos con más de 30,000 personas (d005, d004, d007); bandas 20305, 100902, 101418 y 17499, que suman 240124.",
+    "error": "• «not in GROUP BY»: toda columna del SELECT que no sea una función de agregación debe ir en el GROUP BY. • COUNT(*) dentro de WHERE: usa HAVING. • La banda con CASE debe ir en orden de menor a mayor; el primer WHEN que se cumple gana."
+   },
+   {
+    "n": 5,
+    "minutes": 12,
+    "titulo": "Une tablas con JOIN",
+    "donde": "Cliente mysql de la VM.",
+    "action": "Une employees con dept_emp y departments; compara INNER con LEFT; comprueba que un JOIN puede multiplicar filas y que un JOIN sin condición cruza todo con todo. Resuelve E1 a E3 de s02_05_unir_tablas.sql.",
+    "costo": "Sin cargo adicional. El conteo del cruce (2,700,216 filas) solo cuenta; no lo imprimas con SELECT *.",
+    "codigo": "-- Paso 5 · Une tablas con JOIN.\n-- Ejecuta el archivo completo con:\n--   mysql -u big_data_user -pExample123 employees -t < s02_05_unir_tablas.sql\n\n-- 5.1 Tres tablas unidas por sus llaves: empleado → departamento → nombre del departamento.\nSELECT e.emp_no, e.first_name, e.last_name, d.dept_name, de.from_date, de.to_date\nFROM employees AS e\nJOIN dept_emp AS de ON de.emp_no = e.emp_no\nJOIN departments AS d ON d.dept_no = de.dept_no\nWHERE e.emp_no IN (10001, 10010)\nORDER BY e.emp_no, de.from_date;\n\n-- 5.2 INNER JOIN solo conserva a quien tiene pareja. Comprueba: 24 personas son gerentes.\nSELECT COUNT(*) AS con_pareja\nFROM employees AS e\nJOIN dept_manager AS m ON m.emp_no = e.emp_no;\n\n-- 5.3 LEFT JOIN conserva todas las filas de la izquierda y pone NULL donde no hay pareja.\n--     Comprueba: 300024 filas, 24 con gerencia y 300000 sin gerencia.\nSELECT COUNT(*) AS filas,\n       COUNT(m.emp_no) AS con_gerencia,\n       COUNT(*) - COUNT(m.emp_no) AS sin_gerencia\nFROM employees AS e\nLEFT JOIN dept_manager AS m ON m.emp_no = e.emp_no;\n\nSELECT e.emp_no, e.first_name, e.last_name, m.dept_no\nFROM employees AS e\nLEFT JOIN dept_manager AS m ON m.emp_no = e.emp_no\nWHERE e.emp_no IN (10001, 10002, 10003, 110022, 110039, 110085)\nORDER BY e.emp_no;\n\n-- 5.4 Un JOIN puede multiplicar filas. Una persona con 17 salarios se vuelve 17 filas.\n--     Comprueba: 2844047 filas (no 300024) y promedio 63811 (no 72012).\nSELECT COUNT(*) AS filas, ROUND(AVG(s.salary)) AS promedio\nFROM employees AS e\nJOIN salaries AS s ON s.emp_no = e.emp_no;\n\n-- 5.5 Unir solo lo vigente evita la multiplicación. Comprueba: 240124 filas y promedio 72012.\nSELECT COUNT(*) AS filas, ROUND(AVG(s.salary)) AS promedio_vigente\nFROM employees AS e\nJOIN salaries AS s ON s.emp_no = e.emp_no AND s.to_date = '9999-01-01';\n\n-- 5.6 Un JOIN sin condición cruza todo con todo. Comprueba: 2700216 filas (300024 × 9).\nSELECT COUNT(*) AS cruce FROM employees CROSS JOIN departments;\n",
+    "salida": "+--------+------------+-----------+--------------------+------------+------------+\n| emp_no | first_name | last_name | dept_name          | from_date  | to_date    |\n+--------+------------+-----------+--------------------+------------+------------+\n|  10001 | Georgi     | Facello   | Development        | 1986-06-26 | 9999-01-01 |\n|  10010 | Duangkaew  | Piveteau  | Production         | 1996-11-24 | 2000-06-26 |\n|  10010 | Duangkaew  | Piveteau  | Quality Management | 2000-06-26 | 9999-01-01 |\n+--------+------------+-----------+--------------------+------------+------------+\n+------------+\n| con_pareja |\n+------------+\n|         24 |\n+------------+\n+--------+--------------+--------------+\n| filas  | con_gerencia | sin_gerencia |\n+--------+--------------+--------------+\n| 300024 |           24 |       300000 |\n+--------+--------------+--------------+\n+--------+------------+------------+---------+\n| emp_no | first_name | last_name  | dept_no |\n+--------+------------+------------+---------+\n|  10001 | Georgi     | Facello    | NULL    |\n|  10002 | Bezalel    | Simmel     | NULL    |\n|  10003 | Parto      | Bamford    | NULL    |\n| 110022 | Margareta  | Markovitch | d001    |\n| 110039 | Vishwani   | Minakawa   | d001    |\n| 110085 | Ebru       | Alpin      | d002    |\n+--------+------------+------------+---------+\n+---------+----------+\n| filas   | promedio |\n+---------+----------+\n| 2844047 |    63811 |\n+---------+----------+\n+--------+------------------+\n| filas  | promedio_vigente |\n+--------+------------------+\n| 240124 |            72012 |\n+--------+------------------+\n+---------+\n| cruce   |\n+---------+\n| 2700216 |\n+---------+",
+    "check": "5.2 → 24; 5.3 → 300024 filas, 24 con gerencia y 300000 sin ella; 5.4 → 2844047 filas y 63811; 5.5 → 240124 y 72012; 5.6 → 2700216.",
+    "error": "• Consulta que no termina o resultado enorme: falta la condición ON (cruce de todo con todo); interrumpe con Ctrl+C. • Con LEFT JOIN, un filtro sobre la tabla de la derecha escrito en WHERE descarta los NULL y la unión se comporta como INNER: si quieres conservarlos, pon esa condición en ON. • Antes de confiar en un resultado, compara su número de filas con el esperado."
+   },
+   {
+    "n": 6,
+    "minutes": 12,
+    "titulo": "De la pregunta de negocio a la consulta",
+    "donde": "Cliente mysql de la VM.",
+    "action": "Prueba subconsultas y resuelve tres preguntas de negocio con el método de la clase: primero la pregunta, luego las piezas y al final la consulta. Termina con los límites del dato. Resuelve E1 a E3 de s02_06_de_la_pregunta_a_la_consulta.sql.",
+    "costo": "Sin cargo adicional. Al terminar la sesión, apaga la VM (ver cierre).",
+    "codigo": "-- Paso 6 · De la pregunta de negocio a la consulta.\n-- Ejecuta el archivo completo con:\n--   mysql -u big_data_user -pExample123 employees -t < s02_06_de_la_pregunta_a_la_consulta.sql\n-- Regla: escribe primero la pregunta, luego las piezas (qué columnas, de qué tabla, qué filas, qué grupos),\n-- y solo al final la consulta.\n\n-- 6.1 Subconsulta escalar: ¿cuántas personas ganan hoy más que el promedio de hoy? Comprueba: 107706.\nSELECT COUNT(*) AS arriba_del_promedio\nFROM salaries\nWHERE to_date = '9999-01-01'\n  AND salary > (SELECT AVG(salary) FROM salaries WHERE to_date = '9999-01-01');\n\n-- 6.2 Subconsulta con IN: nombres de personas que han sido gerentes (24 en total; aquí cinco).\nSELECT first_name, last_name\nFROM employees\nWHERE emp_no IN (SELECT emp_no FROM dept_manager)\nORDER BY last_name\nLIMIT 5;\n\n-- 6.3 Pregunta A: ¿cuántas personas trabajan hoy en la empresa? Comprueba: 240124 (y no 300024).\nSELECT COUNT(DISTINCT emp_no) AS trabajan_hoy\nFROM dept_emp\nWHERE to_date = '9999-01-01';\n\n-- 6.4 Pregunta B: ¿qué departamentos tienen más de 30,000 personas hoy? (nombre, no código)\nSELECT d.dept_name, COUNT(*) AS vigentes\nFROM dept_emp AS de\nJOIN departments AS d ON d.dept_no = de.dept_no\nWHERE de.to_date = '9999-01-01'\nGROUP BY d.dept_name\nHAVING COUNT(*) > 30000\nORDER BY vigentes DESC;\n\n-- 6.5 Pregunta C: ¿hay diferencia de salario vigente promedio entre géneros? Comprueba: M 72045 y F 71964.\n--     Qué NO demuestra: que el pago sea justo o injusto; la consulta no mira puesto, antigüedad ni historia.\nSELECT e.gender, COUNT(*) AS vigentes, ROUND(AVG(s.salary)) AS salario_promedio\nFROM employees AS e\nJOIN salaries AS s ON s.emp_no = e.emp_no AND s.to_date = '9999-01-01'\nGROUP BY e.gender;\n\n-- 6.6 Hasta dónde llega el dato. Comprueba: última contratación 2000-01-28 y último cambio de salario 2002-08-01.\nSELECT (SELECT MAX(hire_date)  FROM employees) AS ultima_contratacion,\n       (SELECT MAX(from_date)  FROM salaries)  AS ultimo_cambio_de_salario;\n",
+    "salida": "+---------------------+\n| arriba_del_promedio |\n+---------------------+\n|              107706 |\n+---------------------+\n+------------+-------------+\n| first_name | last_name   |\n+------------+-------------+\n| Ebru       | Alpin       |\n| Tonny      | Butterworth |\n| Rosine     | Cools       |\n| Leon       | DasSarma    |\n| Oscar      | Ghazalie    |\n+------------+-------------+\n+--------------+\n| trabajan_hoy |\n+--------------+\n|       240124 |\n+--------------+\n+-------------+----------+\n| dept_name   | vigentes |\n+-------------+----------+\n| Development |    61386 |\n| Production  |    53304 |\n| Sales       |    37701 |\n+-------------+----------+\n+--------+----------+------------------+\n| gender | vigentes | salario_promedio |\n+--------+----------+------------------+\n| M      |   144114 |            72045 |\n| F      |    96010 |            71964 |\n+--------+----------+------------------+\n+---------------------+--------------------------+\n| ultima_contratacion | ultimo_cambio_de_salario |\n+---------------------+--------------------------+\n| 2000-01-28          | 2002-08-01               |\n+---------------------+--------------------------+",
+    "check": "107706; cinco nombres de gerentes (Alpin, Butterworth, Cools, DasSarma, Ghazalie); 240124; Development 61386, Production 53304 y Sales 37701; M 72045 y F 71964; 2000-01-28 y 2002-08-01.",
+    "error": "• Resultado que no coincide: revisa que usaste to_date = '9999-01-01' con comillas para «hoy». • Subconsulta que devuelve más de una fila donde esperabas un valor: usa IN en lugar de =. • Respuesta correcta pero sin sentido de negocio: vuelve a escribir la pregunta con tus palabras antes de la consulta."
+   }
   ],
-  "sources": [
-    [
-      "datacharmer · employees",
-      "https://github.com/datacharmer/test_db"
-    ],
-    [
-      "Mercado Libre · BigQuery y Looker · 2022",
-      "https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker"
-    ]
+  "cierre": [
+   "Qué conservar: tus consultas guardadas en un archivo y los números de comprobación de cada paso.",
+   "Costo: la VM e2-micro encendida es el único gasto de esta sesión; las consultas no cuestan nada adicional. Al terminar, apágala con gcloud compute instances stop mariadb-curso --zone=us-central1-a. Los datos se conservan en su disco; para volver a usarla, enciéndela con gcloud compute instances start mariadb-curso --zone=us-central1-a.",
+   "Si algo no coincide: confirma que la carga de employees terminó (300,024 filas) y que escribiste to_date = '9999-01-01' con comillas.",
+   "Recuerda: la base es una muestra generada para practicar; una consulta responde lo que contó, no lo que significa."
+  ]
+ },
+ "assets": [
+  "tweets/s02_01_cargar_employees.sh",
+  "tweets/s02_02_mirar_la_base.sql",
+  "tweets/s02_03_filtrar_y_ordenar.sql",
+  "tweets/s02_04_resumir_y_agrupar.sql",
+  "tweets/s02_05_unir_tablas.sql",
+  "tweets/s02_06_de_la_pregunta_a_la_consulta.sql"
+ ],
+ "sources": [
+  [
+   "Base employees (datacharmer/test_db)",
+   "https://github.com/datacharmer/test_db"
   ],
-  "editorialSource": "../editorial/guion.py",
-  "slidesStatus": "Referencia de la versión anterior; las slides vigentes se generan desde editorial/guion.py."
+  [
+   "MariaDB · SELECT",
+   "https://mariadb.com/kb/en/select/"
+  ],
+  [
+   "MariaDB · JOIN",
+   "https://mariadb.com/kb/en/join-syntax/"
+  ],
+  [
+   "MariaDB · GROUP BY",
+   "https://mariadb.com/kb/en/group-by/"
+  ],
+  [
+   "MariaDB · subconsultas",
+   "https://mariadb.com/kb/en/subqueries/"
+  ]
+ ],
+ "editorialSource": "../editorial/s02.py",
+ "slidesStatus": "Slides vigentes en editorial/s02.py; este archivo solo alimenta la guía de laboratorio."
 }

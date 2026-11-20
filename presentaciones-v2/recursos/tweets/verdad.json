@@ -1,0 +1,529 @@
+{
+ "_nota": "Verdad medida el 2026-11-19 en big-data-lunes-2026-1 con SQL real (BigQuery) y un batch PySpark. Uso académico: los datos no se modifican. Los datos cubren 12 días (16 al 27 de marzo de 2022), no un mes completo. No es una muestra representativa de la conversación pública.",
+ "proyecto": "big-data-lunes-2026-1",
+ "ubicacion_datasets": "US",
+ "bucket": "gs://big-data-lunes-20260223 (US-EAST1)",
+ "archivo_origen": {
+  "nombre": "war_tweets.txt",
+  "bytes": 23663541134,
+  "gib": 22.04,
+  "formato": "JSON Lines (snscrape.modules.twitter.Tweet), un tweet por línea"
+ },
+ "parquet_spark": {
+  "ruta": "gs://big-data-lunes-20260223/tweets_parquet/",
+  "partes": 177,
+  "gib": 5.78,
+  "esquema": "una columna `value` STRING con el JSON crudo",
+  "tweets_por_parte_aprox": 37875,
+  "_nota": "177 archivos .parquet (el listado de 180 contaba la carpeta y _SUCCESS)"
+ },
+ "tablas": {
+  "tweets_bronze.entrada": {
+   "filas": 6798932,
+   "gib_logicos": 22.04,
+   "columnas": [
+    "value STRING"
+   ],
+   "escaneo_completo_facturable_bytes": 23670340066
+  },
+  "tweets_silver.tweets": {
+   "filas": 6798932,
+   "gib": 2.28,
+   "particion": "fecha (DAY)",
+   "cluster": "idioma",
+   "columnas": [
+    "tweet_id INT64",
+    "fecha_hora TIMESTAMP",
+    "fecha DATE",
+    "idioma",
+    "texto",
+    "url",
+    "usuario",
+    "usuario_verificado BOOL",
+    "seguidores INT64",
+    "ubicacion_usuario",
+    "likes INT64",
+    "retuits INT64",
+    "respuestas INT64",
+    "citas INT64",
+    "es_respuesta BOOL",
+    "es_cita BOOL",
+    "hashtags ARRAY<STRING>",
+    "aplicacion"
+   ],
+   "scripts": "20_silver_tweets.sql (SQL) y spark_silver.py (PySpark)"
+  },
+  "tweets_gold.temas_palabras": {
+   "filas": 42,
+   "nota": "definición editable de 6 temas satélite con palabras en inglés y español"
+  },
+  "tweets_gold.tema_dia": {
+   "filas": 216,
+   "grano": "fecha x tema x grupo_idioma (en, es, otro)",
+   "columnas": [
+    "fecha",
+    "tema",
+    "grupo_idioma",
+    "tweets_tema",
+    "likes_tema",
+    "tweets_dia",
+    "pct_del_dia"
+   ],
+   "script": "30_gold_tweets.sql"
+  },
+  "tweets_silver.autores": {
+   "filas": 1872074,
+   "grano": "un autor (usuario) con su dato más reciente",
+   "script": "21_silver_autores.sql (CTE + ROW_NUMBER, deriva de tweets_silver.tweets)",
+   "columnas": [
+    "usuario",
+    "usuario_verificado",
+    "seguidores",
+    "ubicacion",
+    "tweets_en_archivo"
+   ],
+   "hechos": "verificados 38,568; autor con más tweets 7,492; 1,091,593 autores con un solo tweet"
+  },
+  "tweets_silver.hashtags": {
+   "filas": 3339839,
+   "grano": "un tweet y un hashtag",
+   "script": "22_silver_hashtags.sql (UNNEST + DISTINCT)",
+   "particion": "fecha",
+   "columnas": [
+    "tweet_id",
+    "fecha",
+    "idioma",
+    "hashtag"
+   ]
+  },
+  "tweets_gold.hashtags_dia": {
+   "filas": 10636,
+   "grano": "fecha x hashtag (≥25 tweets ese día)",
+   "script": "31_gold_hashtags_dia.sql",
+   "columnas": [
+    "fecha",
+    "hashtag",
+    "tweets",
+    "tweets_dia",
+    "pct_del_dia"
+   ]
+  },
+  "tweets_gold.autores_alcance": {
+   "filas": 5,
+   "grano": "segmento de seguidores del autor",
+   "script": "32_gold_autores_alcance.sql"
+  },
+  "tweets_gold.aplicaciones_dia": {
+   "filas": 108,
+   "grano": "fecha x aplicación (top 8 + otras)",
+   "script": "33_gold_aplicaciones_dia.sql"
+  },
+  "tweets_gold.actividad_hora": {
+   "filas": 804,
+   "grano": "fecha x hora UTC x grupo_idioma",
+   "script": "34_gold_actividad_hora.sql"
+  },
+  "tweets_gold.conversacion_dia": {
+   "filas": 36,
+   "grano": "fecha x tipo (original/respuesta/cita)",
+   "script": "35_gold_conversacion.sql"
+  }
+ },
+ "campos_json_bronze": [
+  "_type",
+  "url",
+  "date",
+  "content",
+  "renderedContent",
+  "id",
+  "user{username,id,displayname,description,verified,created,followersCount,friendsCount,statusesCount,favouritesCount,location,...}",
+  "replyCount",
+  "retweetCount",
+  "likeCount",
+  "quoteCount",
+  "conversationId",
+  "lang",
+  "source",
+  "sourceUrl",
+  "sourceLabel",
+  "outlinks",
+  "tcooutlinks",
+  "media",
+  "retweetedTweet",
+  "quotedTweet",
+  "inReplyToTweetId",
+  "inReplyToUser",
+  "mentionedUsers",
+  "coordinates",
+  "place",
+  "hashtags",
+  "cashtags",
+  "card"
+ ],
+ "calidad_silver": {
+  "filas": 6798932,
+  "ids_distintos": 6798932,
+  "sin_id": 0,
+  "sin_fecha": 0,
+  "texto_vacio": 0,
+  "idioma_und": 97490,
+  "respuestas": 3414201,
+  "citas": 686301,
+  "verificados": 310252,
+  "sin_ubicacion": "2,664,367 (vacía o solo espacios); 2,662,395 son cadenas vacías exactas, no NULL",
+  "con_hashtags": 1226642,
+  "retweets": "0 (la extracción excluyó retweets: retweetedTweet siempre nulo en el Parquet revisado)",
+  "textos_repetidos_distintos": 30375,
+  "tweets_en_textos_repetidos": 91678,
+  "max_repeticiones_de_un_texto": "421 (texto idéntico completo)",
+  "texto_mas_repetido": "'@nathaliejacoby1 Putin': 421 copias de 416 cuentas distintas. Segundo: 375 copias de UNA sola cuenta (aviso repetido). Tercero: 362 copias de 352 cuentas.",
+  "_correccion": "Corregido 2026-11-19: el 461/440 inicial agrupaba por SUBSTR(texto,1,110) por error; los 30,375 textos y 91,678 tweets repetidos sí estaban bien."
+ },
+ "tweets_por_dia": {
+  "2022-03-16": 134871,
+  "2022-03-17": 778608,
+  "2022-03-18": 735033,
+  "2022-03-19": 590028,
+  "2022-03-20": 614483,
+  "2022-03-21": 632383,
+  "2022-03-22": 586523,
+  "2022-03-23": 567023,
+  "2022-03-24": 584497,
+  "2022-03-25": 554519,
+  "2022-03-26": 505568,
+  "2022-03-27": 515396,
+  "_nota": "16 de marzo es un día parcial (134,871); comparar sus conteos con días completos engaña. El archivo está ordenado del más reciente al más antiguo."
+ },
+ "idiomas": {
+  "en": 4013172,
+  "es": 1056425,
+  "it": 343412,
+  "de": 334900,
+  "pt": 322470,
+  "fr": 261685,
+  "otro_total_fuera_de_en_es": 1729335
+ },
+ "engagement": {
+  "mediana_likes": 0,
+  "p90": 7,
+  "p99": "≈153–155 (APPROX_QUANTILES varía entre ejecuciones)",
+  "maximo": 195299,
+  "pct_tweets_con_cero_likes": 54.4,
+  "total_likes": 107966871,
+  "tweets_1000_o_mas_likes": 13928,
+  "likes_en_esos_tweets": 65176277,
+  "nota": "0.2% de los tweets concentra el 60.4% de los likes: el promedio engaña, usa mediana y percentiles",
+  "max_seguidores_de_un_autor": 131464763
+ },
+ "top_hashtags": {
+  "ukraine": 514337,
+  "putin": 164453,
+  "russia": 142488,
+  "ucrania": 59585,
+  "ukrainerussiawar": 46769,
+  "standwithukraine": 45852,
+  "ukrainewar": 33984,
+  "russian": 29235,
+  "nato": 26787,
+  "ukrainerussianwar": 26416,
+  "_nota": "Conteo de menciones en los arreglos (un tweet que repite un hashtag cuenta dos veces). Por tweets distintos (tabla silver.hashtags): ukraine 507,762 · putin 161,491 · russia 140,279"
+ },
+ "top_aplicaciones": {
+  "Twitter Web App": 2208662,
+  "Twitter for Android": 2090335,
+  "Twitter for iPhone": 1545888,
+  "Twitter for iPad": 213732,
+  "WordPress.com": 135051,
+  "TweetDeck": 105316
+ },
+ "gold_temas_total": {
+  "energia": {
+   "tweets": 137598,
+   "likes": 2948412
+  },
+  "sanciones": {
+   "tweets": 80266,
+   "likes": 1982746
+  },
+  "mercados": {
+   "tweets": 59685,
+   "likes": 1375758
+  },
+  "alimentos": {
+   "tweets": 49137,
+   "likes": 975732
+  },
+  "cadena_suministro": {
+   "tweets": 8975,
+   "likes": 274133
+  },
+  "aviacion": {
+   "tweets": 6823,
+   "likes": 139950
+  },
+  "_nota": "suma de los tres grupos de idioma; un tweet cuenta una vez por tema pero puede estar en varios temas; las palabras clave no miden el tema real (precisión no medida)"
+ },
+ "gold_energia_en_pct_del_dia": {
+  "2022-03-16": [
+   1666,
+   86271,
+   1.931
+  ],
+  "2022-03-17": [
+   10167,
+   476188,
+   2.135
+  ],
+  "2022-03-18": [
+   9772,
+   433524,
+   2.254
+  ],
+  "2022-03-19": [
+   7247,
+   357489,
+   2.027
+  ],
+  "2022-03-20": [
+   6980,
+   369390,
+   1.89
+  ],
+  "2022-03-21": [
+   8920,
+   373906,
+   2.386
+  ],
+  "2022-03-22": [
+   7384,
+   333329,
+   2.215
+  ],
+  "2022-03-23": [
+   10530,
+   311363,
+   3.382
+  ],
+  "2022-03-24": [
+   10400,
+   327399,
+   3.177
+  ],
+  "2022-03-25": [
+   9342,
+   321183,
+   2.909
+  ],
+  "2022-03-26": [
+   7339,
+   304339,
+   2.411
+  ],
+  "2022-03-27": [
+   6666,
+   318791,
+   2.091
+  ],
+  "_formato": "[tweets_tema, tweets_dia(en), pct_del_dia]; sube el 23 y 24 de marzo; la causa no está en el dato"
+ },
+ "gold_sanciones_por_idioma": {
+  "en": {
+   "tweets": 67086,
+   "base": 4013172,
+   "pct": 1.67
+  },
+  "es": {
+   "tweets": 9600,
+   "base": 1056425,
+   "pct": 0.91
+  },
+  "otro": {
+   "tweets": 3580,
+   "base": 1729335,
+   "pct": 0.21
+  }
+ },
+ "bytes_consulta_silver": {
+  "select_star": 2452529977,
+  "solo_texto_todo": 1231613137,
+  "solo_texto_un_dia": 107530303,
+  "count_con_dia_e_idioma_filas": 94350,
+  "count_star": 0
+ },
+ "costos_y_tiempos": {
+  "carga_parquet_a_bronze": "gratis; 24 s",
+  "silver_sql": "1 escaneo de Bronze: ~23.7 GB facturables",
+  "gold_sql": "lee solo Silver (texto) + tabla de 41 filas",
+  "spark_silver_dataproc_serverless": "~8 min, 4 ejecutores máx, resultado idéntico a Silver SQL (6798932 filas, 6798932 ids, 12 días)",
+  "tabla_externa_parquet": "factura 16.8 a 21 GB por consulta (cuenta bytes sin comprimir de `value`); la tabla nativa factura ~23.7 GB por escaneo completo de value",
+  "consumo_mes_antes_del_retrabajo_gb": 241.1
+ },
+ "lecciones_reales": [
+  "COUNT(*) sin columnas cuesta 0 bytes",
+  "LIMIT sin filtro NO reduce bytes en Bronze (23.7 GB)",
+  "TABLESAMPLE: la estimación dijo 66 MB pero la ejecución real exigió 23.7 GB; verificar, no asumir",
+  "Particionar por fecha: un día de texto 107 MB frente a 1.23 GB de todo el texto",
+  "Silver pesa 10 veces menos que Bronze (2.28 vs 22.04 GiB) porque guarda solo los campos usados y tipos reales",
+  "bq query con un SQL que empieza con -- pasado como argumento falla; usar stdin (< archivo) o BigQuery Studio",
+  "Spark exige --deps-bucket y región junto al bucket (us-east1)",
+  "Los textos más repetidos hay textos idénticos copiados 421 veces por 416 cuentas: un conteo de tweets no cuenta voces independientes",
+  "GROUP BY con un alias igual a una columna agrupa por el alias: con SUBSTR(texto,1,110) AS texto salen 1,424 copias en lugar de 421"
+ ],
+ "pendiente_no_verificado": [
+  "Modelo Gemini exacto en Vertex AI Studio: elegir el disponible en la consola (la API se habilitó; no se pudo probar por línea de comandos)",
+  "Precisión de las palabras clave de temas (no medida)",
+  "Rango horario exacto por día y primer/último tweet",
+  "Permisos de alumnos: el docente debe compartir los datasets tweets_* y el bucket de solo lectura"
+ ],
+ "hallazgos_agentes": {
+  "inflacion_es": "18 de marzo: 11,917 tweets en español con 'inflación' (9,736 usuarios); 'mercados' en español es sobre todo inflación (pico 10.57 %: 'guerra contra la inflación')",
+  "pares_tweet_tema": "342,484 pares tweet–tema, 314,527 tweets distintos, 25,936 en 2+ temas",
+  "precision_palabras_clave": "30 tweets leídos a mano (5 por tema, un día, un lector): 17 aciertos, 5 dudosos, 8 falsos positivos",
+  "dia_parcial": "el 16 de marzo empieza a las 20:44 UTC (solo ~4 horas)"
+ },
+ "gold_extra": {
+  "autores_alcance": {
+   "1 · menos de 1 mil": {
+    "autores": 1441113,
+    "tweets": 4556410,
+    "likes": 9414243,
+    "pct_tweets": 67.02,
+    "pct_likes": 8.72
+   },
+   "2 · 1 mil a 10 mil": {
+    "autores": 353935,
+    "tweets": 1591541,
+    "likes": 13623608,
+    "pct_tweets": 23.41,
+    "pct_likes": 12.62
+   },
+   "3 · 10 mil a 100 mil": {
+    "autores": 65549,
+    "tweets": 447790,
+    "likes": 27064759,
+    "pct_tweets": 6.59,
+    "pct_likes": 25.07
+   },
+   "4 · 100 mil a 1 millón": {
+    "autores": 10102,
+    "tweets": 146126,
+    "likes": 38796065,
+    "pct_tweets": 2.15,
+    "pct_likes": 35.93
+   },
+   "5 · más de 1 millón": {
+    "autores": 1375,
+    "tweets": 57065,
+    "likes": 19068196,
+    "pct_tweets": 0.84,
+    "pct_likes": 17.66
+   }
+  },
+  "conversacion_total": {
+   "respuesta": {
+    "tweets": 3414201,
+    "likes": 16395007,
+    "pct": 50.2
+   },
+   "original": {
+    "tweets": 2729906,
+    "likes": 84729320,
+    "pct": 40.2
+   },
+   "cita": {
+    "tweets": 654825,
+    "likes": 6842544,
+    "pct": 9.6
+   }
+  },
+  "top_hashtags_23_marzo": {
+   "ukraine": [
+    49393,
+    8.711
+   ],
+   "putin": [
+    14294,
+    2.521
+   ],
+   "russia": [
+    13333,
+    2.351
+   ],
+   "ucrania": [
+    5384,
+    0.95
+   ],
+   "standwithukraine": [
+    4552,
+    0.803
+   ],
+   "ukrainerussianwar": [
+    3698,
+    0.652
+   ],
+   "ukrainerussiawar": [
+    2912,
+    0.514
+   ],
+   "russian": [
+    2765,
+    0.488
+   ]
+  },
+  "actividad_16_marzo_por_hora_utc": {
+   "20": 12684,
+   "21": 45347,
+   "22": 41166,
+   "23": 35674,
+   "_nota": "el archivo empieza esa tarde: por eso el 16 es día parcial"
+  },
+  "aplicaciones_23_marzo": {
+   "Twitter Web App": 190856,
+   "Twitter for Android": 171340,
+   "Twitter for iPhone": 119482,
+   "otras": 36249,
+   "Twitter for iPad": 15975,
+   "WordPress.com": 11906,
+   "TweetDeck": 9994,
+   "dlvr.it": 6893,
+   "IFTTT": 4328
+  }
+ },
+ "carga_json_a_bronze": {
+  "metodo": "archivo .txt (JSON Lines) en el bucket del alumno -> bq load --source_format=CSV --field_delimiter='þ' --quote='' esquema value:STRING",
+  "ensayo": "2,500 líneas reales: 2,500 filas y 2,500 ids distintos; JSON_VALUE funciona sobre value",
+  "alternativa_parquet": "Spark lee el .txt como texto y lo escribe como Parquet con la misma columna value (así se generó tweets_parquet)"
+ },
+ "_decisiones_2o_ciclo": "El alumno crea todos sus datos en su propio proyecto (cuaderno de Colab del curso copia Drive -> Storage). El hilo del dataset empieza en S3. SQL de S2 en MariaDB/employees. UNNEST y CTE viven en S4. Sin actividades de equipo, sin ficha H1 en S1, sin fechas de calendario, sin 'el docente'.",
+ "ensayo_mariadb": {
+  "flujo": "recursos/mariadb/crear_firewall_y_instancia.sh (desde Cloud Shell o terminal con gcloud) + startup-mariadb.sh; el script crea la regla de firewall si no existe y luego la VM",
+  "vm": "e2-micro, Ubuntu 22.04 LTS, disco 30 GB pd-standard, zona us-central1-a, etiqueta de red mariadb-server, ~958 MB de RAM",
+  "salida_real_resumida": [
+   "=== 1/3: Regla de firewall === (si ya existe: «La regla 'allow-mariadb-curso' ya existe, no se recrea.»)",
+   "=== 2/3: Password de root (no se comparte) ===",
+   "=== 3/3: Crear la instancia ===",
+   "Created [.../instances/<nombre>]",
+   "NAME ZONE MACHINE_TYPE INTERNAL_IP EXTERNAL_IP STATUS -> RUNNING",
+   "=== Instancia creada === Usuario y password de la clase: big_data_user / Example123"
+  ],
+  "avisos_reales": "gcloud avisa que un disco menor de 200 GB puede tener E/S lenta y que 30 GB es mayor que la imagen de 10 GB; ambos son inofensivos para el curso",
+  "tiempo_hasta_instalacion_completa": "unos 14 minutos desde crear la VM hasta ver «--- Instalación completa ---» en /var/log/mariadb_install.log (el script dice 1-2 minutos: es optimista; mientras tanto el log muestra apt-get)",
+  "comprobaciones_tras_instalar": "MariaDB 10.6.23 activo; escucha en 0.0.0.0:3306; git instalado; ssh con `gcloud compute ssh NOMBRE --zone=ZONA --command=...`",
+  "employees": {
+   "fuente": "https://github.com/datacharmer/test_db",
+   "clon": "git clone --depth 1 (≈215 MB)",
+   "carga": "cd test_db && mysql -u big_data_user -pExample123 -t < employees.sql",
+   "tiempo_carga": "3 min 29 s en la e2-micro",
+   "datos_en_disco": "367 MB en /var/lib/mysql",
+   "conteos": {
+    "employees": 300024,
+    "departments": 9,
+    "dept_emp": 331603,
+    "dept_manager": 24,
+    "titles": 443308,
+    "salaries": 2844047
+   }
+  },
+  "nota": "El firewall del curso abre 3306 a 0.0.0.0/0 y la credencial es compartida: decisión didáctica para datos públicos de práctica; nunca para datos reales. Detener la VM al terminar (gcloud compute instances stop NOMBRE --zone=ZONA) evita el cargo de cómputo."
+ }
+}

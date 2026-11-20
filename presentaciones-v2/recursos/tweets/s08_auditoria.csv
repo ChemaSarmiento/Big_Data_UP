@@ -1,0 +1,3 @@
+equipo,dataset,cifra_o_afirmacion,fuente,regla,consulta,gold,visual_o_memo,veredicto,pendiente
+Modelo (docente),war_tweets,"3.4 % de los tweets en inglés del 23 de marzo de 2022 mencionó energía",tweets_gold.tema_dia <- tweets_silver.tweets,"un tweet cuenta una vez por tema; 41 palabras en inglés y español",s08_control_cifra.sql bloque 2,"10530 / 311363 = 3.382 %","gráfica de barras del % del día; 16 de marzo rayado (día parcial)",reproducida,"precisión de las palabras clave sin medir"
+,,,,,,,,,

@@ -1,6 +1,6 @@
 # Clase independiente · BigQuery, arquitecturas y Medallion
 
-Ejecutivos · 180 minutos · 26 slides. **Ruta local:** `/clase-bigquery/`. Al publicar desde plan3: `/refactor_especialidad/clase-bigquery/`. Esta clase no añade una novena sesión al curso de Especialidad.
+Ejecutivos · 180 minutos · 22 slides. **Ruta local:** `/clase-bigquery/`. Al publicar desde plan3: `/refactor_especialidad/clase-bigquery/`. Esta clase no añade una novena sesión al curso de Especialidad.
 
 Secuencia: BigQuery (30 min), propuestas de arquitectura (20), Medallion (20), pausa (10), laboratorio con all_data.csv (80), tarea de actualización (20). El laboratorio usa una muestra real reproducible, no el fixture ficticio del curso. La ruta docente permite cargar el archivo completo desde GCS antes de impartir.
 
@@ -12,7 +12,7 @@ Secuencia: BigQuery (30 min), propuestas de arquitectura (20), Medallion (20), p
 - `recursos/`: 4500 filas observadas, esquema y consultas breves.
 - `guion.py`: fuente de las diapositivas y notas docentes.
 
-El laboratorio se inicia con el proyecto preparado por el docente. Carga la muestra en `emergente_bronze.entrada`, de15 columnas STRING. El alumnado ve primero los datos crudos, ejecuta Silver en cuatro bloques (incluye una revisión de filas idénticas repetidas) y consulta Gold con una pregunta concreta, con una columna que distingue un precio único de uno en conflicto. No tiene que configurar datasets ni manejar un pipeline complejo durante clase.
+El laboratorio se inicia con el proyecto preparado por el docente. Carga la muestra en `emergente_bronze.entrada`, de15 columnas STRING. El alumnado ve primero los datos crudos, ejecuta Silver en siete bloques (limpieza, filas para revisar, conteo, filas idénticas repetidas, motivo de cada rechazo, periodo real y precios por categoría) y Gold en cuatro bloques, con una columna que distingue un precio único de uno en conflicto. No tiene que configurar datasets ni manejar un pipeline complejo durante clase.
 
 **Optimización para ejecutivos:** seleccionar columnas necesarias, filtrar por fecha y revisar el estimado de bytes. `LIMIT` limita filas de salida; no necesariamente los bytes leídos. El docente compara rendimiento con el archivo completo antes de la clase y presenta medidas observadas; los alumnos no duplican tablas para hacer un benchmark.
 
@@ -24,7 +24,7 @@ Se observaron4500 filas distintas,3000 municipios con espacios finales,0 rechazo
 
 Controles locales: `python3 presentaciones-v2/scripts/verify-all-data-sample.py`. Sintaxis analizada con sqlglot en dialectoBigQuery; esto no sustituye el motor. Navegador: `node presentaciones-v2/scripts/verify-clase-bigquery.mjs`; proyector/móvil, controles interactivos, enlaces y PDF. Artefactos `/tmp/bigdata-clase-bigquery/`.
 
-**Pendiente:** ejecutar SQL/carga enBigQuery, medir jobs/bytes reales y perfilar el archivo completo. No se crearon recursos cloud ni se publicó esta clase durante su producción. Los scripts03/04 reconstruyen capas; no implementan actualización incremental. 
+**Pendiente:** ejecutar SQL/carga enBigQuery, medir jobs/bytes reales y perfilar el archivo completo. No se crearon recursos cloud ni se publicó esta clase durante su producción. `20_silver.sql` y `30_gold.sql` reconstruyen la capa completa con `CREATE OR REPLACE TABLE`; no implementan actualización incremental.
 
 ## Regenerar
 

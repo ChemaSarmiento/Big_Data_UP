@@ -3,42 +3,42 @@
   "sessions": [
     {
       "id": 1,
-      "title": "Una compra merece evidencia",
+      "title": "Antes de elegir una herramienta, entiende el problema",
       "url": "especialidad-01/",
-      "slides": 27,
+      "slides": 28,
       "minutes": 180
     },
     {
       "id": 2,
-      "title": "Una consulta también puede contar mal",
+      "title": "SQL con MariaDB: de una pregunta de negocio a una consulta",
       "url": "especialidad-02/",
       "slides": 28,
       "minutes": 180
     },
     {
       "id": 3,
-      "title": "El archivo debe sobrevivir a tus conclusiones",
+      "title": "Del JSON a una tabla: así empieza Medallion",
       "url": "especialidad-03/",
-      "slides": 26,
+      "slides": 24,
       "minutes": 180
     },
     {
       "id": 4,
-      "title": "Un cero puede decidir la compra por ti",
+      "title": "Silver: tablas con significado",
       "url": "especialidad-04/",
-      "slides": 27,
+      "slides": 28,
       "minutes": 180
     },
     {
       "id": 5,
-      "title": "Una canasta incompleta parece una ganga",
+      "title": "Un conteo no es un indicador",
       "url": "especialidad-05/",
-      "slides": 27,
+      "slides": 25,
       "minutes": 180
     },
     {
       "id": 6,
-      "title": "La gráfica también puede torcer la decisión",
+      "title": "Un tablero decide antes de que alguien lo lea",
       "url": "especialidad-06/",
       "slides": 27,
       "minutes": 180
@@ -47,17 +47,17 @@
       "id": 7,
       "title": "La frase suena lista. La evidencia todavía no",
       "url": "especialidad-07/",
-      "slides": 27,
+      "slides": 26,
       "minutes": 180
     },
     {
       "id": 8,
       "title": "Comité de decisión",
       "url": "especialidad-08/",
-      "slides": 14,
+      "slides": 24,
       "minutes": 180
     }
   ],
-  "slides": 203,
+  "slides": 210,
   "cloudValidated": false
 }

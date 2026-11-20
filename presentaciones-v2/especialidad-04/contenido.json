@@ -1,653 +1,152 @@
 {
-  "session": 4,
-  "title": "Un cero puede decidir la compra por ti",
-  "minutes": 180,
-  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
-  "slides": [
-    {
-      "id": "E04-01",
-      "title": "¿Aprobarías la misma compra si el precio fuera un error?",
-      "kind": "cover",
-      "items": [
-        {
-          "label": "Error",
-          "text": "Un precio cero puede parecer una oportunidad y ser un valor inválido."
-        },
-        {
-          "label": "Decisión",
-          "text": "Antes de rankear, pregunta si la observación representa un precio utilizable."
-        }
-      ],
-      "code": null,
-      "note": "Ranking ilustrativo antes/después de corregir formato Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-02",
-      "title": "Bronze conserva; Silver valida",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Bronze",
-          "text": "Conserva el texto original y su procedencia."
-        },
-        {
-          "label": "Silver",
-          "text": "Produce valores tipados y un registro de reglas, aceptaciones y exclusiones."
-        }
-      ],
-      "code": null,
-      "note": "Seguir la misma observación y recuperar su fuente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-03",
-      "title": "Hoy cada regla dejará una prueba",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Resultado",
-          "text": "Cada fila debe tener destino explicable."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Reporte de calidad más una persona responsable de aprobar las reglas."
-        }
-      ],
-      "code": null,
-      "note": "Mapa aceptadas/rechazadas/reporte/dueño Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "Bronze",
-          "16 filas ilustrativas"
-        ],
-        [
-          "Reglas",
-          "1 copia y 2 rechazos"
-        ],
-        [
-          "Silver",
-          "13 observaciones válidas"
-        ]
-      ]
-    },
-    {
-      "id": "E04-04",
-      "title": "Nulo, cero y texto inválido no significan lo mismo",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Nulo",
-          "text": "No se observó o no se informó un valor."
-        },
-        {
-          "label": "Cero",
-          "text": "Sí es un número; no equivale a precio desconocido. Texto inválido tampoco equivale a cero."
-        }
-      ],
-      "code": null,
-      "note": "Mini-tabla con tres casos; decidir tratamiento Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-05",
-      "title": "Convertir tipos exige conservar la explicación",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Conversión",
-          "text": "SAFE_CAST permite detectar una fecha o número no convertible."
-        },
-        {
-          "label": "Responsabilidad",
-          "text": "La conversión fallida se registra; no se sustituye silenciosamente por un precio conveniente."
-        }
-      ],
-      "code": "SELECT id,\n SAFE_CAST(precio_texto AS NUMERIC) AS precio,\n SAFE_CAST(fecha_texto AS DATE) AS fecha\nFROM curso_bronze.observaciones_raw;",
-      "note": "Cadena → fecha/precio o rechazo; `SAFE_CAST` comentado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-06",
-      "title": "Normalizar texto no demuestra equivalencia",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Normalizar",
-          "text": "Recortar espacios y unificar mayúsculas ayuda a comparar identificadores revisados."
-        },
-        {
-          "label": "Equivalencia",
-          "text": "Dos marcas o envases diferentes no se vuelven el mismo producto por normalizar texto."
-        }
-      ],
-      "code": null,
-      "note": "Mayúsculas/espacios vs. marca/presentación distintas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-07",
-      "title": "Un duplicado depende de la clave y del contexto",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Clave",
-          "text": "Una copia exacta de la misma observación puede retirarse del procesamiento."
-        },
-        {
-          "label": "Contexto",
-          "text": "Mismo precio de dos tiendas o fechas diferentes no es duplicación por ese solo hecho."
-        }
-      ],
-      "code": null,
-      "note": "Filas idénticas frente a observaciones de distinta fecha/tienda Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-08",
-      "title": "La calidad se comprueba con reglas y conteos",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Dimensiones",
-          "text": "Validez, completitud, unicidad según clave y cobertura temporal."
-        },
-        {
-          "label": "Denominador",
-          "text": "El porcentaje de errores debe indicar si cuenta filas o motivos; una fila puede tener varios problemas."
-        }
-      ],
-      "code": null,
-      "note": "Completitud, validez, unicidad definida y frescura; métricas por regla Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-09",
-      "title": "Una partición evita leer historia que no necesitas",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Partición",
-          "text": "Separar por fecha facilita acotar lecturas con un filtro adecuado."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Medir bytes en tabla nativa; el fixture pequeño puede no mostrar una ganancia relevante."
-        }
-      ],
-      "code": null,
-      "note": "Cajones por fecha y filtro; no confundir con clustering Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-10",
-      "title": "Gobernar significa asignar decisiones y responsables",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Gobierno",
-          "text": "Definir dueño, reglas, lectores, retención y consumidor."
-        },
-        {
-          "label": "Linaje",
-          "text": "Poder reconstruir cómo una observación terminó en un indicador."
-        }
-      ],
-      "code": null,
-      "note": "Dueño, consumidor, acceso, retención y linaje en una observación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-11",
-      "title": "Un dato público no autoriza cualquier cruce o publicación",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Finalidad",
-          "text": "Que un enlace sea público no demuestra permiso para cualquier cruce o publicación."
-        },
-        {
-          "label": "Minimización",
-          "text": "Comparte lo necesario para la decisión y evita exponer identificadores personales."
-        }
-      ],
-      "code": null,
-      "note": "Contexto/finalidad/minimización; precios frente a datos de personas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "Bronze",
-          "16 filas ilustrativas"
-        ],
-        [
-          "Reglas",
-          "1 copia y 2 rechazos"
-        ],
-        [
-          "Silver",
-          "13 observaciones válidas"
-        ]
-      ]
-    },
-    {
-      "id": "E04-12",
-      "title": "GDPR e HIPAA responden a contextos distintos",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "GDPR",
-          "text": "Sus principios ayudan a discutir finalidad, minimización y responsabilidad en su contexto."
-        },
-        {
-          "label": "HIPAA",
-          "text": "Tiene un ámbito de entidades y datos sanitarios definido; no aplica automáticamente a todos los precios públicos."
-        }
-      ],
-      "code": null,
-      "note": "GDPR: principios de tratamiento personal; HIPAA: entidades/datos sanitarios cubiertos; fuentes oficiales Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "Comisión Europea · principios GDPR",
-          "https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en"
-        ],
-        [
-          "HHS · entidades cubiertas HIPAA",
-          "https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html"
-        ]
-      ]
-    },
-    {
-      "id": "E04-13",
-      "title": "Mayo Clinic muestra por qué la procedencia y el acceso importan",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Mayo Clinic",
-          "text": "El caso histórico de datos ómicos describe lago, BigQuery y control de accesos."
-        },
-        {
-          "label": "Transferencia",
-          "text": "Calidad y procedencia deben acompañar la integración; no usamos datos clínicos de personas en clase."
-        }
-      ],
-      "code": null,
-      "note": "Ficha histórica de plataforma ómica, GCS/BigQuery/IAM; sin datos clínicos en clase Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "Mayo Clinic · datos ómicos · 2020",
-          "https://cloud.google.com/blog/products/data-analytics/genome-data-analytics-with-google-cloud"
-        ]
-      ]
-    },
-    {
-      "id": "E04-14",
-      "title": "Carrefour comparte datos con reglas de análisis",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Carrefour",
-          "text": "El testimonio de clean rooms ilustra colaboración con reglas de análisis."
-        },
-        {
-          "label": "Nuestro alcance",
-          "text": "Asignar responsabilidades y controlar accesos; no desplegar una clean room ni afirmar cumplimiento automático."
-        }
-      ],
-      "code": null,
-      "note": "Caso clean rooms; transferir responsabilidad/control, sin desplegar el producto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "Carrefour · colaboración de datos · 2024",
-          "https://cloud.google.com/blog/products/data-analytics/bigquery-data-clean-rooms-now-generally-available"
-        ]
-      ],
-      "nodes": [
-        [
-          "Bronze",
-          "16 filas ilustrativas"
-        ],
-        [
-          "Reglas",
-          "1 copia y 2 rechazos"
-        ],
-        [
-          "Silver",
-          "13 observaciones válidas"
-        ]
-      ]
-    },
-    {
-      "id": "E04-15",
-      "title": "Rechazar datos también cambia la decisión",
-      "kind": "quality",
-      "items": [
-        {
-          "label": "Efecto",
-          "text": "Eliminar observaciones puede reducir cobertura de una zona o periodo."
-        },
-        {
-          "label": "Decisión",
-          "text": "Reporta el impacto; datos con menos errores no garantizan una muestra representativa."
-        }
-      ],
-      "code": null,
-      "note": "Comparación de cobertura antes/después de reglas; conservar exclusiones Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-16",
-      "title": "Pausa · decide una regla y quién la aprueba",
-      "kind": "pause",
-      "items": [
-        {
-          "label": "Pausa",
-          "text": "Diez minutos; prepara Bronze y el contrato del fixture."
-        },
-        {
-          "label": "Recuperación",
-          "text": "Si falta la sesión anterior, el script de fixture reconstruye la entrada ilustrativa sin usar la fuente grande."
-        }
-      ],
-      "code": null,
-      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-17",
-      "title": "Laboratorio: ejecutar reglas que puedas explicar",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Entradas",
-          "text": "16 filas en el fixture."
-        },
-        {
-          "label": "Política",
-          "text": "Una copia exacta se retira, dos filas se rechazan y trece quedan válidas; verificar con el reporte, no por memoria."
-        }
-      ],
-      "code": null,
-      "note": "Contrato y SQL completos; cambios del alumno delimitados Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-18",
-      "title": "Mide antes de transformar",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Perfil",
-          "text": "Cuenta filas y observa precios/fechas originales."
-        },
-        {
-          "label": "Antes de transformar",
-          "text": "Guarda ese conteo para reconciliar, no sobrescribas el archivo crudo."
-        }
-      ],
-      "code": null,
-      "note": "Paso 1: perfil de Bronze y conteo base Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-19",
-      "title": "Convierte y registra el motivo de rechazo",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Tipado",
-          "text": "Convierte fecha y precio; clasifica la causa principal del rechazo."
-        },
-        {
-          "label": "Fixture",
-          "text": "C4 tiene precio cero y C5 fecha inválida; ambos conservan procedencia."
-        }
-      ],
-      "code": null,
-      "note": "Paso 2: precio/fecha/texto y columna de motivo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-20",
-      "title": "Conserva aceptadas y rechazadas por separado",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Destino",
-          "text": "Silver recibe aceptadas y una tabla separada conserva rechazadas."
-        },
-        {
-          "label": "Política",
-          "text": "El original permanece en Bronze; eliminar del análisis no borra la evidencia de recepción."
-        }
-      ],
-      "code": null,
-      "note": "Paso 3: CTAS Silver y tabla de rechazadas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-21",
-      "title": "Comprueba que ninguna fila desapareció sin explicación",
-      "kind": "quality",
-      "items": [
-        {
-          "label": "Reconciliar",
-          "text": "Entrada = copias retiradas + aceptadas + rechazadas."
-        },
-        {
-          "label": "Esperado",
-          "text": "16 = 1 + 13 + 2. El script incluye una aserción que detiene una reconciliación inconsistente."
-        }
-      ],
-      "code": "SELECT entrada, duplicados, aceptadas, rechazadas\nFROM curso_silver.reporte_calidad;\n-- Esperado en fixture: 16 = 1 + 13 + 2",
-      "note": "Paso 4: reconciliación y reporte Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-22",
-      "title": "Consulta solo el periodo necesario",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Consulta",
-          "text": "Filtra fecha_observada de enero de 2024."
-        },
-        {
-          "label": "Registro",
-          "text": "Conserva estadísticas y caché; no publiques un porcentaje de ahorro sin medición comparable."
-        }
-      ],
-      "code": "SELECT COUNT(*) FROM curso_silver.observaciones\nWHERE fecha_observada BETWEEN\n DATE '2024-01-01' AND DATE '2024-01-31';",
-      "note": "Paso 5: filtro de partición y estadísticas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-23",
-      "title": "Asigna permisos y responsables por función",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Matriz",
-          "text": "Capa, responsable, lectores, retención y evidencia de acceso."
-        },
-        {
-          "label": "Permiso",
-          "text": "Comprobar una identidad autorizada; si no hay segunda cuenta, declarar la prueba pendiente."
-        }
-      ],
-      "code": null,
-      "note": "Paso 6: matriz de gobierno y prueba de acceso autorizada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-24",
-      "title": "Otra persona debe poder rastrear una exclusión",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Auditoría",
-          "text": "Elige una fila rechazada y muestra su archivo, valor original y motivo."
-        },
-        {
-          "label": "Proyecto",
-          "text": "Aplica al menos dos reglas relevantes de tu dominio; no uses precio positivo para todos los datasets."
-        }
-      ],
-      "code": null,
-      "note": "Auditoría por pares de una observación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-25",
-      "title": "¿La regla protege la decisión o borra evidencia útil?",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Sesgo",
-          "text": "Revisar cuánto cambia la población tras cada exclusión."
-        },
-        {
-          "label": "Criterio",
-          "text": "Una regla que elimina casi todo quizá revela mala fuente o mala interpretación, no calidad sobresaliente."
-        }
-      ],
-      "code": null,
-      "note": "Revisar sesgo de cobertura por zona/periodo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-26",
-      "title": "Datos limpios no garantizan una comparación justa",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Comparabilidad",
-          "text": "Fechas válidas pueden pertenecer a periodos incompatibles."
-        },
-        {
-          "label": "Límite",
-          "text": "Silver asegura un contrato técnico; Gold todavía debe definir la comparación de negocio."
-        }
-      ],
-      "code": null,
-      "note": "Ejemplo de fechas/unidades incompatibles que superan validaciones de tipo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-27",
-      "title": "H4: filas, reglas, responsables y límites",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "H4",
-          "text": "Silver, rechazados, reconciliación y matriz del dataset propio."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Guardar reglas, responsable y limitaciones de cobertura sin publicar datos sensibles."
-        }
-      ],
-      "code": null,
-      "note": "Checklist Silver/reporte/linaje/matriz Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E04-28",
-      "title": "Gold agregará significado de negocio",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Recuperación",
-          "text": "¿Qué diferencia hay entre duplicado y repetición legítima?"
-        },
-        {
-          "label": "Cierre",
-          "text": "Conserva linaje y accesos acordados. Gold traducirá las filas en KPIs."
-        }
-      ],
-      "code": null,
-      "note": "Recuperación de conceptos y cierre Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    }
+ "session": 4,
+ "title": "Silver: tablas con significado",
+ "minutes": 180,
+ "status": "Guía ensayada con consultas reales de BigQuery sobre las tablas de referencia; crear el dataset desde una cuenta nueva no se ensayó.",
+ "slides": [],
+ "lab": {
+  "aviso": "Guía ensayada con consultas reales de BigQuery sobre las mismas tablas que vas a construir. Las cifras de «Salida esperada» son valores de referencia del curso: las tuyas deben coincidir en los conteos y pueden variar ligeramente en bytes. No se ensayó crear el dataset desde una cuenta nueva ni los nombres exactos de menús y botones de la consola, que pueden cambiar.",
+  "prerequisitos": [
+   "Tu tabla tweets_bronze.entrada con 6,798,932 filas (sesión 3), en tu propio proyecto y en la ubicación US.",
+   "BigQuery Studio abierto con tu proyecto seleccionado: escribes dataset.tabla sin el nombre del proyecto.",
+   "Facturación activa y un presupuesto con alerta (sesión 1). La consulta más cara de hoy lee ≈23.67 GB; las demás, menos de 1.4 GB cada una.",
+   "Una pestaña nueva por paso; si el editor te pide la ubicación de procesamiento, elige US."
   ],
-  "lab": {
-    "steps": [
-      {
-        "n": 1,
-        "minutes": 5,
-        "action": "Abrir BigQuery Studio y verificar proyecto y ubicación del laboratorio. Ejecutar COUNT(*) sobre curso_bronze.observaciones_raw; conservar ID/versión de fuente.",
-        "check": "Fixture:16 filas. Si falta Bronze, recuperar con 01_fixture_bronze.sql y declarar que es una tabla nativa ilustrativa. Si el conteo difiere, localizar la versión correcta antes de transformar."
-      },
-      {
-        "n": 2,
-        "minutes": 8,
-        "action": "Leer 04_silver.sql completo: copias exactas, UPPER/TRIM de tienda, SAFE_CAST de fecha/precio y prioridad del CASE. Predecir destinos C4 y C5 sin ejecutar fragmentos.",
-        "check": "C4 precio_invalido; C5 fecha_invalida. El CASE registra el primer motivo. La regla mínima no certifica comparabilidad de marca, presentación o periodo."
-      },
-      {
-        "n": 3,
-        "minutes": 12,
-        "action": "En una pestaña del editor SQL pegar y ejecutar 04_silver.sql completo. Revisar que el destino es curso_silver del proyecto de laboratorio y la región compatible.",
-        "check": "Tablas persistentes: observaciones, rechazadas, reporte_calidad. Las temporales unicas/tipadas/clasificadas pertenecen al script; no ejecutarlas en bloques aislados. Ante error, guardar mensaje, resolver permiso/ubicación y repetir completo; Bronze permanece intacta."
-      },
-      {
-        "n": 4,
-        "minutes": 12,
-        "action": "Consultar reporte_calidad y rechazadas. Conservar resultado y el ASSERT de reconciliación junto con SQL y versión de entrada.",
-        "check": "entrada16 = duplicados1 + aceptadas13 + rechazadas2; unicas15. C4 precio; C5 fecha. Si no cierra, detener Gold y revisar origen/ejecución; nunca editar el reporte para forzar igualdad."
-      },
-      {
-        "n": 5,
-        "minutes": 10,
-        "action": "Ejecutar 05_control_silver.sql. Abrir detalles/historial del job y registrar ID, bytes, caché y tiempo. Verificar partición fecha_observada en detalles de observaciones.",
-        "check": "Enero: A5,B5,C3; control de id duplicado sin filas en el fixture. El fixture no prueba ahorro: tiene una sola fecha y poco volumen. Comparar con fuente mayor solo bajo preparación y costo autorizados."
-      },
-      {
-        "n": 6,
-        "minutes": 8,
-        "action": "Completar matriz-gobierno.csv: activo, responsable de regla, lectores, retención/revisión y evidencia. Con identidad adicional autorizada disponible, comprobar lectura prevista.",
-        "check": "Si no existe identidad adicional, registrar prueba pendiente. No publicar bucket ni conceder Owner para resolver acceso. Conservar capas requeridas por Gold y revisar recursos/retención con docente."
-      }
-    ],
-    "instructions": "Preparación: Bronze de S3 en curso_bronze.observaciones_raw, proyecto de laboratorio y ubicación compatible (scripts: us-central1); permisos autorizados de lectura y escritura en curso_silver. Ruta: BigQuery Studio → editor SQL → seleccionar proyecto → ejecutar consulta de entrada, leer 04_silver.sql y ejecutarlo completo como script. Revisar resultados y pestaña de detalles del job; ejecutar luego 05_control_silver.sql sobre las tablas persistentes. El script reemplaza destinos curso_silver y no debe apuntarse a producción. Conserva originales, SQL, versión de reglas, reporte y motivos; no hay publicación ni provisión desde esta página. Los campos crudos permanecen en rechazadas, y Bronze conserva la fuente. El alumno modifica reglas solo después de discutir su significado con docente. Para otra fuente, el docente prepara esquema y SQL adaptados antes de la transferencia. Si faltan permisos, usar evidencia docente identificada y registrar ejecución pendiente."
-  },
-  "assets": [
-    "01_fixture_bronze.sql",
-    "03_explorar.sql",
-    "04_silver.sql",
-    "05_control_silver.sql",
-    "matriz-gobierno.csv"
+  "instructions": "Consola de Google Cloud → BigQuery → BigQuery Studio → botón + para abrir una consulta SQL nueva. Usa una pestaña por paso. Antes de pulsar Ejecutar mira el estimador de bytes (arriba a la derecha del editor). Cuando una consulta termine, abre «Información del trabajo» para ver los bytes procesados. Los archivos SQL se descargan desde esta página y cada paso muestra el código completo.",
+  "region": "Tus datasets deben estar en la ubicación US, igual que tweets_bronze. Para crear tablas necesitas en tu proyecto los permisos de usuario de trabajos de BigQuery y editor de datos de BigQuery; en un proyecto propio ya los tienes.",
+  "steps": [
+   {
+    "n": 1,
+    "minutes": 12,
+    "titulo": "Crea tu tabla Silver de tweets",
+    "donde": "BigQuery Studio → tu proyecto → botón + (consulta SQL nueva). Una pestaña para cada bloque.",
+    "action": "Crea el dataset tweets_silver y después ejecuta 20_silver_tweets.sql completo. Antes de pulsar Ejecutar en el bloque 1.b, lee el estimador de bytes: debe indicar una lectura completa de tu tabla Bronze. Bronze no cambia. La tabla nueva queda particionada por fecha y agrupada por idioma. Después ejecuta las dos comprobaciones.",
+    "costo": "Referencia: 23,670,340,066 bytes (≈23.67 GB) para 1.b: una lectura completa de tu tweets_bronze.entrada. Es la consulta más cara de la sesión: ejecútala una sola vez. Las comprobaciones cuestan ≈54 MB y ≈30 MB.",
+    "codigo": "-- Paso 1.a · crea el dataset (ejecútalo primero).\nCREATE SCHEMA IF NOT EXISTS tweets_silver OPTIONS (location = 'US');\n\n-- Paso 1.b · crea la tabla Silver de tweets (20_silver_tweets.sql). Lee el estimador antes de ejecutar.\n-- Silver: una fila por tweet, con tipos reales. Bronze no se modifica.\n-- Cuesta un escaneo completo de Bronze (~23.7 GB facturables); ejecútalo una vez.\nCREATE OR REPLACE TABLE tweets_silver.tweets\nPARTITION BY fecha\nCLUSTER BY idioma AS\nSELECT\n  SAFE_CAST(JSON_VALUE(value, '$.id') AS INT64)                  AS tweet_id,\n  SAFE_CAST(JSON_VALUE(value, '$.date') AS TIMESTAMP)            AS fecha_hora,\n  DATE(SAFE_CAST(JSON_VALUE(value, '$.date') AS TIMESTAMP))      AS fecha,\n  JSON_VALUE(value, '$.lang')                                    AS idioma,\n  JSON_VALUE(value, '$.content')                                 AS texto,\n  JSON_VALUE(value, '$.url')                                     AS url,\n  JSON_VALUE(value, '$.user.username')                           AS usuario,\n  SAFE_CAST(JSON_VALUE(value, '$.user.verified') AS BOOL)        AS usuario_verificado,\n  SAFE_CAST(JSON_VALUE(value, '$.user.followersCount') AS INT64) AS seguidores,\n  JSON_VALUE(value, '$.user.location')                           AS ubicacion_usuario,\n  SAFE_CAST(JSON_VALUE(value, '$.likeCount') AS INT64)           AS likes,\n  SAFE_CAST(JSON_VALUE(value, '$.retweetCount') AS INT64)        AS retuits,\n  SAFE_CAST(JSON_VALUE(value, '$.replyCount') AS INT64)          AS respuestas,\n  SAFE_CAST(JSON_VALUE(value, '$.quoteCount') AS INT64)          AS citas,\n  JSON_VALUE(value, '$.inReplyToTweetId') IS NOT NULL            AS es_respuesta,\n  JSON_VALUE(value, '$.quotedTweet.id') IS NOT NULL              AS es_cita,\n  ARRAY(SELECT LOWER(h) FROM UNNEST(JSON_VALUE_ARRAY(value, '$.hashtags')) AS h) AS hashtags,\n  JSON_VALUE(value, '$.sourceLabel')                             AS aplicacion\nFROM tweets_bronze.entrada;\n\n-- Paso 1.c · comprueba (en otra pestaña).\nSELECT COUNT(*) AS filas, MIN(fecha) AS desde, MAX(fecha) AS hasta\nFROM tweets_silver.tweets;\n\nSELECT tweet_id, fecha_hora, idioma, usuario, seguidores, likes\nFROM tweets_silver.tweets\nWHERE fecha = '2022-03-27'\nORDER BY fecha_hora DESC\nLIMIT 1;",
+    "salida": "1.b · la consola confirma que se creó la tabla tweets_silver.tweets.\n\n1.c · primera consulta (≈54 MB)\nfilas   | desde      | hasta\n6798932 | 2022-03-16 | 2022-03-27\n\n1.c · segunda consulta (≈30 MB)\ntweet_id            | fecha_hora          | idioma | usuario | seguidores | likes\n1508232397162258434 | 2022-03-27 23:59:59 | en     | skift   | 87507      | 0",
+    "check": "filas = 6798932, las mismas que tu Bronze, y las fechas van del 2022-03-16 al 2022-03-27. La segunda consulta devuelve el tweet más reciente del archivo.",
+    "error": "Si dice «Not found: Table …tweets_bronze.entrada», todavía no cargaste Bronze (sesión 3) o está en otro proyecto: selecciona el proyecto correcto y vuelve a intentar. Si dice que el dataset no está en la ubicación, crea tweets_silver con la línea CREATE SCHEMA … OPTIONS (location = 'US') del bloque 1.a. CREATE OR REPLACE TABLE se puede repetir sin problema."
+   },
+   {
+    "n": 2,
+    "minutes": 10,
+    "titulo": "Comprueba que Silver cuadra con Bronze",
+    "donde": "BigQuery Studio → pestaña nueva. Ejecuta cada consulta por separado seleccionándola.",
+    "action": "Ejecuta las cuatro consultas de s04_02_chequeos.sql. Primero compara filas de Bronze y de Silver; después busca ids repetidos o vacíos, revisa el periodo y mira el tipo de cada columna. Escribe en un comentario qué demuestra cada resultado y qué no.",
+    "costo": "≈0 + 109 MB + 54 MB + 10 MB (las de metadatos facturan el mínimo).",
+    "codigo": "-- Paso 2 · ¿Silver cuadra con Bronze? Cuatro comprobaciones baratas.\n\n-- 2.1 Filas de Bronze y de Silver. COUNT(*) no lee columnas: el estimador debe decir 0 bytes.\nSELECT (SELECT COUNT(*) FROM tweets_bronze.entrada) AS bronze,\n       (SELECT COUNT(*) FROM tweets_silver.tweets)  AS silver;\n\n-- 2.2 ¿Hay ids repetidos o vacíos? Solo lee dos columnas.\nSELECT COUNT(*)                     AS filas,\n       COUNT(DISTINCT tweet_id)     AS ids_distintos,\n       COUNTIF(tweet_id IS NULL)    AS sin_id,\n       COUNTIF(fecha_hora IS NULL)  AS sin_fecha\nFROM tweets_silver.tweets;\n\n-- 2.3 ¿Qué periodo cubre y cuántos tweets hay por día?\nSELECT fecha, COUNT(*) AS tweets\nFROM tweets_silver.tweets\nGROUP BY fecha\nORDER BY fecha;\n\n-- 2.4 ¿Qué tipo tiene cada columna? Son metadatos: no leen datos de la tabla.\nSELECT column_name, data_type\nFROM tweets_silver.INFORMATION_SCHEMA.COLUMNS\nWHERE table_name = 'tweets'\nORDER BY ordinal_position;\n",
+    "salida": "2.1 (0 bytes)\nbronze  | silver\n6798932 | 6798932\n\n2.2 (≈109 MB)\nfilas   | ids_distintos | sin_id | sin_fecha\n6798932 | 6798932       | 0      | 0\n\n2.3 (≈54 MB)\nfecha      | tweets\n2022-03-16 | 134871\n2022-03-17 | 778608\n2022-03-18 | 735033\n2022-03-19 | 590028\n2022-03-20 | 614483\n2022-03-21 | 632383\n2022-03-22 | 586523\n2022-03-23 | 567023\n2022-03-24 | 584497\n2022-03-25 | 554519\n2022-03-26 | 505568\n2022-03-27 | 515396\n\n2.4 (metadatos)\ncolumn_name        | data_type\ntweet_id           | INT64\nfecha_hora         | TIMESTAMP\nfecha              | DATE\nidioma             | STRING\ntexto              | STRING\nurl                | STRING\nusuario            | STRING\nusuario_verificado | BOOL\nseguidores         | INT64\nubicacion_usuario  | STRING\nlikes              | INT64\nretuits            | INT64\nrespuestas         | INT64\ncitas              | INT64\nes_respuesta       | BOOL\nes_cita            | BOOL\nhashtags           | ARRAY<STRING>\naplicacion         | STRING",
+    "check": "Bronze y Silver tienen 6798932 filas; ids_distintos = filas; sin_id y sin_fecha valen 0; hay 12 días y el 2022-03-16 solo tiene 134871 tweets; Silver tiene 18 columnas con tipo (INT64, TIMESTAMP, DATE, STRING, BOOL…).",
+    "error": "Si las filas de Silver y de Bronze no coinciden, no sigas: revisa que el paso 1 terminó sin error y que no hay otra tabla con el mismo nombre en otro dataset. Si la consulta 2.4 devuelve vacío, escribiste mal el nombre de la tabla en WHERE table_name."
+   },
+   {
+    "n": 3,
+    "minutes": 12,
+    "titulo": "Crea autores: una fila por autor",
+    "donde": "BigQuery Studio → pestaña nueva.",
+    "action": "Ejecuta 21_silver_autores.sql: usa un CTE (WITH) y ROW_NUMBER para quedarse con el dato más reciente de cada autor. Después ejecuta las cuatro consultas de s04_03_autores_checks.sql. En 3.1 mira cómo cambian los seguidores de skift y cuál fila recibe orden = 1.",
+    "costo": "Referencia: 279,906,967 bytes (≈280 MB) para crear la tabla; las comprobaciones, ≈253 + 75 + 40 + 90 MB.",
+    "codigo": "-- Silver 2 · autores: una fila por autor (grano distinto al de tweets).\n-- Un autor aparece en muchos tweets; nos quedamos con su dato más reciente.\nCREATE OR REPLACE TABLE tweets_silver.autores AS\nWITH ordenados AS (\n  SELECT usuario, usuario_verificado, seguidores,\n         NULLIF(TRIM(ubicacion_usuario), '') AS ubicacion,\n         ROW_NUMBER() OVER (PARTITION BY usuario ORDER BY fecha_hora DESC) AS orden,\n         COUNT(*)     OVER (PARTITION BY usuario)                          AS tweets_en_archivo\n  FROM tweets_silver.tweets\n)\nSELECT usuario, usuario_verificado, seguidores, ubicacion, tweets_en_archivo\nFROM ordenados\nWHERE orden = 1;\n\n-- Paso 3 · Revisa la tabla autores (la creaste con 21_silver_autores.sql).\n\n-- 3.1 Un autor con varios tweets, del más reciente al más antiguo.\n--     orden = 1 es el que se queda en autores. Mira cómo cambia seguidores.\nSELECT tweet_id, fecha_hora, seguidores,\n       ROW_NUMBER() OVER (PARTITION BY usuario ORDER BY fecha_hora DESC) AS orden\nFROM tweets_silver.tweets\nWHERE usuario = 'skift'\nORDER BY fecha_hora DESC;\n\n-- 3.2 Lo que quedó de ese autor: una sola fila.\nSELECT * FROM tweets_silver.autores WHERE usuario = 'skift';\n\n-- 3.3 ¿Cuadra? Una fila por autor y todos los tweets contados una vez.\nSELECT COUNT(*)                  AS autores,\n       COUNT(DISTINCT usuario)   AS usuarios_distintos,\n       SUM(tweets_en_archivo)    AS tweets_sumados\nFROM tweets_silver.autores;\n\n-- 3.4 CTE: WITH le pone nombre a un paso intermedio para poder resumirlo otra vez.\n--     Primero cuenta tweets por autor; después cuenta autores por tramo.\nWITH tweets_por_autor AS (\n  SELECT usuario, COUNT(*) AS tweets\n  FROM tweets_silver.tweets\n  GROUP BY usuario\n)\nSELECT CASE WHEN tweets = 1  THEN '1'\n            WHEN tweets = 2  THEN '2'\n            WHEN tweets <= 5 THEN '3 a 5'\n            WHEN tweets <= 20 THEN '6 a 20'\n            ELSE 'más de 20' END AS tweets_publicados,\n       MIN(tweets)   AS orden,\n       COUNT(*)      AS autores,\n       SUM(tweets)   AS tweets_totales\nFROM tweets_por_autor\nGROUP BY tweets_publicados\nORDER BY orden;\n",
+    "salida": "3.1 (≈253 MB) · skift tiene 10 tweets; la fila con orden = 1 es la que se queda\ntweet_id            | fecha_hora          | seguidores | orden\n1508232397162258434 | 2022-03-27 23:59:59 | 87507      | 1\n1507960605889683458 | 2022-03-27 05:59:59 | 87507      | 2\n1507671384033357827 | 2022-03-26 10:50:43 | 87507      | 3\n1507000006317907977 | 2022-03-24 14:22:54 | 87510      | 4\n1506662974336864257 | 2022-03-23 16:03:40 | 87513      | 5\n1506450658337112067 | 2022-03-23 02:00:00 | 87516      | 6\n1506311312195743744 | 2022-03-22 16:46:17 | 87519      | 7\n1506209937248063488 | 2022-03-22 10:03:27 | 87521      | 8\n1505514489378136065 | 2022-03-20 12:00:00 | 87526      | 9\n1504503847837847567 | 2022-03-17 17:04:04 | 87529      | 10\n\n3.2 (≈75 MB)\nusuario | usuario_verificado | seguidores | ubicacion         | tweets_en_archivo\nskift   | true               | 87507      | New York City, NY | 10\n\n3.3 (≈40 MB)\nautores | usuarios_distintos | tweets_sumados\n1872074 | 1872074            | 6798932\n\n3.4 (≈90 MB)\ntweets_publicados | orden | autores | tweets_totales\n1                 | 1     | 1091593 | 1091593\n2                 | 2     | 288520  | 577040\n3 a 5             | 3     | 266027  | 980781\n6 a 20            | 6     | 179353  | 1780994\nmás de 20         | 21    | 46581   | 2368524",
+    "check": "autores = usuarios_distintos = 1872074 y tweets_sumados = 6798932 (todos los tweets cuentan una vez). skift queda en una fila con 10 tweets y 87507 seguidores (el valor del tweet más reciente). El 58 % de los autores publicó un solo tweet.",
+    "error": "Si tweets_sumados no da 6798932, la tabla se creó con otro orden o filtro: vuelve a ejecutar 21_silver_autores.sql completo. Si 3.1 devuelve 0 filas, el nombre de usuario no existe en tu tabla: prueba otro autor de tu propia consulta."
+   },
+   {
+    "n": 4,
+    "minutes": 12,
+    "titulo": "Crea hashtags: una fila por tweet y hashtag",
+    "donde": "BigQuery Studio → pestaña nueva.",
+    "action": "Ejecuta 22_silver_hashtags.sql: UNNEST convierte la lista de hashtags de cada tweet en filas y DISTINCT quita los repetidos dentro del mismo tweet. Después ejecuta las cinco consultas de s04_04_hashtags_checks.sql. Fíjate en 4.5: al unir tweets con hashtags, las filas se multiplican.",
+    "costo": "Referencia: 173,984,832 bytes (≈174 MB) para crear la tabla; las comprobaciones, entre 7 y 81 MB cada una.",
+    "codigo": "-- Silver 3 · hashtags: una fila por tweet y hashtag. UNNEST convierte el arreglo en filas.\n-- DISTINCT evita contar dos veces un hashtag repetido dentro del mismo tweet.\nCREATE OR REPLACE TABLE tweets_silver.hashtags\nPARTITION BY fecha AS\nSELECT DISTINCT t.tweet_id, t.fecha, t.idioma, h AS hashtag\nFROM tweets_silver.tweets AS t, UNNEST(t.hashtags) AS h\nWHERE h != '';\n\n-- Paso 4 · Revisa la tabla hashtags (la creaste con 22_silver_hashtags.sql).\n\n-- 4.1 Un tweet de una agencia de noticias: sus hashtags viven en un arreglo (una celda con tres valores).\nSELECT tweet_id, usuario, hashtags\nFROM tweets_silver.tweets\nWHERE fecha = '2022-03-27' AND tweet_id = 1508054980313370628;\n\n-- 4.2 El mismo tweet en la tabla hashtags: UNNEST lo convirtió en tres filas.\nSELECT tweet_id, fecha, idioma, hashtag\nFROM tweets_silver.hashtags\nWHERE fecha = '2022-03-27' AND tweet_id = 1508054980313370628\nORDER BY hashtag;\n\n-- 4.3 ¿Cuadra? DISTINCT quitó hashtags repetidos dentro de un mismo tweet.\nSELECT SUM(ARRAY_LENGTH(hashtags))                      AS hashtags_en_arreglos,\n       (SELECT COUNT(*) FROM tweets_silver.hashtags)    AS filas_en_la_tabla,\n       COUNTIF(ARRAY_LENGTH(hashtags) > 0)              AS tweets_con_hashtag\nFROM tweets_silver.tweets;\n\n-- 4.4 Los ocho hashtags con más tweets.\nSELECT hashtag, COUNT(*) AS tweets\nFROM tweets_silver.hashtags\nGROUP BY hashtag\nORDER BY tweets DESC\nLIMIT 8;\n\n-- 4.5 El grano al unir: cada tweet aparece una vez por hashtag. No sumes tweets sobre este resultado.\nSELECT COUNT(*)                 AS filas_del_join,\n       COUNT(DISTINCT t.tweet_id) AS tweets_distintos\nFROM tweets_silver.tweets AS t\nJOIN tweets_silver.hashtags AS h USING (tweet_id);\n",
+    "salida": "4.1 (≈18 MB) · la consola muestra el arreglo en tres líneas; en la vista JSON es [\"update\", \"macron\", \"ukraine\"]\ntweet_id            | usuario | hashtags\n1508054980313370628 | AFP     | update\n                    |         | macron\n                    |         | ukraine\n\n4.2 (≈7 MB)\ntweet_id            | fecha      | idioma | hashtag\n1508054980313370628 | 2022-03-27 | en     | macron\n1508054980313370628 | 2022-03-27 | en     | ukraine\n1508054980313370628 | 2022-03-27 | en     | update\n\n4.3 (≈38 MB)\nhashtags_en_arreglos | filas_en_la_tabla | tweets_con_hashtag\n3369433              | 3339839           | 1226642\n\n4.4 (≈38 MB)\nhashtag          | tweets\nukraine          | 507762\nputin            | 161491\nrussia           | 140279\nucrania          | 58294\nukrainerussiawar | 46620\nstandwithukraine | 45773\nukrainewar       | 33782\nrussian          | 28736\n\n4.5 (≈81 MB)\nfilas_del_join | tweets_distintos\n3339839        | 1226642",
+    "check": "La tabla tiene 3339839 filas; en los arreglos había 3369433 menciones (la diferencia son repeticiones dentro de un mismo tweet); 1226642 tweets tienen al menos un hashtag; el join da 3339839 filas pero solo 1226642 tweets distintos.",
+    "error": "«Cannot access field … on a value with type ARRAY»: olvidaste UNNEST; los arreglos no se filtran con = . Si 4.1 no devuelve el tweet de AFP, tu archivo Bronze es otro: elige cualquier tweet con hashtags en una consulta propia y repite 4.1 y 4.2 con su tweet_id."
+   },
+   {
+    "n": 5,
+    "minutes": 12,
+    "titulo": "Marca la calidad sin borrar nada",
+    "donde": "BigQuery Studio → pestaña nueva.",
+    "action": "Ejecuta las cuatro consultas de s04_05_marcas_calidad.sql. En 5.1 cada regla es una columna verdadero/falso y se cuenta cuántos tweets cae en cada una; en 5.2 localiza los textos más copiados con un CTE; en 5.3 mide ubicación vacía e idioma «und»; en 5.4 compara promedio y mediana de likes. Anota, para cada regla, qué decides: marcar, conservar o no excluir.",
+    "costo": "Referencia: 5.1 y 5.2 leen la columna de texto (≈1.3 GB cada una); 5.3 ≈102 MB; 5.4 ≈54 MB.",
+    "codigo": "-- Paso 5 · Marca, no borres. Cada regla es una columna verdadero/falso; tú decides después qué excluir.\n\n-- 5.1 Cuántos tweets cae en cada regla y cuántos quedan al aplicarlas.\n--     texto_repetido: el mismo texto exacto aparece 20 veces o más.\nWITH marcadas AS (\n  SELECT fecha = DATE '2022-03-16'                  AS dia_parcial,\n         idioma = 'und'                             AS idioma_desconocido,\n         COUNT(*) OVER (PARTITION BY texto) >= 20   AS texto_repetido,\n         es_respuesta\n  FROM tweets_silver.tweets\n)\nSELECT COUNT(*)                                                                         AS tweets,\n       COUNTIF(dia_parcial)                                                             AS dia_parcial,\n       COUNTIF(idioma_desconocido)                                                      AS idioma_desconocido,\n       COUNTIF(texto_repetido)                                                          AS texto_repetido,\n       COUNTIF(NOT (dia_parcial OR idioma_desconocido OR texto_repetido))               AS quedan_con_3_reglas,\n       COUNTIF(NOT (dia_parcial OR idioma_desconocido OR texto_repetido OR es_respuesta)) AS quedan_sin_respuestas\nFROM marcadas;\n\n-- 5.2 Los textos que más se copian. El nombre del paso (por_texto) es distinto al de la columna (texto):\n--     si el alias de SELECT se llamara igual que la columna, GROUP BY agruparía por el alias recortado.\nWITH por_texto AS (\n  SELECT texto, COUNT(*) AS copias, COUNT(DISTINCT usuario) AS cuentas\n  FROM tweets_silver.tweets\n  GROUP BY texto\n)\nSELECT SUBSTR(texto, 1, 40) AS inicio, copias, cuentas\nFROM por_texto\nORDER BY copias DESC\nLIMIT 4;\n\n-- 5.3 Ubicación vacía e idioma sin determinar.\nSELECT COUNTIF(ubicacion_usuario IS NULL OR TRIM(ubicacion_usuario) = '')                        AS sin_ubicacion,\n       ROUND(100 * COUNTIF(ubicacion_usuario IS NULL OR TRIM(ubicacion_usuario) = '') / COUNT(*), 1) AS pct_sin_ubicacion,\n       COUNTIF(idioma = 'und')                                                                   AS idioma_und\nFROM tweets_silver.tweets;\n\n-- 5.4 Likes: el promedio y la mediana cuentan historias distintas.\nSELECT ROUND(AVG(likes), 2)                          AS promedio,\n       APPROX_QUANTILES(likes, 100)[OFFSET(50)]      AS mediana,\n       ROUND(100 * COUNTIF(likes = 0) / COUNT(*), 1) AS pct_con_cero_likes,\n       COUNTIF(likes >= 1000)                        AS tweets_con_mil_o_mas,\n       ROUND(100 * SUM(IF(likes >= 1000, likes, 0)) / SUM(likes), 1) AS pct_de_los_likes\nFROM tweets_silver.tweets;\n",
+    "salida": "5.1 (≈1.3 GB)\ntweets  | dia_parcial | idioma_desconocido | texto_repetido | quedan_con_3_reglas | quedan_sin_respuestas\n6798932 | 134871      | 97490              | 7760           | 6561954             | 3257636\n\n5.2 (≈1.3 GB)\ninicio                                   | copias | cuentas\n@nathaliejacoby1 Putin                   | 421    | 416\n@wiki_war's account is temporarily unava | 375    | 1\n@joncoopertweets Putin                   | 362    | 352\n.@DmytroKuleba @EUCouncil I’m concerned  | 214    | 213\n\n5.3 (≈102 MB)\nsin_ubicacion | pct_sin_ubicacion | idioma_und\n2664367       | 39.2              | 97490\n\n5.4 (≈54 MB)\npromedio | mediana | pct_con_cero_likes | tweets_con_mil_o_mas | pct_de_los_likes\n15.88    | 0       | 54.4               | 13928                | 60.4",
+    "check": "dia_parcial = 134871; idioma_desconocido = 97490; texto_repetido = 7760; quedan_con_3_reglas = 6561954 (96.5 %) y quedan_sin_respuestas = 3257636 (47.9 %). El texto más copiado tiene 421 copias de 416 cuentas; la mediana de likes es 0 y el promedio 15.88.",
+    "error": "Si el texto más copiado sale con muchas más copias (por ejemplo 1424) y un texto recortado, tu consulta agrupa por un alias con el mismo nombre que la columna: agrupa dentro del CTE y recorta fuera, como en 5.2. Si 5.1 supera el límite de bytes que fijaste, súbelo solo para esta consulta."
+   },
+   {
+    "n": 6,
+    "minutes": 12,
+    "titulo": "Mide costos y cuadra las tres tablas",
+    "donde": "BigQuery Studio → pestaña nueva. Selecciona cada consulta sin ejecutarla para leer el estimador.",
+    "action": "Para cada una de las consultas 6.1 a 6.4, selecciónala y anota el estimador de bytes sin ejecutarla. Ejecuta solo 6.3 y compara los bytes procesados (pestaña Información del trabajo) con el estimador. Termina con 6.5, el cuadre final de las tres tablas Silver contra Bronze.",
+    "costo": "Solo 6.3 (≈33 MB) y 6.5 (≈42 MB) se ejecutan. 6.1, 6.2 y 6.4 se leen en el estimador y no cuestan nada.",
+    "codigo": "-- Paso 6 · Cuánto cuesta leer lo mismo de cuatro maneras, y el cuadre final.\n-- No ejecutes 6.1 a 6.4 todavía: selecciona cada una y lee el estimador de bytes del editor.\n\n-- 6.1 Una columna, toda la tabla.\nSELECT texto FROM tweets_silver.tweets;\n\n-- 6.2 Una columna, un solo día (la tabla está particionada por fecha).\nSELECT texto FROM tweets_silver.tweets WHERE fecha = '2022-03-23';\n\n-- 6.3 Una columna, un día y un idioma (la tabla está agrupada por idioma).\n--     Esta sí ejecútala: abre «Información del trabajo» y compara los bytes procesados con el estimador.\nSELECT texto FROM tweets_silver.tweets WHERE fecha = '2022-03-23' AND idioma = 'es';\n\n-- 6.4 Todas las columnas, toda la tabla.\nSELECT * FROM tweets_silver.tweets;\n\n-- 6.5 Cuadre final de las tres tablas Silver. COUNT(*) sobre tablas no lee columnas; los DISTINCT sí.\nSELECT (SELECT COUNT(*) FROM tweets_bronze.entrada)                    AS bronze,\n       (SELECT COUNT(*) FROM tweets_silver.tweets)                     AS tweets,\n       (SELECT COUNT(DISTINCT tweet_id) FROM tweets_silver.hashtags)   AS tweets_con_hashtag,\n       (SELECT COUNT(*) FROM tweets_silver.autores)                    AS autores,\n       (SELECT SUM(tweets_en_archivo) FROM tweets_silver.autores)      AS tweets_sumados_por_autor,\n       (SELECT COUNT(*) FROM tweets_silver.hashtags)                   AS filas_hashtags;\n",
+    "salida": "Estimador del editor, antes de ejecutar (bytes exactos; el editor puede redondearlos o usar GiB):\n6.1  1,231,613,137 bytes  (≈1.23 GB)\n6.2    107,530,303 bytes  (≈107.5 MB)\n6.3     33,294,051 bytes  (≈33.3 MB)  · el trabajo real procesa 33,294,051 bytes\n6.4  2,452,529,977 bytes  (≈2.45 GB)\n\n6.5 (≈42 MB)\nbronze  | tweets  | tweets_con_hashtag | autores | tweets_sumados_por_autor | filas_hashtags\n6798932 | 6798932 | 1226642            | 1872074 | 6798932                  | 3339839",
+    "check": "Leer una sola columna de toda la tabla pesa unas 37 veces más que leer esa columna en un día y un idioma; SELECT * pesa casi el doble que leer solo el texto. El cuadre final muestra bronze = tweets = tweets_sumados_por_autor = 6798932, autores = 1872074 y filas_hashtags = 3339839.",
+    "error": "Si el estimador de 6.3 muestra mucho más que 33 MB, escribiste mal el nombre de la columna de partición (fecha) o usaste una función sobre ella: filtra con fecha = '2022-03-23' sin envolverla en otra función. Si 6.5 da un número distinto, repite el paso donde falla la comprobación antes de seguir."
+   }
   ],
-  "sources": [
-    [
-      "GoogleSQL · scripts",
-      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language"
-    ],
-    [
-      "Comisión Europea · principios GDPR",
-      "https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en"
-    ],
-    [
-      "HHS · entidades cubiertas HIPAA",
-      "https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html"
-    ],
-    [
-      "Mayo Clinic · datos ómicos · 2020",
-      "https://cloud.google.com/blog/products/data-analytics/genome-data-analytics-with-google-cloud"
-    ],
-    [
-      "Carrefour · colaboración de datos · 2024",
-      "https://cloud.google.com/blog/products/data-analytics/bigquery-data-clean-rooms-now-generally-available"
-    ],
-    [
-      "GoogleSQL · SAFE_CAST",
-      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions#safe_casting"
-    ],
-    [
-      "BigQuery · particiones",
-      "https://docs.cloud.google.com/bigquery/docs/querying-partitioned-tables"
-    ]
+  "cierre": [
+   "Qué queda al terminar: tres tablas Silver en tu proyecto (tweets_silver.tweets, tweets_silver.autores y tweets_silver.hashtags) con sus conteos cuadrados. Las usarás en la sesión 5.",
+   "Costo: la tabla de tweets cuesta una lectura de Bronze (≈23.67 GB de referencia); autores y hashtags cuestan ≈280 MB y ≈174 MB; las revisiones, menos de 1.4 GB cada una. Silver ocupa unos 2.3 GiB de almacenamiento.",
+   "Cierre de recursos: no hay cómputo que apagar; solo tablas. Conserva las tres tablas Silver para la siguiente sesión.",
+   "Si algo falla, repite solo el paso donde falló: CREATE OR REPLACE TABLE se puede repetir sin riesgo."
+  ]
+ },
+ "assets": [
+  "tweets/20_silver_tweets.sql",
+  "tweets/s04_02_chequeos.sql",
+  "tweets/21_silver_autores.sql",
+  "tweets/s04_03_autores_checks.sql",
+  "tweets/22_silver_hashtags.sql",
+  "tweets/s04_04_hashtags_checks.sql",
+  "tweets/s04_05_marcas_calidad.sql",
+  "tweets/s04_06_costos_cierre.sql"
+ ],
+ "sources": [
+  [
+   "BigQuery · funciones JSON",
+   "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/json_functions"
   ],
-  "editorialSource": "../editorial/guion.py",
-  "slidesStatus": "Referencia anterior; slides vigentes en editorial/guion.py, SESSIONS[4]."
+  [
+   "BigQuery · SAFE_CAST",
+   "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions"
+  ],
+  [
+   "BigQuery · funciones de numeración (ROW_NUMBER)",
+   "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/numbering_functions"
+  ],
+  [
+   "BigQuery · trabajar con arreglos (UNNEST)",
+   "https://docs.cloud.google.com/bigquery/docs/arrays"
+  ],
+  [
+   "BigQuery · cláusula WITH (CTE)",
+   "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax"
+  ],
+  [
+   "BigQuery · tablas particionadas",
+   "https://docs.cloud.google.com/bigquery/docs/partitioned-tables"
+  ],
+  [
+   "BigQuery · tablas con clustering",
+   "https://docs.cloud.google.com/bigquery/docs/clustered-tables"
+  ],
+  [
+   "BigQuery · control de acceso con IAM",
+   "https://docs.cloud.google.com/bigquery/docs/access-control"
+  ],
+  [
+   "Comisión Europea · principios del GDPR",
+   "https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en"
+  ],
+  [
+   "HHS · entidades cubiertas por HIPAA",
+   "https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html"
+  ]
+ ],
+ "editorialSource": "../editorial/s04.py",
+ "slidesStatus": "Slides vigentes en editorial/s04.py; este archivo solo alimenta la guía de laboratorio."
 }

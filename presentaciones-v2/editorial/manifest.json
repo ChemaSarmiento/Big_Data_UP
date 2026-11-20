@@ -1,37 +1,37 @@
 {
   "1": {
-    "title": "Una compra merece evidencia",
-    "slides": 27,
+    "title": "Antes de elegir una herramienta, entiende el problema",
+    "slides": 28,
     "source": "editorial/guion.py"
   },
   "2": {
-    "title": "Una consulta también puede contar mal",
+    "title": "SQL con MariaDB: de una pregunta de negocio a una consulta",
     "slides": 28,
     "source": "editorial/guion.py"
   },
   "3": {
-    "title": "El archivo debe sobrevivir a tus conclusiones",
-    "slides": 26,
+    "title": "Del JSON a una tabla: así empieza Medallion",
+    "slides": 24,
     "source": "editorial/guion.py"
   },
   "4": {
-    "title": "Un cero puede decidir la compra por ti",
-    "slides": 27,
+    "title": "Silver: tablas con significado",
+    "slides": 28,
     "source": "editorial/guion.py"
   },
   "5": {
-    "title": "Una canasta incompleta parece una ganga",
-    "slides": 27,
+    "title": "Un conteo no es un indicador",
+    "slides": 25,
     "source": "editorial/guion.py"
   },
   "6": {
-    "title": "La gráfica también puede torcer la decisión",
+    "title": "Un tablero decide antes de que alguien lo lea",
     "slides": 27,
     "source": "editorial/guion.py"
   },
   "7": {
     "title": "La frase suena lista. La evidencia todavía no",
-    "slides": 27,
+    "slides": 26,
     "source": "editorial/guion.py"
   }
 }

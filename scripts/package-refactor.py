@@ -6,8 +6,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'presentaciones-v2'
 DEST = ROOT / 'presentaciones/dist/refactor_especialidad'
 # Solo materiales públicos; nunca scripts de build, cachés o notas internas del repo.
-EXTENSIONS = {'.sh', '.html', '.css', '.js', '.json', '.md', '.sql', '.txt', '.csv', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.woff', '.woff2', '.ttf', '.otf'}
-FOLDERS = ['compartido', 'editorial', 'identidad', 'recursos', 'piloto', 'clase-bigquery'] + [f'especialidad-{n:02d}' for n in range(1, 9)]
+EXTENSIONS = {'.sh', '.py', '.html', '.css', '.js', '.json', '.md', '.sql', '.txt', '.csv', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.woff', '.woff2', '.ttf', '.otf'}
+FOLDERS = ['compartido', 'editorial', 'identidad', 'recursos', 'clase-bigquery'] + [f'especialidad-{n:02d}' for n in range(1, 9)]
 if not (DEST.parent / 'index.html').is_file():
     raise SystemExit('Falta build del sitio principal: npm run build:web en slides_maestria.')
 if DEST.exists():

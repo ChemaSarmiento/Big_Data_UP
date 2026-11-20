@@ -1,54 +1,679 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S2 · SQL para hacer preguntas precisas</title><link rel="stylesheet" href="../compartido/curso.css"><script src="../compartido/journal.js" defer></script></head><body data-session="2"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S2 · 180 MINUTOS</p><h1>SQL para hacer preguntas precisas</h1><p class="notice">Material local para revisión. Datos y resultados del fixture son ilustrativos: no provienen de filas de PROFECO ni demuestran escala. Los pasos cloud requieren cuenta, permisos, región y ensayo previo del docente. No se han ejecutado en GCP desde este sitio.</p><h2>Preparación, herramientas y ruta exacta</h2><p>Docente: preparar MariaDB con datacharmer/test_db antes de la clase. En Cloud Shell, los shells de recursos/mariadb instalan el motor pero no importan employees. Para cargar, clonar https://github.com/datacharmer/test_db.git, entrar a test_db y usar el cliente MariaDB autenticado con -p y redirección de employees.sql. Host/usuario dependen del entorno ya autorizado; no escribir contraseñas en el archivo. Verificar SELECT 1 y luego ejecutar employees-fast-track.sql por bloques Q1–Q6. Los conteos reales de departments y los controles de vigencia se registran en esa instalación; no son los resultados del fixture de precios.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/employees-fast-track.sql" download>employees-fast-track.sql ↓</a></li></ul><p>Esta sesión no exige crear nueva infraestructura. Usar la conexión MariaDB preparada por el docente o el paquete ya construido, según corresponda.</p><section id="paso-1"><h2>Paso 1 · 5 min</h2><p><strong>Acción:</strong> Abrir el cliente MariaDB preparado por el docente. Ejecutar USE employees; y SELECT 1 AS conexion;.</p><p><strong>Comprobación y recuperación:</strong> conexion muestra 1; confirmar base activa. Si employees no existe, pedir al docente importar test_db; instalar el motor no carga la base.</p></section><section id="paso-2"><h2>Paso 2 · 8 min</h2><p><strong>Acción:</strong> En employees-fast-track.sql ejecutar Q1 y después Q2, cada bloque completo. Leer columnas, filtro 1990–1994 y desempate por emp_no.</p><p><strong>Comprobación y recuperación:</strong> Q1: códigos y nombres de departamento. Q2: todas las fechas dentro del intervalo, como máximo 20 filas. Revisar comillas y base activa si falla.</p></section><section id="paso-3"><h2>Paso 3 · 12 min</h2><p><strong>Acción:</strong> Ejecutar Q3. Explicar el LEFT JOIN, la vigencia en ON y COUNT(DISTINCT de.emp_no).</p><p><strong>Comprobación y recuperación:</strong> Una fila por departamento, incluyendo cero si no hay coincidencias. No mover vigencia a WHERE: eliminaría filas sin asignación.</p></section><section id="paso-4"><h2>Paso 4 · 12 min</h2><p><strong>Acción:</strong> Ejecutar Q4 y Q5 completos. Q4 filtra salario medio con HAVING; Q5 relaciona persona y departamento.</p><p><strong>Comprobación y recuperación:</strong> Ambos historiales tienen filtro de vigencia. Revisar cardinalidad y unidad salarial; los resultados reales dependen de la instalación, no de las miniaturas del deck.</p></section><section id="paso-5"><h2>Paso 5 · 10 min</h2><p><strong>Acción:</strong> Ejecutar las dos consultas de Q6 para emp_no=10001: historial y salario vigente.</p><p><strong>Comprobación y recuperación:</strong> Comparar filas y personas distintas. No esperar exactamente las tres filas ficticias de la portada. Si el resultado sorprende, inspeccionar fechas.</p></section><section id="paso-6"><h2>Paso 6 · 8 min</h2><p><strong>Acción:</strong> Ejecutar el control de salarios vigentes duplicados; guardar Q1–Q6 comentadas y su evidencia.</p><p><strong>Comprobación y recuperación:</strong> Cero filas en el control significa que esta regla no detectó conflicto. Si hay filas, registrar y revisar antes de interpretar promedios. No modificar base compartida.</p></section><h2>Código completo y materiales</h2><details><summary>employees-fast-track.sql · ver contenido completo</summary><pre><code>-- MariaDB / datacharmer test_db. Solo SELECT; la base la carga el docente.
--- &#x27;9999-01-01&#x27; significa vigente en el snapshot histórico, NO empleados de hoy.
--- La unidad salarial del ejemplo no se presume MXN.
-USE employees;
-SELECT 1 AS conexion;
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S2 · SQL con MariaDB: de una pregunta de negocio a una consulta</title><link rel="stylesheet" href="../compartido/curso.css"></head><body data-session="2"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S2 · 180 MINUTOS</p><h1>SQL con MariaDB: de una pregunta de negocio a una consulta</h1><p class="notice">Guía para trabajar en tu propio proyecto de Google Cloud. Todas las salidas son resultados reales de la base employees en MariaDB 10.6; tus tiempos pueden variar ligeramente. employees es una base de muestra con datos generados (licencia CC BY-SA 3.0), no una empresa real. Entrar a la VM con gcloud compute ssh se ensayó; conectarte desde un cliente externo (por ejemplo un editor de código) no se ensayó.</p><h2>Antes de empezar</h2><ul><li>Una VM con MariaDB creada en la sesión 1 (nombre mariadb-curso y zona us-central1-a si usaste los valores por defecto) y encendida.</li><li>Cloud Shell abierto en tu proyecto.</li><li>Unos 4 minutos de espera para cargar employees (paso 1) y unos 500 MB libres en el disco de la VM: la base ocupa 367 MB.</li><li>Usuario big_data_user y contraseña Example123: son credenciales didácticas para datos de práctica; no uses este patrón con datos reales.</li></ul><h2>Preparación, herramientas y ruta exacta</h2><p>Ruta: consola de Google Cloud → Cloud Shell → gcloud compute ssh mariadb-curso → terminal de la VM → cliente mysql (mysql -u big_data_user -pExample123 employees). Pega cada bloque de la guía en el cliente interactivo; cada sentencia termina con punto y coma. Si prefieres ejecutar un archivo completo dentro de la VM, usa mysql -u big_data_user -pExample123 employees -t &lt; archivo.sql. Cada paso termina con tres ejercicios y su comprobación numérica. Guarda tus consultas en un archivo propio (por ejemplo mis_consultas.sql).</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/tweets/s02_01_cargar_employees.sh" download>tweets/s02_01_cargar_employees.sh ↓</a></li><li><a href="../recursos/tweets/s02_02_mirar_la_base.sql" download>tweets/s02_02_mirar_la_base.sql ↓</a></li><li><a href="../recursos/tweets/s02_03_filtrar_y_ordenar.sql" download>tweets/s02_03_filtrar_y_ordenar.sql ↓</a></li><li><a href="../recursos/tweets/s02_04_resumir_y_agrupar.sql" download>tweets/s02_04_resumir_y_agrupar.sql ↓</a></li><li><a href="../recursos/tweets/s02_05_unir_tablas.sql" download>tweets/s02_05_unir_tablas.sql ↓</a></li><li><a href="../recursos/tweets/s02_06_de_la_pregunta_a_la_consulta.sql" download>tweets/s02_06_de_la_pregunta_a_la_consulta.sql ↓</a></li></ul><p><strong>Región y permisos:</strong> Zona us-central1-a, la del script de la sesión 1. La VM, la regla de firewall y el usuario big_data_user vienen del flujo de recursos/mariadb. Para esta sesión basta la conexión por SSH desde Cloud Shell: no necesitas abrir el puerto 3306 a otras computadoras.</p><section id="paso-1"><h2>Paso 1 · Conéctate a tu VM y carga employees · 12 min</h2><p><strong>Dónde:</strong> Consola de Google Cloud → ícono de Cloud Shell (&gt;_) arriba a la derecha. Después, la terminal de tu VM.</p><p><strong>Acción:</strong> Entra a tu VM con gcloud compute ssh (si cambiaste el nombre o la zona en la sesión 1, usa los tuyos). Dentro de la VM clona el repositorio test_db y carga employees con una sola instrucción. La carga tarda unos 3 a 4 minutos: mientras corre, lee el paso 2. Al terminar, cuenta las filas de cada tabla.</p><p><strong>Costo estimado:</strong> Sin cargo adicional: solo el cómputo de tu VM encendida (e2-micro). Apagarla al final de la sesión evita ese cargo.</p><pre><code># Paso 1 · Entra a tu VM y carga la base employees.
+# Parte A: en Cloud Shell. Si cambiaste el nombre o la zona de la VM en la sesión 1, usa los tuyos.
+gcloud compute ssh mariadb-curso --zone=us-central1-a
 
--- Q1. ¿Qué departamentos existen? Grano: departamento.
-SELECT dept_no, dept_name FROM departments ORDER BY dept_no;
+# Parte B: ya dentro de la VM (el prompt cambia a tu_usuario@mariadb-curso).
+git clone --depth 1 https://github.com/datacharmer/test_db.git
+cd test_db
+time mysql -u big_data_user -pExample123 -t &lt; employees.sql
 
--- Q2. ¿Qué empleados se contrataron entre 1990 y 1994?
--- Grano: persona identificada por emp_no; orden estable.
-SELECT emp_no, first_name, last_name, hire_date
+# Comprobación: cuenta las filas de cada tabla.
+mysql -u big_data_user -pExample123 employees -t -e &quot;
+SELECT (SELECT COUNT(*) FROM employees)    AS empleados,
+       (SELECT COUNT(*) FROM departments)  AS departamentos,
+       (SELECT COUNT(*) FROM dept_emp)     AS dept_emp,
+       (SELECT COUNT(*) FROM dept_manager) AS dept_manager,
+       (SELECT COUNT(*) FROM titles)       AS titles,
+       (SELECT COUNT(*) FROM salaries)     AS salaries;&quot;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>(al terminar la carga, mysql imprime el tiempo y, después, time)
++---------------------+
+| data_load_time_diff |
++---------------------+
+| 00:03:29            |
++---------------------+
+
+real    3m29.676s
+
+(comprobación de filas)
++-----------+---------------+----------+--------------+--------+----------+
+| empleados | departamentos | dept_emp | dept_manager | titles | salaries |
++-----------+---------------+----------+--------------+--------+----------+
+|    300024 |             9 |   331603 |           24 | 443308 |  2844047 |
++-----------+---------------+----------+--------------+--------+----------+</code></pre><p><strong>Comprueba:</strong> Las seis cifras coinciden con las de la salida. Tiempo de referencia: 3 min 29 s en una e2-micro; el tuyo puede variar ligeramente.</p><p><strong>Error frecuente y recuperación:</strong> • «Access denied»: el usuario es big_data_user y la contraseña Example123; revisa que no haya un espacio después de -p. • «Unknown database employees»: la carga no terminó; vuelve a correr la línea mysql … &lt; employees.sql dentro de la carpeta test_db (employees.sql borra y recrea la base: repetirlo es seguro). • Si Cloud Shell se desconecta durante la carga, vuelve a entrar y repite la carga.</p></section><section id="paso-2"><h2>Paso 2 · Mira la base: tablas, columnas y filas · 10 min</h2><p><strong>Dónde:</strong> Dentro de la VM, en el cliente mysql: mysql -u big_data_user -pExample123 employees (pega cada bloque; termina cada sentencia con punto y coma).</p><p><strong>Acción:</strong> Antes de preguntar, mira qué hay: tablas (SHOW TABLES), columnas y tipos (DESCRIBE) y tus primeras consultas con SELECT. Resuelve los tres ejercicios al final del archivo s02_02_mirar_la_base.sql, que trae la comprobación de cada uno.</p><p><strong>Costo estimado:</strong> Sin cargo adicional.</p><pre><code>-- Paso 2 · Mira la base: tablas, columnas y filas.
+-- Dentro de la VM:  mysql -u big_data_user -pExample123 employees
+-- Pega cada sentencia (termina en punto y coma) o ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_02_mirar_la_base.sql
+
+-- 2.1 ¿Qué tablas hay? (dos de ellas, current_dept_emp y dept_emp_latest_date, son vistas)
+SHOW TABLES;
+
+-- 2.2 ¿Qué columnas tiene employees y de qué tipo?
+DESCRIBE employees;
+
+-- 2.3 Las primeras cinco filas. Sin ORDER BY, el orden que ves no está garantizado.
+SELECT * FROM employees LIMIT 5;
+
+-- 2.4 ¿Cuántas filas hay? Comprueba: 300024.
+SELECT COUNT(*) AS empleados FROM employees;
+
+-- 2.5 SELECT con columnas elegidas, un alias y una expresión.
+SELECT emp_no,
+       CONCAT(first_name, &#x27; &#x27;, last_name) AS nombre,
+       hire_date AS contratado
 FROM employees
-WHERE hire_date &gt;= &#x27;1990-01-01&#x27; AND hire_date &lt; &#x27;1995-01-01&#x27;
-ORDER BY hire_date, emp_no LIMIT 20;
+LIMIT 3;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>+----------------------+
+| Tables_in_employees  |
++----------------------+
+| current_dept_emp     |
+| departments          |
+| dept_emp             |
+| dept_emp_latest_date |
+| dept_manager         |
+| employees            |
+| salaries             |
+| titles               |
++----------------------+
++------------+---------------+------+-----+---------+-------+
+| Field      | Type          | Null | Key | Default | Extra |
++------------+---------------+------+-----+---------+-------+
+| emp_no     | int(11)       | NO   | PRI | NULL    |       |
+| birth_date | date          | NO   |     | NULL    |       |
+| first_name | varchar(14)   | NO   |     | NULL    |       |
+| last_name  | varchar(16)   | NO   |     | NULL    |       |
+| gender     | enum(&#x27;M&#x27;,&#x27;F&#x27;) | NO   |     | NULL    |       |
+| hire_date  | date          | NO   |     | NULL    |       |
++------------+---------------+------+-----+---------+-------+
++--------+------------+------------+-----------+--------+------------+
+| emp_no | birth_date | first_name | last_name | gender | hire_date  |
++--------+------------+------------+-----------+--------+------------+
+|  10001 | 1953-09-02 | Georgi     | Facello   | M      | 1986-06-26 |
+|  10002 | 1964-06-02 | Bezalel    | Simmel    | F      | 1985-11-21 |
+|  10003 | 1959-12-03 | Parto      | Bamford   | M      | 1986-08-28 |
+|  10004 | 1954-05-01 | Chirstian  | Koblick   | M      | 1986-12-01 |
+|  10005 | 1955-01-21 | Kyoichi    | Maliniak  | M      | 1989-09-12 |
++--------+------------+------------+-----------+--------+------------+
++-----------+
+| empleados |
++-----------+
+|    300024 |
++-----------+
++--------+----------------+------------+
+| emp_no | nombre         | contratado |
++--------+----------------+------------+
+|  10001 | Georgi Facello | 1986-06-26 |
+|  10002 | Bezalel Simmel | 1985-11-21 |
+|  10003 | Parto Bamford  | 1986-08-28 |
++--------+----------------+------------+</code></pre><p><strong>Comprueba:</strong> SHOW TABLES lista 8 objetos (6 tablas y 2 vistas). employees tiene 300024 filas. En 2.5 el nombre completo aparece en una sola columna llamada nombre.</p><p><strong>Error frecuente y recuperación:</strong> • «Table doesn&#x27;t exist»: estás en otra base; escribe USE employees; o entra con employees al final del comando. • El cliente muestra -&gt; y no responde: falta el punto y coma; escríbelo y pulsa Enter. • Comillas tipográficas (’) pegadas desde un documento: usa comillas simples rectas (&#x27;). • Si hay muchas filas, Ctrl+C interrumpe la consulta.</p></section><section id="paso-3"><h2>Paso 3 · Filtra y ordena · 12 min</h2><p><strong>Dónde:</strong> Cliente mysql de la VM (el mismo del paso 2).</p><p><strong>Acción:</strong> Practica WHERE con AND, el efecto de los paréntesis, IN, BETWEEN y LIKE, y luego ORDER BY y LIMIT. Resuelve E1 a E3 del archivo s02_03_filtrar_y_ordenar.sql.</p><p><strong>Costo estimado:</strong> Sin cargo adicional.</p><pre><code>-- Paso 3 · Filtra y ordena.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_03_filtrar_y_ordenar.sql
 
--- Q3. ¿Cuántas personas vigentes se asignan a cada departamento?
-SELECT d.dept_no, d.dept_name, COUNT(DISTINCT de.emp_no) AS personas
-FROM departments d
-LEFT JOIN dept_emp de ON d.dept_no = de.dept_no AND de.to_date = &#x27;9999-01-01&#x27;
-GROUP BY d.dept_no, d.dept_name ORDER BY personas DESC, d.dept_no;
+-- 3.1 WHERE con AND: mujeres contratadas desde 1990. Comprueba: 53839.
+SELECT COUNT(*) AS mujeres_desde_1990
+FROM employees
+WHERE gender = &#x27;F&#x27; AND hire_date &gt;= &#x27;1990-01-01&#x27;;
 
--- Q4. ¿Qué departamentos tienen salario medio vigente &gt;= 60000?
--- LEFT no es necesario aquí: buscamos solo asignaciones/salarios coincidentes.
-SELECT d.dept_no, d.dept_name, COUNT(DISTINCT de.emp_no) AS personas,
-       AVG(s.salary) AS salario_medio
-FROM departments d
-JOIN dept_emp de ON d.dept_no = de.dept_no AND de.to_date = &#x27;9999-01-01&#x27;
-JOIN salaries s ON de.emp_no = s.emp_no AND s.to_date = &#x27;9999-01-01&#x27;
-GROUP BY d.dept_no, d.dept_name
-HAVING AVG(s.salary) &gt;= 60000 ORDER BY salario_medio DESC, d.dept_no;
+-- 3.2 Los paréntesis cambian la respuesta. Comprueba: 869 y 722.
+SELECT COUNT(*) AS sin_parentesis
+FROM employees
+WHERE gender = &#x27;F&#x27; AND hire_date &gt;= &#x27;1999-01-01&#x27; OR first_name = &#x27;Georgi&#x27;;
 
--- Q5. ¿Quién está asignado a qué departamento en el snapshot?
-SELECT e.emp_no, e.first_name, e.last_name, d.dept_name
-FROM employees e
-JOIN dept_emp de ON e.emp_no = de.emp_no AND de.to_date = &#x27;9999-01-01&#x27;
-JOIN departments d ON de.dept_no = d.dept_no
-ORDER BY e.emp_no, d.dept_no LIMIT 20;
+SELECT COUNT(*) AS con_parentesis
+FROM employees
+WHERE gender = &#x27;F&#x27; AND (hire_date &gt;= &#x27;1999-01-01&#x27; OR first_name = &#x27;Georgi&#x27;);
 
--- Q6. ¿Por qué el historial devuelve más filas que personas?
--- Acotar a una persona: no crear un join cartesiano masivo para demostrarlo.
-SELECT e.emp_no, s.salary, s.from_date, s.to_date
-FROM employees e JOIN salaries s ON e.emp_no = s.emp_no
-WHERE e.emp_no = 10001 ORDER BY s.from_date;
-SELECT e.emp_no, s.salary, s.from_date, s.to_date
-FROM employees e JOIN salaries s ON e.emp_no = s.emp_no
-WHERE e.emp_no = 10001 AND s.to_date = &#x27;9999-01-01&#x27;
-ORDER BY s.from_date;
--- Controles: nombres no son llaves y MAX(salary) histórico no es salario vigente.
-SELECT COUNT(*) AS filas, COUNT(DISTINCT emp_no) AS personas FROM employees;
-SELECT emp_no, COUNT(*) AS salarios_vigentes
-FROM salaries WHERE to_date = &#x27;9999-01-01&#x27;
-GROUP BY emp_no HAVING COUNT(*) &gt; 1;
-</code></pre></details><section id="proyecto"><h2>Transferencia al proyecto propio · 30 minutos</h2><p>Usa tu dataset distinto al de otros equipos. Conserva grano, reglas, fuente, KPI y límites de tu dominio. Las canastas y cifras ilustrativas no son un proyecto obligatorio. La preparación de cada paquete real debe validarse con el docente; no aplicar el esquema del fixture a cualquier archivo.</p><form id="journal-form"><label>Dataset y equipo<input name="dataset" maxlength="200" required></label><label>Evidencia del hito H2<textarea name="evidence" rows="3" maxlength="2000" required></textarea></label><label>Qué ejecuté / qué preparó el docente / qué falta<textarea name="limits" rows="3" maxlength="1500"></textarea></label><button type="submit">Descargar registro H2 ↓</button><span id="journal-status" role="status"></span></form><p class="micro">Solo este navegador. La ficha no asigna fuentes ni envía una entrega. No escribir credenciales. Si localStorage falla, descargar el archivo.</p><a href="entregable.md" download>Plantilla del entregable ↓</a></section><section><h2>Entrega, costo y cierre</h2><p>Guardar consulta, versión de fuente, resultados/controles y límites; adjuntar el hito del dataset propio. Registrar bytes/job/caché o uso de modelo cuando corresponda. Cerrar la página no detiene recursos cloud. Conservar las capas necesarias para la siguiente sesión, revisar expiraciones/refrescos y detener cómputo de práctica según acuerdo; no borrar proyectos compartidos.</p><p>Si falta un paso anterior, usar el punto de restauración ilustrativo apropiado y decirlo. Esa recuperación no cuenta como ejecución real de una fuente grande ni del proyecto propio. No se exige entrenar ML.</p></section><h2>Fuentes</h2><p><a href="https://github.com/datacharmer/test_db" target="_blank" rel="noopener">datacharmer · employees ↗</a> · <a href="https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker" target="_blank" rel="noopener">Mercado Libre · BigQuery y Looker · 2022 ↗</a></p><p>Consulta documental: 2026-11-05. Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas-docente.md">Notas docentes</a> · <a href="../">Índice de sesiones</a></p></article></body></html>
+-- 3.3 IN, BETWEEN y LIKE. Comprueba: 709, 25610 y 186.
+SELECT COUNT(*) AS in_tres_nombres FROM employees WHERE first_name IN (&#x27;Georgi&#x27;, &#x27;Bezalel&#x27;, &#x27;Parto&#x27;);
+SELECT COUNT(*) AS contratados_1990 FROM employees WHERE hire_date BETWEEN &#x27;1990-01-01&#x27; AND &#x27;1990-12-31&#x27;;
+SELECT COUNT(*) AS apellido_fac     FROM employees WHERE last_name LIKE &#x27;Fac%&#x27;;
+
+-- 3.4 ORDER BY y LIMIT: los cinco salarios vigentes más altos (to_date = &#x27;9999-01-01&#x27; significa «hoy»).
+SELECT emp_no, salary
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;
+ORDER BY salary DESC
+LIMIT 5;
+
+-- 3.5 Empates: varias personas entraron el primer día. Una segunda llave fija el orden.
+SELECT emp_no, hire_date
+FROM employees
+ORDER BY hire_date, emp_no
+LIMIT 5;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>+--------------------+
+| mujeres_desde_1990 |
++--------------------+
+|              53839 |
++--------------------+
++----------------+
+| sin_parentesis |
++----------------+
+|            869 |
++----------------+
++----------------+
+| con_parentesis |
++----------------+
+|            722 |
++----------------+
++-----------------+
+| in_tres_nombres |
++-----------------+
+|             709 |
++-----------------+
++------------------+
+| contratados_1990 |
++------------------+
+|            25610 |
++------------------+
++--------------+
+| apellido_fac |
++--------------+
+|          186 |
++--------------+
++--------+--------+
+| emp_no | salary |
++--------+--------+
+|  43624 | 158220 |
+| 254466 | 156286 |
+|  47978 | 155709 |
+| 253939 | 155513 |
+| 109334 | 155190 |
++--------+--------+
++--------+------------+
+| emp_no | hire_date  |
++--------+------------+
+| 110022 | 1985-01-01 |
+| 110085 | 1985-01-01 |
+| 110183 | 1985-01-01 |
+| 110303 | 1985-01-01 |
+| 110511 | 1985-01-01 |
++--------+------------+</code></pre><p><strong>Comprueba:</strong> mujeres_desde_1990 = 53839; sin paréntesis 869 y con paréntesis 722; 709, 25610 y 186; el salario vigente más alto es 158220 (emp_no 43624); en 3.5 el orden con desempate es 110022, 110085, 110183, 110303 y 110511.</p><p><strong>Error frecuente y recuperación:</strong> • Fechas sin comillas: error de sintaxis o resultado equivocado; escríbelas como &#x27;1990-01-01&#x27;. • BETWEEN: el valor menor va primero. • Un LIKE sin % busca el texto exacto. • Si el resultado de 3.5 sale en otro orden, falta la segunda columna en ORDER BY.</p></section><section id="paso-4"><h2>Paso 4 · Resume y agrupa · 12 min</h2><p><strong>Dónde:</strong> Cliente mysql de la VM.</p><p><strong>Acción:</strong> Usa funciones de agregación, GROUP BY, una función de fecha (YEAR), HAVING y CASE. Observa cómo cambian los números cuando filtras lo vigente. Resuelve E1 a E3 del archivo s02_04_resumir_y_agrupar.sql.</p><p><strong>Costo estimado:</strong> Sin cargo adicional.</p><pre><code>-- Paso 4 · Resume y agrupa.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_04_resumir_y_agrupar.sql
+
+-- 4.1 Funciones de agregación sobre los salarios vigentes. Comprueba: 240124 filas, promedio 72012.
+SELECT COUNT(*)       AS vigentes,
+       MIN(salary)    AS minimo,
+       MAX(salary)    AS maximo,
+       ROUND(AVG(salary)) AS promedio,
+       SUM(salary)    AS nomina
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;;
+
+-- 4.2 El promedio de todo el historial no es el salario de hoy. Comprueba: 63811.
+SELECT ROUND(AVG(salary)) AS promedio_del_historial FROM salaries;
+
+-- 4.3 GROUP BY: cuántas personas hay de cada género. Comprueba: M 179973 y F 120051.
+SELECT gender, COUNT(*) AS empleados
+FROM employees
+GROUP BY gender;
+
+-- 4.4 Una función de fecha para agrupar: contrataciones por año.
+SELECT YEAR(hire_date) AS anio, COUNT(*) AS contratados
+FROM employees
+GROUP BY YEAR(hire_date)
+ORDER BY anio;
+
+-- 4.5 HAVING filtra grupos; WHERE filtra filas. Comprueba: d005 61386, d004 53304 y d007 37701.
+SELECT dept_no, COUNT(*) AS vigentes
+FROM dept_emp
+WHERE to_date = &#x27;9999-01-01&#x27;
+GROUP BY dept_no
+HAVING COUNT(*) &gt; 30000
+ORDER BY vigentes DESC;
+
+-- 4.6 CASE: una regla de negocio convertida en columna (bandas de salario vigente).
+SELECT CASE WHEN salary &lt; 50000  THEN &#x27;1 · menos de 50 mil&#x27;
+            WHEN salary &lt; 70000  THEN &#x27;2 · 50 a 70 mil&#x27;
+            WHEN salary &lt; 100000 THEN &#x27;3 · 70 a 100 mil&#x27;
+            ELSE                      &#x27;4 · 100 mil o más&#x27; END AS banda,
+       COUNT(*) AS empleados
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;
+GROUP BY banda
+ORDER BY banda;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>+----------+--------+--------+----------+-------------+
+| vigentes | minimo | maximo | promedio | nomina      |
++----------+--------+--------+----------+-------------+
+|   240124 |  38623 | 158220 |    72012 | 17291866123 |
++----------+--------+--------+----------+-------------+
++------------------------+
+| promedio_del_historial |
++------------------------+
+|                  63811 |
++------------------------+
++--------+-----------+
+| gender | empleados |
++--------+-----------+
+| M      |    179973 |
+| F      |    120051 |
++--------+-----------+
++------+-------------+
+| anio | contratados |
++------+-------------+
+| 1985 |       35316 |
+| 1986 |       36150 |
+| 1987 |       33501 |
+| 1988 |       31436 |
+| 1989 |       28394 |
+| 1990 |       25610 |
+| 1991 |       22568 |
+| 1992 |       20402 |
+| 1993 |       17772 |
+| 1994 |       14835 |
+| 1995 |       12115 |
+| 1996 |        9574 |
+| 1997 |        6669 |
+| 1998 |        4155 |
+| 1999 |        1514 |
+| 2000 |          13 |
++------+-------------+
++---------+----------+
+| dept_no | vigentes |
++---------+----------+
+| d005    |    61386 |
+| d004    |    53304 |
+| d007    |    37701 |
++---------+----------+
++----------------------+-----------+
+| banda                | empleados |
++----------------------+-----------+
+| 1 · menos de 50 mil  |     20305 |
+| 2 · 50 a 70 mil      |    100902 |
+| 3 · 70 a 100 mil     |    101418 |
+| 4 · 100 mil o más    |     17499 |
++----------------------+-----------+</code></pre><p><strong>Comprueba:</strong> Promedio vigente 72012 y promedio del historial 63811; M 179973 y F 120051; tres departamentos con más de 30,000 personas (d005, d004, d007); bandas 20305, 100902, 101418 y 17499, que suman 240124.</p><p><strong>Error frecuente y recuperación:</strong> • «not in GROUP BY»: toda columna del SELECT que no sea una función de agregación debe ir en el GROUP BY. • COUNT(*) dentro de WHERE: usa HAVING. • La banda con CASE debe ir en orden de menor a mayor; el primer WHEN que se cumple gana.</p></section><section id="paso-5"><h2>Paso 5 · Une tablas con JOIN · 12 min</h2><p><strong>Dónde:</strong> Cliente mysql de la VM.</p><p><strong>Acción:</strong> Une employees con dept_emp y departments; compara INNER con LEFT; comprueba que un JOIN puede multiplicar filas y que un JOIN sin condición cruza todo con todo. Resuelve E1 a E3 de s02_05_unir_tablas.sql.</p><p><strong>Costo estimado:</strong> Sin cargo adicional. El conteo del cruce (2,700,216 filas) solo cuenta; no lo imprimas con SELECT *.</p><pre><code>-- Paso 5 · Une tablas con JOIN.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_05_unir_tablas.sql
+
+-- 5.1 Tres tablas unidas por sus llaves: empleado → departamento → nombre del departamento.
+SELECT e.emp_no, e.first_name, e.last_name, d.dept_name, de.from_date, de.to_date
+FROM employees AS e
+JOIN dept_emp AS de ON de.emp_no = e.emp_no
+JOIN departments AS d ON d.dept_no = de.dept_no
+WHERE e.emp_no IN (10001, 10010)
+ORDER BY e.emp_no, de.from_date;
+
+-- 5.2 INNER JOIN solo conserva a quien tiene pareja. Comprueba: 24 personas son gerentes.
+SELECT COUNT(*) AS con_pareja
+FROM employees AS e
+JOIN dept_manager AS m ON m.emp_no = e.emp_no;
+
+-- 5.3 LEFT JOIN conserva todas las filas de la izquierda y pone NULL donde no hay pareja.
+--     Comprueba: 300024 filas, 24 con gerencia y 300000 sin gerencia.
+SELECT COUNT(*) AS filas,
+       COUNT(m.emp_no) AS con_gerencia,
+       COUNT(*) - COUNT(m.emp_no) AS sin_gerencia
+FROM employees AS e
+LEFT JOIN dept_manager AS m ON m.emp_no = e.emp_no;
+
+SELECT e.emp_no, e.first_name, e.last_name, m.dept_no
+FROM employees AS e
+LEFT JOIN dept_manager AS m ON m.emp_no = e.emp_no
+WHERE e.emp_no IN (10001, 10002, 10003, 110022, 110039, 110085)
+ORDER BY e.emp_no;
+
+-- 5.4 Un JOIN puede multiplicar filas. Una persona con 17 salarios se vuelve 17 filas.
+--     Comprueba: 2844047 filas (no 300024) y promedio 63811 (no 72012).
+SELECT COUNT(*) AS filas, ROUND(AVG(s.salary)) AS promedio
+FROM employees AS e
+JOIN salaries AS s ON s.emp_no = e.emp_no;
+
+-- 5.5 Unir solo lo vigente evita la multiplicación. Comprueba: 240124 filas y promedio 72012.
+SELECT COUNT(*) AS filas, ROUND(AVG(s.salary)) AS promedio_vigente
+FROM employees AS e
+JOIN salaries AS s ON s.emp_no = e.emp_no AND s.to_date = &#x27;9999-01-01&#x27;;
+
+-- 5.6 Un JOIN sin condición cruza todo con todo. Comprueba: 2700216 filas (300024 × 9).
+SELECT COUNT(*) AS cruce FROM employees CROSS JOIN departments;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>+--------+------------+-----------+--------------------+------------+------------+
+| emp_no | first_name | last_name | dept_name          | from_date  | to_date    |
++--------+------------+-----------+--------------------+------------+------------+
+|  10001 | Georgi     | Facello   | Development        | 1986-06-26 | 9999-01-01 |
+|  10010 | Duangkaew  | Piveteau  | Production         | 1996-11-24 | 2000-06-26 |
+|  10010 | Duangkaew  | Piveteau  | Quality Management | 2000-06-26 | 9999-01-01 |
++--------+------------+-----------+--------------------+------------+------------+
++------------+
+| con_pareja |
++------------+
+|         24 |
++------------+
++--------+--------------+--------------+
+| filas  | con_gerencia | sin_gerencia |
++--------+--------------+--------------+
+| 300024 |           24 |       300000 |
++--------+--------------+--------------+
++--------+------------+------------+---------+
+| emp_no | first_name | last_name  | dept_no |
++--------+------------+------------+---------+
+|  10001 | Georgi     | Facello    | NULL    |
+|  10002 | Bezalel    | Simmel     | NULL    |
+|  10003 | Parto      | Bamford    | NULL    |
+| 110022 | Margareta  | Markovitch | d001    |
+| 110039 | Vishwani   | Minakawa   | d001    |
+| 110085 | Ebru       | Alpin      | d002    |
++--------+------------+------------+---------+
++---------+----------+
+| filas   | promedio |
++---------+----------+
+| 2844047 |    63811 |
++---------+----------+
++--------+------------------+
+| filas  | promedio_vigente |
++--------+------------------+
+| 240124 |            72012 |
++--------+------------------+
++---------+
+| cruce   |
++---------+
+| 2700216 |
++---------+</code></pre><p><strong>Comprueba:</strong> 5.2 → 24; 5.3 → 300024 filas, 24 con gerencia y 300000 sin ella; 5.4 → 2844047 filas y 63811; 5.5 → 240124 y 72012; 5.6 → 2700216.</p><p><strong>Error frecuente y recuperación:</strong> • Consulta que no termina o resultado enorme: falta la condición ON (cruce de todo con todo); interrumpe con Ctrl+C. • Con LEFT JOIN, un filtro sobre la tabla de la derecha escrito en WHERE descarta los NULL y la unión se comporta como INNER: si quieres conservarlos, pon esa condición en ON. • Antes de confiar en un resultado, compara su número de filas con el esperado.</p></section><section id="paso-6"><h2>Paso 6 · De la pregunta de negocio a la consulta · 12 min</h2><p><strong>Dónde:</strong> Cliente mysql de la VM.</p><p><strong>Acción:</strong> Prueba subconsultas y resuelve tres preguntas de negocio con el método de la clase: primero la pregunta, luego las piezas y al final la consulta. Termina con los límites del dato. Resuelve E1 a E3 de s02_06_de_la_pregunta_a_la_consulta.sql.</p><p><strong>Costo estimado:</strong> Sin cargo adicional. Al terminar la sesión, apaga la VM (ver cierre).</p><pre><code>-- Paso 6 · De la pregunta de negocio a la consulta.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_06_de_la_pregunta_a_la_consulta.sql
+-- Regla: escribe primero la pregunta, luego las piezas (qué columnas, de qué tabla, qué filas, qué grupos),
+-- y solo al final la consulta.
+
+-- 6.1 Subconsulta escalar: ¿cuántas personas ganan hoy más que el promedio de hoy? Comprueba: 107706.
+SELECT COUNT(*) AS arriba_del_promedio
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;
+  AND salary &gt; (SELECT AVG(salary) FROM salaries WHERE to_date = &#x27;9999-01-01&#x27;);
+
+-- 6.2 Subconsulta con IN: nombres de personas que han sido gerentes (24 en total; aquí cinco).
+SELECT first_name, last_name
+FROM employees
+WHERE emp_no IN (SELECT emp_no FROM dept_manager)
+ORDER BY last_name
+LIMIT 5;
+
+-- 6.3 Pregunta A: ¿cuántas personas trabajan hoy en la empresa? Comprueba: 240124 (y no 300024).
+SELECT COUNT(DISTINCT emp_no) AS trabajan_hoy
+FROM dept_emp
+WHERE to_date = &#x27;9999-01-01&#x27;;
+
+-- 6.4 Pregunta B: ¿qué departamentos tienen más de 30,000 personas hoy? (nombre, no código)
+SELECT d.dept_name, COUNT(*) AS vigentes
+FROM dept_emp AS de
+JOIN departments AS d ON d.dept_no = de.dept_no
+WHERE de.to_date = &#x27;9999-01-01&#x27;
+GROUP BY d.dept_name
+HAVING COUNT(*) &gt; 30000
+ORDER BY vigentes DESC;
+
+-- 6.5 Pregunta C: ¿hay diferencia de salario vigente promedio entre géneros? Comprueba: M 72045 y F 71964.
+--     Qué NO demuestra: que el pago sea justo o injusto; la consulta no mira puesto, antigüedad ni historia.
+SELECT e.gender, COUNT(*) AS vigentes, ROUND(AVG(s.salary)) AS salario_promedio
+FROM employees AS e
+JOIN salaries AS s ON s.emp_no = e.emp_no AND s.to_date = &#x27;9999-01-01&#x27;
+GROUP BY e.gender;
+
+-- 6.6 Hasta dónde llega el dato. Comprueba: última contratación 2000-01-28 y último cambio de salario 2002-08-01.
+SELECT (SELECT MAX(hire_date)  FROM employees) AS ultima_contratacion,
+       (SELECT MAX(from_date)  FROM salaries)  AS ultimo_cambio_de_salario;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>+---------------------+
+| arriba_del_promedio |
++---------------------+
+|              107706 |
++---------------------+
++------------+-------------+
+| first_name | last_name   |
++------------+-------------+
+| Ebru       | Alpin       |
+| Tonny      | Butterworth |
+| Rosine     | Cools       |
+| Leon       | DasSarma    |
+| Oscar      | Ghazalie    |
++------------+-------------+
++--------------+
+| trabajan_hoy |
++--------------+
+|       240124 |
++--------------+
++-------------+----------+
+| dept_name   | vigentes |
++-------------+----------+
+| Development |    61386 |
+| Production  |    53304 |
+| Sales       |    37701 |
++-------------+----------+
++--------+----------+------------------+
+| gender | vigentes | salario_promedio |
++--------+----------+------------------+
+| M      |   144114 |            72045 |
+| F      |    96010 |            71964 |
++--------+----------+------------------+
++---------------------+--------------------------+
+| ultima_contratacion | ultimo_cambio_de_salario |
++---------------------+--------------------------+
+| 2000-01-28          | 2002-08-01               |
++---------------------+--------------------------+</code></pre><p><strong>Comprueba:</strong> 107706; cinco nombres de gerentes (Alpin, Butterworth, Cools, DasSarma, Ghazalie); 240124; Development 61386, Production 53304 y Sales 37701; M 72045 y F 71964; 2000-01-28 y 2002-08-01.</p><p><strong>Error frecuente y recuperación:</strong> • Resultado que no coincide: revisa que usaste to_date = &#x27;9999-01-01&#x27; con comillas para «hoy». • Subconsulta que devuelve más de una fila donde esperabas un valor: usa IN en lugar de =. • Respuesta correcta pero sin sentido de negocio: vuelve a escribir la pregunta con tus palabras antes de la consulta.</p></section><h2>Código completo y materiales</h2><details><summary>tweets/s02_02_mirar_la_base.sql · ver contenido completo</summary><pre><code>-- Paso 2 · Mira la base: tablas, columnas y filas.
+-- Dentro de la VM:  mysql -u big_data_user -pExample123 employees
+-- Pega cada sentencia (termina en punto y coma) o ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_02_mirar_la_base.sql
+
+-- 2.1 ¿Qué tablas hay? (dos de ellas, current_dept_emp y dept_emp_latest_date, son vistas)
+SHOW TABLES;
+
+-- 2.2 ¿Qué columnas tiene employees y de qué tipo?
+DESCRIBE employees;
+
+-- 2.3 Las primeras cinco filas. Sin ORDER BY, el orden que ves no está garantizado.
+SELECT * FROM employees LIMIT 5;
+
+-- 2.4 ¿Cuántas filas hay? Comprueba: 300024.
+SELECT COUNT(*) AS empleados FROM employees;
+
+-- 2.5 SELECT con columnas elegidas, un alias y una expresión.
+SELECT emp_no,
+       CONCAT(first_name, &#x27; &#x27;, last_name) AS nombre,
+       hire_date AS contratado
+FROM employees
+LIMIT 3;
+
+-- Ejercicios (intenta cada uno antes de leer su solución al final):
+-- E1 · ¿Qué columnas tiene la tabla salaries?
+-- E2 · Lista los departamentos (dept_no y dept_name) en orden alfabético por nombre. Debes ver 9 filas.
+-- E3 · Muestra nombre completo y fecha de contratación de 5 empleados.
+
+-- Soluciones:
+-- E1: DESCRIBE salaries;
+-- E2: SELECT dept_no, dept_name FROM departments ORDER BY dept_name;
+-- E3: SELECT CONCAT(first_name, &#x27; &#x27;, last_name) AS nombre, hire_date FROM employees LIMIT 5;
+</code></pre></details><details><summary>tweets/s02_03_filtrar_y_ordenar.sql · ver contenido completo</summary><pre><code>-- Paso 3 · Filtra y ordena.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_03_filtrar_y_ordenar.sql
+
+-- 3.1 WHERE con AND: mujeres contratadas desde 1990. Comprueba: 53839.
+SELECT COUNT(*) AS mujeres_desde_1990
+FROM employees
+WHERE gender = &#x27;F&#x27; AND hire_date &gt;= &#x27;1990-01-01&#x27;;
+
+-- 3.2 Los paréntesis cambian la respuesta. Comprueba: 869 y 722.
+SELECT COUNT(*) AS sin_parentesis
+FROM employees
+WHERE gender = &#x27;F&#x27; AND hire_date &gt;= &#x27;1999-01-01&#x27; OR first_name = &#x27;Georgi&#x27;;
+
+SELECT COUNT(*) AS con_parentesis
+FROM employees
+WHERE gender = &#x27;F&#x27; AND (hire_date &gt;= &#x27;1999-01-01&#x27; OR first_name = &#x27;Georgi&#x27;);
+
+-- 3.3 IN, BETWEEN y LIKE. Comprueba: 709, 25610 y 186.
+SELECT COUNT(*) AS in_tres_nombres FROM employees WHERE first_name IN (&#x27;Georgi&#x27;, &#x27;Bezalel&#x27;, &#x27;Parto&#x27;);
+SELECT COUNT(*) AS contratados_1990 FROM employees WHERE hire_date BETWEEN &#x27;1990-01-01&#x27; AND &#x27;1990-12-31&#x27;;
+SELECT COUNT(*) AS apellido_fac     FROM employees WHERE last_name LIKE &#x27;Fac%&#x27;;
+
+-- 3.4 ORDER BY y LIMIT: los cinco salarios vigentes más altos (to_date = &#x27;9999-01-01&#x27; significa «hoy»).
+SELECT emp_no, salary
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;
+ORDER BY salary DESC
+LIMIT 5;
+
+-- 3.5 Empates: varias personas entraron el primer día. Una segunda llave fija el orden.
+SELECT emp_no, hire_date
+FROM employees
+ORDER BY hire_date, emp_no
+LIMIT 5;
+
+-- Ejercicios:
+-- E1 · ¿Cuántas mujeres fueron contratadas durante 1995? Comprueba: 4795.
+-- E2 · ¿Cuántos apellidos empiezan con «Pi»? Comprueba: 2331.
+-- E3 · Muestra las 3 personas contratadas más recientemente (desempata por emp_no, de mayor a menor). Comprueba: 463807, 428377 y 499553.
+
+-- Soluciones:
+-- E1: SELECT COUNT(*) FROM employees WHERE gender = &#x27;F&#x27; AND hire_date BETWEEN &#x27;1995-01-01&#x27; AND &#x27;1995-12-31&#x27;;
+-- E2: SELECT COUNT(*) FROM employees WHERE last_name LIKE &#x27;Pi%&#x27;;
+-- E3: SELECT emp_no, first_name, last_name, hire_date FROM employees ORDER BY hire_date DESC, emp_no DESC LIMIT 3;
+</code></pre></details><details><summary>tweets/s02_04_resumir_y_agrupar.sql · ver contenido completo</summary><pre><code>-- Paso 4 · Resume y agrupa.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_04_resumir_y_agrupar.sql
+
+-- 4.1 Funciones de agregación sobre los salarios vigentes. Comprueba: 240124 filas, promedio 72012.
+SELECT COUNT(*)       AS vigentes,
+       MIN(salary)    AS minimo,
+       MAX(salary)    AS maximo,
+       ROUND(AVG(salary)) AS promedio,
+       SUM(salary)    AS nomina
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;;
+
+-- 4.2 El promedio de todo el historial no es el salario de hoy. Comprueba: 63811.
+SELECT ROUND(AVG(salary)) AS promedio_del_historial FROM salaries;
+
+-- 4.3 GROUP BY: cuántas personas hay de cada género. Comprueba: M 179973 y F 120051.
+SELECT gender, COUNT(*) AS empleados
+FROM employees
+GROUP BY gender;
+
+-- 4.4 Una función de fecha para agrupar: contrataciones por año.
+SELECT YEAR(hire_date) AS anio, COUNT(*) AS contratados
+FROM employees
+GROUP BY YEAR(hire_date)
+ORDER BY anio;
+
+-- 4.5 HAVING filtra grupos; WHERE filtra filas. Comprueba: d005 61386, d004 53304 y d007 37701.
+SELECT dept_no, COUNT(*) AS vigentes
+FROM dept_emp
+WHERE to_date = &#x27;9999-01-01&#x27;
+GROUP BY dept_no
+HAVING COUNT(*) &gt; 30000
+ORDER BY vigentes DESC;
+
+-- 4.6 CASE: una regla de negocio convertida en columna (bandas de salario vigente).
+SELECT CASE WHEN salary &lt; 50000  THEN &#x27;1 · menos de 50 mil&#x27;
+            WHEN salary &lt; 70000  THEN &#x27;2 · 50 a 70 mil&#x27;
+            WHEN salary &lt; 100000 THEN &#x27;3 · 70 a 100 mil&#x27;
+            ELSE                      &#x27;4 · 100 mil o más&#x27; END AS banda,
+       COUNT(*) AS empleados
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;
+GROUP BY banda
+ORDER BY banda;
+
+-- Ejercicios:
+-- E1 · ¿A cuánto asciende la nómina vigente y cuál es el salario máximo vigente? Comprueba: 17291866123 y 158220.
+-- E2 · ¿En qué año se contrató a más personas y cuántas fueron? Comprueba: 1986 con 36150.
+-- E3 · ¿Cuántas personas tienen hoy cada cargo (tabla titles)? Ordena de mayor a menor. Comprueba: Senior Engineer 85939 es el mayor.
+
+-- Soluciones:
+-- E1: SELECT SUM(salary) AS nomina, MAX(salary) AS maximo FROM salaries WHERE to_date = &#x27;9999-01-01&#x27;;
+-- E2: SELECT YEAR(hire_date) AS anio, COUNT(*) AS contratados FROM employees GROUP BY YEAR(hire_date) ORDER BY contratados DESC LIMIT 1;
+-- E3: SELECT title, COUNT(*) AS vigentes FROM titles WHERE to_date = &#x27;9999-01-01&#x27; GROUP BY title ORDER BY vigentes DESC;
+</code></pre></details><details><summary>tweets/s02_05_unir_tablas.sql · ver contenido completo</summary><pre><code>-- Paso 5 · Une tablas con JOIN.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_05_unir_tablas.sql
+
+-- 5.1 Tres tablas unidas por sus llaves: empleado → departamento → nombre del departamento.
+SELECT e.emp_no, e.first_name, e.last_name, d.dept_name, de.from_date, de.to_date
+FROM employees AS e
+JOIN dept_emp AS de ON de.emp_no = e.emp_no
+JOIN departments AS d ON d.dept_no = de.dept_no
+WHERE e.emp_no IN (10001, 10010)
+ORDER BY e.emp_no, de.from_date;
+
+-- 5.2 INNER JOIN solo conserva a quien tiene pareja. Comprueba: 24 personas son gerentes.
+SELECT COUNT(*) AS con_pareja
+FROM employees AS e
+JOIN dept_manager AS m ON m.emp_no = e.emp_no;
+
+-- 5.3 LEFT JOIN conserva todas las filas de la izquierda y pone NULL donde no hay pareja.
+--     Comprueba: 300024 filas, 24 con gerencia y 300000 sin gerencia.
+SELECT COUNT(*) AS filas,
+       COUNT(m.emp_no) AS con_gerencia,
+       COUNT(*) - COUNT(m.emp_no) AS sin_gerencia
+FROM employees AS e
+LEFT JOIN dept_manager AS m ON m.emp_no = e.emp_no;
+
+SELECT e.emp_no, e.first_name, e.last_name, m.dept_no
+FROM employees AS e
+LEFT JOIN dept_manager AS m ON m.emp_no = e.emp_no
+WHERE e.emp_no IN (10001, 10002, 10003, 110022, 110039, 110085)
+ORDER BY e.emp_no;
+
+-- 5.4 Un JOIN puede multiplicar filas. Una persona con 17 salarios se vuelve 17 filas.
+--     Comprueba: 2844047 filas (no 300024) y promedio 63811 (no 72012).
+SELECT COUNT(*) AS filas, ROUND(AVG(s.salary)) AS promedio
+FROM employees AS e
+JOIN salaries AS s ON s.emp_no = e.emp_no;
+
+-- 5.5 Unir solo lo vigente evita la multiplicación. Comprueba: 240124 filas y promedio 72012.
+SELECT COUNT(*) AS filas, ROUND(AVG(s.salary)) AS promedio_vigente
+FROM employees AS e
+JOIN salaries AS s ON s.emp_no = e.emp_no AND s.to_date = &#x27;9999-01-01&#x27;;
+
+-- 5.6 Un JOIN sin condición cruza todo con todo. Comprueba: 2700216 filas (300024 × 9).
+SELECT COUNT(*) AS cruce FROM employees CROSS JOIN departments;
+
+-- Ejercicios:
+-- E1 · ¿Cuántas personas trabajan hoy en cada departamento? (usa dept_emp, departments y to_date = &#x27;9999-01-01&#x27;) Comprueba: Development 61386 es el mayor.
+-- E2 · ¿Cuál es el salario vigente promedio por departamento? Ordena de mayor a menor. Comprueba: Sales 88853 es el mayor.
+-- E3 · ¿Cuántas personas contratadas antes de 1990 siguen trabajando hoy? Comprueba: 131779.
+
+-- Soluciones:
+-- E1: SELECT d.dept_name, COUNT(*) AS vigentes FROM dept_emp AS de JOIN departments AS d ON d.dept_no = de.dept_no WHERE de.to_date = &#x27;9999-01-01&#x27; GROUP BY d.dept_name ORDER BY vigentes DESC;
+-- E2: SELECT d.dept_name, ROUND(AVG(s.salary)) AS salario_promedio FROM dept_emp AS de JOIN departments AS d ON d.dept_no = de.dept_no JOIN salaries AS s ON s.emp_no = de.emp_no AND s.to_date = &#x27;9999-01-01&#x27; WHERE de.to_date = &#x27;9999-01-01&#x27; GROUP BY d.dept_name ORDER BY salario_promedio DESC;
+-- E3: SELECT COUNT(*) FROM employees AS e JOIN dept_emp AS de ON de.emp_no = e.emp_no WHERE de.to_date = &#x27;9999-01-01&#x27; AND e.hire_date &lt; &#x27;1990-01-01&#x27;;
+</code></pre></details><details><summary>tweets/s02_06_de_la_pregunta_a_la_consulta.sql · ver contenido completo</summary><pre><code>-- Paso 6 · De la pregunta de negocio a la consulta.
+-- Ejecuta el archivo completo con:
+--   mysql -u big_data_user -pExample123 employees -t &lt; s02_06_de_la_pregunta_a_la_consulta.sql
+-- Regla: escribe primero la pregunta, luego las piezas (qué columnas, de qué tabla, qué filas, qué grupos),
+-- y solo al final la consulta.
+
+-- 6.1 Subconsulta escalar: ¿cuántas personas ganan hoy más que el promedio de hoy? Comprueba: 107706.
+SELECT COUNT(*) AS arriba_del_promedio
+FROM salaries
+WHERE to_date = &#x27;9999-01-01&#x27;
+  AND salary &gt; (SELECT AVG(salary) FROM salaries WHERE to_date = &#x27;9999-01-01&#x27;);
+
+-- 6.2 Subconsulta con IN: nombres de personas que han sido gerentes (24 en total; aquí cinco).
+SELECT first_name, last_name
+FROM employees
+WHERE emp_no IN (SELECT emp_no FROM dept_manager)
+ORDER BY last_name
+LIMIT 5;
+
+-- 6.3 Pregunta A: ¿cuántas personas trabajan hoy en la empresa? Comprueba: 240124 (y no 300024).
+SELECT COUNT(DISTINCT emp_no) AS trabajan_hoy
+FROM dept_emp
+WHERE to_date = &#x27;9999-01-01&#x27;;
+
+-- 6.4 Pregunta B: ¿qué departamentos tienen más de 30,000 personas hoy? (nombre, no código)
+SELECT d.dept_name, COUNT(*) AS vigentes
+FROM dept_emp AS de
+JOIN departments AS d ON d.dept_no = de.dept_no
+WHERE de.to_date = &#x27;9999-01-01&#x27;
+GROUP BY d.dept_name
+HAVING COUNT(*) &gt; 30000
+ORDER BY vigentes DESC;
+
+-- 6.5 Pregunta C: ¿hay diferencia de salario vigente promedio entre géneros? Comprueba: M 72045 y F 71964.
+--     Qué NO demuestra: que el pago sea justo o injusto; la consulta no mira puesto, antigüedad ni historia.
+SELECT e.gender, COUNT(*) AS vigentes, ROUND(AVG(s.salary)) AS salario_promedio
+FROM employees AS e
+JOIN salaries AS s ON s.emp_no = e.emp_no AND s.to_date = &#x27;9999-01-01&#x27;
+GROUP BY e.gender;
+
+-- 6.6 Hasta dónde llega el dato. Comprueba: última contratación 2000-01-28 y último cambio de salario 2002-08-01.
+SELECT (SELECT MAX(hire_date)  FROM employees) AS ultima_contratacion,
+       (SELECT MAX(from_date)  FROM salaries)  AS ultimo_cambio_de_salario;
+
+-- Ejercicios:
+-- E1 · Escribe la pregunta, las piezas y la consulta: ¿cuántas personas tienen hoy el cargo «Senior Staff»? Comprueba: 82024.
+-- E2 · ¿Qué departamento tiene el salario vigente promedio más alto? (puedes reutilizar el paso 5, E2) Comprueba: Sales.
+-- E3 · ¿Qué porcentaje de las personas contratadas antes de 1990 sigue trabajando hoy? (usa el paso 5, E3) Comprueba: 80.0.
+
+-- Soluciones:
+-- E1: SELECT COUNT(*) FROM titles WHERE title = &#x27;Senior Staff&#x27; AND to_date = &#x27;9999-01-01&#x27;;   -- 82024
+-- E2: (reutiliza 5.E2) el primero de la lista: Sales, 88853
+-- E3: SELECT ROUND(100 * COUNT(DISTINCT CASE WHEN de.to_date = &#x27;9999-01-01&#x27; THEN e.emp_no END) / COUNT(DISTINCT e.emp_no), 1) AS pct_siguen
+--     FROM employees AS e JOIN dept_emp AS de ON de.emp_no = e.emp_no WHERE e.hire_date &lt; &#x27;1990-01-01&#x27;;   -- 80.0
+</code></pre></details><section><h2>Entrega, costo y cierre</h2><p>Qué conservar: tus consultas guardadas en un archivo y los números de comprobación de cada paso.</p><p>Costo: la VM e2-micro encendida es el único gasto de esta sesión; las consultas no cuestan nada adicional. Al terminar, apágala con gcloud compute instances stop mariadb-curso --zone=us-central1-a. Los datos se conservan en su disco; para volver a usarla, enciéndela con gcloud compute instances start mariadb-curso --zone=us-central1-a.</p><p>Si algo no coincide: confirma que la carga de employees terminó (300,024 filas) y que escribiste to_date = &#x27;9999-01-01&#x27; con comillas.</p><p>Recuerda: la base es una muestra generada para practicar; una consulta responde lo que contó, no lo que significa.</p></section><h2>Fuentes</h2><p><a href="https://github.com/datacharmer/test_db" target="_blank" rel="noopener">Base employees (datacharmer/test_db) ↗</a> · <a href="https://mariadb.com/kb/en/select/" target="_blank" rel="noopener">MariaDB · SELECT ↗</a> · <a href="https://mariadb.com/kb/en/join-syntax/" target="_blank" rel="noopener">MariaDB · JOIN ↗</a> · <a href="https://mariadb.com/kb/en/group-by/" target="_blank" rel="noopener">MariaDB · GROUP BY ↗</a> · <a href="https://mariadb.com/kb/en/subqueries/" target="_blank" rel="noopener">MariaDB · subconsultas ↗</a></p><p>Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas.md">Notas de la sesión</a> · <a href="../">Índice de sesiones</a></p></article></body></html>

@@ -1,76 +1,555 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S4 · Un cero puede decidir la compra por ti</title><link rel="stylesheet" href="../compartido/curso.css"><script src="../compartido/journal.js" defer></script></head><body data-session="4"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S4 · 180 MINUTOS</p><h1>Un cero puede decidir la compra por ti</h1><p class="notice">Material local para revisión. Datos y resultados del fixture son ilustrativos: no provienen de filas de PROFECO ni demuestran escala. Los pasos cloud requieren cuenta, permisos, región y ensayo previo del docente. No se han ejecutado en GCP desde este sitio.</p><h2>Preparación, herramientas y ruta exacta</h2><p>Preparación: Bronze de S3 en curso_bronze.observaciones_raw, proyecto de laboratorio y ubicación compatible (scripts: us-central1); permisos autorizados de lectura y escritura en curso_silver. Ruta: BigQuery Studio → editor SQL → seleccionar proyecto → ejecutar consulta de entrada, leer 04_silver.sql y ejecutarlo completo como script. Revisar resultados y pestaña de detalles del job; ejecutar luego 05_control_silver.sql sobre las tablas persistentes. El script reemplaza destinos curso_silver y no debe apuntarse a producción. Conserva originales, SQL, versión de reglas, reporte y motivos; no hay publicación ni provisión desde esta página. Los campos crudos permanecen en rechazadas, y Bronze conserva la fuente. El alumno modifica reglas solo después de discutir su significado con docente. Para otra fuente, el docente prepara esquema y SQL adaptados antes de la transferencia. Si faltan permisos, usar evidencia docente identificada y registrar ejecución pendiente.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/01_fixture_bronze.sql" download>01_fixture_bronze.sql ↓</a></li><li><a href="../recursos/03_explorar.sql" download>03_explorar.sql ↓</a></li><li><a href="../recursos/04_silver.sql" download>04_silver.sql ↓</a></li><li><a href="../recursos/05_control_silver.sql" download>05_control_silver.sql ↓</a></li><li><a href="../recursos/matriz-gobierno.csv" download>matriz-gobierno.csv ↓</a></li></ul><p><strong>Región propuesta:</strong> us-central1; verificar compatibilidad de GCS/BigQuery y política de cuenta. Leer los scripts antes de ejecutarlos en un proyecto de laboratorio: las escrituras reemplazan solo tablas curso_*. No apuntarlas a datos reales por un cambio de nombre improvisado.</p><section id="paso-1"><h2>Paso 1 · 5 min</h2><p><strong>Acción:</strong> Abrir BigQuery Studio y verificar proyecto y ubicación del laboratorio. Ejecutar COUNT(*) sobre curso_bronze.observaciones_raw; conservar ID/versión de fuente.</p><p><strong>Comprobación y recuperación:</strong> Fixture:16 filas. Si falta Bronze, recuperar con 01_fixture_bronze.sql y declarar que es una tabla nativa ilustrativa. Si el conteo difiere, localizar la versión correcta antes de transformar.</p></section><section id="paso-2"><h2>Paso 2 · 8 min</h2><p><strong>Acción:</strong> Leer 04_silver.sql completo: copias exactas, UPPER/TRIM de tienda, SAFE_CAST de fecha/precio y prioridad del CASE. Predecir destinos C4 y C5 sin ejecutar fragmentos.</p><p><strong>Comprobación y recuperación:</strong> C4 precio_invalido; C5 fecha_invalida. El CASE registra el primer motivo. La regla mínima no certifica comparabilidad de marca, presentación o periodo.</p></section><section id="paso-3"><h2>Paso 3 · 12 min</h2><p><strong>Acción:</strong> En una pestaña del editor SQL pegar y ejecutar 04_silver.sql completo. Revisar que el destino es curso_silver del proyecto de laboratorio y la región compatible.</p><p><strong>Comprobación y recuperación:</strong> Tablas persistentes: observaciones, rechazadas, reporte_calidad. Las temporales unicas/tipadas/clasificadas pertenecen al script; no ejecutarlas en bloques aislados. Ante error, guardar mensaje, resolver permiso/ubicación y repetir completo; Bronze permanece intacta.</p></section><section id="paso-4"><h2>Paso 4 · 12 min</h2><p><strong>Acción:</strong> Consultar reporte_calidad y rechazadas. Conservar resultado y el ASSERT de reconciliación junto con SQL y versión de entrada.</p><p><strong>Comprobación y recuperación:</strong> entrada16 = duplicados1 + aceptadas13 + rechazadas2; unicas15. C4 precio; C5 fecha. Si no cierra, detener Gold y revisar origen/ejecución; nunca editar el reporte para forzar igualdad.</p></section><section id="paso-5"><h2>Paso 5 · 10 min</h2><p><strong>Acción:</strong> Ejecutar 05_control_silver.sql. Abrir detalles/historial del job y registrar ID, bytes, caché y tiempo. Verificar partición fecha_observada en detalles de observaciones.</p><p><strong>Comprobación y recuperación:</strong> Enero: A5,B5,C3; control de id duplicado sin filas en el fixture. El fixture no prueba ahorro: tiene una sola fecha y poco volumen. Comparar con fuente mayor solo bajo preparación y costo autorizados.</p></section><section id="paso-6"><h2>Paso 6 · 8 min</h2><p><strong>Acción:</strong> Completar matriz-gobierno.csv: activo, responsable de regla, lectores, retención/revisión y evidencia. Con identidad adicional autorizada disponible, comprobar lectura prevista.</p><p><strong>Comprobación y recuperación:</strong> Si no existe identidad adicional, registrar prueba pendiente. No publicar bucket ni conceder Owner para resolver acceso. Conservar capas requeridas por Gold y revisar recursos/retención con docente.</p></section><h2>Código completo y materiales</h2><details><summary>01_fixture_bronze.sql · ver contenido completo</summary><pre><code>-- GoogleSQL. EJEMPLO ILUSTRATIVO, no filas del Drive ni prueba de escala.
--- Ejecutar en un proyecto de laboratorio. Reemplaza SOLO tablas curso_*.
--- Región propuesta us-central1: si la política exige otra, cambiarla en todo el flujo.
-CREATE SCHEMA IF NOT EXISTS curso_bronze OPTIONS(location=&#x27;us-central1&#x27;);
-CREATE SCHEMA IF NOT EXISTS curso_silver OPTIONS(location=&#x27;us-central1&#x27;);
-CREATE SCHEMA IF NOT EXISTS curso_gold OPTIONS(location=&#x27;us-central1&#x27;);
-CREATE OR REPLACE TABLE curso_bronze.observaciones_raw AS
-SELECT * FROM UNNEST([
-STRUCT(&#x27;A1&#x27; AS id, &#x27;p1&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;A&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;10&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;A2&#x27; AS id, &#x27;p2&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;A&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;20&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;A3&#x27; AS id, &#x27;p3&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;A&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;30&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;A4&#x27; AS id, &#x27;p4&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;A&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;40&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;A5&#x27; AS id, &#x27;p5&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;A&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;50&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;B1&#x27; AS id, &#x27;p1&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;B&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;12&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;B2&#x27; AS id, &#x27;p2&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;B&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;22&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;B3&#x27; AS id, &#x27;p3&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;B&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;32&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;B4&#x27; AS id, &#x27;p4&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;B&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;42&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;B5&#x27; AS id, &#x27;p5&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;B&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;52&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;C1&#x27; AS id, &#x27;p1&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;C&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;8&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;C2&#x27; AS id, &#x27;p2&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;C&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;18&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;C3&#x27; AS id, &#x27;p3&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;C&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;28&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;C4&#x27; AS id, &#x27;p4&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;C&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;0&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;C5&#x27; AS id, &#x27;p5&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;C&#x27; AS establecimiento, &#x27;fecha-invalida&#x27; AS fecha_texto, &#x27;48&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen),
-STRUCT(&#x27;A1&#x27; AS id, &#x27;p1&#x27; AS producto, &#x27;Marca demo&#x27; AS marca, &#x27;1 envase&#x27; AS presentacion, &#x27;A&#x27; AS establecimiento, &#x27;2024-01-15&#x27; AS fecha_texto, &#x27;10&#x27; AS precio_texto, &#x27;fixture-curso.csv&#x27; AS archivo_origen)
-]);
-SELECT COUNT(*) AS filas FROM curso_bronze.observaciones_raw; -- 16 en el fixture
-</code></pre></details><details><summary>03_explorar.sql · ver contenido completo</summary><pre><code>-- GoogleSQL. Requiere 01_fixture_bronze.sql o 02_bronze_externa.sql.
-SELECT COUNT(*) AS filas, COUNT(DISTINCT id) AS identificadores
-FROM curso_bronze.observaciones_raw; -- fixture: 16 / 15
-SELECT establecimiento, COUNT(*) AS registros
-FROM curso_bronze.observaciones_raw GROUP BY establecimiento ORDER BY establecimiento;
-SELECT id, producto, fecha_texto, precio_texto FROM curso_bronze.observaciones_raw
-WHERE establecimiento=&#x27;C&#x27; ORDER BY id;
--- LIMIT no es control general de bytes leídos. Guardar job ID/bytes/cache hit de cada ejecución.
-</code></pre></details><details><summary>04_silver.sql · ver contenido completo</summary><pre><code>-- GoogleSQL. Ejecutar completo después de Bronze. Reemplaza SOLO tablas curso_silver.
-CREATE SCHEMA IF NOT EXISTS curso_silver OPTIONS(location=&#x27;us-central1&#x27;);
--- Política del fixture: retirar solo copias exactamente iguales, conservar la evidencia cruda.
-CREATE TEMP TABLE unicas AS SELECT DISTINCT * FROM curso_bronze.observaciones_raw;
-CREATE TEMP TABLE tipadas AS
-SELECT *, UPPER(TRIM(establecimiento)) AS tienda,
- SAFE_CAST(fecha_texto AS DATE) AS fecha_observada,
- SAFE_CAST(precio_texto AS NUMERIC) AS precio_envase_mxn
-FROM unicas;
-CREATE TEMP TABLE clasificadas AS
-SELECT *, CASE
- WHEN fecha_observada IS NULL THEN &#x27;fecha_invalida&#x27;
- WHEN precio_envase_mxn IS NULL OR precio_envase_mxn &lt;= 0 THEN &#x27;precio_invalido&#x27;
- WHEN producto IS NULL OR TRIM(producto)=&#x27;&#x27; OR tienda IS NULL OR tienda=&#x27;&#x27; THEN &#x27;identidad_incompleta&#x27;
- ELSE NULL END AS motivo
-FROM tipadas;
-CREATE OR REPLACE TABLE curso_silver.observaciones
-PARTITION BY fecha_observada AS
-SELECT id, producto, marca, presentacion, tienda AS establecimiento,
- fecha_observada, precio_envase_mxn, archivo_origen
-FROM clasificadas WHERE motivo IS NULL;
-CREATE OR REPLACE TABLE curso_silver.rechazadas AS
-SELECT * FROM clasificadas WHERE motivo IS NOT NULL;
-CREATE OR REPLACE TABLE curso_silver.reporte_calidad AS
-SELECT (SELECT COUNT(*) FROM curso_bronze.observaciones_raw) AS entrada,
- (SELECT COUNT(*) FROM unicas) AS unicas,
- (SELECT COUNT(*) FROM curso_bronze.observaciones_raw)-(SELECT COUNT(*) FROM unicas) AS duplicados,
- (SELECT COUNT(*) FROM curso_silver.observaciones) AS aceptadas,
- (SELECT COUNT(*) FROM curso_silver.rechazadas) AS rechazadas;
-ASSERT (SELECT entrada = duplicados + aceptadas + rechazadas FROM curso_silver.reporte_calidad)
- AS &#x27;Hay filas sin reconciliar&#x27;;
-SELECT * FROM curso_silver.reporte_calidad; -- fixture: 16 / 15 / 1 / 13 / 2
-SELECT id, motivo FROM curso_silver.rechazadas ORDER BY id; -- C4 precio, C5 fecha
-</code></pre></details><details><summary>05_control_silver.sql · ver contenido completo</summary><pre><code>-- GoogleSQL. Registrar bytes, caché y tiempo. En un fixture pequeño no prometer ahorro medible.
-SELECT establecimiento, COUNT(*) AS observaciones
-FROM curso_silver.observaciones
-WHERE fecha_observada BETWEEN DATE &#x27;2024-01-01&#x27; AND DATE &#x27;2024-01-31&#x27;
-GROUP BY establecimiento ORDER BY establecimiento; -- A=5, B=5, C=3
-SELECT id, COUNT(*) AS repeticiones FROM curso_silver.observaciones
-GROUP BY id HAVING COUNT(*) &gt; 1; -- ninguna fila en el fixture
-SELECT * FROM curso_silver.reporte_calidad;
-</code></pre></details><section id="proyecto"><h2>Transferencia al proyecto propio · 30 minutos</h2><p>Usa tu dataset distinto al de otros equipos. Conserva grano, reglas, fuente, KPI y límites de tu dominio. Las canastas y cifras ilustrativas no son un proyecto obligatorio. La preparación de cada paquete real debe validarse con el docente; no aplicar el esquema del fixture a cualquier archivo.</p><form id="journal-form"><label>Dataset y equipo<input name="dataset" maxlength="200" required></label><label>Evidencia del hito H4<textarea name="evidence" rows="3" maxlength="2000" required></textarea></label><label>Qué ejecuté / qué preparó el docente / qué falta<textarea name="limits" rows="3" maxlength="1500"></textarea></label><button type="submit">Descargar registro H4 ↓</button><span id="journal-status" role="status"></span></form><p class="micro">Solo este navegador. La ficha no asigna fuentes ni envía una entrega. No escribir credenciales. Si localStorage falla, descargar el archivo.</p><a href="entregable.md" download>Plantilla del entregable ↓</a></section><section><h2>Entrega, costo y cierre</h2><p>Guardar consulta, versión de fuente, resultados/controles y límites; adjuntar el hito del dataset propio. Registrar bytes/job/caché o uso de modelo cuando corresponda. Cerrar la página no detiene recursos cloud. Conservar las capas necesarias para la siguiente sesión, revisar expiraciones/refrescos y detener cómputo de práctica según acuerdo; no borrar proyectos compartidos.</p><p>Si falta un paso anterior, usar el punto de restauración ilustrativo apropiado y decirlo. Esa recuperación no cuenta como ejecución real de una fuente grande ni del proyecto propio. No se exige entrenar ML.</p></section><h2>Fuentes</h2><p><a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language" target="_blank" rel="noopener">GoogleSQL · scripts ↗</a> · <a href="https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en" target="_blank" rel="noopener">Comisión Europea · principios GDPR ↗</a> · <a href="https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html" target="_blank" rel="noopener">HHS · entidades cubiertas HIPAA ↗</a> · <a href="https://cloud.google.com/blog/products/data-analytics/genome-data-analytics-with-google-cloud" target="_blank" rel="noopener">Mayo Clinic · datos ómicos · 2020 ↗</a> · <a href="https://cloud.google.com/blog/products/data-analytics/bigquery-data-clean-rooms-now-generally-available" target="_blank" rel="noopener">Carrefour · colaboración de datos · 2024 ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions#safe_casting" target="_blank" rel="noopener">GoogleSQL · SAFE_CAST ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/querying-partitioned-tables" target="_blank" rel="noopener">BigQuery · particiones ↗</a></p><p>Consulta documental: 2026-11-05. Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas-docente.md">Notas docentes</a> · <a href="../">Índice de sesiones</a></p></article></body></html>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S4 · Silver: tablas con significado</title><link rel="stylesheet" href="../compartido/curso.css"></head><body data-session="4"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S4 · 180 MINUTOS</p><h1>Silver: tablas con significado</h1><p class="notice">Guía ensayada con consultas reales de BigQuery sobre las mismas tablas que vas a construir. Las cifras de «Salida esperada» son valores de referencia del curso: las tuyas deben coincidir en los conteos y pueden variar ligeramente en bytes. No se ensayó crear el dataset desde una cuenta nueva ni los nombres exactos de menús y botones de la consola, que pueden cambiar.</p><h2>Antes de empezar</h2><ul><li>Tu tabla tweets_bronze.entrada con 6,798,932 filas (sesión 3), en tu propio proyecto y en la ubicación US.</li><li>BigQuery Studio abierto con tu proyecto seleccionado: escribes dataset.tabla sin el nombre del proyecto.</li><li>Facturación activa y un presupuesto con alerta (sesión 1). La consulta más cara de hoy lee ≈23.67 GB; las demás, menos de 1.4 GB cada una.</li><li>Una pestaña nueva por paso; si el editor te pide la ubicación de procesamiento, elige US.</li></ul><h2>Preparación, herramientas y ruta exacta</h2><p>Consola de Google Cloud → BigQuery → BigQuery Studio → botón + para abrir una consulta SQL nueva. Usa una pestaña por paso. Antes de pulsar Ejecutar mira el estimador de bytes (arriba a la derecha del editor). Cuando una consulta termine, abre «Información del trabajo» para ver los bytes procesados. Los archivos SQL se descargan desde esta página y cada paso muestra el código completo.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/tweets/20_silver_tweets.sql" download>tweets/20_silver_tweets.sql ↓</a></li><li><a href="../recursos/tweets/s04_02_chequeos.sql" download>tweets/s04_02_chequeos.sql ↓</a></li><li><a href="../recursos/tweets/21_silver_autores.sql" download>tweets/21_silver_autores.sql ↓</a></li><li><a href="../recursos/tweets/s04_03_autores_checks.sql" download>tweets/s04_03_autores_checks.sql ↓</a></li><li><a href="../recursos/tweets/22_silver_hashtags.sql" download>tweets/22_silver_hashtags.sql ↓</a></li><li><a href="../recursos/tweets/s04_04_hashtags_checks.sql" download>tweets/s04_04_hashtags_checks.sql ↓</a></li><li><a href="../recursos/tweets/s04_05_marcas_calidad.sql" download>tweets/s04_05_marcas_calidad.sql ↓</a></li><li><a href="../recursos/tweets/s04_06_costos_cierre.sql" download>tweets/s04_06_costos_cierre.sql ↓</a></li></ul><p><strong>Región y permisos:</strong> Tus datasets deben estar en la ubicación US, igual que tweets_bronze. Para crear tablas necesitas en tu proyecto los permisos de usuario de trabajos de BigQuery y editor de datos de BigQuery; en un proyecto propio ya los tienes.</p><section id="paso-1"><h2>Paso 1 · Crea tu tabla Silver de tweets · 12 min</h2><p><strong>Dónde:</strong> BigQuery Studio → tu proyecto → botón + (consulta SQL nueva). Una pestaña para cada bloque.</p><p><strong>Acción:</strong> Crea el dataset tweets_silver y después ejecuta 20_silver_tweets.sql completo. Antes de pulsar Ejecutar en el bloque 1.b, lee el estimador de bytes: debe indicar una lectura completa de tu tabla Bronze. Bronze no cambia. La tabla nueva queda particionada por fecha y agrupada por idioma. Después ejecuta las dos comprobaciones.</p><p><strong>Costo estimado:</strong> Referencia: 23,670,340,066 bytes (≈23.67 GB) para 1.b: una lectura completa de tu tweets_bronze.entrada. Es la consulta más cara de la sesión: ejecútala una sola vez. Las comprobaciones cuestan ≈54 MB y ≈30 MB.</p><pre><code>-- Paso 1.a · crea el dataset (ejecútalo primero).
+CREATE SCHEMA IF NOT EXISTS tweets_silver OPTIONS (location = &#x27;US&#x27;);
+
+-- Paso 1.b · crea la tabla Silver de tweets (20_silver_tweets.sql). Lee el estimador antes de ejecutar.
+-- Silver: una fila por tweet, con tipos reales. Bronze no se modifica.
+-- Cuesta un escaneo completo de Bronze (~23.7 GB facturables); ejecútalo una vez.
+CREATE OR REPLACE TABLE tweets_silver.tweets
+PARTITION BY fecha
+CLUSTER BY idioma AS
+SELECT
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.id&#x27;) AS INT64)                  AS tweet_id,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.date&#x27;) AS TIMESTAMP)            AS fecha_hora,
+  DATE(SAFE_CAST(JSON_VALUE(value, &#x27;$.date&#x27;) AS TIMESTAMP))      AS fecha,
+  JSON_VALUE(value, &#x27;$.lang&#x27;)                                    AS idioma,
+  JSON_VALUE(value, &#x27;$.content&#x27;)                                 AS texto,
+  JSON_VALUE(value, &#x27;$.url&#x27;)                                     AS url,
+  JSON_VALUE(value, &#x27;$.user.username&#x27;)                           AS usuario,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.user.verified&#x27;) AS BOOL)        AS usuario_verificado,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.user.followersCount&#x27;) AS INT64) AS seguidores,
+  JSON_VALUE(value, &#x27;$.user.location&#x27;)                           AS ubicacion_usuario,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.likeCount&#x27;) AS INT64)           AS likes,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.retweetCount&#x27;) AS INT64)        AS retuits,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.replyCount&#x27;) AS INT64)          AS respuestas,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.quoteCount&#x27;) AS INT64)          AS citas,
+  JSON_VALUE(value, &#x27;$.inReplyToTweetId&#x27;) IS NOT NULL            AS es_respuesta,
+  JSON_VALUE(value, &#x27;$.quotedTweet.id&#x27;) IS NOT NULL              AS es_cita,
+  ARRAY(SELECT LOWER(h) FROM UNNEST(JSON_VALUE_ARRAY(value, &#x27;$.hashtags&#x27;)) AS h) AS hashtags,
+  JSON_VALUE(value, &#x27;$.sourceLabel&#x27;)                             AS aplicacion
+FROM tweets_bronze.entrada;
+
+-- Paso 1.c · comprueba (en otra pestaña).
+SELECT COUNT(*) AS filas, MIN(fecha) AS desde, MAX(fecha) AS hasta
+FROM tweets_silver.tweets;
+
+SELECT tweet_id, fecha_hora, idioma, usuario, seguidores, likes
+FROM tweets_silver.tweets
+WHERE fecha = &#x27;2022-03-27&#x27;
+ORDER BY fecha_hora DESC
+LIMIT 1;</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>1.b · la consola confirma que se creó la tabla tweets_silver.tweets.
+
+1.c · primera consulta (≈54 MB)
+filas   | desde      | hasta
+6798932 | 2022-03-16 | 2022-03-27
+
+1.c · segunda consulta (≈30 MB)
+tweet_id            | fecha_hora          | idioma | usuario | seguidores | likes
+1508232397162258434 | 2022-03-27 23:59:59 | en     | skift   | 87507      | 0</code></pre><p><strong>Comprueba:</strong> filas = 6798932, las mismas que tu Bronze, y las fechas van del 2022-03-16 al 2022-03-27. La segunda consulta devuelve el tweet más reciente del archivo.</p><p><strong>Error frecuente y recuperación:</strong> Si dice «Not found: Table …tweets_bronze.entrada», todavía no cargaste Bronze (sesión 3) o está en otro proyecto: selecciona el proyecto correcto y vuelve a intentar. Si dice que el dataset no está en la ubicación, crea tweets_silver con la línea CREATE SCHEMA … OPTIONS (location = &#x27;US&#x27;) del bloque 1.a. CREATE OR REPLACE TABLE se puede repetir sin problema.</p></section><section id="paso-2"><h2>Paso 2 · Comprueba que Silver cuadra con Bronze · 10 min</h2><p><strong>Dónde:</strong> BigQuery Studio → pestaña nueva. Ejecuta cada consulta por separado seleccionándola.</p><p><strong>Acción:</strong> Ejecuta las cuatro consultas de s04_02_chequeos.sql. Primero compara filas de Bronze y de Silver; después busca ids repetidos o vacíos, revisa el periodo y mira el tipo de cada columna. Escribe en un comentario qué demuestra cada resultado y qué no.</p><p><strong>Costo estimado:</strong> ≈0 + 109 MB + 54 MB + 10 MB (las de metadatos facturan el mínimo).</p><pre><code>-- Paso 2 · ¿Silver cuadra con Bronze? Cuatro comprobaciones baratas.
+
+-- 2.1 Filas de Bronze y de Silver. COUNT(*) no lee columnas: el estimador debe decir 0 bytes.
+SELECT (SELECT COUNT(*) FROM tweets_bronze.entrada) AS bronze,
+       (SELECT COUNT(*) FROM tweets_silver.tweets)  AS silver;
+
+-- 2.2 ¿Hay ids repetidos o vacíos? Solo lee dos columnas.
+SELECT COUNT(*)                     AS filas,
+       COUNT(DISTINCT tweet_id)     AS ids_distintos,
+       COUNTIF(tweet_id IS NULL)    AS sin_id,
+       COUNTIF(fecha_hora IS NULL)  AS sin_fecha
+FROM tweets_silver.tweets;
+
+-- 2.3 ¿Qué periodo cubre y cuántos tweets hay por día?
+SELECT fecha, COUNT(*) AS tweets
+FROM tweets_silver.tweets
+GROUP BY fecha
+ORDER BY fecha;
+
+-- 2.4 ¿Qué tipo tiene cada columna? Son metadatos: no leen datos de la tabla.
+SELECT column_name, data_type
+FROM tweets_silver.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = &#x27;tweets&#x27;
+ORDER BY ordinal_position;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>2.1 (0 bytes)
+bronze  | silver
+6798932 | 6798932
+
+2.2 (≈109 MB)
+filas   | ids_distintos | sin_id | sin_fecha
+6798932 | 6798932       | 0      | 0
+
+2.3 (≈54 MB)
+fecha      | tweets
+2022-03-16 | 134871
+2022-03-17 | 778608
+2022-03-18 | 735033
+2022-03-19 | 590028
+2022-03-20 | 614483
+2022-03-21 | 632383
+2022-03-22 | 586523
+2022-03-23 | 567023
+2022-03-24 | 584497
+2022-03-25 | 554519
+2022-03-26 | 505568
+2022-03-27 | 515396
+
+2.4 (metadatos)
+column_name        | data_type
+tweet_id           | INT64
+fecha_hora         | TIMESTAMP
+fecha              | DATE
+idioma             | STRING
+texto              | STRING
+url                | STRING
+usuario            | STRING
+usuario_verificado | BOOL
+seguidores         | INT64
+ubicacion_usuario  | STRING
+likes              | INT64
+retuits            | INT64
+respuestas         | INT64
+citas              | INT64
+es_respuesta       | BOOL
+es_cita            | BOOL
+hashtags           | ARRAY&lt;STRING&gt;
+aplicacion         | STRING</code></pre><p><strong>Comprueba:</strong> Bronze y Silver tienen 6798932 filas; ids_distintos = filas; sin_id y sin_fecha valen 0; hay 12 días y el 2022-03-16 solo tiene 134871 tweets; Silver tiene 18 columnas con tipo (INT64, TIMESTAMP, DATE, STRING, BOOL…).</p><p><strong>Error frecuente y recuperación:</strong> Si las filas de Silver y de Bronze no coinciden, no sigas: revisa que el paso 1 terminó sin error y que no hay otra tabla con el mismo nombre en otro dataset. Si la consulta 2.4 devuelve vacío, escribiste mal el nombre de la tabla en WHERE table_name.</p></section><section id="paso-3"><h2>Paso 3 · Crea autores: una fila por autor · 12 min</h2><p><strong>Dónde:</strong> BigQuery Studio → pestaña nueva.</p><p><strong>Acción:</strong> Ejecuta 21_silver_autores.sql: usa un CTE (WITH) y ROW_NUMBER para quedarse con el dato más reciente de cada autor. Después ejecuta las cuatro consultas de s04_03_autores_checks.sql. En 3.1 mira cómo cambian los seguidores de skift y cuál fila recibe orden = 1.</p><p><strong>Costo estimado:</strong> Referencia: 279,906,967 bytes (≈280 MB) para crear la tabla; las comprobaciones, ≈253 + 75 + 40 + 90 MB.</p><pre><code>-- Silver 2 · autores: una fila por autor (grano distinto al de tweets).
+-- Un autor aparece en muchos tweets; nos quedamos con su dato más reciente.
+CREATE OR REPLACE TABLE tweets_silver.autores AS
+WITH ordenados AS (
+  SELECT usuario, usuario_verificado, seguidores,
+         NULLIF(TRIM(ubicacion_usuario), &#x27;&#x27;) AS ubicacion,
+         ROW_NUMBER() OVER (PARTITION BY usuario ORDER BY fecha_hora DESC) AS orden,
+         COUNT(*)     OVER (PARTITION BY usuario)                          AS tweets_en_archivo
+  FROM tweets_silver.tweets
+)
+SELECT usuario, usuario_verificado, seguidores, ubicacion, tweets_en_archivo
+FROM ordenados
+WHERE orden = 1;
+
+-- Paso 3 · Revisa la tabla autores (la creaste con 21_silver_autores.sql).
+
+-- 3.1 Un autor con varios tweets, del más reciente al más antiguo.
+--     orden = 1 es el que se queda en autores. Mira cómo cambia seguidores.
+SELECT tweet_id, fecha_hora, seguidores,
+       ROW_NUMBER() OVER (PARTITION BY usuario ORDER BY fecha_hora DESC) AS orden
+FROM tweets_silver.tweets
+WHERE usuario = &#x27;skift&#x27;
+ORDER BY fecha_hora DESC;
+
+-- 3.2 Lo que quedó de ese autor: una sola fila.
+SELECT * FROM tweets_silver.autores WHERE usuario = &#x27;skift&#x27;;
+
+-- 3.3 ¿Cuadra? Una fila por autor y todos los tweets contados una vez.
+SELECT COUNT(*)                  AS autores,
+       COUNT(DISTINCT usuario)   AS usuarios_distintos,
+       SUM(tweets_en_archivo)    AS tweets_sumados
+FROM tweets_silver.autores;
+
+-- 3.4 CTE: WITH le pone nombre a un paso intermedio para poder resumirlo otra vez.
+--     Primero cuenta tweets por autor; después cuenta autores por tramo.
+WITH tweets_por_autor AS (
+  SELECT usuario, COUNT(*) AS tweets
+  FROM tweets_silver.tweets
+  GROUP BY usuario
+)
+SELECT CASE WHEN tweets = 1  THEN &#x27;1&#x27;
+            WHEN tweets = 2  THEN &#x27;2&#x27;
+            WHEN tweets &lt;= 5 THEN &#x27;3 a 5&#x27;
+            WHEN tweets &lt;= 20 THEN &#x27;6 a 20&#x27;
+            ELSE &#x27;más de 20&#x27; END AS tweets_publicados,
+       MIN(tweets)   AS orden,
+       COUNT(*)      AS autores,
+       SUM(tweets)   AS tweets_totales
+FROM tweets_por_autor
+GROUP BY tweets_publicados
+ORDER BY orden;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>3.1 (≈253 MB) · skift tiene 10 tweets; la fila con orden = 1 es la que se queda
+tweet_id            | fecha_hora          | seguidores | orden
+1508232397162258434 | 2022-03-27 23:59:59 | 87507      | 1
+1507960605889683458 | 2022-03-27 05:59:59 | 87507      | 2
+1507671384033357827 | 2022-03-26 10:50:43 | 87507      | 3
+1507000006317907977 | 2022-03-24 14:22:54 | 87510      | 4
+1506662974336864257 | 2022-03-23 16:03:40 | 87513      | 5
+1506450658337112067 | 2022-03-23 02:00:00 | 87516      | 6
+1506311312195743744 | 2022-03-22 16:46:17 | 87519      | 7
+1506209937248063488 | 2022-03-22 10:03:27 | 87521      | 8
+1505514489378136065 | 2022-03-20 12:00:00 | 87526      | 9
+1504503847837847567 | 2022-03-17 17:04:04 | 87529      | 10
+
+3.2 (≈75 MB)
+usuario | usuario_verificado | seguidores | ubicacion         | tweets_en_archivo
+skift   | true               | 87507      | New York City, NY | 10
+
+3.3 (≈40 MB)
+autores | usuarios_distintos | tweets_sumados
+1872074 | 1872074            | 6798932
+
+3.4 (≈90 MB)
+tweets_publicados | orden | autores | tweets_totales
+1                 | 1     | 1091593 | 1091593
+2                 | 2     | 288520  | 577040
+3 a 5             | 3     | 266027  | 980781
+6 a 20            | 6     | 179353  | 1780994
+más de 20         | 21    | 46581   | 2368524</code></pre><p><strong>Comprueba:</strong> autores = usuarios_distintos = 1872074 y tweets_sumados = 6798932 (todos los tweets cuentan una vez). skift queda en una fila con 10 tweets y 87507 seguidores (el valor del tweet más reciente). El 58 % de los autores publicó un solo tweet.</p><p><strong>Error frecuente y recuperación:</strong> Si tweets_sumados no da 6798932, la tabla se creó con otro orden o filtro: vuelve a ejecutar 21_silver_autores.sql completo. Si 3.1 devuelve 0 filas, el nombre de usuario no existe en tu tabla: prueba otro autor de tu propia consulta.</p></section><section id="paso-4"><h2>Paso 4 · Crea hashtags: una fila por tweet y hashtag · 12 min</h2><p><strong>Dónde:</strong> BigQuery Studio → pestaña nueva.</p><p><strong>Acción:</strong> Ejecuta 22_silver_hashtags.sql: UNNEST convierte la lista de hashtags de cada tweet en filas y DISTINCT quita los repetidos dentro del mismo tweet. Después ejecuta las cinco consultas de s04_04_hashtags_checks.sql. Fíjate en 4.5: al unir tweets con hashtags, las filas se multiplican.</p><p><strong>Costo estimado:</strong> Referencia: 173,984,832 bytes (≈174 MB) para crear la tabla; las comprobaciones, entre 7 y 81 MB cada una.</p><pre><code>-- Silver 3 · hashtags: una fila por tweet y hashtag. UNNEST convierte el arreglo en filas.
+-- DISTINCT evita contar dos veces un hashtag repetido dentro del mismo tweet.
+CREATE OR REPLACE TABLE tweets_silver.hashtags
+PARTITION BY fecha AS
+SELECT DISTINCT t.tweet_id, t.fecha, t.idioma, h AS hashtag
+FROM tweets_silver.tweets AS t, UNNEST(t.hashtags) AS h
+WHERE h != &#x27;&#x27;;
+
+-- Paso 4 · Revisa la tabla hashtags (la creaste con 22_silver_hashtags.sql).
+
+-- 4.1 Un tweet de una agencia de noticias: sus hashtags viven en un arreglo (una celda con tres valores).
+SELECT tweet_id, usuario, hashtags
+FROM tweets_silver.tweets
+WHERE fecha = &#x27;2022-03-27&#x27; AND tweet_id = 1508054980313370628;
+
+-- 4.2 El mismo tweet en la tabla hashtags: UNNEST lo convirtió en tres filas.
+SELECT tweet_id, fecha, idioma, hashtag
+FROM tweets_silver.hashtags
+WHERE fecha = &#x27;2022-03-27&#x27; AND tweet_id = 1508054980313370628
+ORDER BY hashtag;
+
+-- 4.3 ¿Cuadra? DISTINCT quitó hashtags repetidos dentro de un mismo tweet.
+SELECT SUM(ARRAY_LENGTH(hashtags))                      AS hashtags_en_arreglos,
+       (SELECT COUNT(*) FROM tweets_silver.hashtags)    AS filas_en_la_tabla,
+       COUNTIF(ARRAY_LENGTH(hashtags) &gt; 0)              AS tweets_con_hashtag
+FROM tweets_silver.tweets;
+
+-- 4.4 Los ocho hashtags con más tweets.
+SELECT hashtag, COUNT(*) AS tweets
+FROM tweets_silver.hashtags
+GROUP BY hashtag
+ORDER BY tweets DESC
+LIMIT 8;
+
+-- 4.5 El grano al unir: cada tweet aparece una vez por hashtag. No sumes tweets sobre este resultado.
+SELECT COUNT(*)                 AS filas_del_join,
+       COUNT(DISTINCT t.tweet_id) AS tweets_distintos
+FROM tweets_silver.tweets AS t
+JOIN tweets_silver.hashtags AS h USING (tweet_id);
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>4.1 (≈18 MB) · la consola muestra el arreglo en tres líneas; en la vista JSON es [&quot;update&quot;, &quot;macron&quot;, &quot;ukraine&quot;]
+tweet_id            | usuario | hashtags
+1508054980313370628 | AFP     | update
+                    |         | macron
+                    |         | ukraine
+
+4.2 (≈7 MB)
+tweet_id            | fecha      | idioma | hashtag
+1508054980313370628 | 2022-03-27 | en     | macron
+1508054980313370628 | 2022-03-27 | en     | ukraine
+1508054980313370628 | 2022-03-27 | en     | update
+
+4.3 (≈38 MB)
+hashtags_en_arreglos | filas_en_la_tabla | tweets_con_hashtag
+3369433              | 3339839           | 1226642
+
+4.4 (≈38 MB)
+hashtag          | tweets
+ukraine          | 507762
+putin            | 161491
+russia           | 140279
+ucrania          | 58294
+ukrainerussiawar | 46620
+standwithukraine | 45773
+ukrainewar       | 33782
+russian          | 28736
+
+4.5 (≈81 MB)
+filas_del_join | tweets_distintos
+3339839        | 1226642</code></pre><p><strong>Comprueba:</strong> La tabla tiene 3339839 filas; en los arreglos había 3369433 menciones (la diferencia son repeticiones dentro de un mismo tweet); 1226642 tweets tienen al menos un hashtag; el join da 3339839 filas pero solo 1226642 tweets distintos.</p><p><strong>Error frecuente y recuperación:</strong> «Cannot access field … on a value with type ARRAY»: olvidaste UNNEST; los arreglos no se filtran con = . Si 4.1 no devuelve el tweet de AFP, tu archivo Bronze es otro: elige cualquier tweet con hashtags en una consulta propia y repite 4.1 y 4.2 con su tweet_id.</p></section><section id="paso-5"><h2>Paso 5 · Marca la calidad sin borrar nada · 12 min</h2><p><strong>Dónde:</strong> BigQuery Studio → pestaña nueva.</p><p><strong>Acción:</strong> Ejecuta las cuatro consultas de s04_05_marcas_calidad.sql. En 5.1 cada regla es una columna verdadero/falso y se cuenta cuántos tweets cae en cada una; en 5.2 localiza los textos más copiados con un CTE; en 5.3 mide ubicación vacía e idioma «und»; en 5.4 compara promedio y mediana de likes. Anota, para cada regla, qué decides: marcar, conservar o no excluir.</p><p><strong>Costo estimado:</strong> Referencia: 5.1 y 5.2 leen la columna de texto (≈1.3 GB cada una); 5.3 ≈102 MB; 5.4 ≈54 MB.</p><pre><code>-- Paso 5 · Marca, no borres. Cada regla es una columna verdadero/falso; tú decides después qué excluir.
+
+-- 5.1 Cuántos tweets cae en cada regla y cuántos quedan al aplicarlas.
+--     texto_repetido: el mismo texto exacto aparece 20 veces o más.
+WITH marcadas AS (
+  SELECT fecha = DATE &#x27;2022-03-16&#x27;                  AS dia_parcial,
+         idioma = &#x27;und&#x27;                             AS idioma_desconocido,
+         COUNT(*) OVER (PARTITION BY texto) &gt;= 20   AS texto_repetido,
+         es_respuesta
+  FROM tweets_silver.tweets
+)
+SELECT COUNT(*)                                                                         AS tweets,
+       COUNTIF(dia_parcial)                                                             AS dia_parcial,
+       COUNTIF(idioma_desconocido)                                                      AS idioma_desconocido,
+       COUNTIF(texto_repetido)                                                          AS texto_repetido,
+       COUNTIF(NOT (dia_parcial OR idioma_desconocido OR texto_repetido))               AS quedan_con_3_reglas,
+       COUNTIF(NOT (dia_parcial OR idioma_desconocido OR texto_repetido OR es_respuesta)) AS quedan_sin_respuestas
+FROM marcadas;
+
+-- 5.2 Los textos que más se copian. El nombre del paso (por_texto) es distinto al de la columna (texto):
+--     si el alias de SELECT se llamara igual que la columna, GROUP BY agruparía por el alias recortado.
+WITH por_texto AS (
+  SELECT texto, COUNT(*) AS copias, COUNT(DISTINCT usuario) AS cuentas
+  FROM tweets_silver.tweets
+  GROUP BY texto
+)
+SELECT SUBSTR(texto, 1, 40) AS inicio, copias, cuentas
+FROM por_texto
+ORDER BY copias DESC
+LIMIT 4;
+
+-- 5.3 Ubicación vacía e idioma sin determinar.
+SELECT COUNTIF(ubicacion_usuario IS NULL OR TRIM(ubicacion_usuario) = &#x27;&#x27;)                        AS sin_ubicacion,
+       ROUND(100 * COUNTIF(ubicacion_usuario IS NULL OR TRIM(ubicacion_usuario) = &#x27;&#x27;) / COUNT(*), 1) AS pct_sin_ubicacion,
+       COUNTIF(idioma = &#x27;und&#x27;)                                                                   AS idioma_und
+FROM tweets_silver.tweets;
+
+-- 5.4 Likes: el promedio y la mediana cuentan historias distintas.
+SELECT ROUND(AVG(likes), 2)                          AS promedio,
+       APPROX_QUANTILES(likes, 100)[OFFSET(50)]      AS mediana,
+       ROUND(100 * COUNTIF(likes = 0) / COUNT(*), 1) AS pct_con_cero_likes,
+       COUNTIF(likes &gt;= 1000)                        AS tweets_con_mil_o_mas,
+       ROUND(100 * SUM(IF(likes &gt;= 1000, likes, 0)) / SUM(likes), 1) AS pct_de_los_likes
+FROM tweets_silver.tweets;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>5.1 (≈1.3 GB)
+tweets  | dia_parcial | idioma_desconocido | texto_repetido | quedan_con_3_reglas | quedan_sin_respuestas
+6798932 | 134871      | 97490              | 7760           | 6561954             | 3257636
+
+5.2 (≈1.3 GB)
+inicio                                   | copias | cuentas
+@nathaliejacoby1 Putin                   | 421    | 416
+@wiki_war&#x27;s account is temporarily unava | 375    | 1
+@joncoopertweets Putin                   | 362    | 352
+.@DmytroKuleba @EUCouncil I’m concerned  | 214    | 213
+
+5.3 (≈102 MB)
+sin_ubicacion | pct_sin_ubicacion | idioma_und
+2664367       | 39.2              | 97490
+
+5.4 (≈54 MB)
+promedio | mediana | pct_con_cero_likes | tweets_con_mil_o_mas | pct_de_los_likes
+15.88    | 0       | 54.4               | 13928                | 60.4</code></pre><p><strong>Comprueba:</strong> dia_parcial = 134871; idioma_desconocido = 97490; texto_repetido = 7760; quedan_con_3_reglas = 6561954 (96.5 %) y quedan_sin_respuestas = 3257636 (47.9 %). El texto más copiado tiene 421 copias de 416 cuentas; la mediana de likes es 0 y el promedio 15.88.</p><p><strong>Error frecuente y recuperación:</strong> Si el texto más copiado sale con muchas más copias (por ejemplo 1424) y un texto recortado, tu consulta agrupa por un alias con el mismo nombre que la columna: agrupa dentro del CTE y recorta fuera, como en 5.2. Si 5.1 supera el límite de bytes que fijaste, súbelo solo para esta consulta.</p></section><section id="paso-6"><h2>Paso 6 · Mide costos y cuadra las tres tablas · 12 min</h2><p><strong>Dónde:</strong> BigQuery Studio → pestaña nueva. Selecciona cada consulta sin ejecutarla para leer el estimador.</p><p><strong>Acción:</strong> Para cada una de las consultas 6.1 a 6.4, selecciónala y anota el estimador de bytes sin ejecutarla. Ejecuta solo 6.3 y compara los bytes procesados (pestaña Información del trabajo) con el estimador. Termina con 6.5, el cuadre final de las tres tablas Silver contra Bronze.</p><p><strong>Costo estimado:</strong> Solo 6.3 (≈33 MB) y 6.5 (≈42 MB) se ejecutan. 6.1, 6.2 y 6.4 se leen en el estimador y no cuestan nada.</p><pre><code>-- Paso 6 · Cuánto cuesta leer lo mismo de cuatro maneras, y el cuadre final.
+-- No ejecutes 6.1 a 6.4 todavía: selecciona cada una y lee el estimador de bytes del editor.
+
+-- 6.1 Una columna, toda la tabla.
+SELECT texto FROM tweets_silver.tweets;
+
+-- 6.2 Una columna, un solo día (la tabla está particionada por fecha).
+SELECT texto FROM tweets_silver.tweets WHERE fecha = &#x27;2022-03-23&#x27;;
+
+-- 6.3 Una columna, un día y un idioma (la tabla está agrupada por idioma).
+--     Esta sí ejecútala: abre «Información del trabajo» y compara los bytes procesados con el estimador.
+SELECT texto FROM tweets_silver.tweets WHERE fecha = &#x27;2022-03-23&#x27; AND idioma = &#x27;es&#x27;;
+
+-- 6.4 Todas las columnas, toda la tabla.
+SELECT * FROM tweets_silver.tweets;
+
+-- 6.5 Cuadre final de las tres tablas Silver. COUNT(*) sobre tablas no lee columnas; los DISTINCT sí.
+SELECT (SELECT COUNT(*) FROM tweets_bronze.entrada)                    AS bronze,
+       (SELECT COUNT(*) FROM tweets_silver.tweets)                     AS tweets,
+       (SELECT COUNT(DISTINCT tweet_id) FROM tweets_silver.hashtags)   AS tweets_con_hashtag,
+       (SELECT COUNT(*) FROM tweets_silver.autores)                    AS autores,
+       (SELECT SUM(tweets_en_archivo) FROM tweets_silver.autores)      AS tweets_sumados_por_autor,
+       (SELECT COUNT(*) FROM tweets_silver.hashtags)                   AS filas_hashtags;
+</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>Estimador del editor, antes de ejecutar (bytes exactos; el editor puede redondearlos o usar GiB):
+6.1  1,231,613,137 bytes  (≈1.23 GB)
+6.2    107,530,303 bytes  (≈107.5 MB)
+6.3     33,294,051 bytes  (≈33.3 MB)  · el trabajo real procesa 33,294,051 bytes
+6.4  2,452,529,977 bytes  (≈2.45 GB)
+
+6.5 (≈42 MB)
+bronze  | tweets  | tweets_con_hashtag | autores | tweets_sumados_por_autor | filas_hashtags
+6798932 | 6798932 | 1226642            | 1872074 | 6798932                  | 3339839</code></pre><p><strong>Comprueba:</strong> Leer una sola columna de toda la tabla pesa unas 37 veces más que leer esa columna en un día y un idioma; SELECT * pesa casi el doble que leer solo el texto. El cuadre final muestra bronze = tweets = tweets_sumados_por_autor = 6798932, autores = 1872074 y filas_hashtags = 3339839.</p><p><strong>Error frecuente y recuperación:</strong> Si el estimador de 6.3 muestra mucho más que 33 MB, escribiste mal el nombre de la columna de partición (fecha) o usaste una función sobre ella: filtra con fecha = &#x27;2022-03-23&#x27; sin envolverla en otra función. Si 6.5 da un número distinto, repite el paso donde falla la comprobación antes de seguir.</p></section><h2>Código completo y materiales</h2><details><summary>tweets/20_silver_tweets.sql · ver contenido completo</summary><pre><code>-- Silver: una fila por tweet, con tipos reales. Bronze no se modifica.
+-- Cuesta un escaneo completo de Bronze (~23.7 GB facturables); ejecútalo una vez.
+CREATE OR REPLACE TABLE tweets_silver.tweets
+PARTITION BY fecha
+CLUSTER BY idioma AS
+SELECT
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.id&#x27;) AS INT64)                  AS tweet_id,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.date&#x27;) AS TIMESTAMP)            AS fecha_hora,
+  DATE(SAFE_CAST(JSON_VALUE(value, &#x27;$.date&#x27;) AS TIMESTAMP))      AS fecha,
+  JSON_VALUE(value, &#x27;$.lang&#x27;)                                    AS idioma,
+  JSON_VALUE(value, &#x27;$.content&#x27;)                                 AS texto,
+  JSON_VALUE(value, &#x27;$.url&#x27;)                                     AS url,
+  JSON_VALUE(value, &#x27;$.user.username&#x27;)                           AS usuario,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.user.verified&#x27;) AS BOOL)        AS usuario_verificado,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.user.followersCount&#x27;) AS INT64) AS seguidores,
+  JSON_VALUE(value, &#x27;$.user.location&#x27;)                           AS ubicacion_usuario,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.likeCount&#x27;) AS INT64)           AS likes,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.retweetCount&#x27;) AS INT64)        AS retuits,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.replyCount&#x27;) AS INT64)          AS respuestas,
+  SAFE_CAST(JSON_VALUE(value, &#x27;$.quoteCount&#x27;) AS INT64)          AS citas,
+  JSON_VALUE(value, &#x27;$.inReplyToTweetId&#x27;) IS NOT NULL            AS es_respuesta,
+  JSON_VALUE(value, &#x27;$.quotedTweet.id&#x27;) IS NOT NULL              AS es_cita,
+  ARRAY(SELECT LOWER(h) FROM UNNEST(JSON_VALUE_ARRAY(value, &#x27;$.hashtags&#x27;)) AS h) AS hashtags,
+  JSON_VALUE(value, &#x27;$.sourceLabel&#x27;)                             AS aplicacion
+FROM tweets_bronze.entrada;
+</code></pre></details><details><summary>tweets/s04_02_chequeos.sql · ver contenido completo</summary><pre><code>-- Paso 2 · ¿Silver cuadra con Bronze? Cuatro comprobaciones baratas.
+
+-- 2.1 Filas de Bronze y de Silver. COUNT(*) no lee columnas: el estimador debe decir 0 bytes.
+SELECT (SELECT COUNT(*) FROM tweets_bronze.entrada) AS bronze,
+       (SELECT COUNT(*) FROM tweets_silver.tweets)  AS silver;
+
+-- 2.2 ¿Hay ids repetidos o vacíos? Solo lee dos columnas.
+SELECT COUNT(*)                     AS filas,
+       COUNT(DISTINCT tweet_id)     AS ids_distintos,
+       COUNTIF(tweet_id IS NULL)    AS sin_id,
+       COUNTIF(fecha_hora IS NULL)  AS sin_fecha
+FROM tweets_silver.tweets;
+
+-- 2.3 ¿Qué periodo cubre y cuántos tweets hay por día?
+SELECT fecha, COUNT(*) AS tweets
+FROM tweets_silver.tweets
+GROUP BY fecha
+ORDER BY fecha;
+
+-- 2.4 ¿Qué tipo tiene cada columna? Son metadatos: no leen datos de la tabla.
+SELECT column_name, data_type
+FROM tweets_silver.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = &#x27;tweets&#x27;
+ORDER BY ordinal_position;
+</code></pre></details><details><summary>tweets/21_silver_autores.sql · ver contenido completo</summary><pre><code>-- Silver 2 · autores: una fila por autor (grano distinto al de tweets).
+-- Un autor aparece en muchos tweets; nos quedamos con su dato más reciente.
+CREATE OR REPLACE TABLE tweets_silver.autores AS
+WITH ordenados AS (
+  SELECT usuario, usuario_verificado, seguidores,
+         NULLIF(TRIM(ubicacion_usuario), &#x27;&#x27;) AS ubicacion,
+         ROW_NUMBER() OVER (PARTITION BY usuario ORDER BY fecha_hora DESC) AS orden,
+         COUNT(*)     OVER (PARTITION BY usuario)                          AS tweets_en_archivo
+  FROM tweets_silver.tweets
+)
+SELECT usuario, usuario_verificado, seguidores, ubicacion, tweets_en_archivo
+FROM ordenados
+WHERE orden = 1;
+</code></pre></details><details><summary>tweets/s04_03_autores_checks.sql · ver contenido completo</summary><pre><code>-- Paso 3 · Revisa la tabla autores (la creaste con 21_silver_autores.sql).
+
+-- 3.1 Un autor con varios tweets, del más reciente al más antiguo.
+--     orden = 1 es el que se queda en autores. Mira cómo cambia seguidores.
+SELECT tweet_id, fecha_hora, seguidores,
+       ROW_NUMBER() OVER (PARTITION BY usuario ORDER BY fecha_hora DESC) AS orden
+FROM tweets_silver.tweets
+WHERE usuario = &#x27;skift&#x27;
+ORDER BY fecha_hora DESC;
+
+-- 3.2 Lo que quedó de ese autor: una sola fila.
+SELECT * FROM tweets_silver.autores WHERE usuario = &#x27;skift&#x27;;
+
+-- 3.3 ¿Cuadra? Una fila por autor y todos los tweets contados una vez.
+SELECT COUNT(*)                  AS autores,
+       COUNT(DISTINCT usuario)   AS usuarios_distintos,
+       SUM(tweets_en_archivo)    AS tweets_sumados
+FROM tweets_silver.autores;
+
+-- 3.4 CTE: WITH le pone nombre a un paso intermedio para poder resumirlo otra vez.
+--     Primero cuenta tweets por autor; después cuenta autores por tramo.
+WITH tweets_por_autor AS (
+  SELECT usuario, COUNT(*) AS tweets
+  FROM tweets_silver.tweets
+  GROUP BY usuario
+)
+SELECT CASE WHEN tweets = 1  THEN &#x27;1&#x27;
+            WHEN tweets = 2  THEN &#x27;2&#x27;
+            WHEN tweets &lt;= 5 THEN &#x27;3 a 5&#x27;
+            WHEN tweets &lt;= 20 THEN &#x27;6 a 20&#x27;
+            ELSE &#x27;más de 20&#x27; END AS tweets_publicados,
+       MIN(tweets)   AS orden,
+       COUNT(*)      AS autores,
+       SUM(tweets)   AS tweets_totales
+FROM tweets_por_autor
+GROUP BY tweets_publicados
+ORDER BY orden;
+</code></pre></details><details><summary>tweets/22_silver_hashtags.sql · ver contenido completo</summary><pre><code>-- Silver 3 · hashtags: una fila por tweet y hashtag. UNNEST convierte el arreglo en filas.
+-- DISTINCT evita contar dos veces un hashtag repetido dentro del mismo tweet.
+CREATE OR REPLACE TABLE tweets_silver.hashtags
+PARTITION BY fecha AS
+SELECT DISTINCT t.tweet_id, t.fecha, t.idioma, h AS hashtag
+FROM tweets_silver.tweets AS t, UNNEST(t.hashtags) AS h
+WHERE h != &#x27;&#x27;;
+</code></pre></details><details><summary>tweets/s04_04_hashtags_checks.sql · ver contenido completo</summary><pre><code>-- Paso 4 · Revisa la tabla hashtags (la creaste con 22_silver_hashtags.sql).
+
+-- 4.1 Un tweet de una agencia de noticias: sus hashtags viven en un arreglo (una celda con tres valores).
+SELECT tweet_id, usuario, hashtags
+FROM tweets_silver.tweets
+WHERE fecha = &#x27;2022-03-27&#x27; AND tweet_id = 1508054980313370628;
+
+-- 4.2 El mismo tweet en la tabla hashtags: UNNEST lo convirtió en tres filas.
+SELECT tweet_id, fecha, idioma, hashtag
+FROM tweets_silver.hashtags
+WHERE fecha = &#x27;2022-03-27&#x27; AND tweet_id = 1508054980313370628
+ORDER BY hashtag;
+
+-- 4.3 ¿Cuadra? DISTINCT quitó hashtags repetidos dentro de un mismo tweet.
+SELECT SUM(ARRAY_LENGTH(hashtags))                      AS hashtags_en_arreglos,
+       (SELECT COUNT(*) FROM tweets_silver.hashtags)    AS filas_en_la_tabla,
+       COUNTIF(ARRAY_LENGTH(hashtags) &gt; 0)              AS tweets_con_hashtag
+FROM tweets_silver.tweets;
+
+-- 4.4 Los ocho hashtags con más tweets.
+SELECT hashtag, COUNT(*) AS tweets
+FROM tweets_silver.hashtags
+GROUP BY hashtag
+ORDER BY tweets DESC
+LIMIT 8;
+
+-- 4.5 El grano al unir: cada tweet aparece una vez por hashtag. No sumes tweets sobre este resultado.
+SELECT COUNT(*)                 AS filas_del_join,
+       COUNT(DISTINCT t.tweet_id) AS tweets_distintos
+FROM tweets_silver.tweets AS t
+JOIN tweets_silver.hashtags AS h USING (tweet_id);
+</code></pre></details><details><summary>tweets/s04_05_marcas_calidad.sql · ver contenido completo</summary><pre><code>-- Paso 5 · Marca, no borres. Cada regla es una columna verdadero/falso; tú decides después qué excluir.
+
+-- 5.1 Cuántos tweets cae en cada regla y cuántos quedan al aplicarlas.
+--     texto_repetido: el mismo texto exacto aparece 20 veces o más.
+WITH marcadas AS (
+  SELECT fecha = DATE &#x27;2022-03-16&#x27;                  AS dia_parcial,
+         idioma = &#x27;und&#x27;                             AS idioma_desconocido,
+         COUNT(*) OVER (PARTITION BY texto) &gt;= 20   AS texto_repetido,
+         es_respuesta
+  FROM tweets_silver.tweets
+)
+SELECT COUNT(*)                                                                         AS tweets,
+       COUNTIF(dia_parcial)                                                             AS dia_parcial,
+       COUNTIF(idioma_desconocido)                                                      AS idioma_desconocido,
+       COUNTIF(texto_repetido)                                                          AS texto_repetido,
+       COUNTIF(NOT (dia_parcial OR idioma_desconocido OR texto_repetido))               AS quedan_con_3_reglas,
+       COUNTIF(NOT (dia_parcial OR idioma_desconocido OR texto_repetido OR es_respuesta)) AS quedan_sin_respuestas
+FROM marcadas;
+
+-- 5.2 Los textos que más se copian. El nombre del paso (por_texto) es distinto al de la columna (texto):
+--     si el alias de SELECT se llamara igual que la columna, GROUP BY agruparía por el alias recortado.
+WITH por_texto AS (
+  SELECT texto, COUNT(*) AS copias, COUNT(DISTINCT usuario) AS cuentas
+  FROM tweets_silver.tweets
+  GROUP BY texto
+)
+SELECT SUBSTR(texto, 1, 40) AS inicio, copias, cuentas
+FROM por_texto
+ORDER BY copias DESC
+LIMIT 4;
+
+-- 5.3 Ubicación vacía e idioma sin determinar.
+SELECT COUNTIF(ubicacion_usuario IS NULL OR TRIM(ubicacion_usuario) = &#x27;&#x27;)                        AS sin_ubicacion,
+       ROUND(100 * COUNTIF(ubicacion_usuario IS NULL OR TRIM(ubicacion_usuario) = &#x27;&#x27;) / COUNT(*), 1) AS pct_sin_ubicacion,
+       COUNTIF(idioma = &#x27;und&#x27;)                                                                   AS idioma_und
+FROM tweets_silver.tweets;
+
+-- 5.4 Likes: el promedio y la mediana cuentan historias distintas.
+SELECT ROUND(AVG(likes), 2)                          AS promedio,
+       APPROX_QUANTILES(likes, 100)[OFFSET(50)]      AS mediana,
+       ROUND(100 * COUNTIF(likes = 0) / COUNT(*), 1) AS pct_con_cero_likes,
+       COUNTIF(likes &gt;= 1000)                        AS tweets_con_mil_o_mas,
+       ROUND(100 * SUM(IF(likes &gt;= 1000, likes, 0)) / SUM(likes), 1) AS pct_de_los_likes
+FROM tweets_silver.tweets;
+</code></pre></details><details><summary>tweets/s04_06_costos_cierre.sql · ver contenido completo</summary><pre><code>-- Paso 6 · Cuánto cuesta leer lo mismo de cuatro maneras, y el cuadre final.
+-- No ejecutes 6.1 a 6.4 todavía: selecciona cada una y lee el estimador de bytes del editor.
+
+-- 6.1 Una columna, toda la tabla.
+SELECT texto FROM tweets_silver.tweets;
+
+-- 6.2 Una columna, un solo día (la tabla está particionada por fecha).
+SELECT texto FROM tweets_silver.tweets WHERE fecha = &#x27;2022-03-23&#x27;;
+
+-- 6.3 Una columna, un día y un idioma (la tabla está agrupada por idioma).
+--     Esta sí ejecútala: abre «Información del trabajo» y compara los bytes procesados con el estimador.
+SELECT texto FROM tweets_silver.tweets WHERE fecha = &#x27;2022-03-23&#x27; AND idioma = &#x27;es&#x27;;
+
+-- 6.4 Todas las columnas, toda la tabla.
+SELECT * FROM tweets_silver.tweets;
+
+-- 6.5 Cuadre final de las tres tablas Silver. COUNT(*) sobre tablas no lee columnas; los DISTINCT sí.
+SELECT (SELECT COUNT(*) FROM tweets_bronze.entrada)                    AS bronze,
+       (SELECT COUNT(*) FROM tweets_silver.tweets)                     AS tweets,
+       (SELECT COUNT(DISTINCT tweet_id) FROM tweets_silver.hashtags)   AS tweets_con_hashtag,
+       (SELECT COUNT(*) FROM tweets_silver.autores)                    AS autores,
+       (SELECT SUM(tweets_en_archivo) FROM tweets_silver.autores)      AS tweets_sumados_por_autor,
+       (SELECT COUNT(*) FROM tweets_silver.hashtags)                   AS filas_hashtags;
+</code></pre></details><section><h2>Entrega, costo y cierre</h2><p>Qué queda al terminar: tres tablas Silver en tu proyecto (tweets_silver.tweets, tweets_silver.autores y tweets_silver.hashtags) con sus conteos cuadrados. Las usarás en la sesión 5.</p><p>Costo: la tabla de tweets cuesta una lectura de Bronze (≈23.67 GB de referencia); autores y hashtags cuestan ≈280 MB y ≈174 MB; las revisiones, menos de 1.4 GB cada una. Silver ocupa unos 2.3 GiB de almacenamiento.</p><p>Cierre de recursos: no hay cómputo que apagar; solo tablas. Conserva las tres tablas Silver para la siguiente sesión.</p><p>Si algo falla, repite solo el paso donde falló: CREATE OR REPLACE TABLE se puede repetir sin riesgo.</p></section><h2>Fuentes</h2><p><a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/json_functions" target="_blank" rel="noopener">BigQuery · funciones JSON ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/conversion_functions" target="_blank" rel="noopener">BigQuery · SAFE_CAST ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/numbering_functions" target="_blank" rel="noopener">BigQuery · funciones de numeración (ROW_NUMBER) ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/arrays" target="_blank" rel="noopener">BigQuery · trabajar con arreglos (UNNEST) ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax" target="_blank" rel="noopener">BigQuery · cláusula WITH (CTE) ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/partitioned-tables" target="_blank" rel="noopener">BigQuery · tablas particionadas ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/clustered-tables" target="_blank" rel="noopener">BigQuery · tablas con clustering ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/access-control" target="_blank" rel="noopener">BigQuery · control de acceso con IAM ↗</a> · <a href="https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en" target="_blank" rel="noopener">Comisión Europea · principios del GDPR ↗</a> · <a href="https://www.hhs.gov/hipaa/for-professionals/covered-entities/index.html" target="_blank" rel="noopener">HHS · entidades cubiertas por HIPAA ↗</a></p><p>Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas.md">Notas de la sesión</a> · <a href="../">Índice de sesiones</a></p></article></body></html>

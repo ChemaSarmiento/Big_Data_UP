@@ -20,7 +20,7 @@ Fuente: guion.py. Los conteos son de la muestra; ejecución GoogleSQL en GCP pen
 
 ## 05. SQL expresa la pregunta; el motor decide cómo ejecutarla.
 
-20–25 min. Lectura guiada: columnas, tabla, filas elegidas y agrupación. Este fragmento es para explicar SQL, no una comparación comercial válida: faltan marca, presentación y geografía. Pedir detectar esos filtros; el archivo05 contiene la versión completa. No se requiere que memoricen sintaxis.
+20–25 min. Lectura guiada: columnas, tabla, filas elegidas y agrupación. Este fragmento es para explicar SQL, no una comparación comercial válida: faltan marca, presentación y geografía. Pedir detectar esos filtros; la versión completa, con esos filtros, está en 30_gold.sql del laboratorio. No se requiere que memoricen sintaxis.
 
 ## 06. LIMIT cambia la salida; el filtro puede evitar lectura.
 

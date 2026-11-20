@@ -1,0 +1,7 @@
+criterio,puntos_maximos,evidencia_observable,senal_de_alerta,puntos_obtenidos,evidencia_registrada
+Pregunta y valor,20,"Audiencia, decisión y qué la cambiaría; cabe en una frase","La pregunta es hacer un dashboard",,
+Arquitectura y gobierno,20,"Capas con responsable; lo ejecutado separado de lo propuesto","Servicios nombrados sin función ni conteos",,
+SQL calidad y KPIs,25,"SQL ejecutado; conteos que concilian entre capas; KPI con grano y denominador","Una cifra sin consulta o conteos que no cuadran",,
+Comunicacion y dashboard,20,"Título que concluye; ejes desde cero; filtros que no ocultan cobertura","Gráfica sin base sin idioma o sin marcar el día parcial",,
+Evaluacion critica de IA,10,"Frases de la IA contrastadas con la evidencia; al menos una corregida","Texto de IA copiado sin verificar ninguna cifra",,
+Reproducibilidad y costo,5,"Scripts; bytes o jobs observados; cierre de recursos","Sin bytes sin scripts sin plan de cierre",,

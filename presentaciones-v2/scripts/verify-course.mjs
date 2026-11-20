@@ -57,14 +57,10 @@ try{
   }
  }
  // Interacciones docentes: el clic no cambia de diapositiva.
- await page.goto(`${origin}/especialidad-07/practica.html`);await page.waitForSelector('[data-search]');
- await page.locator('[data-search]').fill('cobertura');await page.locator('[data-search-button]').click();assert.ok(await page.locator('[data-search-results] details').count()>0);
- await page.locator('[data-search-results] summary').first().click();assert.ok((await page.locator('[data-search-results] details[open] p').innerText()).length>30);
- await page.locator('[data-search]').fill('temperatura marte');await page.locator('[data-search-button]').click();assert.equal(await page.locator('[data-search-results] details').count(),0);assert.match(await page.locator('.demo-answer').innerText(),/No se recuperó/);
  await page.goto(`${origin}/especialidad-08/#3/0`);await page.waitForSelector('.slide:visible [data-timer]');
  await page.locator('.slide:visible [data-timer-questions]').click();assert.equal(await page.locator('.slide:visible output').innerText(),'03:00');await page.locator('.slide:visible [data-timer-reset]').click();assert.equal(await page.locator('.slide:visible output').innerText(),'07:00');
  await page.setViewportSize({width:390,height:844});await page.goto(origin);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`${output}/catalogo-mobile.png`});
- const result={sessions:1,slides:14,errors,failedRequests:failed,horizontalOverflow:horizontal,projectorScroll:overflow,artifacts:output};
+ const result={sessions:1,slides:manifest.sessions.find(s=>s.id===8).slides,errors,failedRequests:failed,horizontalOverflow:horizontal,projectorScroll:overflow,artifacts:output};
  await fs.writeFile(`${output}/report.json`,JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
  assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(horizontal,[]);assert.deepEqual(overflow,[]);
 }finally{await browser.close();}

@@ -1,632 +1,135 @@
 {
-  "session": 3,
-  "title": "Bronze conserva la evidencia y permite consultarla",
-  "minutes": 180,
-  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
-  "slides": [
-    {
-      "id": "E03-01",
-      "title": "¿Por qué mover 19 GB a cada computadora?",
-      "kind": "cover",
-      "items": [
-        {
-          "label": "Fuente",
-          "text": "El archivo grande puede permanecer en GCS y consultarse con un motor apropiado."
-        },
-        {
-          "label": "Pregunta",
-          "text": "¿Qué ganas y qué arriesgas al replicarlo en cada computadora?"
-        }
-      ],
-      "code": null,
-      "note": "Comparar rutas laptop y GCS; tamaño reportado, no medición de trabajo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-02",
-      "title": "SQL te deja preguntar donde está el motor",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Puente",
-          "text": "En S2 aprendiste a especificar columnas, población y grano."
-        },
-        {
-          "label": "Cambio",
-          "text": "Ahora el motor puede distribuir trabajo y el dato puede permanecer fuera de la laptop."
-        }
-      ],
-      "code": null,
-      "note": "Recuperar SELECT/filtro/grano de S2 Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-03",
-      "title": "Hoy conservarás una fuente y la consultarás",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Tres evidencias",
-          "text": "Un archivo, su manifiesto y una consulta rastreable."
-        },
-        {
-          "label": "Resultado",
-          "text": "Saber dónde vive cada cosa antes de limpiar o agregar."
-        }
-      ],
-      "code": null,
-      "note": "Archivo, manifiesto y tabla externa como entregables Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "Archivo",
-          "Versión original"
-        ],
-        [
-          "Manifiesto",
-          "Contrato y procedencia"
-        ],
-        [
-          "Consulta",
-          "Evidencia registrada"
-        ]
-      ]
-    },
-    {
-      "id": "E03-04",
-      "title": "ETL transforma antes de cargar al destino analítico",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "ETL",
-          "text": "Extraer, transformar y cargar al destino analítico."
-        },
-        {
-          "label": "Consecuencia",
-          "text": "Puedes validar antes del destino, pero debes operar el lugar donde ocurre la transformación."
-        }
-      ],
-      "code": null,
-      "note": "Flechas Extract/Transform/Load sobre el mismo caso Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-05",
-      "title": "ELT carga y transforma con el motor de destino",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "ELT",
-          "text": "Extraer, cargar y transformar usando el motor de destino."
-        },
-        {
-          "label": "Consecuencia",
-          "text": "Conservas el original y aprovechas cómputo analítico, pagando y gobernando las transformaciones."
-        }
-      ],
-      "code": null,
-      "note": "Mover el bloque de transformación; comparar trade-offs Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-06",
-      "title": "Bronze conserva la recepción original",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Promesa",
-          "text": "Bronze conserva lo recibido y su procedencia."
-        },
-        {
-          "label": "Límite",
-          "text": "Conservar no implica que los valores estén limpios ni que el esquema sea correcto."
-        }
-      ],
-      "code": null,
-      "note": "Original/fecha de ingestión/checksum; no sobrescribir con limpieza Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-07",
-      "title": "Un manifiesto cuenta de dónde vino el dato",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Manifiesto",
-          "text": "Nombre, URI, checksum, formato, conteo verificado y fecha de recepción."
-        },
-        {
-          "label": "Trazabilidad",
-          "text": "Un resultado sin versión de fuente no se puede reproducir con confianza."
-        }
-      ],
-      "code": null,
-      "note": "Registro real/propuesto con estado de verificación visible Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-08",
-      "title": "Un CSV también tiene un contrato",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Contrato",
-          "text": "Separador, encabezado, comillas, encoding y representación de nulos."
-        },
-        {
-          "label": "Fallo",
-          "text": "Cortar líneas no construye una muestra segura si el CSV contiene texto multilínea."
-        }
-      ],
-      "code": null,
-      "note": "Separador, encabezado, encoding, nulos y comillas; registro multilínea Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-09",
-      "title": "Una tabla externa describe archivos",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Datos",
-          "text": "GCS conserva el archivo."
-        },
-        {
-          "label": "Metadatos",
-          "text": "La tabla externa declara cómo leerlo; BigQuery ejecuta las consultas con permisos compatibles."
-        }
-      ],
-      "code": "-- El esquema completo está en 02_bronze_externa.sql\nSELECT producto, establecimiento, precio_texto\nFROM curso_bronze.observaciones_externas\nORDER BY id LIMIT 10;",
-      "note": "GCS conserva datos; BigQuery aporta esquema y consulta Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-10",
-      "title": "Una tabla nativa almacena datos para analítica",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Nativa",
-          "text": "BigQuery almacena la tabla y sus estructuras analíticas."
-        },
-        {
-          "label": "Elección",
-          "text": "Una fuente CSV externa no adquiere automáticamente las ventajas de una tabla nativa particionada."
-        }
-      ],
-      "code": null,
-      "note": "Contraste externa/nativa, sin atribuir partición a CSV arbitrario Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-11",
-      "title": "El motor divide trabajo y combina resultados",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Distribución",
-          "text": "El motor reparte lecturas y combina resultados."
-        },
-        {
-          "label": "Costo",
-          "text": "Tiempo, bytes y complejidad son medidas distintas; más rápido no siempre significa más barato."
-        }
-      ],
-      "code": null,
-      "note": "Mapa consulta → bloques → resultado; costo/latencia no equivalentes Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "Lectura",
-          "Bloques separados"
-        ],
-        [
-          "Agregación",
-          "Combinar grupos"
-        ],
-        [
-          "Resultado",
-          "Filas del análisis"
-        ]
-      ]
-    },
-    {
-      "id": "E03-12",
-      "title": "HSBC conecta datos con decisiones de riesgo",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "HSBC",
-          "text": "El caso publicado describe Storage, Dataflow y BigQuery en una herramienta de escenarios de riesgo."
-        },
-        {
-          "label": "Transferencia",
-          "text": "Pregunta qué fuente, transformación y consumidor justifican cada servicio; no copies su escala ni prometas su retorno."
-        }
-      ],
-      "code": null,
-      "note": "Ficha fuente: Cloud Storage, Dataflow y BigQuery; no reproducir su sistema Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "HSBC · Risk Advisory Tool",
-          "https://cloud.google.com/customers/hsbc-risk-advisory-tool"
-        ]
-      ]
-    },
-    {
-      "id": "E03-13",
-      "title": "Muestra y fuente completa contestan con alcances distintos",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Muestra",
-          "text": "Permite depurar reglas y consultas con menor volumen."
-        },
-        {
-          "label": "Completo",
-          "text": "Necesita una ejecución y un manifiesto propios; una muestra no probabilística no permite extrapolar totales libremente."
-        }
-      ],
-      "code": null,
-      "note": "Comparación de conteos/cobertura y límites de extrapolación Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-14",
-      "title": "Antes de ejecutar, revisa qué leerás",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Antes",
-          "text": "Revisa estimación y controles de bytes cuando correspondan."
-        },
-        {
-          "label": "Externas",
-          "text": "La estimación puede ser limitada: un dry run no garantiza costo cero al consultar el CSV."
-        }
-      ],
-      "code": null,
-      "note": "Estimación y límites; advertir incertidumbre en fuentes externas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "BigQuery · control de costos",
-          "https://docs.cloud.google.com/bigquery/docs/best-practices-costs"
-        ]
-      ],
-      "nodes": [
-        [
-          "Estimación",
-          "Revisar límites"
-        ],
-        [
-          "Ejecución",
-          "Control y permisos"
-        ],
-        [
-          "Registro",
-          "Bytes y caché"
-        ]
-      ]
-    },
-    {
-      "id": "E03-15",
-      "title": "La ubicación forma parte del diseño",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Ubicación",
-          "text": "Mantén bucket y dataset en una combinación compatible."
-        },
-        {
-          "label": "Acceso",
-          "text": "El editor puede abrir aunque falte permiso sobre el archivo; identifica qué capa bloquea."
-        }
-      ],
-      "code": null,
-      "note": "Bucket/dataset compatibles; los errores no se arreglan con más SQL Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-16",
-      "title": "Pausa · fuente, esquema y permisos listos",
-      "kind": "pause",
-      "items": [
-        {
-          "label": "Pausa",
-          "text": "Diez minutos; abre manifiesto y guía."
-        },
-        {
-          "label": "Preparación",
-          "text": "No descargues all_data.csv. La ruta real de escala se prepara con el docente antes de clase."
-        }
-      ],
-      "code": null,
-      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-17",
-      "title": "Laboratorio: del archivo al SELECT rastreable",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Ruta ilustrativa",
-          "text": "El CSV adjunto tiene 16 filas, errores controlados y esquema conocido."
-        },
-        {
-          "label": "Escala",
-          "text": "Sirve para aprender el mecanismo; no constituye una ejecución sobre grandes datos."
-        }
-      ],
-      "code": null,
-      "note": "Parámetros resueltos del equipo, muestra y fuente grande docente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-18",
-      "title": "Conserva la muestra y su manifiesto",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Carga",
-          "text": "Sube precios-ilustrativos.csv al bucket autorizado y registra su URI."
-        },
-        {
-          "label": "Control",
-          "text": "Compara tamaño/checksum del archivo local y conserva el original; no uses credenciales en el manifiesto."
-        }
-      ],
-      "code": null,
-      "note": "Paso 1: carga/copia controlada en bucket Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-19",
-      "title": "Crea el espacio analítico del proyecto",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Espacios",
-          "text": "curso_bronze, curso_silver y curso_gold son datasets de laboratorio."
-        },
-        {
-          "label": "Seguridad del ejercicio",
-          "text": "Los scripts reemplazan solo tablas curso_*; no los adaptes a producción sin revisión."
-        }
-      ],
-      "code": null,
-      "note": "Paso 2: datasets Bronze/Silver/Gold en ubicación acordada Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-20",
-      "title": "Declara el esquema antes de confiar en la consulta",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Esquema",
-          "text": "Ocho columnas STRING del fixture, incluido precio_texto y fecha_texto."
-        },
-        {
-          "label": "Distinción",
-          "text": "Este no es el esquema validado de all_data.csv; no lo declares como si lo fuera."
-        }
-      ],
-      "code": null,
-      "note": "Paso 3: tabla externa con esquema verificado Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-21",
-      "title": "Explora columnas y conserva el contexto",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Exploración",
-          "text": "Proyecta producto, establecimiento y valores originales antes de convertir."
-        },
-        {
-          "label": "Esperado",
-          "text": "16 filas, 15 identificadores en el fixture; los conteos de una fuente real se deben medir."
-        }
-      ],
-      "code": "SELECT COUNT(*) AS filas,\n COUNT(DISTINCT id) AS identificadores\nFROM curso_bronze.observaciones_raw;",
-      "note": "Paso 4: consultas iniciales con fecha/producto/geografía Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-22",
-      "title": "Observa la escala con una ejecución controlada",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Ejercicio de escala",
-          "text": "Con la fuente grande prevalidada, registra job ID, tablas, bytes, tiempo y caché."
-        },
-        {
-          "label": "Respaldo",
-          "text": "Si no existe acceso autorizado, usa evidencia docente explícita; no la atribuyas a tu ejecución."
-        }
-      ],
-      "code": null,
-      "note": "Paso 5: consulta sobre fuente grande y métricas reales Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-23",
-      "title": "Guarda datos y evidencia como objetos distintos",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Conservar",
-          "text": "Guarda consulta y manifiesto con alcance muestra/completo."
-        },
-        {
-          "label": "Explicar",
-          "text": "La misma pregunta puede dar cifras distintas si cambia la cobertura de la fuente."
-        }
-      ],
-      "code": null,
-      "note": "Paso 6: manifiesto + job ID + consulta Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-24",
-      "title": "Explica por qué elegiste esta ruta ELT",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Proyecto propio",
-          "text": "Usa su paquete y esquema aprobado, no el CSV ilustrativo como proyecto final."
-        },
-        {
-          "label": "Justificación",
-          "text": "Dibuja dónde ocurre la transformación y quién consumirá el resultado."
-        }
-      ],
-      "code": null,
-      "note": "Equipo dibuja punto de transformación y consumidor Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-25",
-      "title": "LIMIT limita filas devueltas; no garantiza menor lectura",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Retorno",
-          "text": "LIMIT restringe las filas devueltas."
-        },
-        {
-          "label": "Lectura",
-          "text": "En una fuente externa de texto no equivale por sí solo a leer menos bytes; verifica estadísticas."
-        }
-      ],
-      "code": null,
-      "note": "Comparación guiada, sin forzar escaneos caros Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-26",
-      "title": "Delimitador, esquema o acceso: diagnostica la falla",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Parseo",
-          "text": "Revisar separador, comillas y columnas."
-        },
-        {
-          "label": "Permiso",
-          "text": "Revisar identidad y objeto; no abrir un bucket al público para resolver un error de acceso."
-        }
-      ],
-      "code": null,
-      "note": "Tres tarjetas de error y una recuperación por causa Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-27",
-      "title": "H3: una cifra conectada con su archivo y consulta",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "H3",
-          "text": "Fuente y manifiesto propios, Bronze consultable y una consulta guardada."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Registrar qué se ejecutó, qué estaba precargado y qué sigue pendiente de escala real."
-        }
-      ],
-      "code": null,
-      "note": "Checklist trazabilidad, filas, bytes y cache hit Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E03-28",
-      "title": "La próxima capa hará explícitas las reglas de calidad",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Recuperación",
-          "text": "¿Qué guarda una tabla externa y qué guarda GCS?"
-        },
-        {
-          "label": "Cierre",
-          "text": "Conserva fuente y manifiesto; revisa consumo y expiración. Silver agregará reglas explícitas."
-        }
-      ],
-      "code": null,
-      "note": "Recordar lo que Bronze todavía no promete; cierre Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    }
+ "session": 3,
+ "title": "Del JSON a una tabla: así empieza Medallion",
+ "minutes": 180,
+ "status": "Guía con valores de referencia reales. Sin ensayar de principio a fin: la copia de war_tweets.txt con el cuaderno de Colab (sus celdas de copia de otros archivos sí se revisaron), la creación del bucket, la carga completa del archivo desde tu bucket y el script de Spark de este laboratorio.",
+ "slides": [],
+ "lab": {
+  "aviso": "Las cifras de esta guía (tamaños, bytes, tiempos) son valores de referencia de ejecuciones reales del curso y pueden variar ligeramente en tu cuenta. Se ensayaron: la carga del método con 2,500 líneas reales, las estimaciones en seco y el patrón de envío de un lote Spark. No se ensayaron de principio a fin: la copia de war_tweets.txt con el cuaderno de Colab, la creación del bucket, la carga completa del archivo desde tu bucket y el script de Spark de este laboratorio.",
+  "prerequisitos": [
+   "Un proyecto de Google Cloud con facturación activa (de la sesión 1) y Cloud Shell abierto.",
+   "Cuenta de Google con acceso al archivo war_tweets.txt en Drive y al cuaderno de Colab del curso, que copia de Drive a Storage: https://colab.research.google.com/drive/1T3Q3HYP2j5n40EEj3QNX3iyDanKc99RZ.",
+   "Unos 22 GiB de almacenamiento disponibles en tu proyecto para el archivo y otros 22 GiB para la tabla Bronze."
   ],
-  "lab": {
-    "steps": [
-      {
-        "n": 1,
-        "minutes": 5,
-        "action": "En Cloud Storage → Buckets, abrir el bucket de S1. Crear prefijo bronze y subir precios-ilustrativos.csv sin editarlo. Descargar manifiesto-fixture.json.",
-        "check": "En detalles del objeto, copiar URI gs://, tamaño y ubicación. Si falla subida, revisar identidad y permiso docente; no publicar el bucket."
-      },
-      {
-        "n": 2,
-        "minutes": 8,
-        "action": "Abrir BigQuery Studio → editor SQL. Confirmar proyecto de laboratorio. Crear curso_bronze con ubicación compatible (script propone us-central1).",
-        "check": "Ver dataset y ubicación en Explorador. IF NOT EXISTS no cambia ubicación existente. Silver y Gold se crearán en sus sesiones."
-      },
-      {
-        "n": 3,
-        "minutes": 12,
-        "action": "Abrir 02_bronze_externa.sql. Reemplazar solo la URI por la del CSV subido; leer DDL y ejecutar hasta la consulta de muestra.",
-        "check": "En curso_bronze, verificar observaciones_externas, esquema completo de ocho columnas y URI. Si hay parseo fallido, comprobar CSV, cabecera y orden de campos."
-      },
-      {
-        "n": 4,
-        "minutes": 12,
-        "action": "Consultar COUNT(*) de observaciones_externas; después ejecutar el CTAS de 02_bronze_externa.sql y las consultas de 03_explorar.sql.",
-        "check": "16 filas de entrada (sin cabecera); 15 distintas en la copia nativa. El CTAS crea observaciones_raw sin limpiar. Si difiere, contrastar archivo/manifiesto, no eliminar registros a mano."
-      },
-      {
-        "n": 5,
-        "minutes": 10,
-        "action": "En historial/detalles del job, guardar ID, bytes procesados/facturados, caché, tiempo y filas devueltas. Consultar fuente grande solo si docente preparó esquema, acceso y límite de costo.",
-        "check": "Estimar antes y revisar máximo de bytes facturados donde aplique. Externas pueden no tener estimación completa: 0 no prueba costo nulo. Sin condiciones, marcar escala pendiente; no sustituir por métricas inventadas."
-      },
-      {
-        "n": 6,
-        "minutes": 8,
-        "action": "Guardar manifiesto con URI, versión, fecha de recepción, ubicación, esquema, permisos y SQL. Otro equipo reconstruye la lectura.",
-        "check": "Distinguir fixture/muestra/fuente completa. Conservar CSV y tablas para Silver; revisar retención y accesos. Fuente sin permiso validado queda pendiente, aunque sea descargable."
-      }
-    ],
-    "instructions": "Ruta principal: en Cloud Storage subir precios-ilustrativos.csv; crear datasets de laboratorio en ubicación compatible; en BigQuery abrir 02_bronze_externa.sql y sustituir uri por la URI exacta del objeto; ejecutar después 03_explorar.sql. Ruta de recuperación: 01_fixture_bronze.sql recrea la entrada como tabla nativa sin descargar nada. Esta recuperación NO demuestra una tabla externa ni escala real. Ambos scripts usan solo tablas curso_*. Para la fuente grande, el docente debe perfilar el esquema y preparar GCS/permisos/consulta acotada antes de clase; no se reutilizan las ocho columnas del fixture como contrato de all_data.csv."
-  },
-  "assets": [
-    "precios-ilustrativos.csv",
-    "manifiesto-fixture.json",
-    "01_fixture_bronze.sql",
-    "02_bronze_externa.sql",
-    "03_explorar.sql"
+  "instructions": "Ruta: Cloud Shell → crear el bucket → Colab para copiar el archivo → Cloud Shell para comprobarlo y cargarlo en BigQuery → BigQuery Studio para contar → Cloud Shell para estimar costos y enviar el lote de Spark. Sustituye TU_PROYECTO y TU_BUCKET por tus valores. El nombre del bucket debe ser único en todo el mundo.",
+  "region": "Usa la ubicación US para el bucket y para los datasets de BigQuery: la carga funciona cuando el bucket está en la misma ubicación o dentro de la multirregión del dataset. Para Dataproc Serverless usa una región de Estados Unidos (por ejemplo us-central1) y la misma en todos tus lotes.",
+  "steps": [
+   {
+    "n": 1,
+    "minutes": 12,
+    "titulo": "Copiar el archivo de Drive a tu bucket",
+    "donde": "Cloud Shell (ícono >_ arriba a la derecha de la consola de Google Cloud) para crear el bucket; después Google Colab, en otra pestaña, con el cuaderno del curso: https://colab.research.google.com/drive/1T3Q3HYP2j5n40EEj3QNX3iyDanKc99RZ.",
+    "action": "Crea un bucket en la ubicación US (su nombre debe ser único en todo el mundo, por ejemplo tweets-TU_PROYECTO). Abre el cuaderno de Colab del curso (enlace arriba). Ejecuta sus dos primeras celdas: montar Drive y autenticarte con tu cuenta. En la celda que fija project_id y bucket_id escribe TU proyecto y TU bucket: el cuaderno trae valores de ensayo y, si los dejas, la copia falla por permisos. Agrega una celda con el comando de copia de war_tweets.txt (es el mismo patrón que usan las celdas de copia del cuaderno) y ejecútala: son 22 GiB y puede tardar un buen rato. Antes, el archivo debe aparecer en Mi unidad de tu Drive (si está en una carpeta compartida, agrégalo con clic derecho → Organizar → Añadir acceso directo). Cuando la celda termine, pasa al paso 2.",
+    "costo": "Crear el bucket no cuesta. Guardar 22 GiB se cobra por GiB y por mes mientras el objeto exista; revisa los precios de tu clase de almacenamiento.",
+    "codigo": "# Cloud Shell: crea tu bucket\ngcloud config get-value project\ngcloud storage buckets create gs://TU_BUCKET --location=US --uniform-bucket-level-access\n\n# Colab (otra pestaña): celdas del cuaderno del curso\n# 1) from google.colab import drive; drive.mount('/content/drive')\n# 2) from google.colab import auth; auth.authenticate_user()\n# 3) project_id = 'TU_PROYECTO'; bucket_id = 'TU_BUCKET'\n#    !gcloud config set project {project_id}\n# 4) celda nueva: !gcloud storage cp /content/drive/MyDrive/war_tweets.txt gs://{bucket_id}\n",
+    "salida": "tu-proyecto\nCreating gs://TU_BUCKET/...",
+    "check": "El cuaderno de Colab termina sin errores y, en el paso 2, el objeto aparece con 23663541134 bytes.",
+    "error": "Si el nombre del bucket ya existe, elige otro. Si Colab se desconecta a medias, vuelve a ejecutar la celda de copia: reescribe el mismo objeto."
+   },
+   {
+    "n": 2,
+    "minutes": 8,
+    "titulo": "Comprobar el objeto y anotar su manifiesto",
+    "donde": "Cloud Shell.",
+    "action": "Pide el tamaño y la huella del objeto. Si copiaste el archivo completo, el tamaño y la huella md5 coinciden con los valores de referencia: es la prueba de que tu copia es igual al original. Anota nombre, tamaño, huella y generación: es el manifiesto de tu Bronze.",
+    "costo": "Pedir metadatos no tiene costo de consulta.",
+    "codigo": "gcloud storage ls -l gs://TU_BUCKET/war_tweets.txt\ngcloud storage objects describe gs://TU_BUCKET/war_tweets.txt \\\n  --format=\"yaml(name,size,storage_class,generation,md5_hash)\"\n",
+    "salida": "23663541134  FECHA_DE_CREACION  gs://TU_BUCKET/war_tweets.txt\nTOTAL: 1 objects, 23663541134 bytes (22.04GiB)\n---\nmd5_hash: nC490+y+7Rt3nDD02VE/pg==\nname: war_tweets.txt\nsize: 23663541134\nstorage_class: STANDARD   # puede variar según tu bucket\n",
+    "check": "size es 23663541134 (22.04 GiB) y md5_hash es nC490+y+7Rt3nDD02VE/pg==. La generación y la clase de almacenamiento pueden ser distintas.",
+    "error": "Si el tamaño es menor, la copia se interrumpió: repite el cuaderno de Colab. Si ls dice \"One or more URLs matched no objects\", revisa el nombre del bucket y del archivo."
+   },
+   {
+    "n": 3,
+    "minutes": 12,
+    "titulo": "Crear tu Bronze en BigQuery",
+    "donde": "Cloud Shell.",
+    "action": "Crea el dataset tweets_bronze en la ubicación US y carga el archivo completo en una sola columna llamada value. El truco: el archivo es JSON Lines (un JSON por línea); si indicas un separador de columnas que nunca aparece en el texto (þ) y desactivas las comillas (--quote=''), cada línea completa cae en value sin alterarse. --replace permite repetir el comando sin duplicar filas.",
+    "costo": "La carga desde Cloud Storage no se factura como consulta. La tabla ocupará unos 22 GiB lógicos de almacenamiento en tu proyecto.",
+    "codigo": "gcloud services enable bigquery.googleapis.com\nbq --location=US mk --dataset tweets_bronze\nbq --location=US load --replace --source_format=CSV \\\n  --field_delimiter='þ' --quote='' --max_bad_records=0 \\\n  tweets_bronze.entrada \"gs://TU_BUCKET/war_tweets.txt\" value:STRING\n",
+    "salida": "Dataset 'TU_PROYECTO:tweets_bronze' successfully created.\nWaiting on bqjob_... (0s) Current status: RUNNING\n...\nWaiting on bqjob_... (Ns) Current status: DONE",
+    "check": "bq show tweets_bronze.entrada muestra una sola columna (value, STRING) y 6,798,932 filas. El método se ensayó con 2,500 líneas reales: 2,500 filas y 2,500 ids distintos. La carga completa desde tu bucket no se midió.",
+    "error": "\"Not found: URI\" indica un nombre de bucket o de archivo mal escrito. Si hay errores de registros malos, comprueba que escribiste --quote='' (dos comillas simples) y el delimitador þ tal cual (cópialo y pégalo)."
+   },
+   {
+    "n": 4,
+    "minutes": 10,
+    "titulo": "Contar filas y mirar un tweet crudo",
+    "donde": "BigQuery Studio → nueva consulta (con tu proyecto seleccionado) para contar; Cloud Shell para ver una línea sin costo.",
+    "action": "Cuenta las filas (el estimador del editor debe decir 0 bytes). Después mira un tweet crudo de dos formas y compara su costo: leyendo los primeros bytes del archivo en el bucket, que no cuesta, o con SELECT value ... LIMIT 1 en la tabla, que lee toda la columna.",
+    "costo": "COUNT(*): 0 bytes. Leer value en la tabla: 23.67 GB (≈22.05 GiB); entra en el primer TiB mensual gratuito, pero evita repetirlo sin necesidad.",
+    "codigo": "-- BigQuery Studio\nSELECT COUNT(*) AS tweets FROM tweets_bronze.entrada;\n\n# Cloud Shell (sin costo de consulta)\ngcloud storage cat -r 0-5000 gs://TU_BUCKET/war_tweets.txt | head -n 1\n",
+    "salida": "tweets\n6798932\n\n{\"_type\": \"snscrape.modules.twitter.Tweet\", \"url\": \"https://twitter.com/skift/status/1508232397162258434\", \"date\": \"2022-03-27T23:59:59+00:00\", \"content\": \"Africa's Airline Recovery Faces Setback on Ukraine War's Higher Fuel Costs https://t.co/6aejPhMfU7\", ... }",
+    "check": "El conteo es 6798932 y la línea empieza con {\"_type\": \"snscrape.modules.twitter.Tweet\". En la tabla, el orden de las filas no está garantizado: SELECT ... LIMIT 1 puede devolver otro tweet.",
+    "error": "Si COUNT(*) no da 6798932, la carga se interrumpió o se duplicó: repite el comando del paso 3 con --replace."
+   },
+   {
+    "n": 5,
+    "minutes": 12,
+    "titulo": "Estimar costos antes de ejecutar",
+    "donde": "Cloud Shell.",
+    "action": "Para cada consulta, predice cuántos bytes leerá y compruébalo con --dry_run (no ejecuta nada ni cuesta). Después ejecuta la cuarta con un tope de 200 MB: verás que BigQuery se niega y te dice cuánto necesitaba. La estimación de la cuarta promete 66.9 MB; la ejecución real exige 23.67 GB.",
+    "costo": "Las estimaciones en seco no cuestan. La ejecución con tope se detiene antes de cobrar.",
+    "codigo": "for SQL in \\\n \"SELECT COUNT(*) FROM tweets_bronze.entrada\" \\\n \"SELECT value FROM tweets_bronze.entrada LIMIT 1\" \\\n \"SELECT JSON_VALUE(value, '\\$.id') FROM tweets_bronze.entrada\" \\\n \"SELECT value FROM tweets_bronze.entrada TABLESAMPLE SYSTEM (0.1 PERCENT)\"; do\n  echo \"$SQL\"; bq query --nouse_legacy_sql --dry_run \"$SQL\"\ndone\n\nbq query --nouse_legacy_sql --maximum_bytes_billed=200000000 \\\n \"SELECT value FROM tweets_bronze.entrada TABLESAMPLE SYSTEM (0.1 PERCENT)\"\n",
+    "salida": "... will process 0 bytes of data.\n... will process 23670340066 bytes of data.\n... will process 23670340066 bytes of data.\n... will process 66865367 bytes of data.\n\nBigQuery error in query operation: ... Query exceeded limit for bytes billed: 200000000. 23670554624 or higher required.",
+    "check": "Tres consultas piden 23,670,340,066 bytes (22.05 GiB) y COUNT(*) pide 0. La cuarta se estima en 66,865,367 pero la ejecución con tope falla exigiendo 23,670,554,624: la estimación no siempre se cumple.",
+    "error": "Si el comando falla por las comillas del JSON_VALUE, escríbelo en una línea o en un archivo .sql y pásalo por stdin. Un SQL que empieza con -- pasado como argumento hace fallar a bq: usa stdin."
+   },
+   {
+    "n": 6,
+    "minutes": 16,
+    "titulo": "De JSON a Parquet con Spark",
+    "donde": "Cloud Shell (editor de texto o cat > archivo) y consola de Dataproc para ver el lote.",
+    "action": "Guarda el script json_a_parquet.py (lee el archivo como texto y lo guarda como Parquet), activa Dataproc y envía el trabajo como lote sin servidor. --deps-bucket es obligatorio; elige una región de Estados Unidos y usa la misma en todos tus lotes. El script cuenta las filas del Parquet que escribió: deben coincidir con tu Bronze.",
+    "costo": "Dataproc Serverless cobra por los recursos que usa mientras corre. Un lote de Silver con hasta 4 ejecutores tardó unos 8 minutos en el ensayo; este script no se midió. Revisa el costo en Facturación y no dejes lotes repetidos.",
+    "codigo": "gcloud services enable dataproc.googleapis.com\ngcloud dataproc batches submit pyspark json_a_parquet.py \\\n  --region=us-central1 \\\n  --batch=json-a-parquet-001 \\\n  --deps-bucket=TU_BUCKET \\\n  --properties=spark.dynamicAllocation.maxExecutors=4\n",
+    "salida": "...\nFILAS 6798932\nBatch [json-a-parquet-001] finished.",
+    "check": "La salida imprime FILAS 6798932, igual que COUNT(*) de tu Bronze, y gcloud storage ls gs://TU_BUCKET/tweets_parquet/ lista archivos .parquet.",
+    "error": "Sin --deps-bucket, gcloud falla con \"--deps-bucket was not specified\" (se observó en el ensayo). Si el lote no arranca por red, la documentación de Dataproc Serverless exige Private Google Access en la subred (no se observó en el ensayo)."
+   }
   ],
-  "sources": [
-    [
-      "BigQuery · tablas externas",
-      "https://docs.cloud.google.com/bigquery/docs/external-data-cloud-storage"
-    ],
-    [
-      "BigQuery · control de costos",
-      "https://docs.cloud.google.com/bigquery/docs/best-practices-costs"
-    ],
-    [
-      "GoogleSQL · scripts",
-      "https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/procedural-language"
-    ],
-    [
-      "HSBC · Risk Advisory Tool",
-      "https://cloud.google.com/customers/hsbc-risk-advisory-tool"
-    ]
+  "cierre": [
+   "Qué conservar: la tabla tweets_bronze.entrada y el objeto war_tweets.txt; la sesión 4 parte de ellas. Anota tu manifiesto (nombre, tamaño, huella y filas).",
+   "Costo: el almacenamiento (22 GiB del archivo, 22 GiB de la tabla y unos 5.8 GiB del Parquet) se cobra por GiB y por mes; las consultas estimadas en seco no cuestan. Revisa Facturación después del lote de Spark.",
+   "Cierre de recursos: puedes borrar el Parquet que escribió Spark con gcloud storage rm -r gs://TU_BUCKET/tweets_parquet/ si no lo vas a usar. No borres tweets_bronze ni el archivo original.",
+   "Si falta un paso anterior, repítelo antes de seguir: cada comprobación depende de la anterior."
+  ]
+ },
+ "assets": [
+  "tweets/s03_01_bucket.sh",
+  "tweets/s03_02_manifiesto.sh",
+  "tweets/s03_03_cargar_bronze.sh",
+  "tweets/s03_04_contar_y_mirar.sql",
+  "tweets/s03_05_estimar_costos.sh",
+  "tweets/s03_06_json_a_parquet.py",
+  "tweets/s03_06_enviar_batch.sh",
+  "tweets/10_bronze_tweets.sql"
+ ],
+ "sources": [
+  [
+   "BigQuery · cargar CSV desde Cloud Storage",
+   "https://docs.cloud.google.com/bigquery/docs/loading-data-cloud-storage-csv"
   ],
-  "editorialSource": "../editorial/guion.py",
-  "slidesStatus": "Referencia de la versión anterior; las slides vigentes se generan desde editorial/guion.py."
+  [
+   "BigQuery · estimar y controlar costos",
+   "https://docs.cloud.google.com/bigquery/docs/best-practices-costs"
+  ],
+  [
+   "BigQuery · dry run",
+   "https://docs.cloud.google.com/bigquery/docs/dry-run-queries"
+  ],
+  [
+   "Cloud Storage · clases de almacenamiento",
+   "https://docs.cloud.google.com/storage/docs/storage-classes"
+  ],
+  [
+   "Dataproc Serverless",
+   "https://docs.cloud.google.com/dataproc-serverless/docs/overview"
+  ],
+  [
+   "Apache Spark · guía",
+   "https://spark.apache.org/docs/latest/rdd-programming-guide.html"
+  ]
+ ],
+ "editorialSource": "../editorial/s03.py",
+ "slidesStatus": "Slides vigentes en editorial/s03.py; este archivo solo alimenta la guía de laboratorio."
 }

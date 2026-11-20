@@ -1,610 +1,127 @@
 {
-  "session": 7,
-  "title": "La frase suena lista. La evidencia todavía no",
-  "minutes": 180,
-  "status": "Material local; guía cloud pendiente de ensayo con cuenta de alumno",
-  "slides": [
-    {
-      "id": "E07-01",
-      "title": "Una respuesta convincente puede recomendar una compra imposible",
-      "kind": "cover",
-      "items": [
-        {
-          "label": "Memo",
-          "text": "La tienda C ofrece una canasta completa de 54 MXN: una frase convincente y falsa en el fixture."
-        },
-        {
-          "label": "Pregunta",
-          "text": "¿Qué tendrías que verificar antes de reenviarla a dirección?"
-        }
-      ],
-      "code": null,
-      "note": "Memo ilustrativo que omite cobertura; encontrar el error Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-02",
-      "title": "El dashboard aporta evidencia, no una explicación automática",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Fuente",
-          "text": "El dashboard muestra cifras bajo reglas y filtros."
-        },
-        {
-          "label": "Explicación",
-          "text": "Un texto generado no demuestra por qué ocurrió un fenómeno ni valida los números."
-        }
-      ],
-      "code": null,
-      "note": "Recuperar fuentes, escenario, unidades y límites Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-03",
-      "title": "Hoy revisarás el memo como responsable de la decisión",
-      "kind": "flow",
-      "items": [
-        {
-          "label": "Resultado",
-          "text": "Un memo breve con afirmaciones auditadas."
-        },
-        {
-          "label": "Responsabilidad",
-          "text": "Tú decides qué se acepta, qué se corrige y cuándo falta evidencia."
-        }
-      ],
-      "code": null,
-      "note": "Criterios de aceptación, rechazo y abstención Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [],
-      "nodes": [
-        [
-          "Afirmación",
-          "Qué sostiene el texto"
-        ],
-        [
-          "Fuente",
-          "Qué evidencia existe"
-        ],
-        [
-          "Veredicto",
-          "Sustentada o por corregir"
-        ]
-      ]
-    },
-    {
-      "id": "E07-04",
-      "title": "Describir, predecir y generar responden preguntas distintas",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Describir",
-          "text": "Qué observamos en los datos."
-        },
-        {
-          "label": "Predecir / generar",
-          "text": "Estimar un resultado futuro no es redactar un texto. Identifica primero el trabajo que pide el negocio."
-        }
-      ],
-      "code": null,
-      "note": "Tres tarjetas de intención, no tres algoritmos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-05",
-      "title": "Para predecir hacen falta ejemplos y una prueba fuera de esos ejemplos",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Fundamento ML",
-          "text": "Aprender un patrón requiere ejemplos y una evaluación sobre datos no usados para aprenderlo."
-        },
-        {
-          "label": "Alcance",
-          "text": "Diez minutos conceptuales de negocio; no entrenamos modelos ni calculamos métricas técnicas."
-        }
-      ],
-      "code": null,
-      "note": "Explicación visual de aprender/evaluar, sin entrenamiento ni fórmulas técnicas Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-06",
-      "title": "Una predicción solo ayuda si mejora una acción",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Utilidad",
-          "text": "Una predicción vale si mejora una acción y conocemos el costo de equivocarnos."
-        },
-        {
-          "label": "Cierre conceptual",
-          "text": "Aquí termina ML; el laboratorio será GenAI y evidencia, sin entregable predictivo."
-        }
-      ],
-      "code": null,
-      "note": "Costo de equivocarse y responsable; cerrar aquí los 10 min de ML conceptual Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-07",
-      "title": "Un LLM genera texto; no es la fuente de tus números",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "LLM",
-          "text": "Genera texto condicionado por instrucciones y contexto."
-        },
-        {
-          "label": "Límite",
-          "text": "Fluidez no asegura exactitud ni actualidad; no usarlo como fuente primaria de los números."
-        }
-      ],
-      "code": null,
-      "note": "Texto probable frente a evidencia tabular; vocabulario mínimo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-08",
-      "title": "Un buen prompt define tarea, contexto y límites",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Prompt",
-          "text": "Definir rol, tarea, evidencia, límites, formato y cómo abstenerse."
-        },
-        {
-          "label": "Criterio",
-          "text": "Pedir citas ayuda a auditar; no garantiza que existan ni que respalden la frase."
-        }
-      ],
-      "code": null,
-      "note": "Construir instrucciones por clic; pedir evidencia y abstención Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-09",
-      "title": "Adjuntar un CSV no demuestra RAG",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Contexto aportado",
-          "text": "Pegar un CSV permite pedir un análisis del contexto recibido."
-        },
-        {
-          "label": "RAG",
-          "text": "Se necesita mostrar recuperación de evidencia relevante antes de generar; el nombre no lo demuestra."
-        }
-      ],
-      "code": null,
-      "note": "Separar análisis de datos aportados y recuperación de conocimiento Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-10",
-      "title": "RAG recupera evidencia antes de generar",
-      "kind": "retrieval",
-      "items": [
-        {
-          "label": "Flujo",
-          "text": "Pregunta → búsqueda → fragmentos con IDs → contexto → respuesta."
-        },
-        {
-          "label": "Aula",
-          "text": "La interfaz local recupera fichas; el alumno las revisa y las transfiere manualmente al modelo."
-        }
-      ],
-      "code": null,
-      "note": "Pregunta → búsqueda → fragmentos con IDs → respuesta; diagrama progresivo Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-11",
-      "title": "El dato que envías a la IA también requiere gobierno",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Gobierno",
-          "text": "Enviar solo agregados autorizados y contexto necesario."
-        },
-        {
-          "label": "Operación",
-          "text": "Verificar servicio/modelo elegible, presupuesto, límites y responsable; no enviar crudos personales."
-        }
-      ],
-      "code": null,
-      "note": "Agregados, minimización, permisos, costo y revisión humana Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-12",
-      "title": "UPS Capital ilustra analítica y modelos para una decisión",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "UPS Capital",
-          "text": "El caso ilustra analítica y modelos aplicados al riesgo en entregas."
-        },
-        {
-          "label": "Distinción",
-          "text": "No prueba RAG ni exige entrenar un predictor en Especialidad."
-        }
-      ],
-      "code": null,
-      "note": "Caso documentado; no convertirlo en entrenamiento ni prueba de RAG Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "UPS Capital · datos y decisiones · 2024",
-          "https://cloud.google.com/blog/products/data-analytics/ups-leverages-bigquery-and-striim-for-ai-secured-package-delivery"
-        ]
-      ]
-    },
-    {
-      "id": "E07-13",
-      "title": "Carrefour ilustra generación de contenido en negocio",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Carrefour",
-          "text": "El caso de Marketing Studio reporta uso de Vertex AI para crear campañas."
-        },
-        {
-          "label": "Transferencia",
-          "text": "La automatización de redacción requiere revisión; no demuestra la veracidad de nuestro memo."
-        }
-      ],
-      "code": null,
-      "note": "Caso Marketing Studio; beneficio atribuido al publicador Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "Google Cloud · casos GenAI (Carrefour)",
-          "https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders"
-        ]
-      ]
-    },
-    {
-      "id": "E07-14",
-      "title": "La recuperación puede traer evidencia irrelevante",
-      "kind": "retrieval",
-      "items": [
-        {
-          "label": "Recuperación",
-          "text": "Una búsqueda puede devolver una ficha vieja o irrelevante."
-        },
-        {
-          "label": "Evaluación",
-          "text": "Abrir fragmento y fecha antes de usar su ID como respaldo."
-        }
-      ],
-      "code": null,
-      "note": "Selector de fragmentos/fecha; cita existente pero insuficiente Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "GCP · patrón RAG",
-          "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"
-        ]
-      ]
-    },
-    {
-      "id": "E07-15",
-      "title": "Una cita válida debe respaldar la afirmación concreta",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Cita",
-          "text": "Debe existir y apoyar la afirmación concreta."
-        },
-        {
-          "label": "Auditoría",
-          "text": "Registrar afirmación, evidencia, estado y corrección; una cita decorativa no basta."
-        }
-      ],
-      "code": null,
-      "note": "Matriz afirmación/evidencia/estado; no premiar solo fluidez Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": [
-        [
-          "GCP · patrón RAG",
-          "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/rag-overview"
-        ]
-      ]
-    },
-    {
-      "id": "E07-16",
-      "title": "Pausa · prepara un resumen autorizado de Gold",
-      "kind": "pause",
-      "items": [
-        {
-          "label": "Pausa",
-          "text": "Diez minutos; prepara un agregado pequeño de Gold."
-        },
-        {
-          "label": "Alternativa",
-          "text": "Si falla el modelo, usar la respuesta docente escrita a mano, identificada como ejemplo, no salida real de IA."
-        }
-      ],
-      "code": null,
-      "note": "10 min Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-17",
-      "title": "Laboratorio: comparar respuestas y verificar cada cifra",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Ruta",
-          "text": "Exportar, comparar, recuperar, generar, comprobar y corregir."
-        },
-        {
-          "label": "Alcance",
-          "text": "El flujo tiene un paso humano; no hay un servicio RAG automático desplegado."
-        }
-      ],
-      "code": null,
-      "note": "Prompt, resumen, corpus acotado y tabla de auditoría Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-18",
-      "title": "Exporta solo la evidencia que necesitas",
-      "kind": "code",
-      "items": [
-        {
-          "label": "Resumen",
-          "text": "Ejecutar 08_resumen_ejecutivo.sql y revisar periodo, cobertura y unidad."
-        },
-        {
-          "label": "Minimización",
-          "text": "Copiar solo el resultado autorizado; no subir toda la fuente por comodidad."
-        }
-      ],
-      "code": "SELECT * FROM curso_gold.canastas\nWHERE escenario='demo_2024-01-15'\nORDER BY establecimiento;",
-      "note": "Paso 1: resumen agregado y límites de contexto Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-19",
-      "title": "Observa qué inventa una respuesta sin evidencia suficiente",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Respuesta base",
-          "text": "Pedir una recomendación sin suficiente evidencia y guardar la salida."
-        },
-        {
-          "label": "Observación",
-          "text": "No asumir que siempre alucinará; señalar respaldo o ausencia de él en lo que realmente devuelva."
-        }
-      ],
-      "code": null,
-      "note": "Paso 2: consulta base sin datos sensibles; guardar respuesta Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-20",
-      "title": "Recupera fragmentos y conserva sus identificadores",
-      "kind": "retrieval",
-      "items": [
-        {
-          "label": "Recuperación local",
-          "text": "Buscar canasta, cobertura o inventario; abrir los IDs recuperados."
-        },
-        {
-          "label": "Prueba negativa",
-          "text": "Una pregunta sobre inventario actual no tiene datos suficientes en el corpus."
-        }
-      ],
-      "code": null,
-      "note": "Paso 3: interfaz docente de recuperación, sin código del alumno Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-21",
-      "title": "Pide una recomendación que cite y reconozca límites",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Generación",
-          "text": "Copiar fragmentos revisados y Gold en el prompt proporcionado."
-        },
-        {
-          "label": "Pedido",
-          "text": "Memo de 180 palabras con referencias, límites y abstención cuando no se pueda concluir."
-        }
-      ],
-      "code": null,
-      "note": "Paso 4: aportar evidencia recuperada al prompt y comparar Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-22",
-      "title": "Valida las cifras fuera del texto generado",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Contraste",
-          "text": "Verificar cifras en SQL/BI y cada cita en su ficha."
-        },
-        {
-          "label": "Esperado",
-          "text": "A150/B160 completas; C54 es subtotal con cobertura0.6. Nada prueba inventario actual."
-        }
-      ],
-      "code": null,
-      "note": "Paso 5: contraste con SQL/dashboard y pregunta sin respuesta Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-23",
-      "title": "Conserva el memo junto a su auditoría",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Conservar",
-          "text": "Prompt, modelo/fecha, evidencia, respuesta y versión revisada."
-        },
-        {
-          "label": "Honestidad",
-          "text": "Si se usó ejemplo docente o no se ejecutó el servicio, dejarlo visible en el registro."
-        }
-      ],
-      "code": null,
-      "note": "Paso 6: versión revisada y registro de modelo/fecha Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-24",
-      "title": "Transfiere el método al dataset de tu equipo",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "Transferencia",
-          "text": "Usar Gold y metodología del dataset propio."
-        },
-        {
-          "label": "Regla",
-          "text": "Cambiar contexto y criterios; no reutilizar frases sobre canastas si el equipo estudia reseñas o préstamos."
-        }
-      ],
-      "code": null,
-      "note": "Usar su Gold y metodología; nunca reutilizar conclusiones PROFECO como propias Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-25",
-      "title": "Un compañero busca una afirmación no sustentada",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Revisión",
-          "text": "Un compañero busca una afirmación no respaldada y una cifra mal interpretada."
-        },
-        {
-          "label": "Corrección",
-          "text": "El objetivo no es ganar por estilo del texto sino cerrar el rastro de evidencia."
-        }
-      ],
-      "code": null,
-      "note": "Revisión de evidencia, no concurso de mejores prompts Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-26",
-      "title": "Decide qué puede automatizarse y qué debe aprobarse",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Automatizar",
-          "text": "Un borrador puede ahorrar redacción."
-        },
-        {
-          "label": "Aprobar",
-          "text": "Publicación, causalidad y decisiones con consecuencias requieren revisión; abstenerse puede ser la respuesta correcta."
-        }
-      ],
-      "code": null,
-      "note": "Control humano y escenario donde la respuesta correcta es abstenerse Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-27",
-      "title": "H7: recomendación, fuentes y límites verificables",
-      "kind": "contrast",
-      "items": [
-        {
-          "label": "H7",
-          "text": "Memo propio con auditoría de al menos cinco afirmaciones."
-        },
-        {
-          "label": "Evidencia",
-          "text": "Datos, citas, hipótesis y errores distinguidos; no hay puntos por entrenamiento ML."
-        }
-      ],
-      "code": null,
-      "note": "Checklist memo/prompts/evidencias/errores corregidos Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    },
-    {
-      "id": "E07-28",
-      "title": "La defensa evaluará tu criterio, no el del modelo",
-      "kind": "panels",
-      "items": [
-        {
-          "label": "Recuperación",
-          "text": "¿Por qué un CSV adjunto no demuestra RAG?"
-        },
-        {
-          "label": "Cierre",
-          "text": "Detener llamadas de prueba y registrar consumo. En S8 defenderás tu criterio y la evidencia."
-        }
-      ],
-      "code": null,
-      "note": "Cierre de llamadas/costo y preparación del comité Guiar la explicación con evidencia. Los valores del fixture son ilustrativos; el hito propio usa otra fuente. No atribuir una ejecución cloud a esta página.",
-      "sources": []
-    }
+ "session": 7,
+ "title": "La frase suena lista. La evidencia todavía no",
+ "minutes": 180,
+ "status": "Deck y guía vigentes. Las consultas SQL se ejecutaron con datos reales; Vertex AI Studio no se ensayó desde esta guía.",
+ "slides": [],
+ "lab": {
+  "aviso": "Las consultas SQL de esta guía se ejecutaron con datos reales y sus resultados se muestran tal cual. Vertex AI Studio no se ensayó desde esta guía: los nombres de menú pueden variar y el texto que genere un modelo cambia en cada ejecución. Las cifras de referencia pueden variar ligeramente en tus tablas.",
+  "prerequisitos": [
+   "Tus tablas Silver y Gold de las sesiones anteriores, en un proyecto con facturación activa: tweets_silver.tweets, tweets_silver.autores, tweets_gold.tema_dia, hashtags_dia, autores_alcance, aplicaciones_dia, actividad_hora y conversacion_dia (ubicación US).",
+   "Permiso para usar BigQuery y Vertex AI en tu proyecto.",
+   "Dos pestañas abiertas: BigQuery Studio y Vertex AI Studio.",
+   "Un editor de texto para armar tu prompt antes de pegarlo."
   ],
-  "lab": {
-    "steps": [
-      {
-        "n": 1,
-        "minutes": 5,
-        "action": "Exportar agregado acotado con consulta `08_resumen_ejecutivo.sql`; revisar unidades/periodo y datos autorizados",
-        "check": "Totales coinciden con Gold; si export contiene identificadores personales, reducir antes de enviarlo"
-      },
-      {
-        "n": 2,
-        "minutes": 8,
-        "action": "En el proyecto aprobado, abrir Studio > New > Chat > New chat (o Crear prompt según interfaz); elegir el modelo autorizado y registrar su nombre. Pegar: «¿Dónde conviene comprar una canasta?». Enviar una vez y guardar salida literal. No activar herramientas externas.",
-        "check": "Señalar afirmaciones sin respaldo sin asumir que siempre habrá alucinación; modelo inaccesible → salida docente identificada"
-      },
-      {
-        "n": 3,
-        "minutes": 12,
-        "action": "Usar interfaz docente para recuperar fichas por pregunta; inspeccionar IDs, fecha y pertinencia",
-        "check": "Evidencia seleccionada realmente responde; incluir pregunta fuera del corpus para ver ausencia de respaldo"
-      },
-      {
-        "n": 4,
-        "minutes": 12,
-        "action": "Abrir un chat nuevo con el mismo modelo. Pegar prompt-ejecutivo.txt completo, reemplazando los marcadores por fichas revisadas con IDs y tabla Gold. Enviar una vez, conservar la salida literal y contrastar con la respuesta base.",
-        "check": "Afirmaciones enlazan a IDs disponibles; no aceptar causalidad o predicción que el dato no permite"
-      },
-      {
-        "n": 5,
-        "minutes": 10,
-        "action": "Verificar al menos cinco afirmaciones: cifras con SQL/BI, citas con fuente, hipótesis como tales",
-        "check": "Registro sustentada/no sustentada/contradicha; citar un documento no prueba que el documento respalde el número"
-      },
-      {
-        "n": 6,
-        "minutes": 8,
-        "action": "Editar y guardar memo final con prompt, modelo/fecha, fuentes y comprobaciones",
-        "check": "Responsable firma revisión y limitaciones; si no hubo ejecución del alumno, dejarlo explícito"
-      }
-    ],
-    "instructions": "Prerrequisitos: Gold de S5 o CSV esperado etiquetado, corpus-evidencia.json y acceso a un proyecto aprobado. En BigQuery abrir una consulta, ejecutar 08_resumen_ejecutivo.sql tras revisar bytes y exportar el resultado autorizado. En Google Cloud abrir Studio del proyecto: el syllabus lo llama Vertex AI Studio; la documentación consultada muestra Agent Studio. Ruta documentada: Studio > New > Chat > New chat; revisar modelo en el panel de ajustes. Si aparece Detect build intent, desactivarlo en Settings para evitar evaluaciones adicionales; no crear agentes ni aplicaciones. Docente verifica permisos, región, modelo elegible, precio y crédito antes de clase. Solo dos solicitudes planificadas: base y con evidencia. Abrir práctica local, buscar términos y revisar IDs/fecha/pertinencia antes de trasladar fichas al prompt. Si no hay acceso, auditar respuesta-ejemplo.txt como texto docente escrito a mano; registrar generación cloud pendiente. Completar al menos cinco filas de auditoria-afirmaciones.csv. Guardar original, corrección y consumo observado; detener pruebas al terminar. El navegador local no llama APIs."
-  },
-  "assets": [
-    "08_resumen_ejecutivo.sql",
-    "prompt-ejecutivo.txt",
-    "respuesta-ejemplo.txt",
-    "auditoria-afirmaciones.csv",
-    "corpus-evidencia.json"
+  "instructions": "BigQuery Studio → elige tu proyecto en el selector → Nueva consulta. Pega un bloque a la vez, mira el estimador de bytes antes de ejecutar y copia la celda de resultado que se indica. Después abre Vertex AI Studio desde la consola de Google Cloud (busca «Vertex AI Studio» en la barra de búsqueda). Los pasos 1, 2 y 5 son SQL; el paso 3 es redacción; el paso 4 es la herramienta de IA; el paso 6 es tu cierre.",
+  "region": "BigQuery: la ubicación de tus datasets (US). Vertex AI Studio: elige una región donde haya modelos Gemini disponibles; la consola lo indica. Si la consola pide habilitar la API de Vertex AI, acéptalo: habilitarla no cobra por sí sola; el cobro llega al ejecutar un modelo.",
+  "steps": [
+   {
+    "n": 1,
+    "minutes": 10,
+    "titulo": "Recuperar cinco tweets con SQL",
+    "donde": "BigQuery Studio → Nueva consulta, con tu proyecto elegido.",
+    "action": "Pega el bloque 1 y ejecútalo; antes, mira el estimador de bytes. Después ejecuta el bloque 2, que arma esos mismos cinco tweets como un solo texto numerado, y copia la celda «contexto». Prueba otra fecha o idioma y compara el estimador.",
+    "costo": "≈ 82 MB por bloque: el filtro por fecha y por idioma lee solo esa parte de tweets_silver.tweets (referencia del curso; tu editor mostrará el tuyo).",
+    "codigo": "-- Paso 1 · Recuperar. Los 5 tweets en inglés con más likes que mencionan energía el 23 de marzo de 2022.\n-- Filtra por fecha (partición) y por idioma (cluster) antes de ordenar: así lees una fracción de la tabla.\nSELECT likes, url, SUBSTR(texto, 1, 230) AS texto\nFROM tweets_silver.tweets\nWHERE fecha = DATE '2022-03-23'\n  AND idioma = 'en'\n  AND REGEXP_CONTAINS(LOWER(texto), r'\\b(oil|gas|fuel|petrol|energy)\\b')\nORDER BY likes DESC\nLIMIT 5;\n\n-- Lo mismo, pero armado como UN solo texto numerado, listo para copiar en el prompt.\nSELECT STRING_AGG(FORMAT('[%d] (%d likes) %s %s', n, likes, url, texto), '\\n' ORDER BY n) AS contexto\nFROM (\n  SELECT ROW_NUMBER() OVER (ORDER BY likes DESC) AS n, likes, url,\n         REPLACE(SUBSTR(texto, 1, 230), '\\n', ' ') AS texto\n  FROM tweets_silver.tweets\n  WHERE fecha = DATE '2022-03-23'\n    AND idioma = 'en'\n    AND REGEXP_CONTAINS(LOWER(texto), r'\\b(oil|gas|fuel|petrol|energy)\\b')\n  ORDER BY likes DESC\n  LIMIT 5\n);",
+    "salida": "likes  | url (recortada)                                | texto\n46186  | …/richimedhurst/status/1506642880919740416     | Explosive. Russia is now demanding that Europe pay for gas in rubles. …\n21483  | …/KyivIndependent/status/1506756373601730565   | ⚡ The International Atomic Energy Agency reported that it was informed by Ukraine …\n18861  | …/KyivIndependent/status/1506623757447749640   | ⚡ Putin: Russia will only accept rubles for gas deliveries to EU. …\n16599  | …/spectatorindex/status/1506612829985869825    | BREAKING: Putin says Russia will demand payment in ruble for natural gas purchases …\n15710  | …/mchooyah/status/1506675225823485957          | If you honestly think that high gas prices are because of Putin, …\n\nBloque 2 (una sola celda «contexto»):\n[1] (46186 likes) …/richimedhurst/status/1506642880919740416 Explosive. Russia is now demanding that Europe pay for gas in rubles. Europe gets 40% of its gas from Russia. That’s 200-800 million euros per day. Putin is basically saying: you want to play sanctions? Either pay up in rubles…\n[2] (21483 likes) …/KyivIndependent/status/1506756373601730565 ⚡The International Atomic Energy Agency reported that it was informed by Ukraine that a forest near Chornobyl Nuclear Power Plant was on fire.\n[3] (18861 likes) …/KyivIndependent/status/1506623757447749640 ⚡ Putin: Russia will only accept rubles for gas deliveries to EU. Vladimir Putin said that “unfriendly countries” must pay for Russian energy in rubles & ordered the changes to be implemented within a week.\n[4] (16599 likes) …/spectatorindex/status/1506612829985869825 BREAKING: Putin says Russia will demand payment in ruble for natural gas purchases from 'unfriendly countries'\n[5] (15710 likes) …/mchooyah/status/1506675225823485957 If you honestly think that high gas prices are because of Putin, you should put your mask back on and lock yourself in your house again. Turn off the lights too.",
+    "check": "Cinco filas ordenadas por likes (46,186; 21,483; 18,861; 16,599; 15,710) y, en el bloque 2, una celda con [1] a [5].",
+    "error": "Si devuelve cero filas, comprueba que tweets_silver.tweets exista en tu proyecto (sesión 4) y que la fecha sea DATE '2022-03-23'. Si el estimador marca más de 1 GB, falta el filtro de fecha. Para tus propias preguntas: cambia fecha, idioma o palabras y vuelve a mirar el estimador."
+   },
+   {
+    "n": 2,
+    "minutes": 12,
+    "titulo": "Armar un contexto con tablas Gold",
+    "donde": "BigQuery Studio → Nueva consulta.",
+    "action": "Ejecuta el script completo. Devuelve una celda «contexto» con seis líneas numeradas [T1] a [T6], una por tabla Gold, con su nombre, filtro y base. Cópiala. Lee cada línea: ¿de qué tabla viene, qué cubre y contra qué base se mide?",
+    "costo": "≈ 38 KB procesados: las tablas Gold ya están resumidas.",
+    "codigo": "-- Paso 2 · Armar un contexto con TABLAS Gold: una línea numerada por tabla, con su nombre, filtro y base.\n-- Cada línea lleva su etiqueta [T1]…[T6] para que el modelo pueda citarla y tú puedas auditarla.\nWITH t1 AS (\n  SELECT 1 AS o, FORMAT('[T1] tweets_gold.tema_dia · 2022-03-23 · inglés · base %d tweets: %s',\n         ANY_VALUE(tweets_dia),\n         STRING_AGG(FORMAT('%s %d (%.3f %%)', tema, tweets_tema, pct_del_dia), '; ' ORDER BY pct_del_dia DESC)) AS linea\n  FROM tweets_gold.tema_dia\n  WHERE fecha = DATE '2022-03-23' AND grupo_idioma = 'en'\n),\nt2 AS (\n  SELECT 2, FORMAT('[T2] tweets_gold.hashtags_dia · 2022-03-23 · cinco hashtags con más tweets: %s',\n         STRING_AGG(FORMAT('#%s %d (%.3f %%)', hashtag, tweets, pct_del_dia), '; ' ORDER BY tweets DESC))\n  FROM (SELECT hashtag, tweets, pct_del_dia FROM tweets_gold.hashtags_dia\n        WHERE fecha = DATE '2022-03-23' ORDER BY tweets DESC LIMIT 5)\n),\nt3 AS (\n  SELECT 3, FORMAT('[T3] tweets_gold.autores_alcance · todo el archivo · segmento de seguidores: %s',\n         STRING_AGG(FORMAT('%s → %.2f %% de los tweets y %.2f %% de los likes', segmento, pct_tweets, pct_likes), '; ' ORDER BY segmento))\n  FROM tweets_gold.autores_alcance\n),\nt4 AS (\n  SELECT 4, FORMAT('[T4] tweets_gold.conversacion_dia · 2022-03-23 · tipo de tweet: %s',\n         STRING_AGG(FORMAT('%s %d tweets, mediana %d likes', tipo, tweets, mediana_likes), '; ' ORDER BY tweets DESC))\n  FROM tweets_gold.conversacion_dia\n  WHERE fecha = DATE '2022-03-23'\n),\nt5 AS (\n  SELECT 5, FORMAT('[T5] tweets_gold.aplicaciones_dia · 2022-03-23 · tres aplicaciones con más tweets: %s',\n         STRING_AGG(FORMAT('%s %d', aplicacion, tweets), '; ' ORDER BY tweets DESC))\n  FROM (SELECT aplicacion, tweets FROM tweets_gold.aplicaciones_dia\n        WHERE fecha = DATE '2022-03-23' AND aplicacion != 'otras' ORDER BY tweets DESC LIMIT 3)\n),\nt6 AS (\n  SELECT 6, FORMAT('[T6] tweets_gold.actividad_hora · 2022-03-23 · tres horas UTC con más tweets: %s',\n         STRING_AGG(FORMAT('%d:00 → %d', hora_utc, tweets), '; ' ORDER BY tweets DESC))\n  FROM (SELECT hora_utc, SUM(tweets) AS tweets FROM tweets_gold.actividad_hora\n        WHERE fecha = DATE '2022-03-23' GROUP BY hora_utc ORDER BY tweets DESC LIMIT 3)\n)\nSELECT STRING_AGG(linea, '\\n' ORDER BY o) AS contexto\nFROM (SELECT * FROM t1 UNION ALL SELECT * FROM t2 UNION ALL SELECT * FROM t3\n      UNION ALL SELECT * FROM t4 UNION ALL SELECT * FROM t5 UNION ALL SELECT * FROM t6);",
+    "salida": "[T1] tweets_gold.tema_dia · 2022-03-23 · inglés · base 311363 tweets: energia 10530 (3.382 %); sanciones 6085 (1.954 %); alimentos 3600 (1.156 %); mercados 2011 (0.646 %); cadena_suministro 573 (0.184 %); aviacion 398 (0.128 %)\n[T2] tweets_gold.hashtags_dia · 2022-03-23 · cinco hashtags con más tweets: #ukraine 49393 (8.711 %); #putin 14294 (2.521 %); #russia 13333 (2.351 %); #ucrania 5384 (0.950 %); #standwithukraine 4552 (0.803 %)\n[T3] tweets_gold.autores_alcance · todo el archivo · segmento de seguidores: 1 · menos de 1 mil → 67.02 % de los tweets y 8.72 % de los likes; 2 · 1 mil a 10 mil → 23.41 % de los tweets y 12.62 % de los likes; 3 · 10 mil a 100 mil → 6.59 % de los tweets y 25.07 % de los likes; 4 · 100 mil a 1 millón → 2.15 % de los tweets y 35.93 % de los likes; 5 · más de 1 millón → 0.84 % de los tweets y 17.66 % de los likes\n[T4] tweets_gold.conversacion_dia · 2022-03-23 · tipo de tweet: respuesta 271613 tweets, mediana 0 likes; original 241363 tweets, mediana 0 likes; cita 54047 tweets, mediana 0 likes\n[T5] tweets_gold.aplicaciones_dia · 2022-03-23 · tres aplicaciones con más tweets: Twitter Web App 190856; Twitter for Android 171340; Twitter for iPhone 119482\n[T6] tweets_gold.actividad_hora · 2022-03-23 · tres horas UTC con más tweets: 18:00 → 33700; 14:00 → 32958; 15:00 → 32667",
+    "check": "Seis líneas. T1 empieza «base 311363 tweets: energia 10530 (3.382 %)». T3 lista los cinco segmentos de seguidores. T6 dice 18:00 → 33700.",
+    "error": "Si una línea sale vacía o falta, esa tabla Gold no existe todavía en tu proyecto: créala con los scripts de la sesión 5. Si cambiaste la fecha, cambia las seis partes con DATE '2022-03-23'."
+   },
+   {
+    "n": 3,
+    "minutes": 10,
+    "titulo": "Escribir el prompt con reglas",
+    "donde": "Un editor de texto. Más tarde lo pegarás en Vertex AI Studio.",
+    "action": "Copia la plantilla y escribe dos versiones: A con el contexto del paso 1 y la pregunta «¿Qué anunció Putin sobre el pago del gas?»; B con el contexto del paso 2 y la pregunta «¿Qué tema tuvo más presencia el 23 de marzo en inglés?». No uses los dos contextos a la vez.",
+    "codigo": "# Plantilla de prompt · cinco partes\n\nCopia el bloque, sustituye lo que está entre llaves y pégalo en Vertex AI Studio.\n\n```\nROL\nEres analista de inteligencia de mercado. Redactas para un comité que decide qué temas vigilar.\n\nREGLAS\n- Usa SOLO el contexto de abajo.\n- Cada afirmación termina con la etiqueta de su fuente entre corchetes: [1], [2]… o [T1], [T2]…\n- Si el contexto no alcanza para responder, escribe exactamente: «No hay evidencia en el contexto.»\n- No afirmes causas. No inventes cifras ni etiquetas.\n\nCONTEXTO\n{pega aquí el resultado del paso 1 (cinco tweets) o del paso 2 (seis líneas de tablas Gold)}\n\nPREGUNTA\n{una sola pregunta concreta}\n\nFORMATO\nMáximo 120 palabras, en español, una frase por afirmación.\n```\n\n## Variantes que usarás en el laboratorio\n- Versión A: CONTEXTO = salida del paso 1 · PREGUNTA = ¿Qué anunció Putin sobre el pago del gas?\n- Versión B: CONTEXTO = salida del paso 2 · PREGUNTA = ¿Qué tema tuvo más presencia el 23 de marzo en inglés?",
+    "salida": "No hay salida de consulta: el resultado es un prompt de cinco partes (rol, reglas, contexto, pregunta, formato).",
+    "check": "Las cinco partes están. La parte «reglas» contiene «solo el contexto», «cita la etiqueta» y la frase exacta «No hay evidencia en el contexto.»",
+    "error": "Si pegas más contexto del necesario, el modelo lee más tokens y la respuesta cuesta más. Si olvidas la regla de las etiquetas, no podrás auditar en el paso 5."
+   },
+   {
+    "n": 4,
+    "minutes": 18,
+    "titulo": "Probar en Vertex AI Studio",
+    "donde": "Consola de Google Cloud → Vertex AI → Vertex AI Studio (los nombres de menú pueden variar: busca «Studio»).",
+    "action": "Elige un modelo de texto de la familia Gemini entre los que la consola ofrece en tu región. Pega la versión A del prompt y haz las preguntas P1 y P2 de la prueba A; después pega la versión B y haz P3, P4 y P5 de la prueba B. Guarda cada respuesta en tu editor.",
+    "costo": "Se cobra por tokens de entrada y de salida. Cada prueba de esta guía usa unos 300 a 400 tokens de contexto. Consulta la tarifa vigente del modelo que elijas en la página de precios.",
+    "codigo": "# Pruebas para Vertex AI Studio\n\nEl texto del modelo cambia en cada ejecución. No compares palabras: comprueba que se cumplan las reglas.\n\n## Prueba A · contexto = los cinco tweets del paso 1\n- **P1 (se puede responder):** ¿Qué anunció Putin sobre el pago del gas?\n  Debe citar [3] y/o [4].\n- **P2 (no se puede responder):** ¿Cuántos tweets hablaron de energía ese día?\n  Debe escribir «No hay evidencia en el contexto.» El contexto solo tiene cinco tweets.\n\n## Prueba B · contexto = las seis líneas del paso 2\n- **P3:** ¿Qué tema tuvo más presencia el 23 de marzo en inglés? Debe citar [T1]: energía, 10530 tweets (3.382 %).\n- **P4:** ¿Quién concentra la interacción? Debe citar [T3] y hablar de porcentajes de tweets y de likes por segmento.\n- **P5:** ¿Por qué subió la energía? Debe escribir «No hay evidencia en el contexto.» Ninguna tabla trae causas.\n\n## Cómo juzgar cada respuesta\n1. ¿Cada afirmación termina con una etiqueta que existe en tu contexto?\n2. ¿Cada cifra aparece, tal cual, en esa etiqueta?\n3. ¿Dice «No hay evidencia en el contexto.» donde debe?\nSi alguna respuesta falla, anótalo: esa afirmación pasa a la auditoría del paso 5 como «inventada».",
+    "salida": "No hay una respuesta de referencia: el modelo redacta distinto en cada ejecución.\nLo que sí debe cumplirse:\n- P1 cita [3] y/o [4].\n- P2 escribe «No hay evidencia en el contexto.»\n- P3 cita [T1] con energía 10530 (3.382 %).\n- P4 cita [T3] con porcentajes por segmento.\n- P5 escribe «No hay evidencia en el contexto.»",
+    "check": "Cada afirmación termina con una etiqueta que existe en tu contexto, y P2 y P5 se declaran sin evidencia. Si no ocurre, anota cuál falló: pasará a auditoría.",
+    "error": "Si el modelo da cifras sin etiqueta, endurece las reglas («Si una cifra no está en el contexto, no la escribas») y repite. Si no encuentras Vertex AI Studio, revisa que la API esté habilitada en tu proyecto y que tu cuenta tenga permiso para usarla."
+   },
+   {
+    "n": 5,
+    "minutes": 15,
+    "titulo": "Auditar afirmaciones con SQL",
+    "donde": "BigQuery Studio → Nueva consulta.",
+    "action": "Toma tres afirmaciones del texto que generó el modelo y, además, las seis del script (A1 a A6). Ejecuta el bloque de cada una. Asigna un veredicto: sustentada, contradicha o sin respaldo. A5 y A6 no se pueden decidir con las tablas.",
+    "costo": "A1 726 B · A2 6,984 B · A3 195 B · A4 612 B · último bloque ≈ 19 MB (lee la tabla de autores).",
+    "codigo": "-- Paso 5 · Auditar. Cada afirmación del texto generado se comprueba con una consulta sobre Gold.\n-- Veredictos posibles: sustentada, contradicha, sin respaldo (el dato no puede decidirlo).\n\n-- A1 «La energía fue el tema con más presencia el 23 de marzo en inglés.»  → sustentada\nSELECT tema, tweets_tema, pct_del_dia\nFROM tweets_gold.tema_dia\nWHERE fecha = DATE '2022-03-23' AND grupo_idioma = 'en'\nORDER BY pct_del_dia DESC;\n\n-- A2 «Las sanciones pesaron más en español que en inglés.»  → contradicha\nSELECT grupo_idioma, SUM(tweets_tema) AS tweets, SUM(tweets_dia) AS base,\n       ROUND(100 * SUM(tweets_tema) / SUM(tweets_dia), 2) AS pct\nFROM tweets_gold.tema_dia\nWHERE tema = 'sanciones'\nGROUP BY grupo_idioma\nORDER BY pct DESC;\n\n-- A3 «La mayoría de los likes viene de cuentas con más de un millón de seguidores.»  → contradicha\nSELECT segmento, pct_tweets, pct_likes\nFROM tweets_gold.autores_alcance\nORDER BY segmento;\n\n-- A4 «La mitad de los tweets son respuestas.»  → sustentada\nSELECT tipo, SUM(tweets) AS tweets,\n       ROUND(100 * SUM(tweets) / SUM(SUM(tweets)) OVER (), 1) AS pct\nFROM tweets_gold.conversacion_dia\nGROUP BY tipo\nORDER BY tweets DESC;\n\n-- A5 «Las sanciones causaron el pico de energía del 23 de marzo.»  → sin respaldo\n-- A6 «A la gente en Europa le preocupó más la energía.»  → sin respaldo\n-- Ninguna tabla Gold trae causas ni país: el idioma no es el país y cuatro de cada diez autores no declara ubicación.\n-- Lo que sí puedes comprobar sobre A6 es cuántos autores dejaron la ubicación vacía:\nSELECT COUNTIF(ubicacion IS NULL) AS autores_sin_ubicacion, COUNT(*) AS autores,\n       ROUND(100 * COUNTIF(ubicacion IS NULL) / COUNT(*), 1) AS pct\nFROM tweets_silver.autores;",
+    "salida": "A1: energia 10530 · 3.382 % ; sanciones 6085 · 1.954 % ; alimentos 3600 · 1.156 % …\nA2: en 67086 de 4013172 = 1.67 % · es 9600 de 1056425 = 0.91 % · otro 3580 de 1729335 = 0.21 %\nA3: 1 · menos de 1 mil 67.02 | 8.72 ; 2 · 1 mil a 10 mil 23.41 | 12.62 ; 3 · 10 mil a 100 mil 6.59 | 25.07 ; 4 · 100 mil a 1 millón 2.15 | 35.93 ; 5 · más de 1 millón 0.84 | 17.66\nA4: respuesta 3414201 = 50.2 % · original 2729906 = 40.2 % · cita 654825 = 9.6 %\nÚltimo bloque: 758047 autores sin ubicación de 1872074 = 40.5 %",
+    "check": "A1 y A4 sustentadas; A2 y A3 contradichas; A5 y A6 sin respaldo. Cada afirmación del modelo tiene su veredicto.",
+    "error": "Si tus cifras difieren un poco, revisa que usas las mismas tablas y fechas. Si una afirmación del modelo no corresponde a ninguna consulta, márcala «sin respaldo»: no inventes una consulta para justificarla."
+   },
+   {
+    "n": 6,
+    "minutes": 5,
+    "titulo": "Cerrar: qué puedes afirmar y qué no",
+    "donde": "Tu editor de texto o una hoja de cálculo.",
+    "action": "Completa la tabla con las afirmaciones que sí sostienes (con su etiqueta o consulta) y las que no, y escribe el límite que debes decir en cada una. Añade dos filas con afirmaciones del texto que generó el modelo en el paso 4.",
+    "codigo": "# Qué puedo afirmar y qué no · tu tabla\n\n| Afirmación | Etiqueta o consulta | Veredicto | Límite que debo decir |\n|---|---|---|---|\n| El 23 de marzo, 3.382 % de los tweets en inglés mencionaba energía | [T1] · A1 | Sustentada | Cuenta palabras clave, no importancia |\n| Las sanciones pesaron más en español que en inglés | A2 | Contradicha | 1.67 % en inglés frente a 0.91 % en español |\n| La mayoría de los likes viene de cuentas con más de 1 millón de seguidores | [T3] · A3 | Contradicha | 17.66 %; el segmento de 100 mil a 1 millón tiene 35.93 % |\n| La mitad de los tweets son respuestas | A4 | Sustentada | Vale para este archivo, no para Twitter |\n| Las sanciones causaron el pico de energía | — | Sin respaldo | Ninguna tabla trae causas |\n| A la gente en Europa le preocupó más la energía | A6 | Sin respaldo | No hay país; 40.5 % de los autores sin ubicación |\n\nCompleta dos filas más con afirmaciones del texto que generó el modelo en el paso 4.",
+    "salida": "La tabla de ejemplo del archivo: dos sustentadas, dos contradichas y dos sin respaldo.",
+    "check": "Cada fila tiene veredicto y límite; ninguna afirmación «sustentada» carece de etiqueta o consulta.",
+    "error": "Si algo te parece cierto pero no tiene tabla, no lo pongas como sustentado: es una hipótesis."
+   }
   ],
-  "sources": [
-    [
-      "Google Cloud · Studio / prompts",
-      "https://docs.cloud.google.com/gemini-enterprise-agent-platform/agent-studio/quickstart"
-    ],
-    [
-      "Google Cloud · patrón RAG",
-      "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview"
-    ],
-    [
-      "Google Cloud · casos GenAI (Carrefour)",
-      "https://cloud.google.com/transform/101-real-world-generative-ai-use-cases-from-industry-leaders"
-    ]
+  "cierre": [
+   "Qué te llevas: un método repetible: recuperar un corte pequeño, armar un contexto con etiquetas, pedir un texto bajo reglas y auditar cada afirmación. Guarda tus consultas, tu prompt y tu tabla sí / no.",
+   "Costo: las consultas de esta sesión leen desde unos bytes hasta unos 82 MB. Vertex AI Studio cobra por tokens de entrada y de salida; con contextos tan pequeños cada prueba cuesta muy poco, pero consulta la tarifa vigente antes de repetir muchas pruebas.",
+   "Cierre de recursos: no queda ningún recurso encendido; BigQuery y Vertex AI Studio cobran solo por uso. Cierra las pestañas. Si guardaste prompts en Studio, revisa su lista y bórralos si no los necesitas."
+  ]
+ },
+ "assets": [
+  "tweets/s07_01_recuperar_tweets.sql",
+  "tweets/s07_02_contexto_gold.sql",
+  "tweets/s07_03_prompt.md",
+  "tweets/s07_04_pruebas.md",
+  "tweets/s07_05_auditoria.sql",
+  "tweets/s07_06_cierre.md"
+ ],
+ "sources": [
+  [
+   "Google Cloud · recuperación y generación (RAG)",
+   "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview"
   ],
-  "editorialSource": "../editorial/guion.py · SESSIONS[7]",
-  "slidesStatus": "Referencia histórica; el deck vigente se genera desde guion.py."
+  [
+   "Google Cloud · prompts en Studio",
+   "https://docs.cloud.google.com/gemini-enterprise-agent-platform/agent-studio/quickstart"
+  ],
+  [
+   "Google Cloud · diseño de prompts",
+   "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/introduction-prompt-design"
+  ],
+  [
+   "Google Cloud · precios de IA generativa (consultar tarifa vigente)",
+   "https://cloud.google.com/vertex-ai/generative-ai/pricing"
+  ],
+  [
+   "Google Cloud · BigQuery, control de costos",
+   "https://docs.cloud.google.com/bigquery/docs/best-practices-costs"
+  ]
+ ],
+ "editorialSource": "../editorial/s07.py",
+ "slidesStatus": "Slides vigentes en editorial/s07.py; este archivo solo alimenta la guía de laboratorio."
 }

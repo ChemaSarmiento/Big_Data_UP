@@ -1,9 +1,212 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S6 · La gráfica también puede torcer la decisión</title><link rel="stylesheet" href="../compartido/curso.css"><script src="../compartido/journal.js" defer></script></head><body data-session="6"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S6 · 180 MINUTOS</p><h1>La gráfica también puede torcer la decisión</h1><p class="notice">Material local para revisión. Datos y resultados del fixture son ilustrativos: no provienen de filas de PROFECO ni demuestran escala. Los pasos cloud requieren cuenta, permisos, región y ensayo previo del docente. No se han ejecutado en GCP desde este sitio.</p><h2>Preparación, herramientas y ruta exacta</h2><p>Preparar Gold de S5, cuenta BI y permisos acordados. La ruta del syllabus usa Looker Studio; la documentación consultada redirige a Data Studio. Crear informe y conectar BigQuery a curso_gold.canastas. Seguir los seis pasos con escenario fijo; detalle se conecta aparte y se verifica por fuente. Comprobar resultados con07_control_dashboard.sql antes de compartir. No crear serie temporal ni mapa con el fixture: carece de historia y geografía suficientes. Credenciales del propietario y del lector tienen requisitos distintos; registrar modalidad aprobada. Si no hay acceso cloud, abrir practica.html y gold-esperado.csv, declarar que solo se validó diseño local y dejar conexión/acceso pendientes.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/07_control_dashboard.sql" download>07_control_dashboard.sql ↓</a></li><li><a href="../recursos/gold-esperado.csv" download>gold-esperado.csv ↓</a></li><li><a href="../recursos/wireframe-dashboard.md" download>wireframe-dashboard.md ↓</a></li></ul><p><a href="practica.html">Abrir práctica local del dashboard ↗</a></p><p><strong>Región propuesta:</strong> us-central1; verificar compatibilidad de GCS/BigQuery y política de cuenta. Leer los scripts antes de ejecutarlos en un proyecto de laboratorio: las escrituras reemplazan solo tablas curso_*. No apuntarlas a datos reales por un cambio de nombre improvisado.</p><section id="paso-1"><h2>Paso 1 · 5 min</h2><p><strong>Acción:</strong> Abrir Looker Studio (documentación vigente: Data Studio) → Crear → Informe → Añadir datos → BigQuery. Seleccionar proyecto autorizado, curso_gold y canastas. Revisar credenciales y proyecto de facturación con docente.</p><p><strong>Comprobación y recuperación:</strong> Fuente muestra A,B,C y escenario demo_2024-01-15. Si falta permiso, responsable autorizado; no publicar ni conceder Owner para evitar error.</p></section><section id="paso-2"><h2>Paso 2 · 8 min</h2><p><strong>Acción:</strong> Revisar tipos y grano: establecimiento/escenario dimensiones, cobertura numérica con formato%, costo_completo_mxn monetario MXN con NULL. Fijar filtro de escenario demo_2024-01-15.</p><p><strong>Comprobación y recuperación:</strong> Comparar las tres filas con07_control_dashboard.sql. Comprobar unicidad antes de usar MAX como valor por tienda; MAX no corrige duplicados.</p></section><section id="paso-3"><h2>Paso 3 · 12 min</h2><p><strong>Acción:</strong> Insertar barras horizontales: dimensión establecimiento, métrica MAX(costo_completo_mxn), filtros escenario y elegible=true. Eje mínimo0, etiquetas y moneda. Añadir tabla de cobertura SIN filtro elegible.</p><p><strong>Comprobación y recuperación:</strong> Barras A150/B160; tabla de cobertura A100%,B100%,C60%. Tarjeta opcional MIN del costo entre completas; evitar SUM de tiendas alternativas. C no desaparece del control de cobertura.</p></section><section id="paso-4"><h2>Paso 4 · 12 min</h2><p><strong>Acción:</strong> Añadir fuente curso_gold.detalle y tabla con establecimiento, producto, cantidad_envases, fecha_observada e importe_mxn. Aplicar el mismo escenario explícitamente a esta tabla.</p><p><strong>Comprobación y recuperación:</strong> Controles de tienda separados y rotulados por fuente en la ruta base. No asumir que un control filtra fuentes diferentes. Probar A,B,C y comparar cada visual con SQL; evitar joins entre resumen y detalle que repitan el costo.</p></section><section id="paso-5"><h2>Paso 5 · 10 min</h2><p><strong>Acción:</strong> Redactar título compatible con filtros: Costo de canastas completas entre tiendas visibles. Añadir catálogo, unidad, fecha, fuente y limitación; inspeccionar casos de canasta incompleta o sin resultados.</p><p><strong>Comprobación y recuperación:</strong> Solo C: no hay costo completo; no mostrar0 ni54 como canasta completa. Una conclusión fija requiere escenario bloqueado o actualización verificada. Usar practica.html como referencia local, no como informe conectado.</p></section><section id="paso-6"><h2>Paso 6 · 8 min</h2><p><strong>Acción:</strong> Compartir con identidad autorizada y probar lectura desde otra cuenta disponible. Exportar PDF con filtros visibles y guardar SQL de control, modo de credenciales y prueba de acceso.</p><p><strong>Comprobación y recuperación:</strong> Si falta segunda identidad, marcar acceso pendiente. Revisar destinatarios, refrescos y costos; no hacer público ni asumir que cerrar navegador detiene servicios. Conservar Gold para S7.</p></section><h2>Código completo y materiales</h2><details><summary>07_control_dashboard.sql · ver contenido completo</summary><pre><code>-- GoogleSQL: comprobar exactamente un escenario antes de interpretar el dashboard.
-SELECT escenario, establecimiento, cobertura, costo_completo_mxn, subtotal_mxn
-FROM curso_gold.canastas WHERE escenario=&#x27;demo_2024-01-15&#x27;
-ORDER BY elegible DESC, costo_completo_mxn, establecimiento;
-SELECT establecimiento, producto, cantidad_envases, fecha_observada, importe_mxn
-FROM curso_gold.detalle WHERE escenario=&#x27;demo_2024-01-15&#x27; ORDER BY establecimiento,producto;
--- No sumar costos de distintas tiendas como si fueran una sola compra.
--- No sumar snapshots ni escenarios en tarjetas de total.
-</code></pre></details><section id="proyecto"><h2>Transferencia al proyecto propio · 30 minutos</h2><p>Usa tu dataset distinto al de otros equipos. Conserva grano, reglas, fuente, KPI y límites de tu dominio. Las canastas y cifras ilustrativas no son un proyecto obligatorio. La preparación de cada paquete real debe validarse con el docente; no aplicar el esquema del fixture a cualquier archivo.</p><form id="journal-form"><label>Dataset y equipo<input name="dataset" maxlength="200" required></label><label>Evidencia del hito H6<textarea name="evidence" rows="3" maxlength="2000" required></textarea></label><label>Qué ejecuté / qué preparó el docente / qué falta<textarea name="limits" rows="3" maxlength="1500"></textarea></label><button type="submit">Descargar registro H6 ↓</button><span id="journal-status" role="status"></span></form><p class="micro">Solo este navegador. La ficha no asigna fuentes ni envía una entrega. No escribir credenciales. Si localStorage falla, descargar el archivo.</p><a href="entregable.md" download>Plantilla del entregable ↓</a></section><section><h2>Entrega, costo y cierre</h2><p>Guardar consulta, versión de fuente, resultados/controles y límites; adjuntar el hito del dataset propio. Registrar bytes/job/caché o uso de modelo cuando corresponda. Cerrar la página no detiene recursos cloud. Conservar las capas necesarias para la siguiente sesión, revisar expiraciones/refrescos y detener cómputo de práctica según acuerdo; no borrar proyectos compartidos.</p><p>Si falta un paso anterior, usar el punto de restauración ilustrativo apropiado y decirlo. Esa recuperación no cuenta como ejecución real de una fuente grande ni del proyecto propio. No se exige entrenar ML.</p></section><h2>Fuentes</h2><p><a href="https://docs.cloud.google.com/looker/docs/studio/connect-to-google-bigquery" target="_blank" rel="noopener">BI · conector BigQuery ↗</a> · <a href="https://www.storytellingwithdata.com/blog/2017/3/22/so-what" target="_blank" rel="noopener">Cole Nussbaumer Knaflic · el mensaje ↗</a> · <a href="https://www.duarte.com/resources/books/resonate/" target="_blank" rel="noopener">Duarte · Resonate ↗</a> · <a href="https://cloud.google.com/blog/products/data-analytics/improving-retail-using-bigquery-and-looker" target="_blank" rel="noopener">Mercado Libre · BigQuery y Looker · 2022 ↗</a></p><p>Consulta documental: 2026-11-05. Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas-docente.md">Notas docentes</a> · <a href="../">Índice de sesiones</a></p></article></body></html>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guía S6 · Un tablero decide antes de que alguien lo lea</title><link rel="stylesheet" href="../compartido/curso.css"></head><body data-session="6"><article class="guide"><a href="index.html">← Volver al deck</a><p class="eyebrow">ESPECIALIDAD / S6 · 180 MINUTOS</p><h1>Un tablero decide antes de que alguien lo lea</h1><p class="notice">La interfaz de Data Studio no se ensayó al preparar esta guía: los nombres de menús y botones pueden variar. Las comprobaciones con SQL sí se ejecutaron en BigQuery sobre las seis tablas Gold del curso y sus resultados son los de «Salida esperada». Los datos son tweets de 12 días de marzo de 2022 (uso académico) y no representan toda la conversación pública.</p><h2>Antes de empezar</h2><ul><li>Sesión 5 terminada: tienes las seis tablas Gold (tema_dia, hashtags_dia, autores_alcance, aplicaciones_dia, actividad_hora, conversacion_dia) en el dataset tweets_gold de TU_PROYECTO.</li><li>Roles que pide la documentación del conector: BigQuery Data Viewer sobre tu dataset y BigQuery Job User en el proyecto que factura. Si eres propietario del proyecto ya los tienes.</li><li>El proyecto tiene facturación asociada (el conector lo exige) y el presupuesto con alerta de la primera sesión.</li><li>Navegador con tu cuenta de Google. Data Studio está en datastudio.google.com (el producto se llamó antes Looker Studio).</li></ul><h2>Preparación, herramientas y ruta exacta</h2><p>Ruta: BigQuery Studio → editor SQL → ejecuta la consulta de cada paso para ver el número que debes reproducir; Data Studio → Crear → Informe → Agregar datos → BigQuery → TU_PROYECTO → tweets_gold → tabla → Agregar. Convención: una fuente de datos por tabla Gold y una página por pregunta (panorama; dentro del tema; quién, cuándo y cómo). En BigQuery escribe dataset.tabla sin el nombre del proyecto, con tu proyecto elegido en la consola.</p><h2>Recursos completos descargables</h2><ul><li><a href="../recursos/tweets/s06_01_comprobar_gold.sql" download>tweets/s06_01_comprobar_gold.sql ↓</a></li><li><a href="../recursos/tweets/s06_02_validar_panorama.sql" download>tweets/s06_02_validar_panorama.sql ↓</a></li><li><a href="../recursos/tweets/s06_03_validar_hashtags_apps.sql" download>tweets/s06_03_validar_hashtags_apps.sql ↓</a></li><li><a href="../recursos/tweets/s06_04_validar_alcance_hora_conversacion.sql" download>tweets/s06_04_validar_alcance_hora_conversacion.sql ↓</a></li><li><a href="../recursos/tweets/s06_05_revision.md" download>tweets/s06_05_revision.md ↓</a></li><li><a href="../recursos/tweets/s06_06_costo_tablero.sql" download>tweets/s06_06_costo_tablero.sql ↓</a></li></ul><p><strong>Región y permisos:</strong> Tus tablas Gold están en la ubicación que elegiste al crear el dataset (US en esta guía). Data Studio lee de BigQuery sin copiar los datos. Nada de esta sesión crea recursos que sigan cobrando: lo que se factura son las consultas del tablero.</p><section id="paso-1"><h2>Paso 1 · Comprueba tus tablas Gold y conéctalas a un informe · 10 min</h2><p><strong>Dónde:</strong> BigQuery Studio → nueva consulta, con TU_PROYECTO elegido. Después, Data Studio (datastudio.google.com; antes Looker Studio) → Crear → Informe → Agregar datos → BigQuery → tu proyecto → tweets_gold → tema_dia.</p><p><strong>Acción:</strong> Ejecuta la consulta de abajo: lista tus tablas Gold con sus filas y bytes, usando solo metadatos. Debes ver las seis tablas de la sesión anterior más temas_palabras. Luego crea un informe en blanco en Data Studio, agrega tema_dia como fuente de datos con las credenciales del propietario (la opción predeterminada) y confirma el número de registros.</p><p><strong>Costo estimado:</strong> 0 bytes: la consulta lee metadatos, no filas.</p><pre><code>-- Paso 1 · ¿Existen tus tablas Gold y cuánto pesan? Usa metadatos: el estimador debe decir 0 bytes.
+SELECT table_id AS tabla, row_count AS filas, size_bytes AS bytes
+FROM tweets_gold.__TABLES__
+ORDER BY table_id;</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>tabla             | filas  | bytes
+------------------+--------+-------
+actividad_hora    |    804 |  23048
+aplicaciones_dia  |    108 |   3228
+autores_alcance   |      5 |    315
+conversacion_dia  |     36 |   1476
+hashtags_dia      |  10636 | 467828
+tema_dia          |    216 |  12168
+temas_palabras    |     42 |    901</code></pre><p><strong>Comprueba:</strong> Ves las siete tablas y tema_dia tiene 216 filas. En Data Studio, el número de registros de la fuente tema_dia también es 216.</p><p><strong>Error frecuente y recuperación:</strong> Falta una tabla: vuelve a crearla con el SQL de la sesión 5 antes de seguir. Data Studio dice que no tienes acceso: comprueba que el proyecto que factura es el tuyo y que tu cuenta tiene BigQuery Data Viewer sobre el dataset y BigQuery Job User en el proyecto.</p></section><section id="paso-2"><h2>Paso 2 · Página 1 · Panorama del tema · 12 min</h2><p><strong>Dónde:</strong> Data Studio → tu informe, página 1. Gráfico de series temporales, tres tarjetas y un control de lista desplegable.</p><p><strong>Acción:</strong> Primero valida el número con SQL. Después, en Data Studio, crea el campo calculado pct_ponderado = SUM(tweets_tema) / SUM(tweets_dia), dibuja una serie temporal con fecha en el eje X y pct_ponderado, filtra tema = energia, agrega un control de lista desplegable sobre grupo_idioma, tres tarjetas con SUM(tweets_tema), SUM(tweets_dia) y el porcentaje del periodo (todas con el filtro tema = energia), una nota de texto «16 de marzo: día parcial (134,871 tweets)» y un título con la conclusión.</p><p><strong>Costo estimado:</strong> ≈ 10 MiB facturables por consulta (mínimo por tabla).</p><pre><code>-- Paso 2 · Valida la serie del panorama antes de dibujarla.
+-- El porcentaje correcto es SUMA de tweets del tema dividida entre SUMA de tweets del día
+-- (no promedies pct_del_dia: cada idioma tiene una base distinta).
+SELECT fecha,
+       SUM(tweets_tema) AS tweets_tema,
+       SUM(tweets_dia)  AS tweets_dia,
+       ROUND(100 * SUM(tweets_tema) / SUM(tweets_dia), 3) AS pct_ponderado
+FROM tweets_gold.tema_dia
+WHERE tema = &#x27;energia&#x27;
+GROUP BY fecha
+ORDER BY fecha;</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>fecha       | tweets_tema | tweets_dia | pct_ponderado
+2022-03-16  |        2169 |     134871 |         1.608
+2022-03-17  |       13388 |     778608 |         1.719
+2022-03-18  |       12886 |     735033 |         1.753
+2022-03-19  |       10071 |     590028 |         1.707
+2022-03-20  |        9619 |     614483 |         1.565
+2022-03-21  |       11938 |     632383 |         1.888
+2022-03-22  |       10439 |     586523 |          1.78
+2022-03-23  |       17582 |     567023 |         3.101
+2022-03-24  |       15623 |     584497 |         2.673
+2022-03-25  |       14132 |     554519 |         2.549
+2022-03-26  |       10485 |     505568 |         2.074
+2022-03-27  |        9266 |     515396 |         1.798</code></pre><p><strong>Comprueba:</strong> En el tablero, el 23 de marzo marca 3.10 % y el 16 de marzo 1.61 %. Las tarjetas muestran 137,598 tweets de energía, 6,798,932 de base y 2.02 % del periodo.</p><p><strong>Error frecuente y recuperación:</strong> Si usas el promedio de pct_del_dia obtienes otro número: el 16 de marzo da 1.35 % en lugar de 1.61 %, porque cada idioma tiene una base distinta. Si la tarjeta de base muestra 40,793,592, olvidaste filtrar tema = energia (la tabla repite cada día una vez por tema).</p></section><section id="paso-3"><h2>Paso 3 · Página 2 · Dentro del tema · 12 min</h2><p><strong>Dónde:</strong> Data Studio → tu informe → Agregar página. Agrega dos fuentes de datos más: hashtags_dia y aplicaciones_dia.</p><p><strong>Acción:</strong> Valida con SQL los dos resultados del 23 de marzo. Después crea dos gráficos de barras horizontales. Hashtags: dimensión hashtag, métrica SUM(tweets), filtro fecha = 23 de marzo de 2022, orden descendente, 8 filas. Aplicaciones: dimensión aplicacion, métrica SUM(tweets), el mismo filtro de fecha, orden descendente. Pon el filtro de fecha dentro de cada gráfico, para no depender de cómo se comporta un control compartido entre dos fuentes de datos distintas. Añade un título con conclusión y una nota con la fuente.</p><p><strong>Costo estimado:</strong> ≈ 10 MiB facturables por gráfica.</p><pre><code>-- Paso 3 · Valida las dos gráficas de «dentro del tema» para un día elegido.
+-- 3a. Los 8 hashtags con más tweets el 23 de marzo.
+SELECT hashtag, tweets, pct_del_dia
+FROM tweets_gold.hashtags_dia
+WHERE fecha = DATE &#x27;2022-03-23&#x27;
+ORDER BY tweets DESC
+LIMIT 8;
+
+-- 3b. Desde qué aplicación se publicó ese día.
+SELECT aplicacion, tweets
+FROM tweets_gold.aplicaciones_dia
+WHERE fecha = DATE &#x27;2022-03-23&#x27;
+ORDER BY tweets DESC;</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 3a
+hashtag           | tweets | pct_del_dia
+ukraine           |  49393 |       8.711
+putin             |  14294 |       2.521
+russia            |  13333 |       2.351
+ucrania           |   5384 |        0.95
+standwithukraine  |   4552 |       0.803
+ukrainerussianwar |   3698 |       0.652
+ukrainerussiawar  |   2912 |       0.514
+russian           |   2765 |       0.488
+
+-- 3b
+aplicacion          | tweets
+Twitter Web App     | 190856
+Twitter for Android | 171340
+Twitter for iPhone  | 119482
+otras               |  36249
+Twitter for iPad    |  15975
+WordPress.com       |  11906
+TweetDeck           |   9994
+dlvr.it             |   6893
+IFTTT               |   4328</code></pre><p><strong>Comprueba:</strong> La primera barra de hashtags es #ukraine con 49,393 tweets (8.71 % del día) y la primera de aplicaciones es Twitter Web App con 190,856. Ambas gráficas parten de cero y están ordenadas.</p><p><strong>Error frecuente y recuperación:</strong> Las barras salen sin orden: en el panel de estilo elige ordenar por la métrica, descendente. Aparecen hashtags de todos los días sumados: faltó el filtro de fecha del gráfico. El gráfico de hashtags muestra más de 8 barras: limita las filas a 8.</p></section><section id="paso-4"><h2>Paso 4 · Página 3 · Quién, cuándo y cómo · 14 min</h2><p><strong>Dónde:</strong> Data Studio → Agregar página. Agrega tres fuentes: autores_alcance, actividad_hora y conversacion_dia.</p><p><strong>Acción:</strong> Valida con SQL las tres respuestas. Después crea: (a) barras agrupadas con dimensión segmento y métricas pct_tweets y pct_likes, sin ningún filtro (la tabla ya está resumida), eje desde cero; (b) serie con hora_utc en el eje X, métrica SUM(tweets), desglose por grupo_idioma, filtro fecha = 23 de marzo de 2022, y la hora como número ordenado de 0 a 23; (c) barras apiladas al 100 % con dimensión tipo y métrica SUM(tweets) para todo el periodo. Un color de acento por gráfica y etiquetas directas.</p><p><strong>Costo estimado:</strong> ≈ 10 MiB facturables por gráfica.</p><pre><code>-- Paso 4 · Valida las tres gráficas de «quién, cuándo y cómo».
+-- 4a. Quién concentra los tweets y quién concentra los likes.
+SELECT segmento, autores, tweets, pct_tweets, pct_likes
+FROM tweets_gold.autores_alcance
+ORDER BY segmento;
+
+-- 4b. Ritmo del 23 de marzo: la hora UTC con más y con menos tweets por idioma.
+SELECT grupo_idioma,
+       ARRAY_AGG(hora_utc ORDER BY tweets DESC LIMIT 1)[OFFSET(0)] AS hora_pico,
+       MAX(tweets) AS tweets_pico,
+       ARRAY_AGG(hora_utc ORDER BY tweets ASC LIMIT 1)[OFFSET(0)]  AS hora_valle,
+       MIN(tweets) AS tweets_valle
+FROM tweets_gold.actividad_hora
+WHERE fecha = DATE &#x27;2022-03-23&#x27;
+GROUP BY grupo_idioma
+ORDER BY grupo_idioma;
+
+-- 4c. Cómo se reparte la conversación el 27 de marzo.
+SELECT tipo, tweets,
+       ROUND(100 * tweets / SUM(tweets) OVER (), 1) AS pct,
+       mediana_likes
+FROM tweets_gold.conversacion_dia
+WHERE fecha = DATE &#x27;2022-03-27&#x27;
+ORDER BY tweets DESC;</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>-- 4a
+segmento               | autores | tweets  | pct_tweets | pct_likes
+1 · menos de 1 mil     | 1441113 | 4556410 |      67.02 |      8.72
+2 · 1 mil a 10 mil     |  353935 | 1591541 |      23.41 |     12.62
+3 · 10 mil a 100 mil   |   65549 |  447790 |       6.59 |     25.07
+4 · 100 mil a 1 millón |   10102 |  146126 |       2.15 |     35.93
+5 · más de 1 millón    |    1375 |   57065 |       0.84 |     17.66
+
+-- 4b
+grupo_idioma | hora_pico | tweets_pico | hora_valle | tweets_valle
+en           |        18 |       18476 |          5 |         7257
+es           |        14 |        5679 |          5 |         1471
+otro         |        14 |        9769 |          3 |         1858
+
+-- 4c (27 de marzo)
+tipo      | tweets | pct  | mediana_likes
+respuesta | 284112 | 55.1 |             0
+original  | 183635 | 35.6 |             0
+cita      |  47649 |  9.2 |             0</code></pre><p><strong>Comprueba:</strong> Las barras del segmento «más de 1 millón» marcan 0.84 % de los tweets y 17.66 % de los likes; la serie por hora muestra el máximo del inglés a las 18 y el del español a las 14; las tres barras de conversación suman 100 %.</p><p><strong>Error frecuente y recuperación:</strong> La hora aparece como texto y se ordena 0, 1, 10, 11…: cambia el tipo del campo hora_utc a número. Las barras apiladas no suman 100 %: elige el tipo de gráfico «apilado al 100 %», no «apilado». Una barra de alcance supera 70 %: sumaste dos veces el mismo segmento; no agregues dimensiones extra a autores_alcance.</p></section><section id="paso-5"><h2>Paso 5 · Revisa el tablero con la lista de siete preguntas · 12 min</h2><p><strong>Dónde:</strong> Data Studio → modo de vista (botón Ver). Revisa cada página como lo haría un lector, no como autor.</p><p><strong>Acción:</strong> Copia la lista de abajo y respóndela una vez por página. Corrige lo que falle: cambia títulos, marca el día parcial, ordena barras, quita colores de más. Si cambias un filtro en la vista, comprueba que el título sigue siendo cierto: un título fijo con un filtro variable deja de ser verdadero en cuanto el lector toca el control. Escribe el estado por defecto del filtro dentro del título o usa un título que no dependa de él.</p><p><strong>Costo estimado:</strong> 0 bytes adicionales si no cambias fuentes (los resultados recientes se reutilizan).</p><pre><code># Paso 5 · Revisión del tablero (copia esta lista y respóndela por página)
+
+Para cada página (1 Panorama · 2 Dentro del tema · 3 Quién, cuándo y cómo):
+
+1. ¿El título dice la conclusión, con un número y un límite? (no «Tweets por tema»)
+2. ¿Cada medida muestra su base? (porcentaje del día, no solo conteo)
+3. ¿Las barras parten de cero?
+4. ¿Hay un solo color de acento y el resto es contexto?
+5. ¿Se ve qué cubre el filtro de idioma o de fecha?
+6. ¿El 16 de marzo (día parcial, horas 20 a 23 UTC) está marcado o excluido, y dicho?
+7. ¿Cada gráfica lee una tabla Gold y no Silver ni Bronze?
+
+Títulos de partida (ajusta los números a lo que ves en TU tablero):
+
+- Página 1: «Energía pasó de 1.6–1.9 % a 3.1 % de los tweets el 23 de marzo; el dato no explica por qué»
+- Página 2: «#ukraine aparece en 8.71 % de los tweets del 23 de marzo; #nato y #standwithukraine alcanzan su máximo el 24»
+- Página 3: «Menos de 1 % de los tweets, casi 18 % de los likes: pocos autores concentran la atención»</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>Revisión de la página 1 (ejemplo)
+1. Título con número y límite: sí
+2. Base visible (% del día y tarjeta de base): sí
+3. Barras desde cero: no aplica (serie temporal)
+4. Un acento: sí (energía en azul, nada más)
+5. Filtro de idioma visible: sí, con la cobertura escrita
+6. Día parcial marcado: sí
+7. Tabla Gold, no Silver: sí</code></pre><p><strong>Comprueba:</strong> Las tres páginas tienen título con hecho y límite, ninguna barra parte de un valor distinto de cero, el 16 de marzo está marcado en las páginas 1 y 3, y los filtros muestran qué cubren.</p><p><strong>Error frecuente y recuperación:</strong> No sabes si una gráfica lee Gold o Silver: abre la fuente de datos del gráfico; debe decir tweets_gold. Si dudas de un número, valídalo con el SQL del paso correspondiente antes de editar el título.</p></section><section id="paso-6"><h2>Paso 6 · Comparte y comprueba cuánto cuesta abrir el tablero · 10 min</h2><p><strong>Dónde:</strong> Data Studio → Compartir → invitar como lector (o un enlace solo para personas concretas). BigQuery Studio → nueva consulta.</p><p><strong>Acción:</strong> Comparte el tablero como lector con una persona de confianza y pídele que abra las tres páginas. Después ejecuta la consulta de abajo en tu proyecto: lista las consultas de la última hora con los bytes facturados y las tablas que leyeron. Compara con la tabla de la salida esperada.</p><p><strong>Costo estimado:</strong> ≈ 10 MiB (el mínimo facturable; la consulta lee unos 0.7 MB de metadatos de trabajos).</p><pre><code>-- Paso 6 · ¿Cuánto cuesta abrir tu tablero? Mira las consultas que lanzó en la última hora.
+-- cache_hit = true significa que BigQuery reutilizó un resultado reciente y no leyó datos.
+SELECT FORMAT_TIMESTAMP(&#x27;%H:%M:%S&#x27;, creation_time) AS hora,
+       cache_hit,
+       ROUND(total_bytes_billed / POW(1024, 2), 1) AS mib_facturados,
+       ARRAY_TO_STRING(ARRAY(SELECT t.table_id FROM UNNEST(referenced_tables) AS t), &#x27;, &#x27;) AS tablas
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE job_type = &#x27;QUERY&#x27;
+  AND creation_time &gt; TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
+ORDER BY creation_time DESC
+LIMIT 10;</code></pre><p><strong>Salida esperada:</strong></p><pre class="expected"><code>hora     | cache_hit | mib_facturados | tablas
+01:29:03 | false     |          138.0 | tweets
+01:29:01 | false     |           10.0 | conversacion_dia
+01:29:01 | false     |           10.0 | actividad_hora
+01:29:00 | false     |           10.0 | autores_alcance
+01:28:57 | false     |           10.0 | aplicaciones_dia
+01:28:56 | false     |           10.0 | hashtags_dia
+
+(Ejemplo de referencia: tus filas serán las de tu tablero. Una consulta que lee la tabla Silver «tweets» factura cientos de MiB; una que lee una tabla Gold factura el mínimo.)</code></pre><p><strong>Comprueba:</strong> Cada gráfica del tablero aparece como una consulta que lee una tabla Gold y factura 10.0 MiB (o 0 si BigQuery reutilizó el resultado). Ninguna lee tweets ni la tabla de Bronze.</p><p><strong>Error frecuente y recuperación:</strong> Ves tablas Silver o gigabytes: una fuente de datos apunta a la capa equivocada; cámbiala a su tabla Gold. No ves consultas del tablero: espera un minuto y repite, o comprueba que el tablero se abrió con tu cuenta o con las credenciales del propietario en tu proyecto.</p></section><h2>Código completo y materiales</h2><details><summary>tweets/s06_01_comprobar_gold.sql · ver contenido completo</summary><pre><code>-- Paso 1 · ¿Existen tus tablas Gold y cuánto pesan? Usa metadatos: el estimador debe decir 0 bytes.
+SELECT table_id AS tabla, row_count AS filas, size_bytes AS bytes
+FROM tweets_gold.__TABLES__
+ORDER BY table_id;
+</code></pre></details><details><summary>tweets/s06_02_validar_panorama.sql · ver contenido completo</summary><pre><code>-- Paso 2 · Valida la serie del panorama antes de dibujarla.
+-- El porcentaje correcto es SUMA de tweets del tema dividida entre SUMA de tweets del día
+-- (no promedies pct_del_dia: cada idioma tiene una base distinta).
+SELECT fecha,
+       SUM(tweets_tema) AS tweets_tema,
+       SUM(tweets_dia)  AS tweets_dia,
+       ROUND(100 * SUM(tweets_tema) / SUM(tweets_dia), 3) AS pct_ponderado
+FROM tweets_gold.tema_dia
+WHERE tema = &#x27;energia&#x27;
+GROUP BY fecha
+ORDER BY fecha;
+</code></pre></details><details><summary>tweets/s06_03_validar_hashtags_apps.sql · ver contenido completo</summary><pre><code>-- Paso 3 · Valida las dos gráficas de «dentro del tema» para un día elegido.
+-- 3a. Los 8 hashtags con más tweets el 23 de marzo.
+SELECT hashtag, tweets, pct_del_dia
+FROM tweets_gold.hashtags_dia
+WHERE fecha = DATE &#x27;2022-03-23&#x27;
+ORDER BY tweets DESC
+LIMIT 8;
+
+-- 3b. Desde qué aplicación se publicó ese día.
+SELECT aplicacion, tweets
+FROM tweets_gold.aplicaciones_dia
+WHERE fecha = DATE &#x27;2022-03-23&#x27;
+ORDER BY tweets DESC;
+</code></pre></details><details><summary>tweets/s06_04_validar_alcance_hora_conversacion.sql · ver contenido completo</summary><pre><code>-- Paso 4 · Valida las tres gráficas de «quién, cuándo y cómo».
+-- 4a. Quién concentra los tweets y quién concentra los likes.
+SELECT segmento, autores, tweets, pct_tweets, pct_likes
+FROM tweets_gold.autores_alcance
+ORDER BY segmento;
+
+-- 4b. Ritmo del 23 de marzo: la hora UTC con más y con menos tweets por idioma.
+SELECT grupo_idioma,
+       ARRAY_AGG(hora_utc ORDER BY tweets DESC LIMIT 1)[OFFSET(0)] AS hora_pico,
+       MAX(tweets) AS tweets_pico,
+       ARRAY_AGG(hora_utc ORDER BY tweets ASC LIMIT 1)[OFFSET(0)]  AS hora_valle,
+       MIN(tweets) AS tweets_valle
+FROM tweets_gold.actividad_hora
+WHERE fecha = DATE &#x27;2022-03-23&#x27;
+GROUP BY grupo_idioma
+ORDER BY grupo_idioma;
+
+-- 4c. Cómo se reparte la conversación el 27 de marzo.
+SELECT tipo, tweets,
+       ROUND(100 * tweets / SUM(tweets) OVER (), 1) AS pct,
+       mediana_likes
+FROM tweets_gold.conversacion_dia
+WHERE fecha = DATE &#x27;2022-03-27&#x27;
+ORDER BY tweets DESC;
+</code></pre></details><details><summary>tweets/s06_06_costo_tablero.sql · ver contenido completo</summary><pre><code>-- Paso 6 · ¿Cuánto cuesta abrir tu tablero? Mira las consultas que lanzó en la última hora.
+-- cache_hit = true significa que BigQuery reutilizó un resultado reciente y no leyó datos.
+SELECT FORMAT_TIMESTAMP(&#x27;%H:%M:%S&#x27;, creation_time) AS hora,
+       cache_hit,
+       ROUND(total_bytes_billed / POW(1024, 2), 1) AS mib_facturados,
+       ARRAY_TO_STRING(ARRAY(SELECT t.table_id FROM UNNEST(referenced_tables) AS t), &#x27;, &#x27;) AS tablas
+FROM `region-us`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+WHERE job_type = &#x27;QUERY&#x27;
+  AND creation_time &gt; TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
+ORDER BY creation_time DESC
+LIMIT 10;
+</code></pre></details><section><h2>Entrega, costo y cierre</h2><p>Guarda el enlace de tu tablero y una captura de cada página con el filtro de idioma o de fecha visible.</p><p>Costo: abrir el tablero consulta tablas Gold de pocos KB y cada consulta se factura al mínimo (10 MiB). Si alguna gráfica apuntó a Silver, regrésala a Gold. Revisa tu presupuesto.</p><p>Cierre de recursos: quita lectores del tablero si ya no hace falta compartirlo. No hay servidor que detener: lo que cuesta son las consultas a BigQuery. Conserva tus tablas Gold: la sesión siguiente las usa como contexto.</p></section><h2>Fuentes</h2><p><a href="https://docs.cloud.google.com/looker/docs/studio/connect-to-google-bigquery" target="_blank" rel="noopener">Data Studio · conector de BigQuery (antes Looker Studio) ↗</a> · <a href="https://docs.cloud.google.com/looker/docs/studio/data-credentials" target="_blank" rel="noopener">Data Studio · credenciales de datos ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/best-practices-costs" target="_blank" rel="noopener">BigQuery · estimar y controlar costos ↗</a> · <a href="https://docs.cloud.google.com/bigquery/docs/information-schema-jobs" target="_blank" rel="noopener">BigQuery · INFORMATION_SCHEMA.JOBS ↗</a> · <a href="https://www.storytellingwithdata.com/blog/2017/3/22/so-what" target="_blank" rel="noopener">Storytelling with Data · so what? ↗</a></p><p>Los casos reportan experiencias de sus publicadores; no garantizan el resultado del curso. Imprimir la guía con el navegador; el deck imprime todos los revelados desde su índice.</p><p><a href="notas.md">Notas de la sesión</a> · <a href="../">Índice de sesiones</a></p></article></body></html>
